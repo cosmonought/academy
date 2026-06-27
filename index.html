@@ -11,7 +11,7 @@
     /* ── Hero two-col: text left, animation right ── */
     .hero-grid {
       display: grid;
-      grid-template-columns: 1fr 420px;
+      grid-template-columns: 1fr 460px;
       border-bottom: var(--panel-border);
       margin-top: 52px;
     }
@@ -38,7 +38,7 @@
     }
     .tw-static {
       font-family: var(--font-display);
-      font-size: clamp(18px, 2.2vw, 26px);
+      font-size: clamp(16px, 2vw, 22px);
       font-weight: 700;
       text-transform: uppercase;
       line-height: 1.3;
@@ -46,14 +46,15 @@
       margin-bottom: 4px;
     }
     .tw-word-wrap {
-      /* Fixed height prevents reflow */
-      min-height: 48px;
+      /* Fixed height — never causes reflow regardless of word length */
+      height: 40px;
+      overflow: hidden;
       display: flex;
       align-items: center;
     }
     .tw-word {
       font-family: var(--font-display);
-      font-size: clamp(28px, 3.5vw, 44px);
+      font-size: clamp(20px, 2.6vw, 32px);
       font-weight: 900;
       text-transform: uppercase;
       line-height: 1;
@@ -388,7 +389,7 @@
 
   <!-- ── Current + Seminar two-panel ── -->
   <div style="border-bottom:var(--panel-border);">
-    <div style="display:grid;grid-template-columns:2fr 1fr;border-top:var(--panel-border);">
+    <div style="display:grid;grid-template-columns:1fr 460px;border-top:var(--panel-border);">
 
         <!-- Coining Reason (smaller, LEFT, grayed, hiatus) -->
       <div style="padding:40px 36px;background:var(--bg-raised);border-right:var(--panel-border);opacity:0.72;">

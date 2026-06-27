@@ -389,32 +389,33 @@
 
   <!-- ── Current + Seminar two-panel ── -->
   <div style="border-bottom:var(--panel-border);">
-    <div style="display:grid;grid-template-columns:1fr 460px;border-top:var(--panel-border);">
+    <div style="display:grid;grid-template-columns:460px 1fr;border-top:var(--panel-border);">
 
-        <!-- Coining Reason (smaller, LEFT, grayed, hiatus) -->
+      <!-- Coining Reason (LEFT, 460px = matches animation box above) — grayed, on hiatus -->
       <div style="padding:40px 36px;background:var(--bg-raised);border-right:var(--panel-border);opacity:0.72;">
         <p style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px;border:1px solid var(--rule-thin);display:inline-block;padding:2px 7px;">On Hiatus</p>
         <h3 style="font-family:var(--font-display);font-size:26px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:8px;">Coining Reason</h3>
         <p style="font-family:var(--font-display);font-size:14px;font-weight:400;text-transform:uppercase;color:var(--ink-dim);margin-bottom:12px;">A Discussion Series</p>
         <p style="font-size:13px;color:var(--ink-mid);line-height:1.65;margin-bottom:20px;">Explores Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Paused during <em>Sex, and/or Love</em>.</p>
-        <a href="/seminar.html" class="btn btn-outline" style="font-size:10px;padding:10px 16px;">Archive & roadmap →</a>
+        <a href="/seminar.html" class="btn btn-outline" style="font-size:10px;padding:10px 16px;">Archive &amp; roadmap →</a>
       </div>
 
-      <!-- Active series (larger, RIGHT, neon pink border) -->
+      <!-- Active Series (RIGHT, 1fr = matches Academy panel above) — neon pink border -->
       <div style="padding:40px 48px;border:2px solid var(--pink);margin:-1px;position:relative;">
         <p class="current-badge" style="margin-bottom:12px;">● Active Series</p>
         <h2 class="section-title" style="margin-bottom:4px;">Sex, and/or Love</h2>
         <p style="font-family:var(--font-display);font-size:18px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">Psychoanalysis and the Science of Desire</p>
         <p class="section-body" style="margin-bottom:20px;">Analyzing sexual desire through psychoanalysis — placing questioning, trust and doubt, obsession and uncertainty at the center of existence. Topics include paid sex, consensual non-consent, the biology of sex, female orgasm, self-harm, self-pleasure, the ungovernable, and the futurity of romance.</p>
         <div style="display:flex;gap:0;flex-wrap:wrap;">
-          <a href="/current.html" class="btn btn-primary">Full schedule & readings →</a>
+          <a href="/current.html" class="btn btn-primary">Full schedule &amp; readings →</a>
           <a href="/register.html" class="btn btn-outline" style="border-left:none;">Register</a>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Fork Journal -->
+    <!-- Fork Journal -->
   <div class="section reveal" id="journal">
     <div class="page-wrap">
       <p class="section-label">Forthcoming</p>
@@ -480,7 +481,7 @@
       'Visual Studies','Politics','History of Technology',
       'Anthropology','Governance','Spirituality','Social Theory',
       'Science','Ethics','Civics','Design',
-      'Web3 and Thought'
+      'Thought'
     ];
     const el   = document.getElementById('tw-word');
     const note = document.getElementById('tw-note');

@@ -3,784 +3,175 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Neta DAO Academy — Coining Reason</title>
-  <meta name="description" content="Neta DAO Academy hosts Coining Reason, a free public discussion series on Web3, philosophy, and psychoanalysis." />
+  <title>Neta DAO — A Public Institution for the Interchain</title>
+  <meta name="description" content="Public blockchains deserve public institutions. Neta DAO is a nonprofit serving the Cosmos/Interchain through validator services, governance, and education." />
   <link rel="stylesheet" href="css/style.css" />
   <style>
-
-    /* ── Hero two-col: text left, animation right ── */
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 460px;
-      border-bottom: var(--panel-border);
-      margin-top: 52px;
+    /* Hero N logo animation */
+    @keyframes n-pulse {
+      0%, 100% { opacity: 0.95; }
+      50% { opacity: 0.7; }
     }
-    .hero-left {
-      padding: 64px 56px;
-      border-right: var(--panel-border);
+    @keyframes n-shift {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(3px); }
+      100% { transform: translateX(0); }
     }
-    .hero-right {
-      padding: 56px 48px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: var(--bg-raised);
+    .hero-logo-panel svg polygon {
+      animation: n-pulse 3s ease-in-out infinite;
     }
-
-    /* ── Typewriter — fixed height, no reflow ── */
-    .tw-label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--ink-dim);
-      margin-bottom: 16px;
-    }
-    .tw-static {
-      font-family: var(--font-display);
-      font-size: clamp(16px, 2vw, 22px);
-      font-weight: 700;
-      text-transform: uppercase;
-      line-height: 1.3;
-      color: var(--ink);
-      margin-bottom: 4px;
-    }
-    .tw-word-wrap {
-      /* Fixed height — never causes reflow regardless of word length */
-      height: 40px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-    }
-    .tw-word {
-      font-family: var(--font-display);
-      font-size: clamp(20px, 2.6vw, 32px);
-      font-weight: 900;
-      text-transform: uppercase;
-      line-height: 1;
-      /* Gradient builds over sequence — set via JS */
-      -webkit-background-clip: text;
-      background-clip: text;
-      background-image: linear-gradient(90deg, #C9338A 0%, #5B8EF0 100%);
-      -webkit-text-fill-color: transparent;
-      position: relative;
-      display: inline-block;
-    }
-    .tw-word::after {
-      content: '|';
-      position: absolute;
-      right: -5px;
-      font-size: 0.9em;
-      -webkit-text-fill-color: var(--pink);
-      animation: cur 0.7s step-end infinite;
-    }
-    .tw-word.done::after { display: none; }
-    @keyframes cur { 0%,100%{opacity:1} 50%{opacity:0} }
-    .tw-note {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--ink-dim);
-      margin-top: 20px;
-      line-height: 1.6;
-    }
-
-    /* ── Current series ── */
-    .current-series {
-      background: #f0e8d8;
-      border: 2px solid var(--pink);
-      padding: 36px 40px;
-    }
-    .current-badge {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--pink);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .current-badge::before { content: '●'; font-size: 8px; }
-    .current-series .section-title { color: var(--ink); margin-bottom: 6px; }
-    .current-series-subtitle {
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 400;
-      text-transform: uppercase;
-      color: var(--ink-mid);
-      margin-bottom: 20px;
-    }
-    .current-series .section-body { color: var(--ink-mid); max-width: 100%; }
-
-    /* ── Roadmap grid + external panel ── */
-    .roadmap-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      border: var(--panel-border);
-      overflow: hidden;
-      margin-top: 24px;
-    }
-    .roadmap-unit {
-      border-right: 1px solid var(--rule-thin);
-      border-bottom: 1px solid var(--rule-thin);
-      cursor: pointer;
-      transition: background 0.12s;
-      user-select: none;
-    }
-    .roadmap-unit:nth-child(5n) { border-right: none; }
-    .roadmap-unit:last-child { border-bottom: none; }
-    .roadmap-unit:nth-child(n+6) { border-bottom: none; }
-    .roadmap-unit:hover { background: var(--bg-raised); }
-    .roadmap-unit.active { background: var(--ink); color: var(--paper); }
-    .roadmap-unit-header {
-      padding: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-    .roadmap-unit-num {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--ink-dim);
-      letter-spacing: 0.08em;
-      margin-bottom: 4px;
-    }
-    .roadmap-unit.active .roadmap-unit-num { color: #9aa0b8; }
-    .roadmap-unit-title {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-    .roadmap-unit-teaser {
-      font-size: 10px;
-      color: var(--ink-dim);
-      line-height: 1.5;
-      padding: 0 16px 14px;
-    }
-    .roadmap-unit.active .roadmap-unit-teaser { color: #9aa0b8; }
-    .roadmap-arrow {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--ink-dim);
-      flex-shrink: 0;
-      margin-left: 4px;
-      transition: transform 0.2s;
-    }
-    .roadmap-unit.active .roadmap-arrow { transform: rotate(180deg); color: #9aa0b8; }
-
-    /* The expansion panel lives OUTSIDE the grid */
-    .roadmap-expand {
-      display: none;
-      border: var(--panel-border);
-      border-top: none;
-      background: var(--ink);
-      color: var(--paper);
-    }
-    .roadmap-expand.open { display: block; }
-    .roadmap-expand-inner { padding: 36px 40px; }
-    .roadmap-expand-title {
-      font-family: var(--font-display);
-      font-size: 28px;
-      font-weight: 900;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .roadmap-expand-desc {
-      font-size: 14px;
-      color: #9aa0b8;
-      line-height: 1.75;
-      max-width: 720px;
-      margin-bottom: 24px;
-    }
-    .roadmap-session-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .roadmap-session-item {
-      padding: 14px 0;
-      border-top: 1px solid #1e1e1e;
-      display: grid;
-      grid-template-columns: 56px 1fr;
-      gap: 16px;
-    }
-    .roadmap-session-num {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: #555;
-      padding-top: 2px;
-    }
-    .roadmap-session-title {
-      font-family: var(--font-display);
-      font-size: 15px;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    .roadmap-session-reading {
-      font-size: 12px;
-      color: #9aa0b8;
-      line-height: 1.6;
-    }
-    .roadmap-session-reading a {
-      color: #5B8EF0;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      text-decoration-color: rgba(91,142,240,0.3);
-    }
-    .roadmap-session-reading a:hover { color: var(--pink); }
-    .roadmap-status {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border: 1px solid;
-      display: inline-block;
-      margin-bottom: 16px;
-    }
-    .roadmap-close {
-      margin-top: 20px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: none;
-      border: 1px solid #333;
-      color: #9aa0b8;
-      padding: 8px 16px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .roadmap-close:hover { border-color: #555; color: var(--paper); }
-
-    /* ── Collapsible ── */
-    .collapsible-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      padding: 20px 0;
-      border-top: var(--rule-thin);
-      user-select: none;
-    }
-    .collapsible-header:first-child { border-top: none; }
-    .collapsible-title {
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-    .collapsible-meta { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); margin-top: 2px; }
-    .collapsible-arrow { font-family: var(--font-mono); font-size: 14px; color: var(--ink-dim); transition: transform 0.25s; flex-shrink: 0; margin-left: 16px; }
-    .collapsible-header.open .collapsible-arrow { transform: rotate(180deg); }
-    .collapsible-body { display: none; padding-bottom: 8px; }
-    .collapsible-body.open { display: block; }
-
-    /* ── Session blocks ── */
-    .session-block { padding: 20px 0; border-bottom: 1px solid var(--rule-thin); }
-    .session-block:last-child { border-bottom: none; }
-    .session-header { display: flex; gap: 14px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
-    .session-num { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.06em; white-space: nowrap; }
-    .session-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; text-transform: uppercase; }
-    .session-date { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); white-space: nowrap; }
-    .session-status { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border: 1px solid; }
-    .status-past     { border-color: #2a8a4a; color: #2a8a4a; }
-    .status-current  { border-color: var(--pink); color: var(--pink); }
-    .status-upcoming { border-color: var(--blue); color: var(--blue); }
-    .status-hiatus   { border-color: var(--rule-thin); color: var(--ink-dim); }
-    .reading-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-    .reading-list li { font-size: 13px; color: var(--ink-mid); line-height: 1.65; padding-left: 16px; position: relative; }
-    .reading-list li::before { content: '—'; position: absolute; left: 0; color: var(--ink-dim); }
-    .reading-list a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: rgba(58,111,216,0.3); }
-    .reading-list a:hover { color: var(--pink); }
-    .reading-list .optional { color: var(--ink-dim); font-style: italic; }
-    .listen-link { font-family: var(--font-mono); font-size: 10px; color: var(--blue); margin-top: 10px; display: inline-block; }
-    .listen-link:hover { color: var(--pink); }
-
-    /* ── Fork link ── */
-    .fork-logo-link {
-      display: inline-flex; align-items: center; gap: 16px;
-      padding: 20px 24px; border: var(--panel-border);
-      background: var(--ink); transition: background 0.15s;
-    }
-    .fork-logo-link:hover { background: #1a1a2e; }
-
-    .keynes-quote {
-      border-left: 2px solid var(--rule-thin); padding: 14px 24px;
-      margin: 24px 0; font-size: 14px; color: var(--ink-mid);
-      line-height: 1.75; font-style: italic;
-    }
-    .keynes-quote cite { display: block; margin-top: 8px; font-style: normal; font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
-
-    @media (max-width: 900px) {
-      .hero-grid { grid-template-columns: 1fr; }
-      .hero-left { order: 1; border-right: none !important; border-bottom: var(--panel-border); }
-      .hero-right { order: 2; min-height: 160px; }
-      .roadmap-grid { grid-template-columns: repeat(3, 1fr); }
-      .roadmap-unit:nth-child(5n) { border-right: 1px solid var(--rule-thin); }
-      .roadmap-unit:nth-child(3n) { border-right: none; }
-    }
-    @media (max-width: 640px) {
-      .hero-left { padding: 40px 24px; }
-      .hero-right { padding: 32px 24px; }
-      .roadmap-grid { grid-template-columns: repeat(2, 1fr); }
-      .roadmap-unit:nth-child(3n) { border-right: 1px solid var(--rule-thin); }
-      .roadmap-unit:nth-child(2n) { border-right: none; }
-      .current-series { padding: 24px 20px; }
-      .roadmap-expand-inner { padding: 24px; }
+    .hero-logo-panel svg text:last-of-type {
+      animation: n-shift 4s ease-in-out infinite;
     }
   </style>
 </head>
 <body>
 
-  <!-- ── Nav ── -->
+  <!-- ── Navigation ── -->
   <nav class="site-nav">
     <div class="nav-inner">
-      <a href="https://netadao.org" class="nav-logo">
+<a href="index.html" class="nav-logo">
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
           <rect width="40" height="40" fill="#080808"/>
-          <defs><clipPath id="n-top-NAV"><polygon points="0,0 40,0 40,17 0,23"/></clipPath><clipPath id="n-bot-NAV"><polygon points="0,25 40,19 40,40 0,40"/></clipPath><linearGradient id="n-grad-NAV" x1="0" y1="0" x2="40" y2="0"><stop offset="0%" stop-color="#C9338A"/><stop offset="100%" stop-color="#5B8EF0"/></linearGradient></defs>
-          <polygon points="0,22 40,16 40,20 0,26" fill="url(#n-grad-NAV)" opacity="0.95"/>
-          <text clip-path="url(#n-top-NAV)" x="20" y="32" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
-          <text clip-path="url(#n-bot-NAV)" x="21" y="33" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
+          <defs>
+            <linearGradient id="n-grad-NAV" x1="0" y1="0" x2="40" y2="0">
+              <stop offset="0%" stop-color="#C9338A"/>
+              <stop offset="100%" stop-color="#5B8EF0"/>
+            </linearGradient>
+          </defs>
+          <text x="20" y="30" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
+          <polygon points="0,19 40,13 40,19 0,25" fill="url(#n-grad-NAV)"/>
         </svg>
       </a>
       <ul class="nav-links">
-        <li><a href="https://netadao.org">Neta DAO</a></li>
-        <li><a href="/" class="active">Home</a></li>
-        <li><a href="/current.html">Current Series</a></li>
-        <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/forthcoming.html">Forthcoming</a></li>
-        <li><a href="/register.html">Register</a></li>
-        <li><a href="https://fork.netadao.org">Fork Journal</a></li>
-        <li><a href="https://github.com/NetaDAOAcademy" target="_blank" rel="noopener" class="nav-cta">GitHub ↗</a></li>
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="getinvolved.html">Get Involved</a></li>
+        <li><a href="https://academy.netadao.org">Academy</a></li>
+        <li><a href="netadata.html">NetaDATA</a></li>
+        <li><a href="https://daodao.zone/dao/juno1c5v6jkmre5xa9vf9aas6yxewc7aqmjy0rlkkyk4d88pnwuhclyhsrhhns6" target="_blank" rel="noopener" class="nav-cta">DAO DAO ↗</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
 
-  <!-- ── Hero: text left / typewriter right ── -->
+  <!-- ── Hero — text LEFT, logo RIGHT ── -->
   <div class="hero-grid">
-    <div class="hero-left">
-      <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:900;text-transform:uppercase;line-height:0.92;letter-spacing:-0.01em;margin-bottom:20px;">
-        Neta DAO <span class="grad-text">Academy</span>
-      </h1>
-      <p class="section-body" style="margin-bottom:28px;">Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. No prerequisites. Everyone welcome.</p>
-      <div style="display:flex;gap:0;flex-wrap:wrap;">
-        <a href="/current.html" class="btn btn-primary">Current Series</a>
-        <a href="/seminar.html" class="btn btn-outline">Coining Reason</a>
-        <a href="https://fork.netadao.org" class="btn btn-outline">Fork Journal</a>
+    <div class="hero-text-panel">
+      <p class="hero-eyebrow">Interchain · Nonprofit · On-chain</p>
+      <h1 class="section-title" style="font-size:clamp(36px,4vw,60px);">Public blockchains deserve<br><span class="grad-text">public institutions.</span></h1>
+      <p class="hero-sub">Neta DAO is a nonprofit organization serving the Cosmos ecosystem and the Interchain at large — through validator infrastructure, on-chain governance, and open educational programs.</p>
+      <div class="hero-actions">
+        <a href="about.html" class="btn btn-primary">Our Mission</a>
+        <a href="governance.html" class="btn btn-outline">Governance</a>
+        <a href="https://daodao.zone/dao/juno1c5v6jkmre5xa9vf9aas6yxewc7aqmjy0rlkkyk4d88pnwuhclyhsrhhns6" target="_blank" rel="noopener" class="btn btn-outline">DAO DAO ↗</a>
       </div>
     </div>
-    <div class="hero-right">
-      <p class="tw-label">Neta DAO Academy is the home of</p>
-      <p class="tw-static">Web3 and</p>
-      <div class="tw-word-wrap">
-        <span class="tw-word" id="tw-word">Thought</span>
-      </div>
-      <p class="tw-note" id="tw-note" style="display:none;">
-        Free · Open · Interchain
-      </p>
+    <div class="hero-logo-panel">
+      <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;max-height:100%;display:block;">
+      <rect width="320" height="320" fill="#0f0f0f"/>
+      <defs>
+        <linearGradient id="hg-H" x1="0" y1="0" x2="320" y2="0">
+          <stop offset="0%" stop-color="#C9338A"/>
+          <stop offset="100%" stop-color="#5B8EF0"/>
+        </linearGradient>
+      </defs>
+      <text x="160" y="244" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="280" fill="#f2f0eb" letter-spacing="-4">N</text>
+      <polygon points="0,148 320,122 320,142 0,168" fill="url(#hg-H)"/>
+      <line x1="0" y1="0" x2="20" y2="0" stroke="#333" stroke-width="1"/>
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#333" stroke-width="1"/>
+      <line x1="320" y1="0" x2="300" y2="0" stroke="#333" stroke-width="1"/>
+      <line x1="320" y1="0" x2="320" y2="20" stroke="#333" stroke-width="1"/>
+      <line x1="0" y1="320" x2="20" y2="320" stroke="#333" stroke-width="1"/>
+      <line x1="0" y1="320" x2="0" y2="300" stroke="#333" stroke-width="1"/>
+      <line x1="320" y1="320" x2="300" y2="320" stroke="#333" stroke-width="1"/>
+      <line x1="320" y1="320" x2="320" y2="300" stroke="#333" stroke-width="1"/>
+    </svg>
     </div>
   </div>
 
-  <!-- ── Current + Seminar two-panel ── -->
-  <div style="border-bottom:var(--panel-border);">
-    <div style="display:grid;grid-template-columns:460px 1fr;border-top:var(--panel-border);">
-
-      <!-- Coining Reason (LEFT, 460px = matches animation box above) — grayed, on hiatus -->
-      <div style="padding:40px 36px;background:var(--bg-raised);border-right:var(--panel-border);opacity:0.72;">
-        <p style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px;border:1px solid var(--rule-thin);display:inline-block;padding:2px 7px;">On Hiatus</p>
-        <h3 style="font-family:var(--font-display);font-size:26px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:8px;">Coining Reason</h3>
-        <p style="font-family:var(--font-display);font-size:14px;font-weight:400;text-transform:uppercase;color:var(--ink-dim);margin-bottom:12px;">A Discussion Series</p>
-        <p style="font-size:13px;color:var(--ink-mid);line-height:1.65;margin-bottom:20px;">Explores Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Paused during <em>Sex, and/or Love</em>.</p>
-        <a href="/seminar.html" class="btn btn-outline" style="font-size:10px;padding:10px 16px;">Archive &amp; roadmap →</a>
+  <!-- ── Origin — Juno palette ── -->
+  <div class="panel reveal" style="background:#270B0D;">
+    <div class="two-col">
+      <div>
+        <p class="section-label" style="color:#FFEBD2;opacity:0.6;">Origin</p>
+        <h2 class="section-title" style="color:#FFEBD2;">Born from the first proposals of <span style="color:#FF7B7C;">Juno</span></h2>
+        <p class="section-body" style="color:#FFEBD2;">The $NETA token was not created by this DAO. It was airdropped by the <span style="color:#FF7B7C;">Juno</span> Core-1 team to wallets that had participated in the very first governance proposals of the <span style="color:#FF7B7C;">Juno</span> Network — a recognition of civic engagement, not economic activity.</p>
       </div>
-
-      <!-- Active Series (RIGHT, 1fr = matches Academy panel above) — neon pink border -->
-      <div style="padding:40px 48px;border:2px solid var(--pink);margin:-1px;position:relative;">
-        <p class="current-badge" style="margin-bottom:12px;">● Active Series</p>
-        <h2 class="section-title" style="margin-bottom:4px;">Sex, and/or Love</h2>
-        <p style="font-family:var(--font-display);font-size:18px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">Psychoanalysis and the Science of Desire</p>
-        <p class="section-body" style="margin-bottom:20px;">Analyzing sexual desire through psychoanalysis — placing questioning, trust and doubt, obsession and uncertainty at the center of existence. Topics include paid sex, consensual non-consent, the biology of sex, female orgasm, self-harm, self-pleasure, the ungovernable, and the futurity of romance.</p>
-        <div style="display:flex;gap:0;flex-wrap:wrap;">
-          <a href="/current.html" class="btn btn-primary">Full schedule &amp; readings →</a>
-          <a href="/register.html" class="btn btn-outline" style="border-left:none;">Register</a>
-        </div>
+      <div>
+        <p class="section-body" style="margin-bottom:24px;color:#FFEBD2;">Those early participants showed up to vote before it was profitable to do so. The airdrop was a statement that this kind of participation had value beyond price speculation.</p>
+        <p class="section-body" style="margin-bottom:24px;color:#FFEBD2;">Neta DAO formed to honor and extend those values. We are stewards of a community defined by its commitment to governance. Our organization is governed by the Neta DAO Constitution, ratified on-chain, with weekly Congressional meetings open to all members.</p>
+        <p style="font-family:var(--font-mono);font-size:10px;color:#FFEBD2;opacity:0.4;line-height:1.6;word-break:break-all;margin-bottom:28px;">juno1c5v6jkmre5xa9vf9aas6yxewc7aqmjy0rlkkyk4d88pnwuhclyhsrhhns6</p>
+        <a href="about.html" class="btn" style="border:2px solid #FFEBD2;background:transparent;color:#FFEBD2;">Read the full story</a>
       </div>
-
     </div>
   </div>
 
-    <!-- Fork Journal -->
-  <div class="section reveal" id="journal">
-    <div class="page-wrap">
-      <p class="section-label">Forthcoming</p>
-      <h2 class="section-title">Fork: The Journal</h2>
-      <p class="section-body" style="margin-bottom:28px;">A forthcoming open-access, peer-reviewed journal of Interchain Theory and Politics — published by Neta DAO Academy. Free to read. Free to publish in.</p>
-      <a href="https://fork.netadao.org" class="fork-logo-link">
-        <svg viewBox="0 0 240 100" width="240" height="100" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <clipPath id="top-half-sm"><polygon points="0,0 240,0 240,42 0,57"/></clipPath>
-            <clipPath id="bot-half-sm"><polygon points="6,60 246,45 246,110 6,110"/></clipPath>
-            <linearGradient id="gap-grad-sm" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C9338A"/><stop offset="100%" stop-color="#5B8EF0"/></linearGradient>
-          </defs>
-          <polygon points="0,56 240,41 240,46 0,61" fill="url(#gap-grad-sm)" opacity="0.9"/>
-          <text clip-path="url(#top-half-sm)" x="0" y="84" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="84" fill="#f0ede6" letter-spacing="-2">FORK</text>
-          <text clip-path="url(#bot-half-sm)" x="6" y="89" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="84" fill="#f0ede6" letter-spacing="-2">FORK</text>
-        </svg>
-        <div><p style="font-family:var(--font-mono);font-size:10px;color:#9aa0b8;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;">Visit the journal</p><p style="font-family:var(--font-mono);font-size:11px;color:#e8e6e0;">fork.netadao.org ↗</p></div>
-      </a>
+
+
+  <!-- ── Three Pillars / Initiatives ── -->
+  <div class="panel reveal" style="background:#ffffff;border-color:#e0e0e0;">
+    <div class="panel-inner-sm" style="border-bottom:var(--panel-border);">
+      <p class="section-label" style="color:#555;">What we do</p>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar">
+        <span class="pillar-num" style="color:#888;">01 — Crypto Civics</span>
+        <h3 style="color:#080808;">Validator Services</h3>
+        <p style="color:#333;">We run validators for chains across the Interchain, participating directly in the security and decentralization of the networks we serve.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-num" style="color:#888;">02 — Governance</span>
+        <h3 style="color:#080808;">On-Chain Democracy</h3>
+        <p style="color:#333;">Every DAO decision is recorded on the Juno blockchain. Weekly Congressional meetings are the legislative sessions of a living institution.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-num" style="color:#888;">03 — Education</span>
+        <h3 style="color:#080808;">Neta DAO Academy</h3>
+        <p style="color:#333;">Free public seminars and open meetings — exploring Web3, philosophy, and the political theory of decentralized systems.</p>
+      </div>
     </div>
   </div>
 
-  <!-- Disclaimer -->
-  <div class="section" style="border-bottom:none;">
-    <div class="page-wrap">
-      <p style="font-size:12px;color:var(--ink-dim);line-height:1.75;">Coining Reason is presented for informational purposes only. Nothing contained in these materials should be construed as financial advice. Support the work by delegating with the Neta DAO <a href="https://wallet.keplr.app/chains/juno?modal=validator&chain=juno-1&validator_address=junovaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8lfvj9vs" target="_blank" rel="noopener" style="color:var(--blue);">JUNO ↗</a>, <a href="https://wallet.keplr.app/chains/akash?modal=validator&chain=akashnet-2&validator_address=akashvaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8l86yse9" target="_blank" rel="noopener" style="color:var(--blue);">AKT ↗</a>, or <a href="https://ping.pub/jackal/staking/jklvaloper1s4rscs2jj7qydkkrsrc52rgvq38wwgrqdrcrdq" target="_blank" rel="noopener" style="color:var(--blue);">JKL ↗</a> validators.</p>
+  <!-- ── Academy ── -->
+  <div class="panel panel-ink reveal">
+    <div class="panel-inner">
+      <p class="section-label">Educational Initiative</p>
+      <h2 class="section-title">Neta DAO <span class="grad-text">Academy</span></h2>
+      <p class="section-body" style="margin-bottom:28px;">An educational subDAO approaching Web3 as political and philosophical terrain — with special attention to post-Lacanian philosophy and the theory of decentralized governance.</p>
+      <!-- Current series callout -->
+      <div style="border:1px solid #333;padding:20px 24px;margin-bottom:28px;background:#0a0a0a;">
+        <p style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--pink);margin-bottom:8px;">● Currently Running</p>
+        <p style="font-family:var(--font-display);font-size:22px;font-weight:900;text-transform:uppercase;margin-bottom:4px;">Sex, and/or Love</p>
+        <p style="font-family:var(--font-mono);font-size:11px;color:var(--paper-dim);">Psychoanalysis and the Science of Desire · Free · Open to all</p>
+      </div>
+      <a href="https://academy.netadao.org" class="btn btn-outline">Visit the Academy →</a>
     </div>
   </div>
 
+  <!-- ── Footer ── -->
   <footer class="site-footer">
     <div class="footer-inner">
-      <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
-      <div class="footer-links-cell"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li>
-        <li><a href="/current.html">Current Series</a></li>
-        <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/forthcoming.html">Forthcoming</a></li>
-        <li><a href="/register.html">Register</a></li>
-        <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
-        <li><a href="https://github.com/NetaDAOAcademy" target="_blank" rel="noopener">GitHub ↗</a></li>
-        <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
-        <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li></ul></div>
+      <div class="footer-brand-cell">
+        <p class="footer-brand">Neta DAO</p>
+        <p class="footer-tagline">A public institution for the Interchain</p>
+      </div>
+      <div class="footer-links-cell">
+        <ul class="footer-links">
+          <li><a href="about.html">About</a></li>
+          <li><a href="getinvolved.html">Get Involved</a></li>
+          <li><a href="https://academy.netadao.org">Academy</a></li>
+          <li><a href="netadata.html">NetaDATA</a></li>
+          <li><a href="https://github.com/netadao" target="_blank" rel="noopener">GitHub ↗</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p></div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© Neta DAO. Nonprofit. On-chain. Open source.</p>
+      <p class="footer-copy">juno1c5v6jkmre5xa9vf9aas6yxewc7aqmjy0rlkkyk4d88pnwuhclyhsrhhns6</p>
+    </div>
   </footer>
 
-  <script>
-  // ── Scroll reveal ──
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-  // ── Mobile nav ──
-  const hamburger = document.querySelector('.nav-hamburger');
-  const navLinks  = document.querySelector('.nav-links');
-  if (hamburger && navLinks) hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
-
-  // ── Typewriter — one-time, accelerating, gradient builds ──
-  (function() {
-    const words = [
-      'Philosophy','History of Science','Psychoanalysis','Sociology',
-      'Literary Theory','Art History','Law','Performance Studies',
-      'Economics','Museology','Critical Theory','Religion',
-      'Visual Studies','Politics','History of Technology',
-      'Anthropology','Governance','Spirituality','Social Theory',
-      'Science','Ethics','Civics','Design',
-      'Thought'
-    ];
-    const el   = document.getElementById('tw-word');
-    const note = document.getElementById('tw-note');
-    let wi = 0;
-    // Gradient saturation increases with each word (0=white, 1=full gradient)
-    function saturation(idx) {
-      return Math.min(idx / (words.length - 1), 1);
-    }
-    function setWordColor(idx) {
-      const s = saturation(idx);
-      if (s < 0.05) {
-        // Even first word has a faint gradient tint so it's visible
-        const pink = 'rgba(201,51,138,0.25)';
-        const blue = 'rgba(91,142,240,0.25)';
-        el.style.backgroundImage = `linear-gradient(90deg, ${pink} 0%, ${blue} 100%)`;
-        el.style.webkitTextFillColor = 'transparent';
-        el.style.webkitBackgroundClip = 'text';
-        el.style.backgroundClip = 'text';
-      } else {
-        el.style.backgroundImage = 'linear-gradient(90deg, #C9338A 0%, #5B8EF0 100%)';
-        el.style.webkitTextFillColor = 'transparent';
-        el.style.webkitBackgroundClip = 'text';
-        el.style.backgroundClip = 'text';
-        // Fade from white by mixing — use opacity on a pseudo approach
-        // We simulate by adjusting the color stops toward white at low saturation
-        const pink = `rgba(201,51,138,${s})`;
-        const blue = `rgba(91,142,240,${s})`;
-        el.style.backgroundImage = `linear-gradient(90deg, ${pink} 0%, ${blue} 100%)`;
-      }
-    }
-    // Speed: fast throughout, total sequence ~5-6 seconds
-    function typeSpeed(wi)   { return Math.max(20, 50 - wi * 2); }
-    function deleteSpeed(wi) { return Math.max(15, 35 - wi * 1); }
-    function pauseAfter(wi)  {
-      if (wi === words.length - 1) return 99999; // freeze on "Thought"
-      return Math.max(150, 500 - wi * 25);
-    }
-
-    function typeWord(word, cb) {
-      let i = 0;
-      function step() {
-        el.textContent = word.slice(0, ++i);
-        if (i < word.length) setTimeout(step, typeSpeed(wi));
-        else cb();
-      }
-      step();
-    }
-    function deleteWord(word, cb) {
-      let i = word.length;
-      function step() {
-        el.textContent = word.slice(0, --i);
-        if (i > 0) setTimeout(step, deleteSpeed(wi));
-        else cb();
-      }
-      step();
-    }
-    function run() {
-      if (wi >= words.length) {
-        // Done — remove cursor, show note
-        el.classList.add('done');
-        note.style.display = 'block';
-        return;
-      }
-      const word = words[wi];
-      setWordColor(wi);
-      typeWord(word, () => {
-        if (wi === words.length - 1) {
-          // Last word — freeze
-          el.classList.add('done');
-          note.style.display = 'block';
-          return;
-        }
-        setTimeout(() => {
-          deleteWord(word, () => {
-            wi++;
-            run();
-          });
-        }, pauseAfter(wi));
-      });
-    }
-    // Start after a short delay
-    setTimeout(run, 600);
-  })();
-
-  // ── Current series toggle ──
-  function toggleSeries() {
-    const schedule = document.getElementById('series-schedule');
-    const btn      = document.getElementById('series-toggle');
-    const open     = schedule.style.display === 'none';
-    schedule.style.display = open ? 'block' : 'none';
-    btn.textContent = open ? 'Hide schedule ↑' : 'Show schedule ↓';
-  }
-
-  // ── Unit collapsibles ──
-  function toggleUnit(id, header) {
-    const body = document.getElementById(id);
-    const open = body.classList.toggle('open');
-    header.classList.toggle('open', open);
-  }
-
-  // ── Roadmap expansion — below the grid ──
-  const ROADMAP_DATA = [
-    {
-      num: 'Unit I', title: 'The Internet',
-      status: 'completed',
-      desc: 'Before thinking about Web3, it may be helpful to come to terms with the histories of Web 2 and Web 1 and the broader impact of telecommunications technologies, centering the question: What is human nature such that it develops these technologies of distance and propinquity?',
-      sessions: [
-        { n:'1.0', title:'Cypherpunk', readings:'Eric Hughes, "A Cypherpunk\'s Manifesto" · Timothy May, "The Crypto Anarchist Manifesto" · Nick Srnicek, "Trusting the Trustless"' },
-        { n:'1.1', title:'Tele-History', readings:'Tom Standage, "The Mother of All Networks" and "Love Over the Wires," from <em>The Victorian Internet</em>' },
-        { n:'1.2', title:'Web 1.0', readings:'Jessa Lingel, "Becoming Craig\'s List" and "Craigslist, the Secondary Marketplace," from <em>An Internet for the People</em>' },
-        { n:'1.3', title:'Freedom and Control Between Web 1 and Web 2', readings:'Wendy Chun, "Why Cyberspace?" from <em>Control and Freedom: Power and Paranoia in the Age of Fiber Optics</em>' },
-        { n:'1.4', title:'The World Brain', readings:'Charles Petzold, "The World Brain," from <em>Code</em> · Justin Smith, "A Sudden Acceleration," from <em>The Internet is Not What You Think It Is</em>' },
-        { n:'1.5', title:'Psychoanalyzing Cyberspace', readings:'André Nusselder, "The Question Concerning Technology and Desire" and "The Technologization of Human Virtuality," from <em>Interface Fantasy: A Lacanian Cybertheory</em>' },
-        { n:'1.6', title:'Digital Bodies', readings:'Slavoj Žižek, "How Real Is Reality?" from <em>Looking Awry</em> · Clint Burnham, "Is the Internet a Thing?" from <em>Does the Internet Have an Unconscious?</em>' },
-        { n:'1.7', title:'Web 3.0', readings:'Joel Monegro, "The Blockchain Application Stack" · "The Shared Data Layer of the Blockchain Application Stack" · "Fat Protocols" · "Thin Applications"' },
-        { n:'1.8', title:'Digital Commons', readings:'Nick Szabo, "Money, Blockchains, and Social Scalability" · Jameson Lopp, "Who Controls Bitcoin Core?" · Jae Kwon and Ethan Buchman, "Cosmos Whitepaper"' },
-      ]
-    },
-    {
-      num: 'Unit II', title: 'Economics',
-      status: 'hiatus',
-      desc: 'Before all the talk of "Web3," there was Bitcoin, and Bitcoin is as much an intervention in digital technology as it is in monetary theory. In this Unit, we will present histories and theories of the "money" concept, as well as strive to ascertain a relation between money and surplus value. The economic problem of surplus value will be brought into connection with human nature\'s surplus of virtuality as explored in Unit I.',
-      sessions: [
-        { n:'2.0', title:'Re-Orientation', readings:'Optional: Rhea Myers, "Computers and Capital: The Rise of Digital Currency"' },
-        { n:'2.1', title:'Economy', readings:'Keith Tribe, "The Word: Economy," from <em>The Economy of the Word: Language, History, and Economics</em> · Optional: Freud, "The Economic Problem of Masochism"' },
-        { n:'2.2', title:'Byzantine: Icon and Economy', readings:'Marie-Jose Mondzain, "A Semantic Study of the Term Economy," from <em>Image, Icon, Economy</em> · Optional: Deleuze and Guattari, "Apparatus of Capture (7000 BC)"' },
-        { n:'2.3', title:'The Song of Money', readings:'Norman O. Brown, "Filthy Lucre," from <em>Life Against Death</em> · Optional: John Forrester, "Gift, Money, and Debt," from <em>Truth Games</em>' },
-        { n:'2.4', title:'WTF Happened in 1579?', readings:'Samo Tomsic, "The Vicious Circle of Labor and Resistance," from <em>The Labor of Enjoyment</em> · Slavoj Žižek, "Three Fragments on Suicide as a Political Factor," from <em>Crisis and Critique</em>' },
-        { n:'2.5', title:'Phenomenology of Money', readings:'Georg Simmel, selections from <em>The Philosophy of Money</em> · Rudi Visker, "Is There Death After Life?"' },
-        { n:'2.6', title:'Ontology of Money', readings:'John Kenneth Galbraith, "Of Paper" and "An Instrument of Revolution" · Joan Robinson, "The Keynesian Revolution," from <em>Economic Philosophy</em> · Edward Castranova, "Weirdly Normal," from <em>Wildcat Currency</em>' },
-        { n:'2.7', title:'Money: Paper and Virtual', readings:'Christine Desan, "Reinventing Money," from <em>Making Money</em> · John Kenneth Galbraith, "The Impeccable System"' },
-        { n:'2.8', title:'The Birth of Banking', readings:'Jacques Lacan, Sessions 1 and 2 from <em>Seminar XVI: From an Other to the other</em> · Edouard Pignot, "Bringing Down the House (of Goldman Sachs)," from <em>Ephemera</em>' },
-        { n:'2.9', title:'Surplus / Negation / The Money of Language', readings:'Anna Kornbluh, "Fictitious Capital/Real Psyche," from <em>Realizing Capital</em>' },
-        { n:'2.10', title:'Psychoanalysis of Money', readings:'Spencer Pack, "Part IV: Current Issues on the Political Economy of Bitcoin and Cryptocurrencies," from <em>The Political Economy and Feasibility of Bitcoin and Cryptocurrencies</em>' },
-        { n:'2.11', title:'Exchange: Self/Other', readings:'Readings TBC — see GitHub' },
-        { n:'2.12', title:'Money is Sad Shit <em>(On Hiatus)</em>', readings:'Saifedean Ammous, "Digital Money" and "What Is Bitcoin Good For?" from <em>The Bitcoin Standard</em> · George Gilder, "Money in Information Theory" and "What Bitcoin Can Teach," from <em>The Scandal of Money</em> · Lyn Alden, "The Creation of Stateless Money" and "A World of Openness or a World of Control," from <em>Broken Money</em> · Optional: Frances Ferguson, "Bitcoin: A Reader\'s Guide," from <em>Critical Inquiry</em>' },
-        { n:'2.13', title:'Technology of Trust <em>(On Hiatus)</em>', readings:'Readings TBC' },
-        { n:'2.14', title:'Bitcoin <em>(On Hiatus)</em>', readings:'Readings TBC' },
-        { n:'2.15', title:'Money in Crisis <em>(On Hiatus)</em>', readings:'Readings TBC' },
-        { n:'2.16', title:'Money: The Negative <em>(On Hiatus)</em>', readings:'Readings TBC' },
-      ]
-    },
-    {
-      num: 'Unit III', title: 'Politics',
-      status: null,
-      desc: 'Sovereignty, constituent power, democracy, and the political theory of decentralized governance. Labor after Fordism and the politics of software. What does it mean to govern without a state?',
-      sessions: [
-        { n:'3.1', title:'Sovereignty and the Commons', readings:'Agamben, Negri, Schmitt — readings TBC' },
-        { n:'3.2', title:'Constituent Power', readings:'Readings TBC' },
-        { n:'3.3', title:'Democracy and Decentralization', readings:'Readings TBC' },
-        { n:'3.4', title:'Labor After Fordism', readings:'Paolo Virno, "Virtuosity and Revolution: A Political Theory of Exodus," from <em>The Idea of World: Public Intellect and Use of Life</em>' },
-        { n:'3.5', title:'Crypto-Anarchism', readings:'Readings TBC' },
-        { n:'3.6', title:'DAO as Government', readings:'Readings TBC' },
-        { n:'3.7', title:'Software Politics', readings:'Benjamin Bratton, "The Nomos of the Cloud," from <em>The Stack: On Software and Sovereignty</em>' },
-        { n:'3.8', title:'Another Politics?', readings:'Judith Butler, "\'We The Peoples\'—Thoughts on Freedom of Assembly," from <em>Notes Towards a Performative Theory of Assembly</em>' },
-      ]
-    },
-    {
-      num: 'Unit IV', title: 'Philosophy',
-      status: null,
-      desc: 'This Unit returns to and/or foregrounds issues raised in the other Units, deepening their contours through the mediation of philosophical work on human nature, technology, individuation, and general economy.',
-      sessions: [
-        { n:'4.1', title:'Talking Philosophy', readings:'Readings TBC' },
-        { n:'4.2', title:'Human Nature', readings:'Readings TBC' },
-        { n:'4.3', title:'Technology and Individuation', readings:'Bernard Stiegler, Simondon — readings TBC' },
-        { n:'4.4', title:'Crypto-Anarchism Revisited', readings:'Readings TBC' },
-        { n:'4.5', title:'The Transcendental Blockchain', readings:'Readings TBC' },
-        { n:'4.6', title:'General Economy', readings:'Readings TBC' },
-      ]
-    },
-    {
-      num: 'Unit V', title: 'Law',
-      status: null,
-      desc: 'Piracy, contract and tort law, blockchain as law, crypto and the state, and securities regulation. The juridical status of DAOs and the gap between existing legal frameworks and the entities they struggle to comprehend.',
-      sessions: [
-        { n:'5.1', title:'Piracy and Intellectual Property', readings:'Readings TBC' },
-        { n:'5.2', title:'Contract and Tort Law', readings:'Readings TBC' },
-        { n:'5.3', title:'Smart Contract Theory', readings:'Readings TBC' },
-        { n:'5.4', title:'Blockchain as Law', readings:'Readings TBC' },
-        { n:'5.5', title:'Crypto and the State', readings:'Readings TBC' },
-        { n:'5.6', title:'Securities Regulation', readings:'Readings TBC' },
-        { n:'5.7', title:'DAOs: Legal Status', readings:'Readings TBC' },
-      ]
-    },
-    {
-      num: 'Unit VI', title: 'Ecology',
-      status: null,
-      desc: 'Network and ecosystem, surplus enjoyment, surplus energy, and degrowth. The environmental stakes of blockchain infrastructure — Proof of Work, Proof of Stake, and the metabolism of decentralized systems.',
-      sessions: [
-        { n:'6.1', title:'Network as Ecosystem', readings:'Readings TBC' },
-        { n:'6.2', title:'Surplus Energy', readings:'Readings TBC' },
-        { n:'6.3', title:'Degrowth and Crypto', readings:'Readings TBC' },
-        { n:'6.4', title:'Proof of Work/Stake as Ecology', readings:'Readings TBC' },
-      ]
-    },
-    {
-      num: 'Unit VII', title: 'Business',
-      status: null,
-      desc: 'The company, corporations, start-ups, organizational design, nonprofits, and DAOs as organizational form. What kind of institution is a DAO, and what does it inherit from prior organizational forms?',
-      sessions: [
-        { n:'7.1', title:'The Company', readings:'Readings TBC' },
-        { n:'7.2', title:'Corporations and Capital', readings:'Readings TBC' },
-        { n:'7.3', title:'Start-Up Culture', readings:'Readings TBC' },
-        { n:'7.4', title:'Nonprofit Theory', readings:'Readings TBC' },
-        { n:'7.5', title:'DAOs as Organizations', readings:'Readings TBC' },
-        { n:'7.6', title:'Governance Design', readings:'Readings TBC' },
-      ]
-    },
-    {
-      num: 'Unit VIII', title: 'Art',
-      status: null,
-      desc: 'NFTs, fiction and capital, collecting, performativity, and blockchain as art. What remains after performance? What does it mean to own a digital object?',
-      sessions: [
-        { n:'8.1', title:'Fictitious Capital/Real Psyche', readings:'Anna Kornbluh, "Fictitious Capital/Real Psyche: Metalepsis, Psychologism, and the Grounds of Finance," from <em>Realizing Capital: Financial and Psychic Economies in Victorian Form</em>' },
-        { n:'8.2', title:'Poetry, Money, Grief', readings:'Anne Carson, excerpt from <em>Economy of the Unlost: Reading Simonides of Keos with Paul Celan</em>' },
-        { n:'8.3', title:'On Collecting', readings:'McKenzie Wark, "My Collectible Ass," from <em>e-flux</em> #85 · Walter Benjamin, "Unpacking My Library," from <em>Illuminations</em>' },
-        { n:'8.4', title:'Performativity: What It Is', readings:'JL Austin, excerpt from <em>How to Do Things with Words</em>' },
-        { n:'8.5', title:'The Body and the Record, or What Remains', readings:'Peggy Phelan, "The Ontology of Performance," from <em>Unmarked: The Politics of Performance</em> · Rebecca Schneider, "In the Meantime: Performance Remains," from <em>Performing Remains</em>' },
-        { n:'8.6', title:'Blockchain and Performativity', readings:'Readings TBC' },
-        { n:'8.7', title:'NFTs', readings:'Readings TBC' },
-      ]
-    },
-    {
-      num: 'Unit IX', title: 'Religion',
-      status: null,
-      desc: 'Ancient economy, sacred money, icon and economy, divine economy, and the sacralization of value. The theological roots of financial thinking and the implicit eschatologies of crypto.',
-      sessions: [
-        { n:'9.1', title:'Ancient Economy', readings:'Readings TBC' },
-        { n:'9.2', title:'Sacred Money', readings:'Readings TBC' },
-        { n:'9.3', title:'Icon and Economy', readings:'Readings TBC' },
-        { n:'9.4', title:'Divine Economy', readings:'Readings TBC' },
-        { n:'9.5', title:'Sacralization and Crypto', readings:'Readings TBC' },
-      ]
-    },
-    {
-      num: 'Unit X', title: 'Miscellany',
-      status: null,
-      desc: 'Overflow texts from across the roadmap, available for supplementary discussion in any unit at participants\' discretion. Coining Reason\'s participants will ultimately help determine the pace, scale, and scope of these investigations.',
-      sessions: [
-        { n:'X', title:'Texts from any Unit that require further exploration', readings:'Determined by participants' },
-        { n:'X', title:'Participant-proposed readings and discussions', readings:'Open to all' },
-      ]
-    },
-  ];
-
-  let activeRoadmapIdx = -1;
-
-  function openRoadmap(idx, el) {
-    const expand  = document.getElementById('roadmap-expand');
-    const content = document.getElementById('roadmap-expand-content');
-    const units   = document.querySelectorAll('.roadmap-unit');
-
-    if (activeRoadmapIdx === idx) {
-      // Toggle off
-      expand.classList.remove('open');
-      el.classList.remove('active');
-      activeRoadmapIdx = -1;
-      return;
-    }
-
-    activeRoadmapIdx = idx;
-    units.forEach(u => u.classList.remove('active'));
-    el.classList.add('active');
-
-    const d = ROADMAP_DATA[idx];
-    const statusHtml = d.status === 'completed'
-      ? '<span class="roadmap-status status-past">Completed</span>'
-      : d.status === 'hiatus'
-      ? '<span class="roadmap-status status-hiatus">On Hiatus</span>'
-      : '';
-
-    content.innerHTML = `
-      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;flex-wrap:wrap;">
-        <h3 class="roadmap-expand-title">${d.num} — ${d.title}</h3>
-        ${statusHtml}
-      </div>
-      <p class="roadmap-expand-desc">${d.desc}</p>
-      <div class="roadmap-session-list">
-        ${d.sessions.map(s => `
-          <div class="roadmap-session-item">
-            <span class="roadmap-session-num">${s.n}</span>
-            <div>
-              <div class="roadmap-session-title">${s.title}</div>
-              <div class="roadmap-session-reading">${s.readings}</div>
-            </div>
-          </div>`).join('')}
-      </div>
-      <button class="roadmap-close" onclick="closeRoadmap()">↑ Close</button>`;
-
-    expand.classList.add('open');
-    // Scroll the expand panel into view smoothly
-    setTimeout(() => expand.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-  }
-
-  function closeRoadmap() {
-    document.getElementById('roadmap-expand').classList.remove('open');
-    document.querySelectorAll('.roadmap-unit').forEach(u => u.classList.remove('active'));
-    activeRoadmapIdx = -1;
-  }
-  </script>
+  <script src="js/main.js"></script>
 </body>
 </html>

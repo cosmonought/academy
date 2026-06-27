@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Neta DAO Academy — Coining Reason</title>
-  <meta name="description" content="Neta DAO Academy hosts Coining Reason, a free public discussion series on Web3, philosophy, and psychoanalysis." />
+  <title>Coining Reason — Neta DAO Academy</title>
+  <meta name="description" content="Coining Reason: A free public discussion series exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion." />
   <link rel="stylesheet" href="css/style.css" />
   <style>
 
@@ -335,22 +335,24 @@
 </head>
 <body>
 
-  <!-- ── Nav ── -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="https://netadao.org" class="nav-logo">
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
           <rect width="40" height="40" fill="#080808"/>
-          <defs><clipPath id="n-top-NAV"><polygon points="0,0 40,0 40,17 0,23"/></clipPath><clipPath id="n-bot-NAV"><polygon points="0,25 40,19 40,40 0,40"/></clipPath><linearGradient id="n-grad-NAV" x1="0" y1="0" x2="40" y2="0"><stop offset="0%" stop-color="#C9338A"/><stop offset="100%" stop-color="#5B8EF0"/></linearGradient></defs>
-          <polygon points="0,22 40,16 40,20 0,26" fill="url(#n-grad-NAV)" opacity="0.95"/>
-          <text clip-path="url(#n-top-NAV)" x="20" y="32" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
-          <text clip-path="url(#n-bot-NAV)" x="21" y="33" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
+          <defs><clipPath id="nt"><polygon points="0,0 40,0 40,17 0,23"/></clipPath><clipPath id="nb"><polygon points="0,25 40,19 40,40 0,40"/></clipPath><linearGradient id="ng" x1="0" y1="0" x2="40" y2="0"><stop offset="0%" stop-color="#C9338A"/><stop offset="100%" stop-color="#5B8EF0"/></linearGradient></defs>
+          <polygon points="0,22 40,16 40,20 0,26" fill="url(#ng)" opacity="0.95"/>
+          <text clip-path="url(#nt)" x="20" y="32" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
+          <text clip-path="url(#nb)" x="21" y="33" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
         </svg>
       </a>
       <ul class="nav-links">
         <li><a href="https://netadao.org">Neta DAO</a></li>
-        <li><a href="/" class="active">Academy</a></li>
-        
+        <li><a href="/">Home</a></li>
+        <li><a href="/current.html">Current Series</a></li>
+        <li><a href="/seminar.html" class="active">Coining Reason</a></li>
+        <li><a href="/forthcoming.html">Forthcoming</a></li>
+        <li><a href="/register.html">Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
         <li><a href="https://github.com/NetaDAOAcademy" target="_blank" rel="noopener" class="nav-cta">GitHub ↗</a></li>
       </ul>
@@ -358,54 +360,23 @@
     </div>
   </nav>
 
-  <!-- ── Hero: text left / typewriter right ── -->
-  <div class="hero-grid">
-    <div class="hero-left">
-      <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:900;text-transform:uppercase;line-height:0.92;letter-spacing:-0.01em;margin-bottom:20px;">
-        Neta DAO <span class="grad-text">Academy</span>
-      </h1>
-      <p class="section-body" style="margin-bottom:28px;">Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. No prerequisites. Everyone welcome.</p>
-      <div style="display:flex;gap:0;flex-wrap:wrap;">
-        <a href="#current" class="btn btn-primary">Current Series</a>
-        <a href="#coining-reason" class="btn btn-outline">Coining Reason</a>
-        <a href="https://fork.netadao.org" class="btn btn-outline">Fork Journal</a>
-      </div>
-    </div>
-    <div class="hero-right">
-      <p class="tw-label">Neta DAO Academy is the home of</p>
-      <p class="tw-static">Web3 and</p>
-      <div class="tw-word-wrap">
-        <span class="tw-word" id="tw-word">Thought</span>
-      </div>
-      <p class="tw-note" id="tw-note" style="display:none;">
-        Free · Open · Interchain
-      </p>
-    </div>
-  </div>
-
-  <!-- ── Current + Seminar two-panel ── -->
-  <div style="border-bottom:var(--panel-border);">
-    <div style="display:grid;grid-template-columns:2fr 1fr;border-top:var(--panel-border);">
-
-      <!-- Active series (larger) -->
-      <div style="padding:40px 48px;border-right:var(--panel-border);">
-        <p class="current-badge" style="margin-bottom:12px;">● Active Series</p>
-        <h2 class="section-title" style="margin-bottom:4px;">Sex, and/or Love</h2>
-        <p style="font-family:var(--font-display);font-size:18px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">Psychoanalysis and the Science of Desire</p>
-        <p class="section-body" style="margin-bottom:20px;">This seminar analyzes sexual desire through psychoanalysis — placing questioning, trust and doubt, obsession and uncertainty, at the center of existence. Topics include paid sex, consensual non-consent, the biology of sex, female orgasm, self-harm and self-pleasure, the ungovernable, and the futurity of romance.</p>
-        <div style="display:flex;gap:0;flex-wrap:wrap;">
-          <a href="/current.html" class="btn btn-primary">Full schedule & readings →</a>
-          <a href="/register.html" class="btn btn-outline" style="border-left:none;">Register</a>
+  <!-- GitHub header image -->
+  <div style="margin-top:52px;border-bottom:var(--panel-border);">
+    <img src="https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/img/CNTitle.png"
+         alt="Coining Reason" 
+         style="width:100%;max-height:320px;object-fit:cover;object-position:center;display:block;border-bottom:var(--panel-border);" 
+         onerror="this.style.display='none'" />
+    <div class="page-wrap" style="padding-top:48px;padding-bottom:40px;border-bottom:var(--panel-border);">
+      <p class="section-label">Discussion Series</p>
+      <h1 class="section-title">Coining Reason</h1>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;">
+        <div>
+          <p class="section-body" style="margin-bottom:16px;">Coining Reason explores ideas related to Web3 through texts spanning economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. The breadth reflects an urgent necessity: financialization means practically all aspects of life are now subsumed by the rule and roil of coin, so that any single disciplinary approach is apt to miss those "constellations of facts" that index more potent realities.</p>
+          <p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);">Readings not online available on the <a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener" style="color:var(--blue);">Neta DAO Discord ↗</a></p>
         </div>
-      </div>
-
-      <!-- Coining Reason (smaller) -->
-      <div style="padding:40px 36px;background:var(--bg-raised);">
-        <p style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px;border:1px solid var(--rule-thin);display:inline-block;padding:2px 7px;">On Hiatus</p>
-        <h3 style="font-family:var(--font-display);font-size:26px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:8px;">Coining Reason</h3>
-        <p style="font-family:var(--font-display);font-size:14px;font-weight:400;text-transform:uppercase;color:var(--ink-dim);margin-bottom:12px;">A Discussion Series</p>
-        <p style="font-size:13px;color:var(--ink-mid);line-height:1.65;margin-bottom:20px;">Explores Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Currently on hiatus during <em>Sex, and/or Love</em>.</p>
-        <a href="/seminar.html" class="btn btn-outline" style="font-size:10px;padding:10px 16px;">View archive & roadmap →</a>
+        <div>
+          <div class="keynes-quote" style="margin:0;">The ideas of economists and political philosophers, both when they are right and when they are wrong, are more powerful than is commonly understood. Indeed the world is ruled by little else.<cite>— John Maynard Keynes</cite></div>
+        </div>
       </div>
     </div>
   </div>
@@ -490,164 +461,38 @@
     </div>
   </div>
 
-  <!-- Fork Journal -->
-  <div class="section reveal" id="journal">
-    <div class="page-wrap">
-      <p class="section-label">Forthcoming</p>
-      <h2 class="section-title">Fork: The Journal</h2>
-      <p class="section-body" style="margin-bottom:28px;">A forthcoming open-access, peer-reviewed journal of Interchain Theory and Politics — published by Neta DAO Academy. Free to read. Free to publish in.</p>
-      <a href="https://fork.netadao.org" class="fork-logo-link">
-        <svg viewBox="0 0 240 100" width="240" height="100" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <clipPath id="top-half-sm"><polygon points="0,0 240,0 240,42 0,57"/></clipPath>
-            <clipPath id="bot-half-sm"><polygon points="6,60 246,45 246,110 6,110"/></clipPath>
-            <linearGradient id="gap-grad-sm" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C9338A"/><stop offset="100%" stop-color="#5B8EF0"/></linearGradient>
-          </defs>
-          <polygon points="0,56 240,41 240,46 0,61" fill="url(#gap-grad-sm)" opacity="0.9"/>
-          <text clip-path="url(#top-half-sm)" x="0" y="84" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="84" fill="#f0ede6" letter-spacing="-2">FORK</text>
-          <text clip-path="url(#bot-half-sm)" x="6" y="89" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="84" fill="#f0ede6" letter-spacing="-2">FORK</text>
-        </svg>
-        <div><p style="font-family:var(--font-mono);font-size:10px;color:#9aa0b8;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;">Visit the journal</p><p style="font-family:var(--font-mono);font-size:11px;color:#e8e6e0;">fork.netadao.org ↗</p></div>
-      </a>
-    </div>
-  </div>
 
-  <!-- Disclaimer -->
-  <div class="section" style="border-bottom:none;">
-    <div class="page-wrap">
-      <p style="font-size:12px;color:var(--ink-dim);line-height:1.75;">Coining Reason is presented for informational purposes only. Nothing contained in these materials should be construed as financial advice. Support the work by delegating with the Neta DAO <a href="https://wallet.keplr.app/chains/juno?modal=validator&chain=juno-1&validator_address=junovaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8lfvj9vs" target="_blank" rel="noopener" style="color:var(--blue);">JUNO ↗</a>, <a href="https://wallet.keplr.app/chains/akash?modal=validator&chain=akashnet-2&validator_address=akashvaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8l86yse9" target="_blank" rel="noopener" style="color:var(--blue);">AKT ↗</a>, or <a href="https://ping.pub/jackal/staking/jklvaloper1s4rscs2jj7qydkkrsrc52rgvq38wwgrqdrcrdq" target="_blank" rel="noopener" style="color:var(--blue);">JKL ↗</a> validators.</p>
-    </div>
-  </div>
 
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
-      <div class="footer-links-cell"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li><li><a href="https://fork.netadao.org">Fork Journal ↗</a></li><li><a href="https://netadao.org/governance.html">Governance ↗</a></li><li><a href="https://github.com/NetaDAOAcademy" target="_blank" rel="noopener">GitHub ↗</a></li><li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li></ul></div>
+      <div class="footer-links-cell"><ul class="footer-links">
+        <li><a href="https://netadao.org">Neta DAO ↗</a></li>
+        <li><a href="/current.html">Current Series</a></li>
+        <li><a href="/seminar.html">Coining Reason</a></li>
+        <li><a href="/forthcoming.html">Forthcoming</a></li>
+        <li><a href="/register.html">Register</a></li>
+        <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
+        <li><a href="https://github.com/NetaDAOAcademy" target="_blank" rel="noopener">GitHub ↗</a></li>
+        <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
+        <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li>
+      </ul></div>
     </div>
     <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p></div>
   </footer>
-
   <script>
-  // ── Scroll reveal ──
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-  // ── Mobile nav ──
-  const hamburger = document.querySelector('.nav-hamburger');
-  const navLinks  = document.querySelector('.nav-links');
-  if (hamburger && navLinks) hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
-
-  // ── Typewriter — one-time, accelerating, gradient builds ──
-  (function() {
-    const words = [
-      'Philosophy','Art','Psychoanalysis','Religion',
-      'Economics','Theory','Politics','Literature',
-      'History','Civics','Design','Anthropology',
-      'Ethics','Thought'
-    ];
-    const el   = document.getElementById('tw-word');
-    const note = document.getElementById('tw-note');
-    let wi = 0;
-    // Gradient saturation increases with each word (0=white, 1=full gradient)
-    function saturation(idx) {
-      return Math.min(idx / (words.length - 1), 1);
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    const h=document.querySelector('.nav-hamburger'),n=document.querySelector('.nav-links');
+    if(h&&n) h.addEventListener('click',()=>n.classList.toggle('open'));
+    function toggleUnit(id,header) {
+      const body=document.getElementById(id);
+      const open=body.classList.toggle('open');
+      header.classList.toggle('open',open);
     }
-    function setWordColor(idx) {
-      const s = saturation(idx);
-      if (s < 0.05) {
-        // Even first word has a faint gradient tint so it's visible
-        const pink = 'rgba(201,51,138,0.25)';
-        const blue = 'rgba(91,142,240,0.25)';
-        el.style.backgroundImage = `linear-gradient(90deg, ${pink} 0%, ${blue} 100%)`;
-        el.style.webkitTextFillColor = 'transparent';
-        el.style.webkitBackgroundClip = 'text';
-        el.style.backgroundClip = 'text';
-      } else {
-        el.style.backgroundImage = 'linear-gradient(90deg, #C9338A 0%, #5B8EF0 100%)';
-        el.style.webkitTextFillColor = 'transparent';
-        el.style.webkitBackgroundClip = 'text';
-        el.style.backgroundClip = 'text';
-        // Fade from white by mixing — use opacity on a pseudo approach
-        // We simulate by adjusting the color stops toward white at low saturation
-        const pink = `rgba(201,51,138,${s})`;
-        const blue = `rgba(91,142,240,${s})`;
-        el.style.backgroundImage = `linear-gradient(90deg, ${pink} 0%, ${blue} 100%)`;
-      }
-    }
-    // Speed: fast throughout, total sequence ~5-6 seconds
-    function typeSpeed(wi)   { return Math.max(20, 50 - wi * 2); }
-    function deleteSpeed(wi) { return Math.max(15, 35 - wi * 1); }
-    function pauseAfter(wi)  {
-      if (wi === words.length - 1) return 99999; // freeze on "Thought"
-      return Math.max(150, 500 - wi * 25);
-    }
-
-    function typeWord(word, cb) {
-      let i = 0;
-      function step() {
-        el.textContent = word.slice(0, ++i);
-        if (i < word.length) setTimeout(step, typeSpeed(wi));
-        else cb();
-      }
-      step();
-    }
-    function deleteWord(word, cb) {
-      let i = word.length;
-      function step() {
-        el.textContent = word.slice(0, --i);
-        if (i > 0) setTimeout(step, deleteSpeed(wi));
-        else cb();
-      }
-      step();
-    }
-    function run() {
-      if (wi >= words.length) {
-        // Done — remove cursor, show note
-        el.classList.add('done');
-        note.style.display = 'block';
-        return;
-      }
-      const word = words[wi];
-      setWordColor(wi);
-      typeWord(word, () => {
-        if (wi === words.length - 1) {
-          // Last word — freeze
-          el.classList.add('done');
-          note.style.display = 'block';
-          return;
-        }
-        setTimeout(() => {
-          deleteWord(word, () => {
-            wi++;
-            run();
-          });
-        }, pauseAfter(wi));
-      });
-    }
-    // Start after a short delay
-    setTimeout(run, 600);
-  })();
-
-  // ── Current series toggle ──
-  function toggleSeries() {
-    const schedule = document.getElementById('series-schedule');
-    const btn      = document.getElementById('series-toggle');
-    const open     = schedule.style.display === 'none';
-    schedule.style.display = open ? 'block' : 'none';
-    btn.textContent = open ? 'Hide schedule ↑' : 'Show schedule ↓';
-  }
-
-  // ── Unit collapsibles ──
-  function toggleUnit(id, header) {
-    const body = document.getElementById(id);
-    const open = body.classList.toggle('open');
-    header.classList.toggle('open', open);
-  }
-
-  // ── Roadmap expansion — below the grid ──
-  const ROADMAP_DATA = [
+    const ROADMAP_DATA = const ROADMAP_DATA = [
     {
       num: 'Unit I', title: 'The Internet',
       status: 'completed',
@@ -789,11 +634,9 @@
         { n:'X', title:'Participant-proposed readings and discussions', readings:'Open to all' },
       ]
     },
-  ];
-
-  let activeRoadmapIdx = -1;
-
-  function openRoadmap(idx, el) {
+  ];;
+    let activeRoadmapIdx = -1;
+    function openRoadmap(idx, el) {
     const expand  = document.getElementById('roadmap-expand');
     const content = document.getElementById('roadmap-expand-content');
     const units   = document.querySelectorAll('.roadmap-unit');

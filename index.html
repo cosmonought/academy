@@ -6,9 +6,121 @@
   <title>Neta DAO Academy — Coining Reason</title>
   <meta name="description" content="Neta DAO Academy hosts Coining Reason, a free public discussion series on Web3, philosophy, and psychoanalysis." />
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Typewriter animation ── */
+    .typewriter-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+    .typewriter-static {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--ink);
+    }
+    .typewriter-word {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      background: linear-gradient(90deg, #C9338A 0%, #5B8EF0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: inline-block;
+      min-width: 2ch;
+      position: relative;
+    }
+    .typewriter-word::after {
+      content: '|';
+      position: absolute;
+      right: -4px;
+      color: var(--pink);
+      -webkit-text-fill-color: var(--pink);
+      animation: blink 0.75s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── Current series — warm tinted bg ── */
+    .current-series {
+      background: #f0e8d8;
+      border: 2px solid var(--pink);
+      padding: 36px 40px;
+      margin-bottom: 0;
+    }
+    .current-badge {
+      font-family: var(--font-mono);
+      font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--pink);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .current-badge::before { content: '●'; font-size: 8px; }
+    .current-series .section-title { color: var(--ink); margin-bottom: 6px; }
+    .current-series-subtitle {
+      font-family: var(--font-display); font-size: 18px; font-weight: 400;
+      text-transform: uppercase; color: var(--ink-mid); margin-bottom: 20px; letter-spacing: 0.02em;
+    }
+    .current-series .section-body { color: var(--ink-mid); max-width: 100%; }
+
+    /* ── Roadmap expandable grid ── */
+    .roadmap-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      border: var(--panel-border); overflow: hidden; margin-top: 24px;
+    }
+    .roadmap-unit {
+      border-right: 1px solid var(--rule-thin);
+      border-bottom: 1px solid var(--rule-thin);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .roadmap-unit:nth-child(5n) { border-right: none; }
+    .roadmap-unit-header {
+      padding: 18px 16px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .roadmap-unit:hover .roadmap-unit-header { background: var(--bg-raised); }
+    .roadmap-unit-num { font-family: var(--font-mono); font-size: 9px; color: var(--ink-dim); letter-spacing: 0.08em; margin-bottom: 4px; }
+    .roadmap-unit-title { font-family: var(--font-display); font-size: 14px; font-weight: 900; text-transform: uppercase; }
+    .roadmap-unit-arrow { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); transition: transform 0.2s; flex-shrink: 0; margin-left: 4px; }
+    .roadmap-unit.open .roadmap-unit-arrow { transform: rotate(180deg); }
+    .roadmap-unit-body {
+      display: none; padding: 0 16px 16px;
+      border-top: 1px solid var(--rule-thin);
+    }
+    .roadmap-unit-body.open { display: block; }
+    .roadmap-unit-desc { font-size: 11px; color: var(--ink-dim); line-height: 1.6; padding: 12px 0 8px; }
+    .roadmap-session { padding: 8px 0; border-top: 1px solid var(--rule-thin); }
+    .roadmap-session:first-child { border-top: none; }
+    .roadmap-session-title { font-size: 11px; font-weight: 500; color: var(--ink); line-height: 1.4; margin-bottom: 3px; }
+    .roadmap-session-reading { font-size: 10px; color: var(--ink-dim); line-height: 1.5; }
+    .roadmap-status {
+      font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.06em;
+      text-transform: uppercase; padding: 2px 6px; border: 1px solid;
+      display: inline-block; margin-bottom: 8px;
+    }
+
+    /* ── Fork logo section ── */
+    .fork-logo-link {
+      display: inline-flex; align-items: center; gap: 16px;
+      padding: 20px 24px; border: var(--panel-border);
+      background: var(--ink); transition: background 0.15s;
+      text-decoration: none;
+    }
+    .fork-logo-link:hover { background: #1a1a2e; }
+
+    @media (max-width: 1024px) { .roadmap-grid { grid-template-columns: repeat(3, 1fr); } .roadmap-unit:nth-child(5n) { border-right: 1px solid var(--rule-thin); } .roadmap-unit:nth-child(3n) { border-right: none; } }
+    @media (max-width: 640px) { .roadmap-grid { grid-template-columns: repeat(2, 1fr); } .roadmap-unit:nth-child(3n) { border-right: 1px solid var(--rule-thin); } .roadmap-unit:nth-child(2n) { border-right: none; } .current-series { padding: 24px 20px; } }
+  </style>
 </head>
 <body>
 
+  <!-- ── Nav ── -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="https://netadao.org" class="nav-logo">
@@ -30,15 +142,20 @@
     </div>
   </nav>
 
-  <!-- ── Hero ── -->
-  <div class="hero">
+  <!-- ── Hero with typewriter ── -->
+  <div class="hero" style="padding-top:80px;padding-bottom:48px;border-bottom:var(--panel-border);margin-top:52px;">
     <div class="page-wrap">
-      <p class="hero-eyebrow">Educational SubDAO · Free &amp; Open · Neta DAO</p>
-      <h1>Neta DAO<br><span class="grad-text">Academy</span></h1>
-      <p class="hero-sub">Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. No prerequisites. Everyone welcome.</p>
-      <div class="hero-actions">
+      <!-- Typewriter headline -->
+      <div class="typewriter-wrap" style="margin-bottom:20px;">
+        <span class="typewriter-static">Neta DAO is the home of Web3 and&nbsp;</span><span class="typewriter-word" id="typewriter-word">Philosophy</span>
+      </div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:900;text-transform:uppercase;line-height:0.92;letter-spacing:-0.01em;margin-bottom:20px;">
+        Neta DAO <span class="grad-text">Academy</span>
+      </h1>
+      <p class="hero-sub" style="max-width:580px;">Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. No prerequisites. Everyone welcome.</p>
+      <div class="hero-actions" style="margin-top:28px;">
         <a href="#current" class="btn btn-primary">Current Series</a>
-        <a href="#coining-reason" class="btn btn-outline">About the Series</a>
+        <a href="#coining-reason" class="btn btn-outline">About Coining Reason</a>
         <a href="https://fork.netadao.org" class="btn btn-outline">Fork Journal</a>
       </div>
     </div>
@@ -53,96 +170,37 @@
         <h2 class="section-title">Sex, and/or Love</h2>
         <p class="current-series-subtitle">Psychoanalysis and the Science of Desire</p>
         <p class="section-body" style="margin-bottom:28px;">This seminar analyzes sexual desire through its principal science: psychoanalysis. Because desire is a force rather than an object, this "science of desire" questions the limits of ordinary empiricism by placing questioning — with its attendant themes of trust and doubt, obsession and uncertainty — at the center of existence. Topics include paid sex, consensual non-consent, the biology and evolution of sex, female orgasm, self-harm and self-pleasure, the ungovernable, and the futurity of romance.</p>
-        <button class="btn btn-outline" onclick="toggleSeries()" id="series-toggle" style="background:transparent;color:#f0ede6;border-color:#333;">Show schedule ↓</button>
+        <button class="btn btn-outline" onclick="toggleSeries()" id="series-toggle" style="border-color:#333;color:var(--ink);">Show schedule ↓</button>
       </div>
 
-      <!-- Collapsible schedule -->
-      <div id="series-schedule" style="display:none;border:2px solid #111;border-top:none;padding:32px 40px;background:var(--bg-raised);">
-
-        <!-- Past -->
+      <!-- Schedule -->
+      <div id="series-schedule" style="display:none;border:2px solid var(--pink);border-top:none;padding:32px 40px;background:var(--bg-raised);">
         <div class="session-block">
-          <div class="session-header">
-            <span class="session-num">Session 0</span>
-            <span class="session-title">Seduction</span>
-            <span class="session-date">18 February 2026</span>
-            <span class="session-status status-past">Past</span>
-          </div>
+          <div class="session-header"><span class="session-num">Session 0</span><span class="session-title">Seduction</span><span class="session-date">18 Feb 2026</span><span class="session-status status-past">Past</span></div>
+          <ul class="reading-list"><li>Lydia Davis, "Break It Down" — <a href="https://github.com/cosmonought/readings/blob/main/Lydia%20Davis%20Break%20It%20Down.pdf" target="_blank" rel="noopener">Text ↗</a> · <a href="https://www.thisamericanlife.org/88/numbers/act-five-1" target="_blank" rel="noopener">Audio ↗</a></li></ul>
+        </div>
+        <div class="session-block">
+          <div class="session-header"><span class="session-num">Session 1</span><span class="session-title">The Origin of Sexuality</span><span class="session-date">4 Mar 2026</span><span class="session-status status-past">Past</span></div>
           <ul class="reading-list">
-            <li>Lydia Davis, "Break It Down," from <em>Break It Down: Stories</em> — <a href="https://github.com/cosmonought/readings/blob/main/Lydia%20Davis%20Break%20It%20Down.pdf" target="_blank" rel="noopener">Text ↗</a> · <a href="https://www.thisamericanlife.org/88/numbers/act-five-1" target="_blank" rel="noopener">Audio ↗</a></li>
+            <li>Freud, <em>Three Essays on the Theory of Sexuality</em> — <a href="https://www.dropbox.com/scl/fi/v5lhi7b8pndmu0k30j6ov/three-essays.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
+            <li>Laplanche, selections from <em>Life and Death in Psychoanalysis</em> and <em>Freud and the Sexual</em> — <a href="https://github.com/NetaDAOAcademy/CoiningReason/blob/main/assets/Laplanche.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
+          </ul>
+          <p style="font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.65;"><strong style="color:var(--ink-mid);">Note:</strong> Essential in sequence: (1) "The Sexual Aberrations," then (2) "The Order of Life and the Genesis of Human Sexuality," then (3) "Gender, Sex, and the <em>Sexual</em>."</p>
+        </div>
+        <div class="session-block">
+          <div class="session-header"><span class="session-num">Session 2</span><span class="session-title">Sexual Difference</span><span class="session-date">8 Apr 2026</span><span class="session-status status-past">Past</span></div>
+          <ul class="reading-list">
+            <li>Lynn Margulis, excerpts from <em>Mystery Dance</em> — <a href="https://github.com/NetaDAOAcademy/CoiningReason/blob/main/assets/Margulis_Mystery%20Dance_excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
+            <li>Stella Sandford, excerpts from <em>Vegetal Sex</em> — <a href="https://github.com/NetaDAOAcademy/CoiningReason/blob/main/assets/Sandford_Vegetal%20Sex_excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
+            <li>Lucy Cooke, excerpts from <em>Bitch: On the Female of the Species</em> — <a href="https://github.com/NetaDAOAcademy/CoiningReason/blob/main/assets/Cooke_Bitch%20excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
           </ul>
         </div>
-
-        <div class="session-block">
-          <div class="session-header">
-            <span class="session-num">Session 1</span>
-            <span class="session-title">The Origin of Sexuality</span>
-            <span class="session-date">4 March 2026</span>
-            <span class="session-status status-past">Past</span>
-          </div>
-          <ul class="reading-list">
-            <li>Sigmund Freud, <em>Three Essays on the Theory of Sexuality</em> — <a href="https://www.dropbox.com/scl/fi/v5lhi7b8pndmu0k30j6ov/three-essays.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
-            <li>Jean Laplanche, selections from <em>Life and Death in Psychoanalysis</em> and <em>Freud and the Sexual</em> — <a href="https://github.com/NetaDAOAcademy/CoiningReason/blob/main/assets/Laplanche.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
-          </ul>
-          <p style="font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.65;"><strong style="color:var(--ink-mid);">Note:</strong> Essential in sequence: (1) "The Sexual Aberrations" from Freud's <em>Three Essays</em>, then (2) Laplanche's "The Order of Life and the Genesis of Human Sexuality," then (3) "Gender, Sex, and the <em>Sexual</em>."</p>
-        </div>
-
-        <div class="session-block">
-          <div class="session-header">
-            <span class="session-num">Session 2</span>
-            <span class="session-title">Sexual Difference</span>
-            <span class="session-date">8 April 2026</span>
-            <span class="session-status status-past">Past</span>
-          </div>
-          <ul class="reading-list">
-            <li>Lynn Margulis, "Evolutionary Striptease" and "Phallic Psyche," from <em>Mystery Dance</em> — <a href="https://github.com/NetaDAOAcademy/CoiningReason/blob/main/assets/Margulis_Mystery%20Dance_excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
-            <li>Stella Sandford, "Plant Philosophy and Plant Sex" and "What are 'Male' and 'Female' in Botany?," from <em>Vegetal Sex</em> — <a href="https://github.com/NetaDAOAcademy/CoiningReason/blob/main/assets/Sandford_Vegetal%20Sex_excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
-            <li>Lucy Cooke, "Introduction" and "The Anarchy of Sex," from <em>Bitch: On the Female of the Species</em> — <a href="https://github.com/NetaDAOAcademy/CoiningReason/blob/main/assets/Cooke_Bitch%20excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li>
-          </ul>
-        </div>
-
-        <!-- Upcoming -->
-        <div class="session-block">
-          <div class="session-header"><span class="session-num">Session 3</span><span class="session-title">Lacanian Sexuality</span><span class="session-date">April 2026</span><span class="session-status status-upcoming">Upcoming</span></div>
-          <ul class="reading-list">
-            <li>Tim Dean, "Beyond the Couch," "How to Read Lacan," and "Bodies That Mutter," from <em>Beyond Sexuality</em></li>
-            <li>Jacques Lacan, "The Signification of the Phallus," from <em>Écrits</em></li>
-            <li>Dennis Cooper, <em>The Dream Police</em></li>
-          </ul>
-        </div>
-
-        <div class="session-block">
-          <div class="session-header"><span class="session-num">Session 4</span><span class="session-title">Traumatophilia</span><span class="session-date">April 2026</span><span class="session-status status-upcoming">Upcoming</span></div>
-          <ul class="reading-list">
-            <li>Sigmund Freud, <em>Beyond the Pleasure Principle</em></li>
-            <li>Avgi Saketapoulou, "To Suffer Pleasure" and "Toward a Theory of Traumatophilia," from <em>Sexuality Beyond Consent</em></li>
-            <li>Film: <em>Dans Ma Peau</em>, dir. Marina de Van (screening to be scheduled)</li>
-          </ul>
-        </div>
-
-        <div class="session-block">
-          <div class="session-header"><span class="session-num">Session 5</span><span class="session-title">Femininity</span><span class="session-date">May 2026</span><span class="session-status status-upcoming">Upcoming</span></div>
-          <ul class="reading-list">
-            <li>Sigmund Freud, "On Femininity"</li>
-            <li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em></li>
-          </ul>
-        </div>
-
-        <div class="session-block">
-          <div class="session-header"><span class="session-num">Session 6</span><span class="session-title">The Measure of Love</span><span class="session-date">May 2026</span><span class="session-status status-upcoming">Upcoming</span></div>
-          <ul class="reading-list">
-            <li>Lauren Berlant, <em>Desire/Love</em></li>
-            <li>Alain Badiou, <em>In Praise of Love</em></li>
-          </ul>
-        </div>
-
-        <div class="session-block">
-          <div class="session-header"><span class="session-num">Session 7</span><span class="session-title">The Ends of Sex</span><span class="session-date">June 2026</span><span class="session-status status-upcoming">Upcoming</span></div>
-          <ul class="reading-list">
-            <li>Jean-Luc Nancy and Irving Goh, <em>The Deconstruction of Sex</em></li>
-          </ul>
-        </div>
-
-      </div><!-- end schedule -->
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 3</span><span class="session-title">Lacanian Sexuality</span><span class="session-date">April 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Tim Dean, three chapters from <em>Beyond Sexuality</em></li><li>Lacan, "The Signification of the Phallus," from <em>Écrits</em></li><li>Dennis Cooper, <em>The Dream Police</em></li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 4</span><span class="session-title">Traumatophilia</span><span class="session-date">April 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Freud, <em>Beyond the Pleasure Principle</em></li><li>Avgi Saketapoulou, two essays from <em>Sexuality Beyond Consent</em></li><li>Film: <em>Dans Ma Peau</em>, dir. Marina de Van</li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 5</span><span class="session-title">Femininity</span><span class="session-date">May 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Freud, "On Femininity"</li><li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em></li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 6</span><span class="session-title">The Measure of Love</span><span class="session-date">May 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Lauren Berlant, <em>Desire/Love</em></li><li>Alain Badiou, <em>In Praise of Love</em></li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 7</span><span class="session-title">The Ends of Sex</span><span class="session-date">June 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Jean-Luc Nancy and Irving Goh, <em>The Deconstruction of Sex</em></li></ul></div>
+      </div>
     </div>
   </div>
 
@@ -151,194 +209,262 @@
     <div class="page-wrap">
       <p class="section-label">Discussion Series</p>
       <h2 class="section-title">Coining Reason</h2>
-
       <div class="keynes-quote">
         The ideas of economists and political philosophers, both when they are right and when they are wrong, are more powerful than is commonly understood. Indeed the world is ruled by little else.
         <cite>— John Maynard Keynes</cite>
       </div>
-
       <p class="section-body" style="margin-bottom:24px;">Coining Reason explores ideas related to Web3 through texts spanning economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. The breadth reflects an urgent necessity: financialization means practically all aspects of life are now subsumed by the rule and roil of coin, so that any single disciplinary approach is apt to miss those "constellations of facts" that index more potent realities.</p>
       <p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);margin-bottom:32px;">Readings not online are available on the <a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener" style="color:var(--blue);">Neta DAO Discord ↗</a></p>
 
-      <!-- Past sessions collapsible -->
+      <!-- Past sessions -->
       <div style="border-top:var(--panel-border);">
 
         <!-- Unit I -->
         <div>
           <div class="collapsible-header" onclick="toggleUnit('unit1',this)">
-            <div>
-              <div class="collapsible-title">Unit I — The Internet</div>
-              <div class="collapsible-meta">8 Sessions · April – June 2023 · Completed</div>
-            </div>
+            <div><div class="collapsible-title">Unit I — The Internet</div><div class="collapsible-meta">8 Sessions · April – June 2023 · Completed</div></div>
             <span class="collapsible-arrow">↓</span>
           </div>
           <div class="collapsible-body" id="unit1">
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.0</span><span class="session-title">Cypherpunk</span><span class="session-date">5 April 2023</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list">
-                <li>Eric Hughes, <a href="https://activism.net/cypherpunk/manifesto.html" target="_blank" rel="noopener">"A Cypherpunk's Manifesto" ↗</a></li>
-                <li>Timothy May, <a href="https://activism.net/cypherpunk/crypto-anarchy.html" target="_blank" rel="noopener">"The Crypto Anarchist Manifesto" ↗</a></li>
-                <li>Nick Srnicek, <a href="https://fabricatedintimacy.tech/articles/example-2" target="_blank" rel="noopener">"Trusting the Trustless" ↗</a></li>
-              </ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1643765966025682945" target="_blank" rel="noopener">Listen ↗</a>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.1</span><span class="session-title">Tele-History</span><span class="session-date">12 April 2023</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list"><li>Tom Standage, "The Mother of All Networks" and "Love Over the Wires," from <em>The Victorian Internet</em> — <a href="https://bafybeibamm7xofngu2siky4ufncrn2mijj3r4ggzxii4disvxsjbxoyipm.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1646302811292852224" target="_blank" rel="noopener">Listen ↗</a>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.2</span><span class="session-title">Web 1.0</span><span class="session-date">19 April 2023</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list"><li>Jessa Lingel, "Becoming Craig's List" and "Craigslist, the Secondary Marketplace," from <em>An Internet for the People</em> — <a href="https://bafybeidpphhtnjvrdnpxqmhizvzi2eop7lrasmv2mm5ll7zag3anpdg4ly.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1648839464796446720" target="_blank" rel="noopener">Listen ↗</a>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.3</span><span class="session-title">Freedom and Control</span><span class="session-date">26 April 2023</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list"><li>Wendy Chun, "Why Cyberspace?" from <em>Control and Freedom</em> — <a href="https://bafkreiewopo6egzdfbv577ht3md7xvygo46dplbnrx26cksaz6nfnc54za.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul>
-              <p style="font-size:11px;color:var(--ink-dim);margin-top:6px;">Unrecorded</p>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.4</span><span class="session-title">The World Brain</span><span class="session-date">3 May 2023</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list">
-                <li>Charles Petzold, "The World Brain," from <em>Code</em> — <a href="https://bafybeigssuizfc5etspc6emggenwyyl25dzvjxnamoowh754knhvbdt2ii.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li>
-                <li>Justin Smith, "A Sudden Acceleration," from <em>The Internet is Not What You Think It Is</em> — <a href="https://bafybeih2h3mgcj3pzy6sz6kqedqmx4o6tkjk5qzlmhk3xaqlkvkhuktdba.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li>
-              </ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1653912677574496261" target="_blank" rel="noopener">Part 1 ↗</a>&nbsp;&nbsp;
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1653914980763197440" target="_blank" rel="noopener">Part 2 ↗</a>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.5</span><span class="session-title">Psychoanalyzing Cyberspace</span><span class="session-date">10 May 2023</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list"><li>André Nusselder, "The Technologization of Human Virtuality," from <em>Interface Fantasy</em> — <a href="https://bafybeic3elqxzrhirmc2kgw5rjmyrunb4yro65jnfcipn4sylwl6ma7e2m.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1658985960326012931" target="_blank" rel="noopener">Listen ↗</a>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.6</span><span class="session-title">Digital Bodies</span><span class="session-date">24 May 2023</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list">
-                <li>Slavoj Žižek, "How Real Is Reality?" from <em>Looking Awry</em> (see Discord)</li>
-                <li>Clint Burnham, "Is the Internet a Thing?" from <em>Does the Internet Have an Unconscious?</em> — <a href="https://bafybeiarqqrjbl3hlunwnibkenk4k2545ulawuvcq42lbwtoru2w7rvpci.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li>
-              </ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1661523165397254145" target="_blank" rel="noopener">Listen ↗</a>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.7</span><span class="session-title">Web 3.0</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list">
-                <li>Joel Monegro, <a href="https://www.coindesk.com/markets/2014/11/30/the-blockchain-application-stack/" target="_blank" rel="noopener">"The Blockchain Application Stack" ↗</a>, <a href="https://www.usv.com/blog/fat-protocols" target="_blank" rel="noopener">"Fat Protocols" ↗</a>, <a href="https://www.placeholder.vc/blog/2020/1/30/thin-applications" target="_blank" rel="noopener">"Thin Applications" ↗</a></li>
-              </ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1664059235309633538" target="_blank" rel="noopener">Listen ↗</a>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">1.8</span><span class="session-title">Digital Commons</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list">
-                <li>Nick Szabo, <a href="https://nakamotoinstitute.org/money-blockchains-and-social-scalability/" target="_blank" rel="noopener">"Money, Blockchains, and Social Scalability" ↗</a></li>
-                <li>Jae Kwon and Ethan Buchman, <a href="https://v1.cosmos.network/resources/whitepaper" target="_blank" rel="noopener">"Cosmos Whitepaper" ↗</a></li>
-              </ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1666596944846659584" target="_blank" rel="noopener">Listen ↗</a>
-            </div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.0</span><span class="session-title">Cypherpunk</span><span class="session-date">5 Apr 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Eric Hughes, <a href="https://activism.net/cypherpunk/manifesto.html" target="_blank" rel="noopener">"A Cypherpunk's Manifesto" ↗</a></li><li>Timothy May, <a href="https://activism.net/cypherpunk/crypto-anarchy.html" target="_blank" rel="noopener">"The Crypto Anarchist Manifesto" ↗</a></li><li>Nick Srnicek, <a href="https://fabricatedintimacy.tech/articles/example-2" target="_blank" rel="noopener">"Trusting the Trustless" ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1643765966025682945" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.1</span><span class="session-title">Tele-History</span><span class="session-date">12 Apr 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Tom Standage, "The Mother of All Networks" and "Love Over the Wires," from <em>The Victorian Internet</em> — <a href="https://bafybeibamm7xofngu2siky4ufncrn2mijj3r4ggzxii4disvxsjbxoyipm.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1646302811292852224" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.2</span><span class="session-title">Web 1.0</span><span class="session-date">19 Apr 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Jessa Lingel, two chapters from <em>An Internet for the People</em> — <a href="https://bafybeidpphhtnjvrdnpxqmhizvzi2eop7lrasmv2mm5ll7zag3anpdg4ly.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1648839464796446720" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.3</span><span class="session-title">Freedom and Control Between Web 1 and Web 2</span><span class="session-date">26 Apr 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Wendy Chun, "Why Cyberspace?" from <em>Control and Freedom</em> — <a href="https://bafkreiewopo6egzdfbv577ht3md7xvygo46dplbnrx26cksaz6nfnc54za.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><p style="font-size:11px;color:var(--ink-dim);margin-top:6px;">Unrecorded</p></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.4</span><span class="session-title">The World Brain</span><span class="session-date">3 May 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Charles Petzold, "The World Brain," from <em>Code</em> — <a href="https://bafybeigssuizfc5etspc6emggenwyyl25dzvjxnamoowh754knhvbdt2ii.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li><li>Justin Smith, "A Sudden Acceleration," from <em>The Internet is Not What You Think It Is</em> — <a href="https://bafybeih2h3mgcj3pzy6sz6kqedqmx4o6tkjk5qzlmhk3xaqlkvkhuktdba.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1653912677574496261" target="_blank" rel="noopener">Part 1 ↗</a>&nbsp;&nbsp;<a class="listen-link" href="https://twitter.com/CoiningReason/status/1653914980763197440" target="_blank" rel="noopener">Part 2 ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.5</span><span class="session-title">Psychoanalyzing Cyberspace</span><span class="session-date">10 May 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>André Nusselder, two chapters from <em>Interface Fantasy</em> — <a href="https://bafybeic3elqxzrhirmc2kgw5rjmyrunb4yro65jnfcipn4sylwl6ma7e2m.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1658985960326012931" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.6</span><span class="session-title">Digital Bodies</span><span class="session-date">24 May 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Slavoj Žižek, "How Real Is Reality?" from <em>Looking Awry</em> (see Discord)</li><li>Clint Burnham, "Is the Internet a Thing?" from <em>Does the Internet Have an Unconscious?</em> — <a href="https://bafybeiarqqrjbl3hlunwnibkenk4k2545ulawuvcq42lbwtoru2w7rvpci.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1661523165397254145" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.7</span><span class="session-title">Web 3.0</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Joel Monegro, <a href="https://www.coindesk.com/markets/2014/11/30/the-blockchain-application-stack/" target="_blank" rel="noopener">"The Blockchain Application Stack" ↗</a>, <a href="https://www.usv.com/blog/fat-protocols" target="_blank" rel="noopener">"Fat Protocols" ↗</a>, <a href="https://www.placeholder.vc/blog/2020/1/30/thin-applications" target="_blank" rel="noopener">"Thin Applications" ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1664059235309633538" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">1.8</span><span class="session-title">Digital Commons</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Nick Szabo, <a href="https://nakamotoinstitute.org/money-blockchains-and-social-scalability/" target="_blank" rel="noopener">"Money, Blockchains, and Social Scalability" ↗</a></li><li>Jae Kwon and Ethan Buchman, <a href="https://v1.cosmos.network/resources/whitepaper" target="_blank" rel="noopener">"Cosmos Whitepaper" ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1666596944846659584" target="_blank" rel="noopener">Listen ↗</a></div>
           </div>
         </div>
 
         <!-- Unit II -->
         <div>
           <div class="collapsible-header" onclick="toggleUnit('unit2',this)">
-            <div>
-              <div class="collapsible-title">Unit II — Economics <span style="font-family:var(--font-mono);font-size:9px;border:1px solid var(--rule-thin);padding:2px 6px;margin-left:8px;color:var(--ink-dim);">On Hiatus</span></div>
-              <div class="collapsible-meta">11 Sessions held · July 2023 – July 2024 · Continuing after current series</div>
-            </div>
+            <div><div class="collapsible-title">Unit II — Economics <span style="font-family:var(--font-mono);font-size:9px;border:1px solid var(--rule-thin);padding:2px 6px;margin-left:8px;color:var(--ink-dim);">On Hiatus</span></div><div class="collapsible-meta">11 Sessions held · July 2023 – July 2024</div></div>
             <span class="collapsible-arrow">↓</span>
           </div>
           <div class="collapsible-body" id="unit2">
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">2.0</span><span class="session-title">Re-Orientation</span><span class="session-date">26 July 2023</span><span class="session-status status-past">Past</span></div>
-              <ul class="reading-list"><li class="optional">Optional: Rhea Myers, <a href="https://www.furtherfield.org/computers-and-capital-the-rise-of-digital-currency/" target="_blank" rel="noopener">"Computers and Capital" ↗</a></li></ul>
-              <a class="listen-link" href="https://twitter.com/CoiningReason/status/1684413715070824449" target="_blank" rel="noopener">Listen ↗</a>
-            </div>
-            <div class="session-block">
-              <div class="session-header"><span class="session-num">2.1–2.11</span><span class="session-title">Economy through Exchange: Self/Other</span><span class="session-date">Aug 2023 – Jul 2024</span><span class="session-status status-past">Past</span></div>
-              <p style="font-size:13px;color:var(--ink-mid);margin-top:8px;line-height:1.65;">Sessions covering Economy, Byzantine Icon and Economy, the Song of Money, WTF Happened in 1579, Phenomenology and Ontology of Money, Money: Paper and Virtual, Birth of Banking, Surplus, Negation, Money of Language, Psychoanalysis of Money, and Exchange: Self/Other.</p>
-              <a class="listen-link" href="https://github.com/NetaDAOAcademy/CoiningReason#past-sessions" target="_blank" rel="noopener">Full archive with recordings on GitHub ↗</a>
-            </div>
-            <div style="background:var(--bg);border:1px solid var(--rule-thin);padding:20px 24px;margin-top:16px;">
-              <p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">On Hiatus — Remaining Unit II</p>
-              <p style="font-size:13px;color:var(--ink-mid);line-height:1.65;">Sessions 2.12–2.16 (Money is Sad Shit; Technology of Trust; Bitcoin; Money in Crisis; Money: The Negative) are scheduled but paused during the current <em>Sex, and/or Love</em> series.</p>
-            </div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.0</span><span class="session-title">Re-Orientation</span><span class="session-date">26 Jul 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li class="optional">Optional: Rhea Myers, <a href="https://www.furtherfield.org/computers-and-capital-the-rise-of-digital-currency/" target="_blank" rel="noopener">"Computers and Capital" ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1684413715070824449" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.1</span><span class="session-title">Economy</span><span class="session-date">16 Aug 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Keith Tribe, "The Word: Economy," from <em>The Economy of the Word</em> — <a href="https://bafybeiezdiybq5xappdkpismqr2xl62gvellkvh57pt2kxdkjrgzuv2oji.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li><li class="optional">Optional: Freud, "The Economic Problem of Masochism" — <a href="https://www.sas.upenn.edu/~cavitch/pdf-library/Freud_Masochism.pdf" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1692061497554346489" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.2</span><span class="session-title">Byzantine: Icon and Economy</span><span class="session-date">30 Aug 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Marie-Jose Mondzain, "A Semantic Study of the Term Economy," from <em>Image, Icon, Economy</em> — <a href="https://bafybeihbzgqb3anabiwdsqyt6yn5ixbq2rxfwe4mbeu3np3mfth4dm6qgm.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li><li class="optional">Optional: Deleuze and Guattari, "Apparatus of Capture (7000 BC)" — <a href="https://bafybeiblxswsrm7otnynhfe5275j5dp4wuiqdutl45sveadieyu4zb4k44.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1697096725859549558" target="_blank" rel="noopener">Listen ↗</a></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.3</span><span class="session-title">The Song of Money</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Norman O. Brown, "Filthy Lucre," from <em>Life Against Death</em></li><li class="optional">Optional: John Forrester, "Gift, Money, and Debt," from <em>Truth Games</em></li></ul></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.4</span><span class="session-title">WTF Happened in 1579?</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Samo Tomsic, "The Vicious Circle of Labor and Resistance," from <em>The Labor of Enjoyment</em></li><li>Slavoj Žižek, "Three Fragments on Suicide as a Political Factor," from <em>Crisis and Critique</em></li></ul></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.5</span><span class="session-title">Phenomenology of Money</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Georg Simmel, selections from <em>The Philosophy of Money</em></li><li>Rudi Visker, "Is There Death After Life?"</li></ul></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.6</span><span class="session-title">Ontology of Money</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>John Kenneth Galbraith, "Of Paper" and "An Instrument of Revolution," from <em>Money: Whence It Came, Where It Went</em></li><li>Joan Robinson, "The Keynesian Revolution," from <em>Economic Philosophy</em></li><li>Edward Castranova, "Weirdly Normal," from <em>Wildcat Currency</em></li></ul></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.7</span><span class="session-title">Money: Paper and Virtual</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Christine Desan, "Reinventing Money," from <em>Making Money</em></li><li>John Kenneth Galbraith, "The Impeccable System," from <em>Money</em></li></ul></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.8</span><span class="session-title">The Birth of Banking</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Anna Kornbluh, "Fictitious Capital/Real Psyche," from <em>Realizing Capital</em></li></ul></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.9</span><span class="session-title">Surplus / Negation / The Money of Language</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Spencer Pack, "Part IV: Current Issues on the Political Economy of Bitcoin and Cryptocurrencies"</li></ul></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.10</span><span class="session-title">Psychoanalysis of Money</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Readings TBC — see GitHub for full list</li></ul></div>
+            <div class="session-block"><div class="session-header"><span class="session-num">2.11</span><span class="session-title">Exchange: Self/Other</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Readings TBC — see GitHub for full list</li></ul></div>
+            <div style="background:var(--bg);border:1px solid var(--rule-thin);padding:16px 20px;margin-top:16px;"><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">On Hiatus — Remaining</p><p style="font-size:12px;color:var(--ink-mid);line-height:1.65;">Sessions 2.12–2.16 (Money is Sad Shit; Technology of Trust; Bitcoin; Money in Crisis; Money: The Negative) paused during the current <em>Sex, and/or Love</em> series.</p></div>
           </div>
-        </div>
-
-      </div><!-- end past sessions -->
-
-      <!-- Roadmap -->
-      <div style="margin-top:48px;">
-        <p class="section-label">Full Curriculum</p>
-        <h3 class="section-title-sm">Ten-Unit Roadmap</h3>
-        <p style="font-size:14px;color:var(--ink-dim);margin-bottom:0;">Participants help determine the pace and scope. Full reading lists on <a href="https://github.com/NetaDAOAcademy/CoiningReason" target="_blank" rel="noopener" style="color:var(--blue);">GitHub ↗</a></p>
-        <div class="roadmap-grid">
-          <div class="roadmap-unit"><div class="roadmap-unit-num">I</div><div class="roadmap-unit-title">The Internet</div><div class="roadmap-unit-desc">Completed ✓</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">II</div><div class="roadmap-unit-title">Economics</div><div class="roadmap-unit-desc">On hiatus</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">III</div><div class="roadmap-unit-title">Politics</div><div class="roadmap-unit-desc">Sovereignty, democracy, decentralization</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">IV</div><div class="roadmap-unit-title">Philosophy</div><div class="roadmap-unit-desc">Tech, individuation, crypto-anarchism</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">V</div><div class="roadmap-unit-title">Law</div><div class="roadmap-unit-desc">Piracy, contract, blockchain as law</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">VI</div><div class="roadmap-unit-title">Ecology</div><div class="roadmap-unit-desc">Networks, surplus energy, degrowth</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">VII</div><div class="roadmap-unit-title">Business</div><div class="roadmap-unit-desc">Companies, nonprofits, DAOs</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">VIII</div><div class="roadmap-unit-title">Art</div><div class="roadmap-unit-desc">NFTs, collecting, performativity</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">IX</div><div class="roadmap-unit-title">Religion</div><div class="roadmap-unit-desc">Sacred money, divine economy</div></div>
-          <div class="roadmap-unit"><div class="roadmap-unit-num">X</div><div class="roadmap-unit-title">Miscellany</div><div class="roadmap-unit-desc">Overflow for any unit</div></div>
         </div>
       </div>
 
+      <!-- Roadmap -->
+      <div style="margin-top:48px;">
+        <p class="section-label">Coining Reason Roadmap</p>
+        <h3 class="section-title-sm">Ten-Unit Curriculum</h3>
+        <p style="font-size:13px;color:var(--ink-dim);margin-bottom:4px;">Click any unit to expand its description and session outline. Full reading lists on <a href="https://github.com/NetaDAOAcademy/CoiningReason" target="_blank" rel="noopener" style="color:var(--blue);">GitHub ↗</a></p>
+        <div class="roadmap-grid">
+
+          <!-- I -->
+          <div class="roadmap-unit open" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit I</div><div class="roadmap-unit-title">The Internet</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body open">
+              <span class="roadmap-status status-past">Completed</span>
+              <p class="roadmap-unit-desc">Web 1, 2, 3 — histories of cyberspace, digital bodies, psychoanalysis of online life, and the blockchain application stack.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">1.0 Cypherpunk · 1.1 Tele-History · 1.2 Web 1.0</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">1.3 Freedom and Control · 1.4 The World Brain</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">1.5 Psychoanalyzing Cyberspace · 1.6 Digital Bodies</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">1.7 Web 3.0 · 1.8 Digital Commons</div></div>
+            </div>
+          </div>
+
+          <!-- II -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit II</div><div class="roadmap-unit-title">Economics</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <span class="roadmap-status status-hiatus">On Hiatus</span>
+              <p class="roadmap-unit-desc">Histories and theories of the "money" concept. The economic problem of surplus value brought into connection with human nature's surplus of virtuality.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">2.0 Re-Orientation · 2.1 Economy · 2.2 Byzantine: Icon and Economy</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">2.3 Song of Money · 2.4 WTF Happened in 1579? · 2.5 Phenomenology of Money</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">2.6 Ontology of Money · 2.7 Money: Paper and Virtual · 2.8 Birth of Banking</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">2.9 Surplus/Negation · 2.10 Psychoanalysis of Money · 2.11 Exchange: Self/Other</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">2.12–2.16 Sad Shit · Trust · Bitcoin · Crisis · The Negative <span style="color:var(--ink-dim);font-style:italic;">(forthcoming)</span></div></div>
+            </div>
+          </div>
+
+          <!-- III -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit III</div><div class="roadmap-unit-title">Politics</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <p class="roadmap-unit-desc">Sovereignty, constituent power, democracy, and the political theory of decentralized governance. Labor after Fordism and the politics of software.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">3.1 Sovereignty and the Commons</div><div class="roadmap-session-reading">Readings from Agamben, Negri, Schmitt</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">3.2 Constituent Power</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">3.3 Democracy and Decentralization</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">3.4 Labor After Fordism</div><div class="roadmap-session-reading">Paolo Virno, "Virtuosity and Revolution"</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">3.5–3.8 Crypto-Anarchism · Software Politics · Another Politics? · DAO as Government</div></div>
+            </div>
+          </div>
+
+          <!-- IV -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit IV</div><div class="roadmap-unit-title">Philosophy</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <p class="roadmap-unit-desc">Human nature, technology, and individuation. Returns to and foregrounds issues raised in other Units through philosophical work on general economy and crypto-anarchism.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">4.1 Talking Philosophy · 4.2 Human Nature</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">4.3 Technology and Individuation</div><div class="roadmap-session-reading">Stiegler, Simondon</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">4.4 The Transcendental Blockchain</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">4.5 General Economy · 4.6 Crypto-Anarchism Revisited</div></div>
+            </div>
+          </div>
+
+          <!-- V -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit V</div><div class="roadmap-unit-title">Law</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <p class="roadmap-unit-desc">Piracy, contract and tort law, blockchain as law, crypto and the state, and securities regulation. The juridical status of DAOs.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">5.1 Piracy and Intellectual Property</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">5.2 Contract and Tort Law · 5.3 Smart Contract Theory</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">5.4 Blockchain as Law · 5.5 Crypto and the State</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">5.6 Securities Regulation · 5.7 DAOs: Legal Status</div></div>
+            </div>
+          </div>
+
+          <!-- VI -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit VI</div><div class="roadmap-unit-title">Ecology</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <p class="roadmap-unit-desc">Network and ecosystem, surplus enjoyment, surplus energy, and degrowth. The environmental stakes of blockchain infrastructure.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">6.1 Network as Ecosystem · 6.2 Surplus Energy</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">6.3 Degrowth and Crypto · 6.4 Proof of Work/Stake as Ecology</div></div>
+            </div>
+          </div>
+
+          <!-- VII -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit VII</div><div class="roadmap-unit-title">Business</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <p class="roadmap-unit-desc">The company, corporations, start-ups, organizational design, nonprofits, and DAOs as organizational form.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">7.1 The Company · 7.2 Corporations and Capital</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">7.3 Start-Up Culture · 7.4 Nonprofit Theory</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">7.5 DAOs as Organizations · 7.6 Governance Design</div></div>
+            </div>
+          </div>
+
+          <!-- VIII -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit VIII</div><div class="roadmap-unit-title">Art</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <p class="roadmap-unit-desc">NFTs, fiction and capital, collecting, performativity, and blockchain as art. What remains after performance.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">8.1 Poetry, Money, Grief</div><div class="roadmap-session-reading">Anne Carson, <em>Economy of the Unlost</em></div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">8.2 On Collecting</div><div class="roadmap-session-reading">McKenzie Wark · Walter Benjamin, "Unpacking My Library"</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">8.3 Performativity</div><div class="roadmap-session-reading">JL Austin, <em>How to Do Things with Words</em></div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">8.4 The Body and the Record</div><div class="roadmap-session-reading">Peggy Phelan · Rebecca Schneider</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">8.5 Blockchain and Performativity · 8.6 NFTs</div></div>
+            </div>
+          </div>
+
+          <!-- IX -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit IX</div><div class="roadmap-unit-title">Religion</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <p class="roadmap-unit-desc">Ancient economy, sacred money, icon and economy, divine economy, and the sacralization of value. The theological roots of financial thinking.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">9.1 Ancient Economy · 9.2 Sacred Money</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">9.3 Icon and Economy · 9.4 Divine Economy</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">9.5 Sacralization and Crypto</div></div>
+            </div>
+          </div>
+
+          <!-- X -->
+          <div class="roadmap-unit" onclick="toggleRoadmap(this)">
+            <div class="roadmap-unit-header"><div><div class="roadmap-unit-num">Unit X</div><div class="roadmap-unit-title">Miscellany</div></div><span class="roadmap-unit-arrow">↓</span></div>
+            <div class="roadmap-unit-body">
+              <p class="roadmap-unit-desc">Overflow texts from across the roadmap, available for supplementary discussion in any unit at participants' discretion.</p>
+              <div class="roadmap-session"><div class="roadmap-session-title">Texts from any Unit that require further exploration</div></div>
+              <div class="roadmap-session"><div class="roadmap-session-title">Participant-proposed readings and discussions</div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ── Fork / Journal ── -->
+  <!-- ── Fork Journal ── -->
   <div class="section reveal" id="journal">
     <div class="page-wrap">
       <p class="section-label">Forthcoming</p>
       <h2 class="section-title">Fork: The Journal</h2>
-      <p class="section-body" style="margin-bottom:28px;">A forthcoming open-access, peer-reviewed journal of Interchain Theory and Politics — published by Neta DAO Academy. Free to read. Free to publish in. Community-governed.</p>
-      <a href="https://fork.netadao.org" class="btn btn-primary">Visit fork.netadao.org →</a>
+      <p class="section-body" style="margin-bottom:28px;">A forthcoming open-access, peer-reviewed journal of Interchain Theory and Politics — published by Neta DAO Academy. Free to read. Free to publish in.</p>
+      <a href="https://fork.netadao.org" class="fork-logo-link">
+        <!-- Bisected FORK logo — matches fork.netadao.org -->
+        <svg viewBox="0 0 240 100" width="240" height="100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="top-half-sm"><polygon points="0,0 240,0 240,42 0,57"/></clipPath>
+            <clipPath id="bot-half-sm"><polygon points="6,60 246,45 246,110 6,110"/></clipPath>
+            <linearGradient id="gap-grad-sm" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C9338A"/><stop offset="100%" stop-color="#5B8EF0"/></linearGradient>
+          </defs>
+          <polygon points="0,56 240,41 240,46 0,61" fill="url(#gap-grad-sm)" opacity="0.9"/>
+          <text clip-path="url(#top-half-sm)" x="0" y="84" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="84" fill="#f0ede6" letter-spacing="-2">FORK</text>
+          <text clip-path="url(#bot-half-sm)" x="6" y="89" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="84" fill="#f0ede6" letter-spacing="-2">FORK</text>
+        </svg>
+        <div>
+          <p style="font-family:var(--font-mono);font-size:10px;color:#9aa0b8;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;">Visit the journal</p>
+          <p style="font-family:var(--font-mono);font-size:11px;color:#e8e6e0;">fork.netadao.org ↗</p>
+        </div>
+      </a>
     </div>
   </div>
 
   <!-- ── Disclaimer ── -->
   <div class="section" style="border-bottom:none;">
     <div class="page-wrap">
-      <p style="font-size:12px;color:var(--ink-dim);line-height:1.75;">Coining Reason is presented for informational purposes only. Nothing contained in these or related materials should be construed as professional or financial advice. This program is organized and run by volunteers of Neta DAO. Support the work by delegating with the Neta DAO <a href="https://wallet.keplr.app/chains/juno?modal=validator&chain=juno-1&validator_address=junovaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8lfvj9vs" target="_blank" rel="noopener" style="color:var(--blue);">JUNO ↗</a>, <a href="https://wallet.keplr.app/chains/akash?modal=validator&chain=akashnet-2&validator_address=akashvaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8l86yse9" target="_blank" rel="noopener" style="color:var(--blue);">AKT ↗</a>, or <a href="https://ping.pub/jackal/staking/jklvaloper1s4rscs2jj7qydkkrsrc52rgvq38wwgrqdrcrdq" target="_blank" rel="noopener" style="color:var(--blue);">JKL ↗</a> validators.</p>
+      <p style="font-size:12px;color:var(--ink-dim);line-height:1.75;">Coining Reason is presented for informational purposes only. Nothing contained in these materials should be construed as financial advice. Support the work by delegating with the Neta DAO <a href="https://wallet.keplr.app/chains/juno?modal=validator&chain=juno-1&validator_address=junovaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8lfvj9vs" target="_blank" rel="noopener" style="color:var(--blue);">JUNO ↗</a>, <a href="https://wallet.keplr.app/chains/akash?modal=validator&chain=akashnet-2&validator_address=akashvaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8l86yse9" target="_blank" rel="noopener" style="color:var(--blue);">AKT ↗</a>, or <a href="https://ping.pub/jackal/staking/jklvaloper1s4rscs2jj7qydkkrsrc52rgvq38wwgrqdrcrdq" target="_blank" rel="noopener" style="color:var(--blue);">JKL ↗</a> validators.</p>
     </div>
   </div>
 
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
-      <div class="footer-links-cell">
-        <ul class="footer-links">
-          <li><a href="https://netadao.org">Neta DAO ↗</a></li>
-          <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
-          <li><a href="https://netadao.org/governance.html">Governance ↗</a></li>
-          <li><a href="https://github.com/NetaDAOAcademy" target="_blank" rel="noopener">GitHub ↗</a></li>
-          <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li>
-        </ul>
-      </div>
+      <div class="footer-links-cell"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li><li><a href="https://fork.netadao.org">Fork Journal ↗</a></li><li><a href="https://netadao.org/governance.html">Governance ↗</a></li><li><a href="https://github.com/NetaDAOAcademy" target="_blank" rel="noopener">GitHub ↗</a></li><li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li></ul></div>
     </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p>
-      <p class="footer-copy">academy.netadao.org</p>
-    </div>
+    <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p></div>
   </footer>
 
   <script>
-    // Scroll reveal
-    const revealEls = document.querySelectorAll('.reveal');
-    if (revealEls.length) {
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-      }, { threshold: 0.08 });
-      revealEls.forEach(el => obs.observe(el));
-    }
-    // Mobile nav
+    // ── Scroll reveal ──
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // ── Mobile nav ──
     const hamburger = document.querySelector('.nav-hamburger');
     const navLinks  = document.querySelector('.nav-links');
     if (hamburger && navLinks) hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
 
-    // Current series toggle
+    // ── Typewriter ──
+    const words = ['Philosophy','Art','Psychology','Religion','Economics','Theory','Politics','Literature','Civics','Theatre','Design','Anthropology','Psychoanalysis','History','Ethics'];
+    let wi = 0, ci = 0, deleting = false;
+    const el = document.getElementById('typewriter-word');
+    function type() {
+      const word = words[wi];
+      if (!deleting) {
+        el.textContent = word.slice(0, ++ci);
+        if (ci === word.length) { deleting = true; return setTimeout(type, 1800); }
+        setTimeout(type, 80);
+      } else {
+        el.textContent = word.slice(0, --ci);
+        if (ci === 0) { deleting = false; wi = (wi+1) % words.length; return setTimeout(type, 300); }
+        setTimeout(type, 45);
+      }
+    }
+    setTimeout(type, 800);
+
+    // ── Current series toggle ──
     function toggleSeries() {
       const schedule = document.getElementById('series-schedule');
       const btn      = document.getElementById('series-toggle');
@@ -347,11 +473,18 @@
       btn.textContent = open ? 'Hide schedule ↑' : 'Show schedule ↓';
     }
 
-    // Unit collapsibles
+    // ── Unit collapsibles ──
     function toggleUnit(id, header) {
       const body = document.getElementById(id);
       const open = body.classList.toggle('open');
       header.classList.toggle('open', open);
+    }
+
+    // ── Roadmap expandable units ──
+    function toggleRoadmap(unit) {
+      const body  = unit.querySelector('.roadmap-unit-body');
+      const open  = body.classList.toggle('open');
+      unit.classList.toggle('open', open);
     }
   </script>
 </body>

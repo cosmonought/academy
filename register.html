@@ -28,10 +28,14 @@
       <a href="https://netadao.org" class="nav-logo">
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
           <rect width="40" height="40" fill="#080808"/>
-          <defs><clipPath id="nt"><polygon points="0,0 40,0 40,17 0,23"/></clipPath><clipPath id="nb"><polygon points="0,25 40,19 40,40 0,40"/></clipPath><linearGradient id="ng" x1="0" y1="0" x2="40" y2="0"><stop offset="0%" stop-color="#C9338A"/><stop offset="100%" stop-color="#5B8EF0"/></linearGradient></defs>
-          <polygon points="0,22 40,16 40,20 0,26" fill="url(#ng)" opacity="0.95"/>
-          <text clip-path="url(#nt)" x="20" y="32" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
-          <text clip-path="url(#nb)" x="21" y="33" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="32" fill="#f2f0eb">N</text>
+          <defs>
+            <linearGradient id="a-grad-NAV" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#C9338A"/>
+              <stop offset="100%" stop-color="#5B8EF0"/>
+            </linearGradient>
+          </defs>
+          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
+          <polygon points="0,17 40,11 40,20 0,26" fill="url(#a-grad-NAV)"/>
         </svg>
       </a>
       <ul class="nav-links">

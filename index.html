@@ -44,18 +44,19 @@
     .tw-line {
       display: flex;
       align-items: baseline;
-      flex-wrap: wrap;
+      white-space: nowrap;
       gap: 10px;
     }
     .tw-static {
       font-family: var(--font-display);
-      font-size: clamp(16px, 2vw, 22px);
+      font-size: 18px;
       font-weight: 700;
       text-transform: uppercase;
       line-height: 1.3;
       color: #f2f0eb;
       margin: 0;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .tw-word-wrap {
       /* Fixed height — never causes reflow regardless of word length */
@@ -63,13 +64,15 @@
       overflow: hidden;
       display: flex;
       align-items: center;
+      min-width: 0;
     }
     .tw-word {
       font-family: var(--font-display);
-      font-size: clamp(20px, 2.6vw, 32px);
+      font-size: 18px;
       font-weight: 900;
       text-transform: uppercase;
       line-height: 1;
+      white-space: nowrap;
       /* Gradient builds over sequence — set via JS */
       -webkit-background-clip: text;
       background-clip: text;
@@ -385,15 +388,15 @@
 
   <!-- ── Hero: text left / typewriter right ── -->
   <div class="hero-grid">
-    <div class="hero-left" style="background:#111111;">
-      <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:900;text-transform:uppercase;line-height:0.92;letter-spacing:-0.01em;margin-bottom:20px;color:#f2f0eb;">
+    <div class="hero-left">
+      <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:900;text-transform:uppercase;line-height:0.92;letter-spacing:-0.01em;margin-bottom:20px;">
         Neta DAO <span class="grad-text">Academy</span>
       </h1>
-      <p style="font-size:15px;color:#b8b8b8;line-height:1.75;max-width:640px;margin-bottom:28px;">Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. No prerequisites. Everyone welcome.</p>
+      <p class="section-body" style="margin-bottom:28px;">Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. No prerequisites. Everyone welcome.</p>
       <div style="display:flex;gap:0;flex-wrap:wrap;">
-        <a href="/current.html" class="btn" style="background:#f2f0eb;color:#111111;border:2px solid #f2f0eb;">Current Series</a>
-        <a href="/seminar.html" class="btn" style="background:transparent;color:#f2f0eb;border:2px solid #f2f0eb;border-left:none;">Coining Reason</a>
-        <a href="https://fork.netadao.org" class="btn" style="background:transparent;color:#f2f0eb;border:2px solid #f2f0eb;border-left:none;">Fork Journal</a>
+        <a href="/current.html" class="btn btn-primary">Current Series</a>
+        <a href="/seminar.html" class="btn btn-outline">Coining Reason</a>
+        <a href="https://fork.netadao.org" class="btn btn-outline">Fork Journal</a>
       </div>
     </div>
     <div class="hero-right" style="background:#111111;">
@@ -401,11 +404,11 @@
       <style>
         @keyframes academyLiquidRise {
           0%   { transform: translateY(210px); }
-          65%  { transform: translateY(-8px); }
-          82%  { transform: translateY(3px); }
+          92%  { transform: translateY(-8px); }
+          97%  { transform: translateY(3px); }
           100% { transform: translateY(0px); }
         }
-        .academy-liquid-group { animation: academyLiquidRise 5.5s cubic-bezier(0.22,0.61,0.36,1) forwards; }
+        .academy-liquid-group { animation: academyLiquidRise 19.9s cubic-bezier(0.34,0.06,0.36,1) forwards; }
       </style>
       <rect width="200" height="200" fill="#0f0f0f"/>
       <defs>

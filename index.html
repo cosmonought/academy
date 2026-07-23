@@ -18,7 +18,7 @@
       display: grid;
       grid-template-columns: 1fr 460px;
       border-bottom: var(--panel-border);
-      margin-top: 86px;
+      margin-top: 52px;
     }
     .hero-left {
       padding: 64px 56px;
@@ -38,8 +38,14 @@
       font-size: 10px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--ink-dim);
+      color: #9aa0b8;
       margin-bottom: 16px;
+    }
+    .tw-line {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .tw-static {
       font-family: var(--font-display);
@@ -47,8 +53,9 @@
       font-weight: 700;
       text-transform: uppercase;
       line-height: 1.3;
-      color: var(--ink);
-      margin-bottom: 4px;
+      color: #f2f0eb;
+      margin: 0;
+      white-space: nowrap;
     }
     .tw-word-wrap {
       /* Fixed height — never causes reflow regardless of word length */
@@ -308,10 +315,10 @@
     /* ── Fork link ── */
     .fork-logo-link {
       display: inline-flex; align-items: center; gap: 16px;
-      padding: 20px 24px; border: var(--panel-border);
-      background: var(--ink); transition: background 0.15s;
+      padding: 20px 24px; border: 1px solid #333;
+      background: var(--ink); transition: background 0.15s, border-color 0.15s;
     }
-    .fork-logo-link:hover { background: #1a1a2e; }
+    .fork-logo-link:hover { background: #1a1a2e; border-color: #555; }
 
     .keynes-quote {
       border-left: 2px solid var(--rule-thin); padding: 14px 24px;
@@ -342,9 +349,6 @@
 <body>
 
   <!-- ── Nav ── -->
-  <div class="announce-bar">
-    <a href="/cinema.html"><span class="dot"></span>Live screening — 22 July, 10:30pm EST — Watch →</a>
-  </div>
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="https://netadao.org" class="nav-logo">
@@ -370,7 +374,6 @@
         <li><a href="/" class="active">Home</a></li>
         <li><a href="/current.html">Current Series</a></li>
         <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/cinema.html">Cinema</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
         <li><a href="/register.html">Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
@@ -382,22 +385,31 @@
 
   <!-- ── Hero: text left / typewriter right ── -->
   <div class="hero-grid">
-    <div class="hero-left">
-      <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:900;text-transform:uppercase;line-height:0.92;letter-spacing:-0.01em;margin-bottom:20px;">
+    <div class="hero-left" style="background:#111111;">
+      <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:900;text-transform:uppercase;line-height:0.92;letter-spacing:-0.01em;margin-bottom:20px;color:#f2f0eb;">
         Neta DAO <span class="grad-text">Academy</span>
       </h1>
-      <p class="section-body" style="margin-bottom:28px;">Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. No prerequisites. Everyone welcome.</p>
+      <p style="font-size:15px;color:#b8b8b8;line-height:1.75;max-width:640px;margin-bottom:28px;">Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. No prerequisites. Everyone welcome.</p>
       <div style="display:flex;gap:0;flex-wrap:wrap;">
-        <a href="/current.html" class="btn btn-primary">Current Series</a>
-        <a href="/seminar.html" class="btn btn-outline">Coining Reason</a>
-        <a href="https://fork.netadao.org" class="btn btn-outline">Fork Journal</a>
+        <a href="/current.html" class="btn" style="background:#f2f0eb;color:#111111;border:2px solid #f2f0eb;">Current Series</a>
+        <a href="/seminar.html" class="btn" style="background:transparent;color:#f2f0eb;border:2px solid #f2f0eb;border-left:none;">Coining Reason</a>
+        <a href="https://fork.netadao.org" class="btn" style="background:transparent;color:#f2f0eb;border:2px solid #f2f0eb;border-left:none;">Fork Journal</a>
       </div>
     </div>
-    <div class="hero-right">
+    <div class="hero-right" style="background:#111111;">
       <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:160px;height:160px;display:block;margin-bottom:20px;">
+      <style>
+        @keyframes academyLiquidRise {
+          0%   { transform: translateY(210px); }
+          65%  { transform: translateY(-8px); }
+          82%  { transform: translateY(3px); }
+          100% { transform: translateY(0px); }
+        }
+        .academy-liquid-group { animation: academyLiquidRise 5.5s cubic-bezier(0.22,0.61,0.36,1) forwards; }
+      </style>
       <rect width="200" height="200" fill="#0f0f0f"/>
       <defs>
-        <linearGradient id="a-grad-H" x1="0" y1="0" x2="1" y2="0">
+        <linearGradient id="a-liquid-grad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stop-color="#C9338A"/>
           <stop offset="35%" stop-color="#C9338A"/>
           <stop offset="100%" stop-color="#5B8EF0"/>
@@ -406,9 +418,12 @@
           <text x="100" y="155" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="170">A</text>
         </clipPath>
       </defs>
-      <text x="100" y="155" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="170" fill="#f2f0eb">A</text>
       <g clip-path="url(#a-clip-H)">
-        <rect x="0" y="115" width="200" height="18" fill="url(#a-grad-H)"/>
+        <rect x="0" y="0" width="200" height="200" fill="#2a2a2a"/>
+        <g class="academy-liquid-group">
+          <rect x="-10" y="0" width="220" height="220" fill="url(#a-liquid-grad)"/>
+          <path d="M -10,0 C 15,-6 35,6 60,0 C 85,-6 105,6 130,0 C 155,-6 175,6 210,0 L 210,8 C 175,14 155,2 130,8 C 105,14 85,2 60,8 C 35,14 15,2 -10,8 Z" fill="#ffffff" opacity="0.16"/>
+        </g>
       </g>
       <line x1="0" y1="0" x2="14" y2="0" stroke="#333" stroke-width="1"/>
       <line x1="0" y1="0" x2="0" y2="14" stroke="#333" stroke-width="1"/>
@@ -420,9 +435,11 @@
       <line x1="200" y1="200" x2="200" y2="186" stroke="#333" stroke-width="1"/>
     </svg>
       <p class="tw-label">Neta DAO Academy is the home of</p>
-      <p class="tw-static">Web3 and</p>
-      <div class="tw-word-wrap">
-        <span class="tw-word" id="tw-word">Thought</span>
+      <div class="tw-line">
+        <p class="tw-static">Web3 and</p>
+        <div class="tw-word-wrap">
+          <span class="tw-word" id="tw-word">Thought</span>
+        </div>
       </div>
     </div>
   </div>
@@ -432,12 +449,12 @@
     <div style="display:grid;grid-template-columns:460px 1fr;border-top:var(--panel-border);">
 
       <!-- Coining Reason (LEFT, 460px = matches animation box above) — grayed, on hiatus -->
-      <div style="padding:40px 36px;background:var(--bg-raised);border-right:var(--panel-border);opacity:0.72;">
-        <p style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:10px;border:1px solid var(--rule-thin);display:inline-block;padding:2px 7px;">On Hiatus</p>
-        <h3 style="font-family:var(--font-display);font-size:26px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:8px;">Coining Reason</h3>
-        <p style="font-family:var(--font-display);font-size:14px;font-weight:400;text-transform:uppercase;color:var(--ink-dim);margin-bottom:12px;">A Discussion Series</p>
-        <p style="font-size:13px;color:var(--ink-mid);line-height:1.65;margin-bottom:20px;">Explores Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Paused during <em>Sex, and/or Love</em>.</p>
-        <a href="/seminar.html" class="btn btn-outline" style="font-size:10px;padding:10px 16px;">Archive &amp; roadmap →</a>
+      <div style="padding:40px 36px;background:#111111;border-right:var(--panel-border);">
+        <p style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#9aa0b8;margin-bottom:10px;border:1px solid #444;display:inline-block;padding:2px 7px;">On Hiatus</p>
+        <h3 style="font-family:var(--font-display);font-size:26px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:8px;color:#f2f0eb;">Coining Reason</h3>
+        <p style="font-family:var(--font-display);font-size:14px;font-weight:400;text-transform:uppercase;color:#9aa0b8;margin-bottom:12px;">A Discussion Series</p>
+        <p style="font-size:13px;color:#b8b8b8;line-height:1.65;margin-bottom:20px;">Explores Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Paused during <em>Sex, and/or Love</em>.</p>
+        <a href="/seminar.html" class="btn" style="font-size:10px;padding:10px 16px;background:transparent;color:#f2f0eb;border:2px solid #f2f0eb;">Archive &amp; roadmap →</a>
       </div>
 
       <!-- Active Series (RIGHT, 1fr = matches Academy panel above) — neon pink border -->
@@ -456,11 +473,11 @@
   </div>
 
     <!-- Fork Journal -->
-  <div class="section reveal" id="journal">
+  <div class="section reveal" id="journal" style="background:#111111;">
     <div class="page-wrap">
-      <p class="section-label">Forthcoming</p>
-      <h2 class="section-title">Fork: The Journal</h2>
-      <p class="section-body" style="margin-bottom:28px;">A forthcoming open-access, peer-reviewed journal of Interchain Theory and Politics — published by Neta DAO Academy. Free to read. Free to publish in.</p>
+      <p class="section-label" style="color:#9aa0b8;">Forthcoming</p>
+      <h2 class="section-title" style="color:#f2f0eb;">Fork: The Journal</h2>
+      <p class="section-body" style="margin-bottom:28px;color:#b8b8b8;">A forthcoming open-access, peer-reviewed journal of Interchain Theory and Politics — published by Neta DAO Academy. Free to read. Free to publish in.</p>
       <a href="https://fork.netadao.org" class="fork-logo-link">
         <svg viewBox="0 0 240 100" width="240" height="100" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -490,7 +507,6 @@
       <div class="footer-links-cell"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li>
         <li><a href="/current.html">Current Series</a></li>
         <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/cinema.html">Cinema</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
         <li><a href="/register.html">Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>

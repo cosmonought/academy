@@ -6,6 +6,11 @@
   <title>Cinema — Neta DAO Academy</title>
   <meta name="description" content="Live film screening — Neta DAO Academy." />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
   <style>
     /* ── Cinema page ── */
     .cinema-wrap {
@@ -163,10 +168,20 @@
       <a href="/" class="nav-logo">
         <svg class="nav-logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="40" height="40" fill="#080808"/>
-          <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C9338A"/><stop offset="100%" stop-color="#5B8EF0"/></linearGradient></defs>
-          <line x1="20" y1="7" x2="7" y2="33" stroke="#f2f0eb" stroke-width="5" stroke-linecap="round"/>
-          <line x1="20" y1="7" x2="33" y2="33" stroke="#f2f0eb" stroke-width="5" stroke-linecap="round"/>
-          <polygon points="9,25.5 31,21.5 31,23.5 9,27.5" fill="url(#ag)"/>
+          <defs>
+            <linearGradient id="ag" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#C9338A"/>
+              <stop offset="35%" stop-color="#C9338A"/>
+              <stop offset="100%" stop-color="#5B8EF0"/>
+            </linearGradient>
+            <clipPath id="a-clip-cinema">
+              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
+            </clipPath>
+          </defs>
+          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
+          <g clip-path="url(#a-clip-cinema)">
+            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#ag)"/>
+          </g>
         </svg>
       </a>
       <ul class="nav-links">

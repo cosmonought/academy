@@ -45,7 +45,7 @@
       display: flex;
       align-items: baseline;
       white-space: nowrap;
-      gap: 10px;
+      gap: 5px;
     }
     .tw-static {
       font-family: var(--font-display);
@@ -404,11 +404,11 @@
       <style>
         @keyframes academyLiquidRise {
           0%   { transform: translateY(210px); }
-          92%  { transform: translateY(-8px); }
-          97%  { transform: translateY(3px); }
+          95%  { transform: translateY(31px); }
+          98%  { transform: translateY(-6px); }
           100% { transform: translateY(0px); }
         }
-        .academy-liquid-group { animation: academyLiquidRise 19.9s cubic-bezier(0.34,0.06,0.36,1) forwards; }
+        .academy-liquid-group { animation: academyLiquidRise 9.85s linear forwards; }
       </style>
       <rect width="200" height="200" fill="#0f0f0f"/>
       <defs>
@@ -549,34 +549,27 @@
     function saturation(idx) {
       return Math.min(idx / (words.length - 1), 1);
     }
+    function lerp(c1, c2, t) {
+      return [0,1,2].map(i => Math.round(c1[i] + (c2[i]-c1[i]) * t));
+    }
+    const WHITE = [242,240,235];
+    const PINK  = [201,51,138];
+    const BLUE  = [91,142,240];
     function setWordColor(idx) {
       const s = saturation(idx);
-      if (s < 0.05) {
-        // Even first word has a faint gradient tint so it's visible
-        const pink = 'rgba(201,51,138,0.25)';
-        const blue = 'rgba(91,142,240,0.25)';
-        el.style.backgroundImage = `linear-gradient(90deg, ${pink} 0%, ${blue} 100%)`;
-        el.style.webkitTextFillColor = 'transparent';
-        el.style.webkitBackgroundClip = 'text';
-        el.style.backgroundClip = 'text';
-      } else {
-        el.style.backgroundImage = 'linear-gradient(90deg, #C9338A 0%, #5B8EF0 100%)';
-        el.style.webkitTextFillColor = 'transparent';
-        el.style.webkitBackgroundClip = 'text';
-        el.style.backgroundClip = 'text';
-        // Fade from white by mixing — use opacity on a pseudo approach
-        // We simulate by adjusting the color stops toward white at low saturation
-        const pink = `rgba(201,51,138,${s})`;
-        const blue = `rgba(91,142,240,${s})`;
-        el.style.backgroundImage = `linear-gradient(90deg, ${pink} 0%, ${blue} 100%)`;
-      }
+      const p = lerp(WHITE, PINK, s);
+      const b = lerp(WHITE, BLUE, s);
+      el.style.backgroundImage = `linear-gradient(90deg, rgb(${p.join(',')}) 0%, rgb(${b.join(',')}) 100%)`;
+      el.style.webkitTextFillColor = 'transparent';
+      el.style.webkitBackgroundClip = 'text';
+      el.style.backgroundClip = 'text';
     }
-    // Speed: fast throughout, total sequence ~5-6 seconds
-    function typeSpeed(wi)   { return Math.max(20, 50 - wi * 2); }
-    function deleteSpeed(wi) { return Math.max(15, 35 - wi * 1); }
+    // Speed: doubled (2x faster than original ~10s baseline)
+    function typeSpeed(wi)   { return Math.max(10, 25 - wi); }
+    function deleteSpeed(wi) { return Math.max(8, 17 - wi * 0.5); }
     function pauseAfter(wi)  {
       if (wi === words.length - 1) return 99999; // freeze on "Thought"
-      return Math.max(150, 500 - wi * 25);
+      return Math.max(75, 250 - wi * 12.5);
     }
 
     function typeWord(word, cb) {
@@ -620,7 +613,7 @@
       });
     }
     // Start after a short delay
-    setTimeout(run, 600);
+    setTimeout(run, 300);
   })();
 
   // ── Current series toggle ──

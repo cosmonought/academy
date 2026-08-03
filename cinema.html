@@ -21,7 +21,7 @@
     .cinema-hero {
       padding: 48px 0 32px;
       border-bottom: var(--panel-border);
-      margin-top: 86px;
+      margin-top: 52px;
     }
     .cinema-title {
       font-family: var(--font-display);
@@ -131,6 +131,118 @@
     }
     @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
+    /* ── Live chat ── */
+    .chat-section {
+      padding-bottom: 64px;
+    }
+    .chat-box {
+      background: #0a0a0a;
+      border: var(--panel-border);
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-messages {
+      height: 280px;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat-empty {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #555;
+      text-align: center;
+      margin-top: 100px;
+    }
+    .chat-msg {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #d8d6d0;
+      word-break: break-word;
+    }
+    .chat-msg .chat-name {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--pink);
+      margin-right: 6px;
+    }
+    .chat-msg .chat-time {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: #555;
+      margin-left: 6px;
+    }
+    .chat-name-row, .chat-input-row {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid #222;
+    }
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 14px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #f2f0eb;
+      outline: none;
+    }
+    .chat-input::placeholder { color: #555; }
+    .chat-send-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0 20px;
+      background: transparent;
+      color: #e8e6e0;
+      border: none;
+      border-left: 1px solid #222;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .chat-send-btn:hover { background: #1a1a1a; }
+    .chat-send-btn:disabled { color: #555; cursor: default; }
+    .hidden { display: none; }
+
+    /* ── Chat flash overlay — visible in fullscreen too ── */
+    .chat-overlay {
+      position: absolute;
+      left: 14px;
+      bottom: 64px;
+      width: min(340px, 60%);
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .chat-toast {
+      background: rgba(10,10,10,0.72);
+      backdrop-filter: blur(3px);
+      border-left: 2px solid var(--pink);
+      padding: 7px 12px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #f0eee8;
+      word-break: break-word;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .chat-toast.show { opacity: 1; transform: translateY(0); }
+    .chat-toast.leaving { opacity: 0; }
+    .chat-toast .chat-name {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--pink);
+      margin-right: 6px;
+    }
+
     /* ── Player controls — the only two affordances shown ── */
     .player-controls {
       position: absolute;
@@ -163,9 +275,6 @@
 </head>
 <body>
 
-  <div class="announce-bar">
-    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
-  </div>
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">
@@ -188,14 +297,12 @@
         </svg>
       </a>
       <ul class="nav-links">
+        <li><a href="https://netadao.org">Neta DAO</a></li>
         <li><a href="/">Home</a></li>
         <li><a href="/current.html">Current Series</a></li>
         <li><a href="/seminar.html">Coining Reason</a></li>
         <li><a href="/cinema.html" class="active">Cinema</a></li>
-        <li><a href="/forthcoming.html">Forthcoming</a></li>
-        <li><a href="/register.html">Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
-        <li><a href="https://github.com/NetaDAOAcademy" target="_blank" rel="noopener" class="nav-cta">GitHub ↗</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
@@ -216,6 +323,8 @@
           <button class="fullscreen-toggle" id="fullscreenToggle" aria-label="Toggle fullscreen" title="Toggle fullscreen">⛶</button>
         </div>
 
+        <div class="chat-overlay" id="chatOverlay"></div>
+
         <div class="player-state" id="stateLoading">
           <span class="state-badge">Connecting</span>
           <p class="state-title">Connecting to stream…</p>
@@ -233,6 +342,27 @@
       <div class="player-meta">
         <p id="liveIndicator" style="display:none;"><span class="live-dot"></span>Live now</p>
         <p>This is a live feed — no pause or rewind. Having trouble? Try refreshing, or watch in <a href="#" id="vlcLink" style="color:var(--blue);">VLC</a> using the MediaMTX RTMP/RTSP address.</p>
+      </div>
+    </div>
+
+    <!-- ── Live chat ── -->
+    <div class="chat-section">
+      <p class="section-label" style="margin-bottom:12px;">Live Chat</p>
+
+      <div class="chat-box">
+        <div class="chat-messages" id="chatMessages">
+          <p class="chat-empty" id="chatEmpty">No messages yet — say hello.</p>
+        </div>
+
+        <div class="chat-name-row" id="chatNameRow">
+          <input type="text" id="chatNameInput" class="chat-input" placeholder="Your name" maxlength="40" />
+          <button id="chatNameSubmit" class="chat-send-btn">Continue</button>
+        </div>
+
+        <div class="chat-input-row hidden" id="chatInputRow">
+          <input type="text" id="chatMessageInput" class="chat-input" placeholder="Say something…" maxlength="500" />
+          <button id="chatSendBtn" class="chat-send-btn">Send</button>
+        </div>
       </div>
     </div>
   </div>
@@ -404,6 +534,131 @@
     const hamburger = document.querySelector('.nav-hamburger');
     const navLinks  = document.querySelector('.nav-links');
     if (hamburger && navLinks) hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  </script>
+
+  <!-- ── Live chat (Firebase Realtime Database) ── -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+    import {
+      getDatabase, ref, push, onChildAdded, serverTimestamp, query, limitToLast
+    } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC6b9HOs3rB46PloDDvrTg8BIx0T7r5HzA",
+      authDomain: "neta-dao-cinema.firebaseapp.com",
+      databaseURL: "https://neta-dao-cinema-default-rtdb.firebaseio.com",
+      projectId: "neta-dao-cinema",
+      storageBucket: "neta-dao-cinema.firebasestorage.app",
+      messagingSenderId: "857402063474",
+      appId: "1:857402063474:web:1e3a5c9ea8625cb0a8e0eb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const messagesRef = ref(db, 'chat/cinema/messages');
+
+    const chatMessages   = document.getElementById('chatMessages');
+    const chatEmpty      = document.getElementById('chatEmpty');
+    const chatNameRow    = document.getElementById('chatNameRow');
+    const chatNameInput  = document.getElementById('chatNameInput');
+    const chatNameSubmit = document.getElementById('chatNameSubmit');
+    const chatInputRow   = document.getElementById('chatInputRow');
+    const chatMessageInput = document.getElementById('chatMessageInput');
+    const chatSendBtn    = document.getElementById('chatSendBtn');
+    const chatOverlay    = document.getElementById('chatOverlay');
+
+    // Only flash messages sent after this page was opened — not the loaded history
+    const pageLoadTime = Date.now();
+
+    // Escape any HTML in user text — never trust content from the database
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function renderMessage(name, text, timestamp) {
+      if (chatEmpty) chatEmpty.remove();
+      const el = document.createElement('p');
+      el.className = 'chat-msg';
+      const time = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      el.innerHTML = `<span class="chat-name">${escapeHtml(name)}</span>${escapeHtml(text)}<span class="chat-time">${time}</span>`;
+      chatMessages.appendChild(el);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    const MAX_TOASTS = 4;
+    function spawnToast(name, text) {
+      const toast = document.createElement('div');
+      toast.className = 'chat-toast';
+      toast.innerHTML = `<span class="chat-name">${escapeHtml(name)}</span>${escapeHtml(text)}`;
+      chatOverlay.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('show'));
+
+      // Cap how many toasts stack at once
+      while (chatOverlay.children.length > MAX_TOASTS) {
+        chatOverlay.removeChild(chatOverlay.firstChild);
+      }
+
+      setTimeout(() => {
+        toast.classList.add('leaving');
+        toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+      }, 4500);
+    }
+
+    // Only show the most recent 100 messages to keep things light
+    const recentMessages = query(messagesRef, limitToLast(100));
+    onChildAdded(recentMessages, (snapshot) => {
+      const msg = snapshot.val();
+      if (msg && msg.name && msg.text) {
+        renderMessage(msg.name, msg.text, msg.timestamp);
+        if (msg.timestamp && msg.timestamp > pageLoadTime) {
+          spawnToast(msg.name, msg.text);
+        }
+      }
+    });
+
+    let displayName = localStorage.getItem('cinemaChatName') || '';
+    let lastSendTime = 0;
+
+    function showMessageInput() {
+      chatNameRow.classList.add('hidden');
+      chatInputRow.classList.remove('hidden');
+      chatMessageInput.focus();
+    }
+
+    if (displayName) {
+      showMessageInput();
+    }
+
+    function submitName() {
+      const name = chatNameInput.value.trim().slice(0, 40);
+      if (!name) return;
+      displayName = name;
+      localStorage.setItem('cinemaChatName', name);
+      showMessageInput();
+    }
+    chatNameSubmit.addEventListener('click', submitName);
+    chatNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitName(); });
+
+    function sendMessage() {
+      const text = chatMessageInput.value.trim().slice(0, 500);
+      if (!text || !displayName) return;
+
+      // Light client-side rate limit — 1 message per 1.5s
+      const now = Date.now();
+      if (now - lastSendTime < 1500) return;
+      lastSendTime = now;
+
+      push(messagesRef, {
+        name: displayName,
+        text: text,
+        timestamp: Date.now()
+      });
+      chatMessageInput.value = '';
+    }
+    chatSendBtn.addEventListener('click', sendMessage);
+    chatMessageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
   </script>
 </body>
 </html>

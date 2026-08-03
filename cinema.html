@@ -14,14 +14,23 @@
   <style>
     /* ── Cinema page ── */
     .cinema-wrap {
-      max-width: 960px;
+      max-width: 1300px;
       margin: 0 auto;
       padding: 0 24px;
+    }
+    .live-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      align-items: stretch;
+    }
+    @media (max-width: 900px) {
+      .live-layout { grid-template-columns: 1fr; }
     }
     .cinema-hero {
       padding: 48px 0 32px;
       border-bottom: var(--panel-border);
-      margin-top: 52px;
+      margin-top: 86px;
     }
     .cinema-title {
       font-family: var(--font-display);
@@ -133,21 +142,32 @@
 
     /* ── Live chat ── */
     .chat-section {
-      padding-bottom: 64px;
+      padding: 32px 0 56px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
     .chat-box {
       background: #0a0a0a;
       border: var(--panel-border);
       display: flex;
       flex-direction: column;
+      flex: 1;
+      min-height: 0;
     }
     .chat-messages {
-      height: 280px;
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
       padding: 16px 20px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+    }
+    @media (max-width: 900px) {
+      .chat-section { padding-top: 0; }
+      .chat-box { flex: none; }
+      .chat-messages { flex: none; height: 280px; }
     }
     .chat-empty {
       font-family: var(--font-mono);
@@ -275,6 +295,9 @@
 </head>
 <body>
 
+  <div class="announce-bar">
+    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
+  </div>
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">
@@ -315,11 +338,13 @@
       <p class="cinema-sub">Live film screening, streamed to the Academy community.</p>
     </div>
 
+    <div class="live-layout">
     <div class="player-section">
       <div class="player-frame" id="playerFrame">
         <video id="video" playsinline muted autoplay disablePictureInPicture disableRemotePlayback oncontextmenu="return false;"></video>
         <div class="player-controls">
           <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound" title="Toggle sound">🔇</button>
+          <button class="sound-toggle" id="toastToggle" aria-label="Toggle chat popups" title="Toggle chat popups">🔔</button>
           <button class="fullscreen-toggle" id="fullscreenToggle" aria-label="Toggle fullscreen" title="Toggle fullscreen">⛶</button>
         </div>
 
@@ -360,10 +385,11 @@
         </div>
 
         <div class="chat-input-row hidden" id="chatInputRow">
-          <input type="text" id="chatMessageInput" class="chat-input" placeholder="Say something…" maxlength="500" />
-          <button id="chatSendBtn" class="chat-send-btn">Send</button>
+          <input type="text" id="chatMessageInput" class="chat-input" placeholder="Chat opens once the screening is live" maxlength="500" disabled />
+          <button id="chatSendBtn" class="chat-send-btn" disabled>Send</button>
         </div>
       </div>
+    </div>
     </div>
   </div>
 
@@ -404,6 +430,7 @@
     const vlcLink        = document.getElementById('vlcLink');
     const soundToggle      = document.getElementById('soundToggle');
     const fullscreenToggle  = document.getElementById('fullscreenToggle');
+    const toastToggle       = document.getElementById('toastToggle');
     const playerFrame       = document.getElementById('playerFrame');
 
     vlcLink.href = `vlc://${RTMP_URL}`;
@@ -424,6 +451,8 @@
       liveIndicator.style.display = 'none';
       soundToggle.classList.remove('visible');
       fullscreenToggle.classList.remove('visible');
+      toastToggle.classList.remove('visible');
+      window.dispatchEvent(new CustomEvent('streamStatus', { detail: { live: false } }));
     }
     function showLive() {
       stateLoading.classList.add('hidden');
@@ -431,7 +460,9 @@
       liveIndicator.style.display = 'flex';
       soundToggle.classList.add('visible');
       fullscreenToggle.classList.add('visible');
+      toastToggle.classList.add('visible');
       updateSoundIcon();
+      window.dispatchEvent(new CustomEvent('streamStatus', { detail: { live: true } }));
     }
 
     function updateSoundIcon() {
@@ -540,8 +571,11 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
     import {
-      getDatabase, ref, push, onChildAdded, serverTimestamp, query, limitToLast
+      getDatabase, ref, push, onChildAdded, query, limitToLast
     } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
+    import {
+      getAuth, signInAnonymously, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC6b9HOs3rB46PloDDvrTg8BIx0T7r5HzA",
@@ -555,7 +589,14 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
     const messagesRef = ref(db, 'chat/cinema/messages');
+
+    let currentUid = null;
+    signInAnonymously(auth).catch((err) => console.error('Anonymous sign-in failed:', err));
+    onAuthStateChanged(auth, (user) => {
+      currentUid = user ? user.uid : null;
+    });
 
     const chatMessages   = document.getElementById('chatMessages');
     const chatEmpty      = document.getElementById('chatEmpty');
@@ -612,11 +653,42 @@
       const msg = snapshot.val();
       if (msg && msg.name && msg.text) {
         renderMessage(msg.name, msg.text, msg.timestamp);
-        if (msg.timestamp && msg.timestamp > pageLoadTime) {
+        if (msg.timestamp && msg.timestamp > pageLoadTime && toastsEnabled) {
           spawnToast(msg.name, msg.text);
         }
       }
     });
+
+    // ── Toast on/off preference (persists per-viewer) ──
+    let toastsEnabled = localStorage.getItem('cinemaToastsOff') !== 'true';
+    function updateToastIcon() {
+      toastToggle.textContent = toastsEnabled ? '🔔' : '🔕';
+    }
+    updateToastIcon();
+    toastToggle.addEventListener('click', () => {
+      toastsEnabled = !toastsEnabled;
+      localStorage.setItem('cinemaToastsOff', toastsEnabled ? 'false' : 'true');
+      updateToastIcon();
+    });
+
+    // ── Only allow sending while the stream is actually live ──
+    let streamIsLive = false;
+    window.addEventListener('streamStatus', (e) => {
+      streamIsLive = e.detail.live;
+      updateChatAvailability();
+    });
+    function updateChatAvailability() {
+      if (streamIsLive) {
+        chatMessageInput.disabled = false;
+        chatMessageInput.placeholder = 'Say something…';
+        chatSendBtn.disabled = false;
+      } else {
+        chatMessageInput.disabled = true;
+        chatMessageInput.placeholder = 'Chat opens once the screening is live';
+        chatSendBtn.disabled = true;
+      }
+    }
+    updateChatAvailability();
 
     let displayName = localStorage.getItem('cinemaChatName') || '';
     let lastSendTime = 0;
@@ -642,8 +714,9 @@
     chatNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitName(); });
 
     function sendMessage() {
+      if (!streamIsLive) return;
       const text = chatMessageInput.value.trim().slice(0, 500);
-      if (!text || !displayName) return;
+      if (!text || !displayName || !currentUid) return;
 
       // Light client-side rate limit — 1 message per 1.5s
       const now = Date.now();
@@ -653,7 +726,12 @@
       push(messagesRef, {
         name: displayName,
         text: text,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        uid: currentUid
+      }).catch((err) => {
+        // Security rules reject writes from banned UIDs — surface it plainly
+        console.error('Message rejected:', err);
+        renderMessage('System', 'Your messages are currently blocked in this chat.', Date.now());
       });
       chatMessageInput.value = '';
     }

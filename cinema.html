@@ -314,6 +314,40 @@
     }
     .end-screening-btn.visible { display: block; }
     .end-screening-btn:hover { background: rgba(160,72,72,0.12); color: #e08080; }
+
+    /* ── Host-only: Disable Chat toggle ── */
+    .disable-chat-btn {
+      display: none;
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      background: transparent;
+      color: #9aa0b8;
+      border: none;
+      border-top: 1px solid #222;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .disable-chat-btn.visible { display: block; }
+    .disable-chat-btn:hover { background: rgba(154,160,184,0.1); color: #c8ccdc; }
+    .disable-chat-btn.active { color: #d4a017; }
+    .disable-chat-btn.active:hover { background: rgba(212,160,23,0.12); color: #e8b830; }
+
+    /* ── Banner shown to everyone while chat is disabled ── */
+    .chat-disabled-banner {
+      display: none;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #d4a017;
+      background: rgba(212,160,23,0.08);
+      border-top: 1px solid rgba(212,160,23,0.3);
+      padding: 10px 20px;
+      text-align: center;
+    }
+    .chat-disabled-banner.visible { display: block; }
   </style>
 </head>
 <body>
@@ -407,6 +441,9 @@
           <button id="chatSendBtn" class="chat-send-btn" disabled>Send</button>
         </div>
 
+        <p id="chatDisabledBanner" class="chat-disabled-banner">Chat has been temporarily disabled by the host</p>
+
+        <button id="disableChatBtn" class="disable-chat-btn">Disable Chat</button>
         <button id="endScreeningBtn" class="end-screening-btn">End Screening &amp; Clear Chat</button>
       </div>
     </div>
@@ -636,7 +673,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
     import {
-      getDatabase, ref, push, remove, onChildAdded, query, limitToLast
+      getDatabase, ref, push, remove, set, onValue, onChildAdded, query, limitToLast
     } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
     import {
       getAuth, signInAnonymously, onAuthStateChanged
@@ -656,6 +693,7 @@
     const db = getDatabase(app);
     const auth = getAuth(app);
     const messagesRef = ref(db, 'chat/cinema/messages');
+    const chatDisabledRef = ref(db, 'chat/cinema/disabled');
 
     let currentUid = null;
     signInAnonymously(auth).catch((err) => console.error('Anonymous sign-in failed:', err));
@@ -737,18 +775,32 @@
       updateToastIcon();
     });
 
-    // ── Only allow sending while the stream is actually live ──
+    // ── Only allow sending while the stream is actually live, and chat isn't host-disabled ──
     let streamIsLive = false;
+    let chatDisabled = false;
     window.addEventListener('streamStatus', (e) => {
       streamIsLive = e.detail.live;
       updateChatAvailability();
     });
+    onValue(chatDisabledRef, (snapshot) => {
+      chatDisabled = snapshot.val() === true;
+      updateChatAvailability();
+      updateDisableChatBtn();
+    });
     function updateChatAvailability() {
-      if (streamIsLive) {
+      const chatDisabledBanner = document.getElementById('chatDisabledBanner');
+      if (chatDisabled) {
+        chatDisabledBanner.classList.add('visible');
+        chatMessageInput.disabled = true;
+        chatMessageInput.placeholder = 'Chat has been disabled by the host';
+        chatSendBtn.disabled = true;
+      } else if (streamIsLive) {
+        chatDisabledBanner.classList.remove('visible');
         chatMessageInput.disabled = false;
         chatMessageInput.placeholder = 'Say something…';
         chatSendBtn.disabled = false;
       } else {
+        chatDisabledBanner.classList.remove('visible');
         chatMessageInput.disabled = true;
         chatMessageInput.placeholder = 'Chat opens once the screening is live';
         chatSendBtn.disabled = true;
@@ -780,7 +832,7 @@
     chatNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitName(); });
 
     function sendMessage() {
-      if (!streamIsLive) return;
+      if (!streamIsLive || chatDisabled) return;
       const text = chatMessageInput.value.trim().slice(0, 500);
       if (!text || !displayName || !currentUid) return;
 
@@ -808,9 +860,11 @@
     // Usage: add ?host=WRxw7EwYkc40Ugb1VDx3jQ to the cinema.html URL
     const HOST_TOKEN = 'WRxw7EwYkc40Ugb1VDx3jQ';
     const endScreeningBtn = document.getElementById('endScreeningBtn');
+    const disableChatBtn = document.getElementById('disableChatBtn');
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('host') === HOST_TOKEN) {
       endScreeningBtn.classList.add('visible');
+      disableChatBtn.classList.add('visible');
     }
     endScreeningBtn.addEventListener('click', () => {
       const confirmed = confirm('End the screening and permanently clear all chat messages? This cannot be undone.');
@@ -818,6 +872,15 @@
       remove(messagesRef)
         .then(() => { chatMessages.innerHTML = '<p class="chat-empty">No messages yet — say hello.</p>'; })
         .catch((err) => { console.error('Failed to clear chat:', err); alert('Could not clear chat — check console for details.'); });
+    });
+
+    function updateDisableChatBtn() {
+      disableChatBtn.textContent = chatDisabled ? 'Re-enable Chat' : 'Disable Chat';
+      disableChatBtn.classList.toggle('active', chatDisabled);
+    }
+    disableChatBtn.addEventListener('click', () => {
+      set(chatDisabledRef, !chatDisabled)
+        .catch((err) => { console.error('Failed to toggle chat:', err); alert('Could not update chat status — check console.'); });
     });
   </script>
 </body>

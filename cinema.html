@@ -273,7 +273,11 @@
       display: flex;
       gap: 8px;
       z-index: 5;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
     }
+    .player-controls.visible { opacity: 1; pointer-events: auto; }
     .sound-toggle,
     .fullscreen-toggle {
       width: 40px;
@@ -284,13 +288,11 @@
       color: #e8e6e0;
       font-size: 16px;
       cursor: pointer;
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
       transition: background 0.15s, border-color 0.15s;
     }
-    .sound-toggle.visible,
-    .fullscreen-toggle.visible { display: flex; }
     .sound-toggle:hover,
     .fullscreen-toggle:hover { background: rgba(20,20,20,0.85); border-color: #555; }
   </style>
@@ -345,7 +347,7 @@
     <div class="player-section">
       <div class="player-frame" id="playerFrame">
         <video id="video" playsinline muted autoplay disablePictureInPicture disableRemotePlayback oncontextmenu="return false;"></video>
-        <div class="player-controls">
+        <div class="player-controls" id="playerControls">
           <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound" title="Toggle sound">🔇</button>
           <button class="sound-toggle" id="toastToggle" aria-label="Toggle chat popups" title="Toggle chat popups">🔔</button>
           <button class="fullscreen-toggle" id="fullscreenToggle" aria-label="Toggle fullscreen" title="Toggle fullscreen">⛶</button>
@@ -371,7 +373,7 @@
     <!-- ── Live chat ── -->
     <div class="chat-section">
 
-      <div class="chat-box">
+      <div class="chat-box" id="chatBox">
         <div class="chat-messages" id="chatMessages">
           <p class="chat-empty" id="chatEmpty">No messages yet — say hello.</p>
         </div>
@@ -432,7 +434,24 @@
     const soundToggle      = document.getElementById('soundToggle');
     const fullscreenToggle  = document.getElementById('fullscreenToggle');
     const toastToggle       = document.getElementById('toastToggle');
+    const playerControls   = document.getElementById('playerControls');
     const playerFrame       = document.getElementById('playerFrame');
+
+    // Lock chat box height to match the video exactly, so new messages
+    // scroll within a fixed box instead of growing the whole layout.
+    const chatBox = document.getElementById('chatBox');
+    if (chatBox && playerFrame && window.ResizeObserver) {
+      const syncChatHeight = () => {
+        if (window.innerWidth > 900) {
+          chatBox.style.maxHeight = playerFrame.offsetHeight + 'px';
+        } else {
+          chatBox.style.maxHeight = ''; // mobile: fixed height handled by CSS instead
+        }
+      };
+      new ResizeObserver(syncChatHeight).observe(playerFrame);
+      window.addEventListener('resize', syncChatHeight);
+      syncChatHeight();
+    }
 
     vlcLink.href = `vlc://${RTMP_URL}`;
     vlcLink.title = RTMP_URL;
@@ -450,21 +469,45 @@
       stateLoading.classList.add('hidden');
       stateOffline.classList.remove('hidden');
       liveIndicator.style.display = 'none';
-      soundToggle.classList.remove('visible');
-      fullscreenToggle.classList.remove('visible');
-      toastToggle.classList.remove('visible');
+      streamIsLiveForControls = false;
+      updateControlsVisibility();
       window.dispatchEvent(new CustomEvent('streamStatus', { detail: { live: false } }));
     }
     function showLive() {
       stateLoading.classList.add('hidden');
       stateOffline.classList.add('hidden');
       liveIndicator.style.display = 'flex';
-      soundToggle.classList.add('visible');
-      fullscreenToggle.classList.add('visible');
-      toastToggle.classList.add('visible');
+      streamIsLiveForControls = true;
+      updateControlsVisibility();
+      revealControlsTemporarily();
       updateSoundIcon();
       window.dispatchEvent(new CustomEvent('streamStatus', { detail: { live: true } }));
     }
+
+    // ── Auto-hide controls unless live AND the mouse is active over the frame ──
+    let streamIsLiveForControls = false;
+    let controlsActive = false;
+    let controlsHideTimer = null;
+    function updateControlsVisibility() {
+      const shouldShow = streamIsLiveForControls && controlsActive;
+      playerControls.classList.toggle('visible', shouldShow);
+    }
+    function revealControlsTemporarily() {
+      controlsActive = true;
+      updateControlsVisibility();
+      clearTimeout(controlsHideTimer);
+      controlsHideTimer = setTimeout(() => {
+        controlsActive = false;
+        updateControlsVisibility();
+      }, 2500);
+    }
+    playerFrame.addEventListener('mousemove', revealControlsTemporarily);
+    playerFrame.addEventListener('mouseenter', revealControlsTemporarily);
+    playerFrame.addEventListener('mouseleave', () => {
+      clearTimeout(controlsHideTimer);
+      controlsActive = false;
+      updateControlsVisibility();
+    });
 
     function updateSoundIcon() {
       soundToggle.textContent = video.muted ? '🔇' : '🔊';
@@ -654,7 +697,8 @@
       const msg = snapshot.val();
       if (msg && msg.name && msg.text) {
         renderMessage(msg.name, msg.text, msg.timestamp);
-        if (msg.timestamp && msg.timestamp > pageLoadTime && toastsEnabled) {
+        const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        if (msg.timestamp && msg.timestamp > pageLoadTime && toastsEnabled && isFullscreen) {
           spawnToast(msg.name, msg.text);
         }
       }

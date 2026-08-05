@@ -295,6 +295,25 @@
     }
     .sound-toggle:hover,
     .fullscreen-toggle:hover { background: rgba(20,20,20,0.85); border-color: #555; }
+
+    /* ── Host-only: End Screening button ── */
+    .end-screening-btn {
+      display: none;
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      background: transparent;
+      color: #a04848;
+      border: none;
+      border-top: 1px solid #222;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .end-screening-btn.visible { display: block; }
+    .end-screening-btn:hover { background: rgba(160,72,72,0.12); color: #e08080; }
   </style>
 </head>
 <body>
@@ -387,6 +406,8 @@
           <input type="text" id="chatMessageInput" class="chat-input" placeholder="Chat opens once the screening is live" maxlength="500" disabled />
           <button id="chatSendBtn" class="chat-send-btn" disabled>Send</button>
         </div>
+
+        <button id="endScreeningBtn" class="end-screening-btn">End Screening &amp; Clear Chat</button>
       </div>
     </div>
     </div>
@@ -615,7 +636,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
     import {
-      getDatabase, ref, push, onChildAdded, query, limitToLast
+      getDatabase, ref, push, remove, onChildAdded, query, limitToLast
     } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
     import {
       getAuth, signInAnonymously, onAuthStateChanged
@@ -782,6 +803,22 @@
     }
     chatSendBtn.addEventListener('click', sendMessage);
     chatMessageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+    // ── Host-only: End Screening button, revealed via secret URL parameter ──
+    // Usage: add ?host=WRxw7EwYkc40Ugb1VDx3jQ to the cinema.html URL
+    const HOST_TOKEN = 'WRxw7EwYkc40Ugb1VDx3jQ';
+    const endScreeningBtn = document.getElementById('endScreeningBtn');
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('host') === HOST_TOKEN) {
+      endScreeningBtn.classList.add('visible');
+    }
+    endScreeningBtn.addEventListener('click', () => {
+      const confirmed = confirm('End the screening and permanently clear all chat messages? This cannot be undone.');
+      if (!confirmed) return;
+      remove(messagesRef)
+        .then(() => { chatMessages.innerHTML = '<p class="chat-empty">No messages yet — say hello.</p>'; })
+        .catch((err) => { console.error('Failed to clear chat:', err); alert('Could not clear chat — check console for details.'); });
+    });
   </script>
 </body>
 </html>

@@ -111,6 +111,27 @@ export async function getSeminarReadings(seminarId) {
   const currentEmail = auth.currentUser ? auth.currentUser.email : null;
   const path = `seminarReadings/${seminarId}`;
   console.log('Attempting to fetch seminarReadings. Current auth email:', currentEmail, '| Fetch path:', path, '| seminarId param received:', JSON.stringify(seminarId));
+
+  // DIAGNOSTIC: fetch the PARENT node and list the actual keys that exist,
+  // so we can compare against the seminarId string being requested — this
+  // catches invisible character mismatches (e.g. a different dash character)
+  // that look identical visually but don't match programmatically.
+  try {
+    const parentSnap = await get(ref(db, 'seminarReadings'));
+    if (parentSnap.exists()) {
+      const actualKeys = Object.keys(parentSnap.val());
+      console.log('DIAGNOSTIC — actual keys under seminarReadings:', actualKeys);
+      actualKeys.forEach(k => {
+        console.log(`  Key "${k}" char codes:`, Array.from(k).map(c => c.charCodeAt(0)).join(','));
+      });
+      console.log('  Requested seminarId char codes:', Array.from(seminarId).map(c => c.charCodeAt(0)).join(','));
+    } else {
+      console.log('DIAGNOSTIC — seminarReadings parent node itself does not exist or is empty.');
+    }
+  } catch (diagErr) {
+    console.error('DIAGNOSTIC fetch of seminarReadings parent FAILED:', diagErr);
+  }
+
   try {
     const snap = await get(ref(db, path));
     console.log('Raw snapshot result — key:', snap.key, '| exists():', snap.exists(), '| val():', snap.val(), '| ref URL:', snap.ref.toString());

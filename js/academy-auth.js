@@ -109,9 +109,11 @@ export async function submitRegistration(email, name, xHandle, seminarId) {
 // the signed-in user's registration record has readingsAccess === true.
 export async function getSeminarReadings(seminarId) {
   const currentEmail = auth.currentUser ? auth.currentUser.email : null;
-  console.log('Attempting to fetch seminarReadings. Current auth email:', currentEmail, '| Computed key that the RULE should be checking:', emailToKey(currentEmail));
+  const path = `seminarReadings/${seminarId}`;
+  console.log('Attempting to fetch seminarReadings. Current auth email:', currentEmail, '| Fetch path:', path, '| seminarId param received:', JSON.stringify(seminarId));
   try {
-    const snap = await get(ref(db, `seminarReadings/${seminarId}`));
+    const snap = await get(ref(db, path));
+    console.log('Raw snapshot result — key:', snap.key, '| exists():', snap.exists(), '| val():', snap.val(), '| ref URL:', snap.ref.toString());
     return snap.exists() ? snap.val() : null;
   } catch (err) {
     console.error('seminarReadings fetch FAILED. Full error:', err);

@@ -18,7 +18,7 @@
       display: grid;
       grid-template-columns: 1fr 420px;
       border-bottom: var(--panel-border);
-      margin-top: 86px;
+      margin-top: 54px;
     }
     .hero-left {
       padding: 64px 56px;
@@ -340,11 +340,6 @@
 </head>
 <body>
 
-    <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
-  <div class="announce-bar">
-    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
-  </div>
-  -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="https://netadao.org" class="nav-logo">
@@ -372,13 +367,19 @@
         <li><a href="/seminar.html" class="active">Coining Reason</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
+        <li id="navAccountItem"><a href="/current.html#accessPanel" id="navAccountLink">Sign In</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
+  <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
+  <div class="announce-bar">
+    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
+  </div>
+  -->
 
   <!-- GitHub header image -->
-  <div style="margin-top:86px;border-bottom:var(--panel-border);">
+  <div style="margin-top:54px;border-bottom:var(--panel-border);">
     <img src="https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/img/CNTitle.png"
          alt="Coining Reason" 
          style="width:100%;max-height:320px;object-fit:cover;object-position:center;display:block;" 
@@ -719,6 +720,12 @@
     document.querySelectorAll('.roadmap-unit').forEach(u => u.classList.remove('active'));
     activeRoadmapIdx = -1;
   }
+  </script>
+
+  <!-- ── Nav sign-in status ── -->
+  <script type="module">
+    import { initNavAccountWidget } from '/js/academy-auth.js?v=7';
+    initNavAccountWidget('/current.html#accessPanel');
   </script>
 </body>
 </html>

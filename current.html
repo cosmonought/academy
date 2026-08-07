@@ -13,11 +13,6 @@
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
 </head>
 <body>
-    <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
-  <div class="announce-bar">
-    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
-  </div>
-  -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="https://netadao.org" class="nav-logo">
@@ -50,6 +45,11 @@
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
+  <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
+  <div class="announce-bar">
+    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
+  </div>
+  -->
 
   <style>
     .series-hero-img {
@@ -142,7 +142,7 @@
     #navAccountItem .nav-signout { margin-left: 8px; color: var(--ink-dim); text-decoration: underline; font-size: inherit; cursor: pointer; }
   </style>
 
-  <div style="margin-top:86px;">
+  <div style="margin-top:54px;">
     <!-- Hero image -->
     <img src="assets/sex-and-or-love.webp" alt="Sex, and/or Love — Neta DAO Academy" class="series-hero-img" />
 
@@ -303,7 +303,7 @@
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       sendMagicLink, signInWithPassword, setPasswordForCurrentUser,
       getRegistration, submitRegistration, getSeminarReadings
-    } from '/js/academy-auth.js?v=6';
+    } from '/js/academy-auth.js?v=7';
 
     const CURRENT_SEMINAR_ID = 'sex-and-or-love';
 

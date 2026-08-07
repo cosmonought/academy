@@ -44,13 +44,26 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ── Nav ── */
-/* ── Announcement bar ── */
-.announce-bar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 101;
-  background: linear-gradient(90deg, #C9338A 0%, #5B8EF0 100%);
-  height: 34px;
+/* Always pinned at the very top, regardless of whether the announcement
+   bar is present — this means the bar can be toggled on/off without ever
+   needing to touch the nav's position or any page's content offset. */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--bg-dark); border-bottom: var(--panel-border);
   transform: translateZ(0);
   will-change: transform;
+}
+
+/* ── Announcement bar ──
+   Sits in normal document flow, directly after the nav in the HTML —
+   NOT fixed. It pushes page content down by its own height automatically
+   when present, and takes up zero space when absent/commented out. The
+   margin-top here just clears the fixed nav above it (54px = 52px nav
+   height + 2px border-bottom). */
+.announce-bar {
+  margin-top: 54px;
+  background: linear-gradient(90deg, #C9338A 0%, #5B8EF0 100%);
+  height: 34px;
 }
 .announce-bar a {
   display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -61,13 +74,6 @@ a { color: inherit; text-decoration: none; }
 }
 .announce-bar a:hover { text-decoration: underline; }
 .announce-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #0a0a0a; flex-shrink: 0; }
-
-.site-nav {
-  position: fixed; top: 34px; left: 0; right: 0; z-index: 100;
-  background: var(--bg-dark); border-bottom: var(--panel-border);
-  transform: translateZ(0);
-  will-change: transform;
-}
 .nav-inner {
   max-width: 1200px; margin: 0 auto; height: 52px;
   display: flex; align-items: stretch;
@@ -93,6 +99,16 @@ a { color: inherit; text-decoration: none; }
   padding: 0 14px; border-left: var(--panel-border); margin-left: auto;
 }
 .nav-hamburger span { display: block; width: 20px; height: 2px; background: #e8e6e0; margin: 4px 0; }
+
+/* ── Nav account widget (sign-in status, shared across all pages) ── */
+#navAccountItem { position: relative; }
+#navAccountItem a { white-space: nowrap; }
+#navAccountItem.signed-in a { color: #2a8a4a; }
+#navAccountItem .nav-signout {
+  margin-left: 8px; color: #9aa0b8; text-decoration: underline;
+  font-size: inherit; cursor: pointer; background: none; border: none;
+  font-family: var(--font-mono);
+}
 
 /* ── Page wrapper — constrained width ── */
 .page-wrap {

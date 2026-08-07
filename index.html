@@ -18,7 +18,7 @@
       display: grid;
       grid-template-columns: 1fr 460px;
       border-bottom: var(--panel-border);
-      margin-top: 86px;
+      margin-top: 54px;
     }
     .hero-left {
       padding: 64px 56px;
@@ -351,12 +351,7 @@
 </head>
 <body>
 
-    <!-- ── Nav ── -->
-  <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
-  <div class="announce-bar">
-    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
-  </div>
-  -->
+  <!-- ── Nav ── -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="https://netadao.org" class="nav-logo">
@@ -384,10 +379,16 @@
         <li><a href="/seminar.html">Coining Reason</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
+        <li id="navAccountItem"><a href="/current.html#accessPanel" id="navAccountLink">Sign In</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
+  <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
+  <div class="announce-bar">
+    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
+  </div>
+  -->
 
   <!-- ── Hero: text left / typewriter right ── -->
   <div class="hero-grid">
@@ -500,20 +501,13 @@
     </div>
   </div>
 
-  <!-- Disclaimer -->
-  <div class="section" style="border-bottom:none;">
-    <div class="page-wrap">
-      <p style="font-size:12px;color:var(--ink-dim);line-height:1.75;">Coining Reason is presented for informational purposes only. Nothing contained in these materials should be construed as financial advice. Support the work by delegating with the Neta DAO <a href="https://wallet.keplr.app/chains/juno?modal=validator&chain=juno-1&validator_address=junovaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8lfvj9vs" target="_blank" rel="noopener" style="color:var(--blue);">JUNO ↗</a>, <a href="https://wallet.keplr.app/chains/akash?modal=validator&chain=akashnet-2&validator_address=akashvaloper1f2jpv5sc6ur6yurq5w0t2chphrznpy8l86yse9" target="_blank" rel="noopener" style="color:var(--blue);">AKT ↗</a>, or <a href="https://ping.pub/jackal/staking/jklvaloper1s4rscs2jj7qydkkrsrc52rgvq38wwgrqdrcrdq" target="_blank" rel="noopener" style="color:var(--blue);">JKL ↗</a> validators.</p>
-    </div>
-  </div>
+  <!-- Disclaimer removed — validators not currently running, Coining Reason not active. General note moved to footer instead. -->
 
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p>
 
-        <a href="#" id="footerSignupToggle" style="display:inline-block;margin-top:16px;font-family:var(--font-mono);font-size:11px;color:var(--blue);text-decoration:underline;text-underline-offset:2px;">Stay updated / propose a guest lecture →</a>
-
-        <div id="footerSignupForm" class="hidden" style="margin-top:16px;max-width:360px;display:flex;flex-direction:column;gap:8px;">
+        <div id="footerSignupForm" style="margin-top:16px;max-width:360px;display:flex;flex-direction:column;gap:8px;">
           <input type="text" id="fsName" placeholder="Name" style="background:var(--bg);border:1px solid var(--rule-thin);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--ink);outline:none;" />
           <input type="email" id="fsEmail" placeholder="Email" style="background:var(--bg);border:1px solid var(--rule-thin);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--ink);outline:none;" />
           <label style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;color:var(--ink-mid);cursor:pointer;">
@@ -532,19 +526,14 @@
         <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
         <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li></ul></div>
     </div>
-    <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p></div>
+    <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p><p class="footer-copy" style="margin-top:8px;font-size:11px;">The materials presented on this site are for informational purposes only and should not be construed as financial advice.</p></div>
   </footer>
 
   <script>
-    const footerSignupToggle = document.getElementById('footerSignupToggle');
     const footerSignupForm   = document.getElementById('footerSignupForm');
     const fsProposeCheckbox  = document.getElementById('fsProposeCheckbox');
     const fsProposal         = document.getElementById('fsProposal');
 
-    footerSignupToggle.addEventListener('click', (e) => {
-      e.preventDefault();
-      footerSignupForm.classList.toggle('hidden');
-    });
     fsProposeCheckbox.addEventListener('change', () => {
       fsProposal.classList.toggle('hidden', !fsProposeCheckbox.checked);
     });
@@ -873,6 +862,12 @@
     document.querySelectorAll('.roadmap-unit').forEach(u => u.classList.remove('active'));
     activeRoadmapIdx = -1;
   }
+  </script>
+
+  <!-- ── Nav sign-in status ── -->
+  <script type="module">
+    import { initNavAccountWidget } from '/js/academy-auth.js?v=7';
+    initNavAccountWidget('/current.html#accessPanel');
   </script>
 </body>
 </html>

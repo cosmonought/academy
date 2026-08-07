@@ -30,7 +30,7 @@
     .cinema-hero {
       padding: 48px 0 32px;
       border-bottom: var(--panel-border);
-      margin-top: 86px;
+      margin-top: 54px;
     }
     .cinema-title {
       font-family: var(--font-display);
@@ -427,11 +427,6 @@
 </head>
 <body>
 
-    <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
-  <div class="announce-bar">
-    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
-  </div>
-  -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">
@@ -464,6 +459,11 @@
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
+  <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
+  <div class="announce-bar">
+    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
+  </div>
+  -->
 
   <div class="cinema-wrap">
     <div class="cinema-hero">
@@ -1010,7 +1010,7 @@
     import {
       auth, onAuthStateChanged, completeSignInIfNeeded,
       sendMagicLink, signInWithPassword, signOut, getRegistration
-    } from '/js/academy-auth.js?v=6';
+    } from '/js/academy-auth.js?v=7';
 
     const CURRENT_SEMINAR_ID = 'sex-and-or-love';
 

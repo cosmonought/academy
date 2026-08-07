@@ -28,6 +28,43 @@ export const db = getDatabase(app);
 export const onAuthStateChanged = _onAuthStateChanged;
 export const signOut = _signOut;
 
+// Wires up the shared nav account widget (#navAccountItem / #navAccountLink)
+// on any page that includes that markup. Shows "Sign In" (linking to
+// signInHref) when signed out, or "Signed in: email · Sign out" when
+// signed in. Safe to call on pages that don't have the markup at all.
+export function initNavAccountWidget(signInHref) {
+  const navAccountItem = document.getElementById('navAccountItem');
+  const navAccountLink = document.getElementById('navAccountLink');
+  if (!navAccountItem || !navAccountLink) return;
+
+  function updateNavAccount(user) {
+    if (user && user.email) {
+      navAccountItem.classList.add('signed-in');
+      navAccountLink.textContent = `Signed in: ${user.email}`;
+      navAccountLink.removeAttribute('href');
+      if (!document.getElementById('navSignOutLink')) {
+        const btn = document.createElement('button');
+        btn.id = 'navSignOutLink';
+        btn.className = 'nav-signout';
+        btn.textContent = 'Sign out';
+        btn.addEventListener('click', () => _signOut(auth));
+        navAccountItem.appendChild(btn);
+      }
+    } else {
+      navAccountItem.classList.remove('signed-in');
+      navAccountLink.textContent = 'Sign In';
+      navAccountLink.setAttribute('href', signInHref);
+      const existing = document.getElementById('navSignOutLink');
+      if (existing) existing.remove();
+    }
+  }
+
+  _onAuthStateChanged(auth, (user) => {
+    if (user && !user.email) return; // transitional auth state, wait for the next update
+    updateNavAccount(user);
+  });
+}
+
 export const ADMIN_EMAIL = 'academy@netadao.org';
 
 // Firebase Realtime Database keys can't contain "." — this is the

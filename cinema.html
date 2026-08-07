@@ -450,9 +450,15 @@
       </a>
       <ul class="nav-links">
         <li><a href="/">Home</a></li>
-        <li><a href="/current.html">Current Series</a></li>
-        <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/forthcoming.html">Forthcoming</a></li>
+        <li class="nav-dropdown-item">
+          <a href="/seminars.html">Seminars</a>
+          <ul class="nav-dropdown-menu">
+            <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
+            <li><a href="/seminar.html">Flagship: Coining Reason</a></li>
+            <li><a href="/forthcoming.html">Forthcoming</a></li>
+            <li><a href="/seminars.html#past">Past</a></li>
+          </ul>
+        </li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
         <li id="navAccountItem"><a href="#cinemaAccessGate" id="navAccountLink">Sign In</a></li>
       </ul>
@@ -485,7 +491,7 @@
           <button id="cinemaLoginBtn">Log In</button>
         </div>
         <p class="gate-status" id="cinemaLoginStatus"></p>
-        <p class="gate-note">Not registered yet? <a href="/current.html#accessPanel">Register for the current seminar →</a></p>
+        <p class="gate-note">Not registered yet? <a href="/sex-and-or-love.html#accessPanel">Register for the current seminar →</a></p>
         <p class="gate-note">First time signing in, or forgot your password? <a href="#" id="cinemaShowMagicLink">Use email link instead →</a></p>
       </div>
 
@@ -503,7 +509,7 @@
       <div id="cinemaStateNoAccess" class="hidden">
         <h3>Not Registered for This Seminar</h3>
         <p class="gate-sub">You're signed in as <strong id="cinemaEmailNoAccess"></strong>, but you don't have access to this seminar's screening yet.</p>
-        <p class="gate-note"><a href="/current.html#accessPanel">Register for the current seminar →</a></p>
+        <p class="gate-note"><a href="/sex-and-or-love.html#accessPanel">Register for the current seminar →</a></p>
       </div>
 
       <div id="cinemaStatePending" class="hidden">
@@ -1009,8 +1015,8 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, completeSignInIfNeeded,
-      sendMagicLink, signInWithPassword, signOut, getRegistration, initNavAccountWidget
-    } from '/js/academy-auth.js?v=10';
+      sendMagicLink, signInWithPassword, signOut, getRegistrationForSeminar, initNavAccountWidget
+    } from '/js/academy-auth.js?v=11';
 
     initNavAccountWidget('#cinemaAccessGate');
 
@@ -1043,28 +1049,19 @@
         return;
       }
 
-      const reg = await getRegistration(user.email);
+      const reg = await getRegistrationForSeminar(user.email, CURRENT_SEMINAR_ID);
 
-      const seminarOk = reg && reg.seminarAccess &&
-        (reg.seminarAccess[CURRENT_SEMINAR_ID] === true || reg.seminarAccess[CURRENT_SEMINAR_ID] === 'true');
-
-      if (seminarOk) {
+      if (reg && (reg.enrolled === true || reg.enrolled === 'true')) {
         grantAccess();
         return;
       }
 
-      if (reg) {
-        document.getElementById('cinemaEmailNoAccess').textContent = user.email;
-        if (reg.seminarId === CURRENT_SEMINAR_ID) {
-          showGateState(gatePending);
-        } else {
-          showGateState(gateNoAccess);
-        }
-        return;
-      }
-
-      showGateState(gateNoAccess);
       document.getElementById('cinemaEmailNoAccess').textContent = user.email;
+      if (reg) {
+        showGateState(gatePending);
+      } else {
+        showGateState(gateNoAccess);
+      }
     }
 
     (async () => {

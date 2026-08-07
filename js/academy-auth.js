@@ -152,38 +152,56 @@ export async function sendPasswordReset(email) {
 }
 
 // ── Registration + entitlement lookups ──
+// Data model: academyRegistrations/{emailKey}/{seminarId} — one record
+// PER SEMINAR per person, so someone can be registered/enrolled in
+// multiple seminars (e.g. Sex, and/or Love AND a Coining Reason unit)
+// independently, without one overwriting the other.
 
-// Returns null if this email has never registered, OR if email is
-// missing/not-yet-loaded on the auth object — callers should treat
-// both cases as "nothing to show yet."
-export async function getRegistration(email) {
+// Returns ALL of a person's seminar registrations, keyed by seminarId.
+// Returns null if they've never registered for anything, or if email is
+// missing/not-yet-loaded on the auth object.
+export async function getRegistrations(email) {
   const key = emailToKey(email);
   if (!key) return null;
   try {
     const snap = await get(ref(db, `academyRegistrations/${key}`));
     return snap.exists() ? snap.val() : null;
   } catch (err) {
-    console.error('getRegistration failed:', err);
+    console.error('getRegistrations failed:', err);
     return null;
   }
 }
 
-// Creates a NEW registration. Does NOT require prior sign-in — this
-// is intentional, so people can register in one step before ever
-// touching the magic-link flow. Security rules only allow this to
-// succeed for a brand-new entry; once created, only the verified
-// owner (or admin) can modify it further.
-export async function submitRegistration(email, name, xHandle, seminarId) {
+// Returns a single seminar's registration record for this person, or null.
+export async function getRegistrationForSeminar(email, seminarId) {
   const key = emailToKey(email);
-  await update(ref(db, `academyRegistrations/${key}`), {
-    email, name, xHandle, seminarId,
+  if (!key) return null;
+  try {
+    const snap = await get(ref(db, `academyRegistrations/${key}/${seminarId}`));
+    return snap.exists() ? snap.val() : null;
+  } catch (err) {
+    console.error('getRegistrationForSeminar failed:', err);
+    return null;
+  }
+}
+
+// Creates a NEW registration for a specific seminar. Does NOT require
+// prior sign-in — this is intentional, so people can register in one
+// step before ever touching the magic-link flow. Security rules only
+// allow this to succeed for a brand-new entry at this seminar; once
+// created, only the verified owner (or admin) can modify it further.
+export async function submitRegistration(email, name, xHandle, seminarId, reason) {
+  const key = emailToKey(email);
+  await update(ref(db, `academyRegistrations/${key}/${seminarId}`), {
+    email, name, xHandle, reason,
     requestedAt: Date.now()
   });
-  notifyAdmin('Seminar Registration', name, email, `X handle: ${xHandle}\nSeminar: ${seminarId}`);
+  notifyAdmin('Seminar Registration', name, email, `X handle: ${xHandle}\nSeminar: ${seminarId}\n\nReason for joining:\n${reason}`);
 }
 
 // Fetches the actual reading URLs for a seminar — only succeeds if
-// the signed-in user's registration record has readingsAccess === true.
+// the signed-in user's registration record for THIS seminar has
+// enrolled === true (enforced by security rules).
 export async function getSeminarReadings(seminarId) {
   try {
     const snap = await get(ref(db, `seminarReadings/${seminarId}`));
@@ -196,6 +214,8 @@ export async function getSeminarReadings(seminarId) {
 
 // ── Admin-only functions (require signing in as ADMIN_EMAIL) ──
 
+// Returns the full nested tree: { [emailKey]: { [seminarId]: {...} } }.
+// Callers should flatten this themselves for display.
 export async function getAllRegistrations() {
   try {
     const snap = await get(ref(db, 'academyRegistrations'));
@@ -207,20 +227,17 @@ export async function getAllRegistrations() {
 }
 
 export async function approveRegistration(emailKey, seminarId) {
-  await update(ref(db, `academyRegistrations/${emailKey}`), {
-    readingsAccess: true,
-    [`seminarAccess/${seminarId}`]: true
+  await update(ref(db, `academyRegistrations/${emailKey}/${seminarId}`), {
+    enrolled: true
   });
 }
 
-// Revokes a person's access entirely — sets readingsAccess to false and
-// clears their seminarAccess for this specific seminar. Does not delete
-// their registration record itself, so their name/handle/history stays
-// visible in the admin list, and they can be re-approved later if needed.
+// Revokes a person's enrollment in this specific seminar. Does not delete
+// the registration record itself, so their name/handle/reason/history
+// stays visible in the admin list, and they can be re-approved later.
 export async function revokeRegistration(emailKey, seminarId) {
-  await update(ref(db, `academyRegistrations/${emailKey}`), {
-    readingsAccess: false,
-    [`seminarAccess/${seminarId}`]: false
+  await update(ref(db, `academyRegistrations/${emailKey}/${seminarId}`), {
+    enrolled: false
   });
 }
 

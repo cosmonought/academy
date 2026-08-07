@@ -96,6 +96,26 @@ a { color: inherit; text-decoration: none; }
 .nav-links a.active { color: #e8e6e0; }
 .nav-links a.nav-cta { background: #e8e6e0; color: #111; }
 .nav-links a.nav-cta:hover { background: #c8c6c0; }
+
+/* ── Seminars nav dropdown ──
+   The "Seminars" nav item is both a normal link (goes to the hub) and
+   a hover trigger for a dropdown of direct links to each seminar. */
+.nav-dropdown-item { position: relative; }
+.nav-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background: var(--bg-dark);
+  border: var(--panel-border);
+  list-style: none;
+  z-index: 150;
+}
+.nav-dropdown-item:hover .nav-dropdown-menu { display: block; }
+.nav-dropdown-menu li { border-left: none; border-top: 1px solid #1e2640; }
+.nav-dropdown-menu li:first-child { border-top: none; }
+.nav-dropdown-menu a { padding: 12px 16px; white-space: nowrap; }
 .nav-hamburger {
   display: none; background: none; border: none; cursor: pointer;
   padding: 0 14px; border-left: var(--panel-border); margin-left: auto;
@@ -106,6 +126,12 @@ a { color: inherit; text-decoration: none; }
 #navAccountItem { position: relative; }
 #navAccountItem a { white-space: nowrap; }
 #navAccountItem.signed-in a { color: #2a8a4a; }
+
+/* ── Policy items (registration/participation/etc. process notes, shared) ── */
+.policy-item { padding: 20px 0; border-bottom: 1px solid var(--rule-thin); display: grid; grid-template-columns: 120px 1fr; gap: 20px; }
+.policy-item:last-child { border-bottom: none; }
+.policy-label { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; }
+.policy-text { font-size: 14px; color: var(--ink-mid); line-height: 1.75; }
 
 /* ── Page wrapper — constrained width ── */
 .page-wrap {

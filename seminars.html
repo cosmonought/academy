@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seminars — Neta DAO Academy</title>
+  <meta name="description" content="All Neta DAO Academy seminars: flagship, current, forthcoming, and past — plus how registration and enrollment work." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+  <style>
+    .seminar-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: var(--panel-border);
+    }
+    .seminar-card:last-child { border-bottom: none; }
+    .seminar-card-left { padding: 40px 48px; border-right: var(--panel-border); }
+    .seminar-card-right { padding: 40px 48px; }
+    .seminar-status-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border: 1px solid;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .seminar-status-badge.flagship { border-color: var(--pink); color: var(--pink); }
+    .seminar-status-badge.current { border-color: #2a8a4a; color: #2a8a4a; }
+    .seminar-status-badge.forthcoming { border-color: var(--blue); color: var(--blue); }
+    .seminar-status-badge.hiatus { border-color: var(--rule-thin); color: var(--ink-dim); }
+    @media (max-width: 900px) {
+      .seminar-card { grid-template-columns: 1fr; }
+      .seminar-card-left { border-right: none; border-bottom: var(--panel-border); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="https://netadao.org" class="nav-logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
+          <rect width="40" height="40" fill="#080808"/>
+          <defs>
+            <linearGradient id="a-grad-NAV" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#C9338A"/>
+              <stop offset="35%" stop-color="#C9338A"/>
+              <stop offset="100%" stop-color="#5B8EF0"/>
+            </linearGradient>
+            <clipPath id="a-clip-NAV">
+              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
+            </clipPath>
+          </defs>
+          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
+          <g clip-path="url(#a-clip-NAV)">
+            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/>
+          </g>
+        </svg>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li class="nav-dropdown-item">
+          <a href="/seminars.html" class="active">Seminars</a>
+          <ul class="nav-dropdown-menu">
+            <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
+            <li><a href="/seminar.html">Flagship: Coining Reason</a></li>
+            <li><a href="/forthcoming.html">Forthcoming</a></li>
+            <li><a href="/seminars.html#past">Past</a></li>
+          </ul>
+        </li>
+        <li><a href="https://fork.netadao.org">Fork Journal</a></li>
+        <li id="navAccountItem"><a href="/sex-and-or-love.html#accessPanel" id="navAccountLink">Sign In</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div style="margin-top:54px;">
+    <div style="padding:56px 48px;border-bottom:var(--panel-border);">
+      <p class="section-label">Neta DAO Academy</p>
+      <h1 class="section-title">Seminars</h1>
+      <p class="section-body">Coining Reason opened with psychoanalysis as one of its recurring methods and references, but never gave it a seminar of its own. Sex, and/or Love picked up that thread and has since become its own thing. Below are all of our seminars — flagship, current, forthcoming, and past.</p>
+    </div>
+
+    <!-- Flagship: Coining Reason -->
+    <div class="seminar-card">
+      <div class="seminar-card-left">
+        <span class="seminar-status-badge flagship">Flagship · Unit II on Hiatus</span>
+        <h2 class="section-title-sm" style="font-size:28px;">Coining Reason</h2>
+        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">A Discussion Series</p>
+        <a href="/seminar.html" class="btn btn-primary">View Coining Reason →</a>
+      </div>
+      <div class="seminar-card-right">
+        <p class="section-body">Neta DAO Academy's original, ongoing discussion series — exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Organized into Units, with Unit II currently paused while Sex, and/or Love runs.</p>
+      </div>
+    </div>
+
+    <!-- Current: Sex, and/or Love -->
+    <div class="seminar-card">
+      <div class="seminar-card-left">
+        <span class="seminar-status-badge current">● Current</span>
+        <h2 class="section-title-sm" style="font-size:28px;">Sex, and/or Love</h2>
+        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">Psychoanalysis and the Science of Desire</p>
+        <a href="/sex-and-or-love.html" class="btn btn-primary">View Sex, and/or Love →</a>
+      </div>
+      <div class="seminar-card-right">
+        <p class="section-body">A deep dive into psychoanalysis as Coining Reason's chosen method for studying desire — grown well beyond its origins into a seminar of its own. Currently running, with registration and enrollment open.</p>
+      </div>
+    </div>
+
+    <!-- Forthcoming -->
+    <div class="seminar-card">
+      <div class="seminar-card-left">
+        <span class="seminar-status-badge forthcoming">Forthcoming</span>
+        <h2 class="section-title-sm" style="font-size:28px;">Sex, Monsters, and Superheroes</h2>
+        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">On the Graphic</p>
+        <a href="/forthcoming.html" class="btn btn-primary">View Forthcoming →</a>
+      </div>
+      <div class="seminar-card-right">
+        <p class="section-body">Comics and graphic novels read as sequential art, revealing both a secret history of our world and the history of a secret world. Announced, not yet open for registration.</p>
+      </div>
+    </div>
+
+    <!-- Past -->
+    <div id="past" style="border-bottom:var(--panel-border);">
+      <div class="page-wrap" style="padding-top:40px;padding-bottom:40px;">
+        <p class="section-label">Past Seminars</p>
+        <p class="section-body">No seminars have concluded yet. When one does, it will appear here.</p>
+      </div>
+    </div>
+
+    <!-- Policies (canonical — linked to from every seminar's own registration panel) -->
+    <div id="policies" style="border-bottom:var(--panel-border);">
+      <div class="page-wrap" style="padding-top:40px;padding-bottom:40px;">
+        <p class="section-label">Policies</p>
+        <p class="section-body" style="margin-bottom:24px;">These apply across all Academy seminars unless a specific seminar states otherwise.</p>
+        <div class="policy-item"><span class="policy-label">Registration</span><p class="policy-text">Registering submits your interest with your name, email, X handle, and a brief note on why you'd like to join. Registration alone does not grant access.</p></div>
+        <div class="policy-item"><span class="policy-label">Enrollment</span><p class="policy-text">To complete enrollment, DM us from your registered X handle. Once enrolled, you'll have access to readings, the Cinema screening, and speaking access during the seminar's live X Spaces discussions.</p></div>
+        <div class="policy-item"><span class="policy-label">X Spaces</span><p class="policy-text">Speaking access during the live X Spaces discussion is reserved for enrolled participants. At the host's discretion, the discussion may open to general audience Q&amp;A near the end.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
+      <div class="footer-links-cell"><ul class="footer-links">
+        <li><a href="https://netadao.org">Neta DAO ↗</a></li>
+        <li><a href="/seminars.html">Seminars</a></li>
+        <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
+        <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
+        <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p>
+      <p class="footer-copy">academy.netadao.org</p>
+    </div>
+  </footer>
+
+  <script>
+    const h = document.querySelector('.nav-hamburger');
+    const n = document.querySelector('.nav-links');
+    if (h && n) h.addEventListener('click', () => n.classList.toggle('open'));
+  </script>
+
+  <script type="module">
+    import { initNavAccountWidget } from '/js/academy-auth.js?v=11';
+    initNavAccountWidget('/sex-and-or-love.html#accessPanel');
+  </script>
+</body>
+</html>

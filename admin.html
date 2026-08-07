@@ -145,6 +145,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>X Handle</th>
+            <th>Reason for Joining</th>
             <th>Seminar</th>
             <th>Status</th>
             <th>Action</th>
@@ -176,7 +177,7 @@
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, sendMagicLink,
       getAllRegistrations, approveRegistration, revokeRegistration,
       getAllInterestSignups, ADMIN_EMAIL
-    } from '/js/academy-auth.js?v=10';
+    } from '/js/academy-auth.js?v=11';
 
     const adminSignedOut    = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
@@ -201,22 +202,32 @@
         return;
       }
 
-      const entries = Object.entries(all);
+      // Flatten the nested { emailKey: { seminarId: {...} } } tree into a
+      // flat list of [emailKey, seminarId, reg] rows for display.
+      const rows = [];
+      for (const [emailKey, seminars] of Object.entries(all)) {
+        if (!seminars || typeof seminars !== 'object') continue;
+        for (const [seminarId, reg] of Object.entries(seminars)) {
+          rows.push({ emailKey, seminarId, reg });
+        }
+      }
+
       document.getElementById('adminStatusLine').textContent =
-        `${entries.length} total registration(s) — ${entries.filter(([,r]) => isApproved(r.readingsAccess)).length} approved.`;
+        `${rows.length} total registration(s) — ${rows.filter(r => isApproved(r.reg.enrolled)).length} enrolled.`;
 
       // Most recent first
-      entries.sort((a, b) => (b[1].requestedAt || 0) - (a[1].requestedAt || 0));
+      rows.sort((a, b) => (b.reg.requestedAt || 0) - (a.reg.requestedAt || 0));
 
-      for (const [emailKey, reg] of entries) {
-        const approved = isApproved(reg.readingsAccess);
+      for (const { emailKey, seminarId, reg } of rows) {
+        const approved = isApproved(reg.enrolled);
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${escapeHtml(reg.name || '')}</td>
           <td>${escapeHtml(reg.email || '')}</td>
           <td>${escapeHtml(reg.xHandle || '')}</td>
-          <td>${escapeHtml(reg.seminarId || '')}</td>
-          <td><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Approved' : 'Pending'}</span></td>
+          <td>${escapeHtml(reg.reason || '—')}</td>
+          <td>${escapeHtml(seminarId || '')}</td>
+          <td><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Enrolled' : 'Pending'}</span></td>
           <td></td>
         `;
         const actionCell = tr.lastElementChild;
@@ -228,7 +239,7 @@
             if (!confirm(`Revoke access for ${reg.name || reg.email}? They will lose readings and screening access immediately.`)) return;
             btn.disabled = true;
             btn.textContent = 'Revoking…';
-            await revokeRegistration(emailKey, reg.seminarId);
+            await revokeRegistration(emailKey, seminarId);
             loadRegistrations();
           });
           actionCell.appendChild(btn);
@@ -239,7 +250,7 @@
           btn.addEventListener('click', async () => {
             btn.disabled = true;
             btn.textContent = 'Approving…';
-            await approveRegistration(emailKey, reg.seminarId);
+            await approveRegistration(emailKey, seminarId);
             loadRegistrations();
           });
           actionCell.appendChild(btn);

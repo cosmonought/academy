@@ -363,11 +363,17 @@
       </a>
       <ul class="nav-links">
         <li><a href="/">Home</a></li>
-        <li><a href="/current.html">Current Series</a></li>
-        <li><a href="/seminar.html" class="active">Coining Reason</a></li>
-        <li><a href="/forthcoming.html">Forthcoming</a></li>
+        <li class="nav-dropdown-item">
+          <a href="/seminars.html">Seminars</a>
+          <ul class="nav-dropdown-menu">
+            <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
+            <li><a href="/seminar.html" class="active">Flagship: Coining Reason</a></li>
+            <li><a href="/forthcoming.html">Forthcoming</a></li>
+            <li><a href="/seminars.html#past">Past</a></li>
+          </ul>
+        </li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
-        <li id="navAccountItem"><a href="/current.html#accessPanel" id="navAccountLink">Sign In</a></li>
+        <li id="navAccountItem"><a href="/sex-and-or-love.html#accessPanel" id="navAccountLink">Sign In</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
@@ -492,9 +498,7 @@
       <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
       <div class="footer-links-cell"><ul class="footer-links">
         <li><a href="https://netadao.org">Neta DAO ↗</a></li>
-        <li><a href="/current.html">Current Series</a></li>
-        <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/forthcoming.html">Forthcoming</a></li>
+        <li><a href="/seminars.html">Seminars</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
         <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
         <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li>
@@ -724,8 +728,8 @@
 
   <!-- ── Nav sign-in status ── -->
   <script type="module">
-    import { initNavAccountWidget } from '/js/academy-auth.js?v=10';
-    initNavAccountWidget('/current.html#accessPanel');
+    import { initNavAccountWidget } from '/js/academy-auth.js?v=11';
+    initNavAccountWidget('/sex-and-or-love.html#accessPanel');
   </script>
 </body>
 </html>

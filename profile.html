@@ -117,11 +117,17 @@
       </a>
       <ul class="nav-links">
         <li><a href="/">Home</a></li>
-        <li><a href="/current.html">Current Series</a></li>
-        <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/forthcoming.html">Forthcoming</a></li>
+        <li class="nav-dropdown-item">
+          <a href="/seminars.html">Seminars</a>
+          <ul class="nav-dropdown-menu">
+            <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
+            <li><a href="/seminar.html">Flagship: Coining Reason</a></li>
+            <li><a href="/forthcoming.html">Forthcoming</a></li>
+            <li><a href="/seminars.html#past">Past</a></li>
+          </ul>
+        </li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
-        <li id="navAccountItem"><a href="/current.html#accessPanel" id="navAccountLink">Sign In</a></li>
+        <li id="navAccountItem"><a href="/sex-and-or-love.html#accessPanel" id="navAccountLink">Sign In</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
@@ -131,7 +137,7 @@
 
     <div id="profileSignedOut">
       <h1 class="profile-title">Not Signed In</h1>
-      <p class="profile-note">You need to be signed in to view your profile. <a href="/current.html#accessPanel" style="color:var(--blue);">Sign in from the Current Seminar page →</a></p>
+      <p class="profile-note">You need to be signed in to view your profile. <a href="/seminars.html" style="color:var(--blue);">Browse seminars to sign in →</a></p>
     </div>
 
     <div id="profileSignedIn" class="hidden">
@@ -139,18 +145,11 @@
       <p class="profile-email" id="profileEmailLine"></p>
 
       <div id="profileNoRegistration" class="profile-card hidden">
-        <h3>No Registration Found</h3>
-        <p class="profile-note" style="margin-top:8px;">You're signed in, but we don't have a registration on file for this email. <a href="/current.html#accessPanel" style="color:var(--blue);">Register for the current seminar →</a></p>
+        <h3>No Registrations Found</h3>
+        <p class="profile-note" style="margin-top:8px;">You're signed in, but we don't have any seminar registrations on file for this email. <a href="/seminars.html" style="color:var(--blue);">Browse seminars →</a></p>
       </div>
 
-      <div id="profileRegistration" class="profile-card hidden">
-        <h3 id="profileSeminarTitle"></h3>
-        <div class="profile-field"><span class="profile-field-label">Status</span><span id="profileStatusPill"></span></div>
-        <div class="profile-field"><span class="profile-field-label">Name</span><span id="profileName"></span></div>
-        <div class="profile-field"><span class="profile-field-label">X Handle</span><span id="profileXHandle"></span></div>
-        <div class="profile-field"><span class="profile-field-label">Applied</span><span id="profileAppliedDate"></span></div>
-        <p class="profile-note" id="profilePendingNote" style="margin-top:16px;"></p>
-      </div>
+      <div id="profileRegistrationsList"></div>
 
       <button class="signout-btn" id="profileSignOutBtn">Sign Out</button>
     </div>
@@ -160,22 +159,28 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
-      initNavAccountWidget, getRegistration
-    } from '/js/academy-auth.js?v=10';
+      initNavAccountWidget, getRegistrations
+    } from '/js/academy-auth.js?v=11';
 
-    initNavAccountWidget('/current.html#accessPanel');
+    initNavAccountWidget('/seminars.html');
 
     const SEMINAR_TITLES = {
       'sex-and-or-love': 'Sex, and/or Love'
     };
 
-    const profileSignedOut     = document.getElementById('profileSignedOut');
-    const profileSignedIn      = document.getElementById('profileSignedIn');
+    const profileSignedOut      = document.getElementById('profileSignedOut');
+    const profileSignedIn       = document.getElementById('profileSignedIn');
     const profileNoRegistration = document.getElementById('profileNoRegistration');
-    const profileRegistration  = document.getElementById('profileRegistration');
+    const profileRegistrationsList = document.getElementById('profileRegistrationsList');
 
     function isApproved(val) {
       return val === true || val === 'true';
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
     }
 
     async function refreshProfile(user) {
@@ -189,30 +194,33 @@
       profileSignedIn.classList.remove('hidden');
       document.getElementById('profileEmailLine').textContent = user.email;
 
-      const reg = await getRegistration(user.email);
+      const regs = await getRegistrations(user.email);
+      profileRegistrationsList.innerHTML = '';
 
-      if (!reg) {
+      if (!regs) {
         profileNoRegistration.classList.remove('hidden');
-        profileRegistration.classList.add('hidden');
         return;
       }
 
       profileNoRegistration.classList.add('hidden');
-      profileRegistration.classList.remove('hidden');
 
-      const approved = isApproved(reg.readingsAccess);
-      document.getElementById('profileSeminarTitle').textContent = SEMINAR_TITLES[reg.seminarId] || reg.seminarId || 'Seminar';
-      document.getElementById('profileName').textContent = reg.name || '—';
-      document.getElementById('profileXHandle').textContent = reg.xHandle || '—';
-      document.getElementById('profileAppliedDate').textContent = reg.requestedAt ? new Date(reg.requestedAt).toLocaleDateString() : '—';
+      const entries = Object.entries(regs).sort((a, b) => (b[1].requestedAt || 0) - (a[1].requestedAt || 0));
 
-      const pill = document.getElementById('profileStatusPill');
-      pill.className = 'status-pill ' + (approved ? 'approved' : 'pending');
-      pill.textContent = approved ? 'Enrolled' : 'Pending Approval';
-
-      document.getElementById('profilePendingNote').textContent = approved
-        ? ''
-        : 'Your registration is submitted but not yet verified. DM @NetaDAO_Academy from your registered X handle to complete it.';
+      for (const [seminarId, reg] of entries) {
+        const approved = isApproved(reg.enrolled);
+        const card = document.createElement('div');
+        card.className = 'profile-card';
+        card.innerHTML = `
+          <h3>${escapeHtml(SEMINAR_TITLES[seminarId] || seminarId)}</h3>
+          <div class="profile-field"><span class="profile-field-label">Status</span><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Enrolled' : 'Registered — Pending Enrollment'}</span></div>
+          <div class="profile-field"><span class="profile-field-label">Name</span><span>${escapeHtml(reg.name || '—')}</span></div>
+          <div class="profile-field"><span class="profile-field-label">X Handle</span><span>${escapeHtml(reg.xHandle || '—')}</span></div>
+          <div class="profile-field"><span class="profile-field-label">Reason</span><span>${escapeHtml(reg.reason || '—')}</span></div>
+          <div class="profile-field"><span class="profile-field-label">Applied</span><span>${reg.requestedAt ? new Date(reg.requestedAt).toLocaleDateString() : '—'}</span></div>
+          ${approved ? '' : `<p class="profile-note" style="margin-top:16px;">Your registration is submitted, but enrollment is not yet complete. DM @NetaDAO_Academy from your registered X handle to finish enrolling.</p>`}
+        `;
+        profileRegistrationsList.appendChild(card);
+      }
     }
 
     (async () => {

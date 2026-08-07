@@ -13,9 +13,11 @@
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
 </head>
 <body>
+    <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
   <div class="announce-bar">
     <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
   </div>
+  -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="https://netadao.org" class="nav-logo">
@@ -41,9 +43,9 @@
         <li><a href="/" >Home</a></li>
         <li><a href="/current.html" class="active">Current Series</a></li>
         <li><a href="/seminar.html" >Coining Reason</a></li>
-        <li><a href="/cinema.html">Cinema</a></li>
         <li><a href="/forthcoming.html" >Forthcoming</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
+        <li id="navAccountItem"><a href="#accessPanel" id="navAccountLink">Sign In</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
@@ -128,7 +130,16 @@
     #accessPanel .access-status.pending { color: var(--blue); }
     #accessPanel a.access-signout { color: var(--ink-dim); font-size: 11px; text-decoration: underline; margin-left: 12px; }
     #accessPanel .access-divider { border-top: 1px solid var(--rule-thin); margin: 20px 0; padding-top: 20px; }
+    #accessPanel .toggle-link { color: var(--blue); text-decoration: underline; cursor: pointer; background: none; border: none; font-family: var(--font-mono); font-size: 12px; padding: 0; }
+    #accessPanel .toggle-link:hover { color: var(--pink); }
+    #accessPanel .fallback-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); margin-top: 14px; }
     .hidden { display: none; }
+
+    /* ── Nav account widget ── */
+    #navAccountItem { position: relative; }
+    #navAccountItem a { white-space: nowrap; }
+    #navAccountItem.signed-in a { color: #2a8a4a; }
+    #navAccountItem .nav-signout { margin-left: 8px; color: var(--ink-dim); text-decoration: underline; font-size: inherit; cursor: pointer; }
   </style>
 
   <div style="margin-top:86px;">
@@ -146,7 +157,7 @@
         </div>
         <div style="background:var(--bg-raised);border:1px solid var(--rule-thin);padding:20px 24px;margin-bottom:28px;">
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-            <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Dates</p><p style="font-size:13px;color:var(--ink);">18 February – 29 July 2026</p></div>
+            <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Dates</p><p style="font-size:13px;color:var(--ink);">18 February – 26 August 2026</p></div>
             <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Time</p><p style="font-size:13px;color:var(--ink);">12AM EST / 5AM UTC</p></div>
             <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Location</p><p style="font-size:13px;color:var(--ink);"><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">x.com/NetaDAO_Academy ↗</a></p></div>
             <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Presented by</p><p style="font-size:13px;color:var(--ink);">Neta DAO Academy</p></div>
@@ -161,63 +172,71 @@
       <div class="page-wrap" style="padding-top:40px;padding-bottom:8px;">
         <div id="accessPanel">
 
-          <!-- State: not signed in — register in one step, or sign in if already registered -->
-          <div id="stateSignedOut">
+          <!-- Register form (default view when signed out) -->
+          <div id="panelRegister">
             <h3>Seminar Access</h3>
             <p class="access-sub">Readings and the Cinema screening are reserved for registered participants. This seminar covers challenging, sometimes disturbing material — registering confirms you understand that context.</p>
-            <div class="access-row">
-              <input type="text" id="regName" placeholder="Your name" />
-            </div>
-            <div class="access-row">
-              <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" />
-            </div>
-            <div class="access-row">
-              <input type="text" id="regXHandle" placeholder="Your X handle (e.g. @yourname)" />
-            </div>
-            <div class="access-row">
-              <button id="submitRegBtn" class="btn btn-primary">Register</button>
-            </div>
+            <div class="access-row"><input type="text" id="regName" placeholder="Your name" /></div>
+            <div class="access-row"><input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" /></div>
+            <div class="access-row"><input type="text" id="regXHandle" placeholder="Your X handle (e.g. @yourname)" /></div>
+            <div class="access-row"><button id="submitRegBtn" class="btn btn-primary">Register</button></div>
             <p class="access-note" id="regStatus"></p>
-
-            <div class="access-divider">
-              <p class="access-note" style="margin-bottom:10px;">Already registered? Sign in to check your status or view unlocked materials.</p>
-              <div class="access-row">
-                <input type="email" id="signInEmail" placeholder="you@example.com" autocomplete="email" />
-                <button id="sendLinkBtn" class="btn btn-outline">Send Sign-In Link</button>
-              </div>
-              <p class="access-note" id="signInStatus"></p>
-            </div>
+            <p class="fallback-note">Already registered? <button class="toggle-link" id="showLoginBtn">Login instead →</button></p>
           </div>
 
-          <!-- State: just submitted a new registration (no sign-in needed yet) -->
+          <!-- Login form (password-based, toggled in) -->
+          <div id="panelLogin" class="hidden">
+            <h3>Login</h3>
+            <p class="access-sub">Sign in with the email and password you set up after your first approval.</p>
+            <div class="access-row"><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" /></div>
+            <div class="access-row"><input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" /></div>
+            <div class="access-row"><button id="loginBtn" class="btn btn-primary">Log In</button></div>
+            <p class="access-note" id="loginStatus"></p>
+            <p class="fallback-note">New here? <button class="toggle-link" id="showRegisterBtn">Register instead ←</button></p>
+            <p class="fallback-note">Haven't set a password yet, or trouble signing in? <button class="toggle-link" id="showMagicLinkBtn">Use email link instead</button></p>
+          </div>
+
+          <!-- Magic-link fallback (first-time sign-in, or trouble with password) -->
+          <div id="panelMagicLink" class="hidden">
+            <h3>Sign In via Email Link</h3>
+            <p class="access-sub">We'll send a one-time sign-in link — use this for your very first sign-in after approval, or if you've forgotten your password.</p>
+            <div class="access-row"><input type="email" id="signInEmail" placeholder="you@example.com" autocomplete="email" /><button id="sendLinkBtn" class="btn btn-primary">Send Sign-In Link</button></div>
+            <p class="access-note" id="signInStatus"></p>
+            <p class="fallback-note"><button class="toggle-link" id="backToLoginBtn">← Back to login</button></p>
+          </div>
+
+          <!-- Just submitted a new registration -->
           <div id="stateJustRegistered" class="hidden">
             <h3>Registration Submitted</h3>
-            <p class="access-sub access-status pending">Thanks, <span id="justRegName"></span> — your registration is in. Please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="justRegHandle"></strong> to verify. Once approved, come back and sign in below with the email you registered with — no need to fill out the form again.</p>
-            <div class="access-row">
-              <input type="email" id="signInEmail2" placeholder="you@example.com" autocomplete="email" />
-              <button id="sendLinkBtn2" class="btn btn-primary">Send Sign-In Link</button>
-            </div>
-            <p class="access-note" id="signInStatus2"></p>
+            <p class="access-sub access-status pending">Thanks, <span id="justRegName"></span> — your registration is in. Please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="justRegHandle"></strong> to verify. Once approved, come back and use the Login link in the nav above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
           </div>
 
-          <!-- State: signed in, but no registration found for this email -->
+          <!-- Prompt to set a password, shown right after a first-time magic-link sign-in -->
+          <div id="panelSetPassword" class="hidden">
+            <h3>Set a Password</h3>
+            <p class="access-sub">You're signed in. Set a password now so you won't need an email link next time — just come back and log in directly.</p>
+            <div class="access-row"><input type="password" id="newPassword" placeholder="New password" autocomplete="new-password" /></div>
+            <div class="access-row"><input type="password" id="newPasswordConfirm" placeholder="Confirm password" autocomplete="new-password" /></div>
+            <div class="access-row"><button id="setPasswordBtn" class="btn btn-primary">Set Password</button> <button id="skipPasswordBtn" class="btn btn-outline">Skip for now</button></div>
+            <p class="access-note" id="setPasswordStatus"></p>
+          </div>
+
+          <!-- Signed in, no registration found -->
           <div id="stateNeedsRegistration" class="hidden">
             <h3>No Registration Found</h3>
             <p class="access-sub">You're signed in as <strong id="signedInEmail"></strong>, but we don't have a registration on file for this email. <a href="#" id="backToRegisterLink" style="color:var(--blue);">Register now →</a></p>
           </div>
 
-          <!-- State: registered, awaiting approval -->
+          <!-- Registered, awaiting approval -->
           <div id="statePending" class="hidden">
             <h3>Registration Pending</h3>
             <p class="access-sub access-status pending">Thanks, <span id="pendingName"></span> — your registration is in. Please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="pendingHandle"></strong> to verify. Access unlocks once confirmed.</p>
             <button id="recheckBtn" class="btn btn-outline">Check Status Again</button>
-            <a href="#" id="signOutLinkPending" class="access-signout">Sign out</a>
           </div>
 
-          <!-- State: approved -->
+          <!-- Approved — kept minimal since account status now lives in the nav -->
           <div id="stateApproved" class="hidden">
-            <p class="access-status granted">✓ Signed in as <span id="approvedEmail"></span> — readings unlocked below.</p>
-            <a href="#" id="signOutLinkApproved" class="access-signout">Sign out</a>
+            <p class="access-status granted">✓ Readings unlocked below.</p>
           </div>
 
         </div>
@@ -238,13 +257,13 @@
 
         <div class="session-block"><div class="session-header"><span class="session-num">Session 3</span><span class="session-title">Lacanian Sexuality</span><span class="session-date">27 May 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Tim Dean, "Beyond the Couch," "How to Read Lacan," and "Bodies That Mutter," from <em>Beyond Sexuality</em> — <span class="reading-locked" data-key="session3.dean">🔒 Register to unlock</span></li><li>Jacques Lacan, "The Signification of the Phallus," from <em>Écrits</em> — <span class="reading-locked" data-key="session3.lacan">🔒 Register to unlock</span></li></ul></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 4</span><span class="session-title">Traumatophilia</span><span class="session-date">Screening 22 Jul · Discussion 29 Jul 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Sigmund Freud, <em>Beyond the Pleasure Principle</em> — <span class="reading-locked" data-key="session4.freud">🔒 Register to unlock</span></li><li>Avgi Saketapoulou, "To Suffer Pleasure: Limit Experience and Transgression" and "Toward a Theory of Traumatophilia," from <em>Sexuality Beyond Consent: Risk, Race, Traumatophilia</em> — <span class="reading-locked" data-key="session4.saketapoulou">🔒 Register to unlock</span></li><li>Film: <em>Dans Ma Peau</em>, dir. Marina de Van (screening 22 July 2026)</li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 4</span><span class="session-title">Traumatophilia</span><span class="session-date">Screening 22 Jul · Discussion 29 Jul 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Sigmund Freud, <em>Beyond the Pleasure Principle</em> — <span class="reading-locked" data-key="session4.freud">🔒 Register to unlock</span></li><li>Avgi Saketapoulou, "To Suffer Pleasure: Limit Experience and Transgression" and "Toward a Theory of Traumatophilia," from <em>Sexuality Beyond Consent: Risk, Race, Traumatophilia</em> — <span class="reading-locked" data-key="session4.saketapoulou">🔒 Register to unlock</span></li><li>Film: <em>Dans Ma Peau</em>, dir. Marina de Van (screening 22 July 2026) — <a href="/cinema.html" style="color:var(--blue);">Stream here →</a></li></ul></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 5</span><span class="session-title">Feminine Sexuality</span><span class="session-date">Screening 5 Aug · Discussion 12 Aug 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Sigmund Freud, "Femininity," from <em>New Introductory Lectures on Psycho-Analysis</em> — <span class="reading-locked" data-key="session5.freud">🔒 Register to unlock</span></li><li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em> — <span class="reading-locked" data-key="session5.malabou">🔒 Register to unlock</span></li><li>Film: <em>À ma sœur!</em>, dir. Catherine Breillat (screening 5 August 2026, 10pm EST / 7pm PST)</li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 5</span><span class="session-title">Feminine Sexuality</span><span class="session-date">Screening 5 Aug · Discussion 12 Aug 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Sigmund Freud, "Femininity," from <em>New Introductory Lectures on Psycho-Analysis</em> — <span class="reading-locked" data-key="session5.freud">🔒 Register to unlock</span></li><li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em> — <span class="reading-locked" data-key="session5.malabou">🔒 Register to unlock</span></li><li>Film: <em>À ma sœur!</em>, dir. Catherine Breillat (screening 5 August 2026, 10pm EST / 7pm PST) — <a href="/cinema.html" style="color:var(--blue);">Stream here →</a></li></ul></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 6</span><span class="session-title">The Measure of Love</span><span class="session-date">Upcoming</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Lauren Berlant, <em>Desire/Love</em></li><li>Alain Badiou, <em>In Praise of Love</em></li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 6</span><span class="session-title">The Measure of Love</span><span class="session-date">Screening 19 Aug · Discussion 26 Aug 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Lauren Berlant, <em>Desire/Love</em></li><li>Alain Badiou, <em>In Praise of Love</em></li><li>Film: <em>The Cook, the Thief, His Wife &amp; Her Lover</em>, dir. Peter Greenaway (screening 19 August 2026) — <a href="/cinema.html" style="color:var(--blue);">Stream here →</a></li></ul></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 7</span><span class="session-title">The Ends of Sex</span><span class="session-date">Upcoming</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Jean-Luc Nancy and Irving Goh, <em>The Deconstruction of Sex</em></li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 7</span><span class="session-title">The Ends of Sex</span><span class="session-date">Upcoming</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Joan Copjec, "Sex and the Euthanasia of Reason," from <em>Read My Desire: Lacan Against the Historicists</em></li><li>Alenka Zupančič, <em>What IS Sex?</em></li></ul></div>
       </div>
     </div>
   </div>
@@ -282,20 +301,50 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
-      sendMagicLink, getRegistration, submitRegistration, getSeminarReadings
-    } from '/js/academy-auth.js?v=5';
+      sendMagicLink, signInWithPassword, setPasswordForCurrentUser,
+      getRegistration, submitRegistration, getSeminarReadings
+    } from '/js/academy-auth.js?v=6';
 
     const CURRENT_SEMINAR_ID = 'sex-and-or-love';
 
-    const stateSignedOut         = document.getElementById('stateSignedOut');
+    const panelRegister          = document.getElementById('panelRegister');
+    const panelLogin             = document.getElementById('panelLogin');
+    const panelMagicLink         = document.getElementById('panelMagicLink');
     const stateJustRegistered    = document.getElementById('stateJustRegistered');
+    const panelSetPassword       = document.getElementById('panelSetPassword');
     const stateNeedsRegistration = document.getElementById('stateNeedsRegistration');
     const statePending           = document.getElementById('statePending');
     const stateApproved          = document.getElementById('stateApproved');
+    const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, panelSetPassword, stateNeedsRegistration, statePending, stateApproved];
 
     function showState(el) {
-      [stateSignedOut, stateJustRegistered, stateNeedsRegistration, statePending, stateApproved].forEach(s => s.classList.add('hidden'));
+      ALL_PANELS.forEach(s => s.classList.add('hidden'));
       el.classList.remove('hidden');
+    }
+
+    // ── Nav account widget ──
+    const navAccountItem = document.getElementById('navAccountItem');
+    const navAccountLink = document.getElementById('navAccountLink');
+    function updateNavAccount(user) {
+      if (user && user.email) {
+        navAccountItem.classList.add('signed-in');
+        navAccountLink.textContent = `Signed in: ${user.email}`;
+        navAccountLink.removeAttribute('href');
+        if (!document.getElementById('navSignOutLink')) {
+          const btn = document.createElement('button');
+          btn.id = 'navSignOutLink';
+          btn.className = 'nav-signout';
+          btn.textContent = 'Sign out';
+          btn.addEventListener('click', () => signOut(auth));
+          navAccountItem.appendChild(btn);
+        }
+      } else {
+        navAccountItem.classList.remove('signed-in');
+        navAccountLink.textContent = 'Sign In';
+        navAccountLink.setAttribute('href', '#accessPanel');
+        const existing = document.getElementById('navSignOutLink');
+        if (existing) existing.remove();
+      }
     }
 
     async function unlockReadings() {
@@ -305,7 +354,7 @@
         return;
       }
       document.querySelectorAll('.reading-locked').forEach(span => {
-        const key = span.getAttribute('data-key'); // e.g. "session1.freud"
+        const key = span.getAttribute('data-key');
         const [session, item] = key.split('.');
         const url = readings[session] && readings[session][item];
         if (url) {
@@ -319,26 +368,34 @@
       });
     }
 
-    // Accepts boolean true OR the string "true" — guards against values
-    // that got typed into the Firebase console without switching the
-    // field type to Boolean.
     function isApproved(val) {
       return val === true || val === 'true';
     }
 
+    let authInitialized = false;
+    let justCompletedMagicLink = false;
+
     async function refreshAccessState(user) {
-      if (!user) { showState(stateSignedOut); return; }
+      updateNavAccount(user);
+
+      if (!user) {
+        if (!authInitialized) { showState(panelRegister); authInitialized = true; }
+        return;
+      }
+      authInitialized = true;
 
       if (!user.email) {
-        // Transitional auth state (e.g. mid magic-link exchange) — the
-        // email hasn't loaded yet. Don't show anything broken; a follow-up
-        // onAuthStateChanged call with the full user object will arrive shortly.
         console.log('Auth state fired without an email yet — waiting for the next update.');
         return;
       }
 
+      if (justCompletedMagicLink) {
+        justCompletedMagicLink = false;
+        showState(panelSetPassword);
+        return;
+      }
+
       const reg = await getRegistration(user.email);
-      console.log('Registration record for', user.email, ':', reg);
 
       if (!reg) {
         document.getElementById('signedInEmail').textContent = user.email || '(no email found on this session — try signing in again)';
@@ -347,7 +404,6 @@
       }
 
       if (isApproved(reg.readingsAccess)) {
-        document.getElementById('approvedEmail').textContent = user.email;
         showState(stateApproved);
         unlockReadings();
         return;
@@ -359,7 +415,8 @@
     }
 
     (async () => {
-      await completeSignInIfNeeded();
+      const result = await completeSignInIfNeeded();
+      justCompletedMagicLink = (result === 'magic-link');
       onAuthStateChanged(auth, (user) => { refreshAccessState(user); });
     })();
 
@@ -381,37 +438,75 @@
       }
     });
 
-    // ── Sign-in (three separate buttons across different states, same logic) ──
-    async function handleSendLink(emailInputId, statusId) {
-      const email = document.getElementById(emailInputId).value.trim();
-      const status = document.getElementById(statusId);
+    // ── Password login ──
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const status = document.getElementById('loginStatus');
+      if (!email || !password) { status.textContent = 'Enter both email and password.'; return; }
+      try {
+        await signInWithPassword(email, password);
+        status.textContent = '';
+      } catch (err) {
+        console.error(err);
+        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+          status.textContent = 'Incorrect password. Try again, or use the email link option below.';
+        } else if (err.code === 'auth/user-not-found') {
+          status.textContent = "No account found for that email. Try registering, or use the email link if you're already approved.";
+        } else {
+          status.textContent = 'Something went wrong signing in. Try again.';
+        }
+      }
+    });
+
+    // ── Magic-link fallback ──
+    document.getElementById('sendLinkBtn').addEventListener('click', async () => {
+      const email = document.getElementById('signInEmail').value.trim();
+      const status = document.getElementById('signInStatus');
       if (!email) { status.textContent = 'Enter an email address first.'; return; }
       try {
         await sendMagicLink(email);
         status.textContent = 'Check your inbox for a sign-in link — if you don\'t see it within a minute or two, check your spam/junk folder.';
       } catch (err) {
         console.error(err);
-        status.textContent = 'Something went wrong sending that link. Try again in a moment.';
+        status.textContent = err.code === 'auth/quota-exceeded'
+          ? 'Too many sign-in emails sent today — please try again tomorrow, or contact us directly.'
+          : 'Something went wrong sending that link. Try again in a moment.';
       }
-    }
-    document.getElementById('sendLinkBtn').addEventListener('click', () => handleSendLink('signInEmail', 'signInStatus'));
-    document.getElementById('sendLinkBtn2').addEventListener('click', () => handleSendLink('signInEmail2', 'signInStatus2'));
-
-    document.getElementById('backToRegisterLink').addEventListener('click', (e) => {
-      e.preventDefault();
-      showState(stateSignedOut);
     });
 
-    document.getElementById('recheckBtn').addEventListener('click', () => {
+    // ── Set-password prompt (after first magic-link sign-in) ──
+    document.getElementById('setPasswordBtn').addEventListener('click', async () => {
+      const pw = document.getElementById('newPassword').value;
+      const pwConfirm = document.getElementById('newPasswordConfirm').value;
+      const status = document.getElementById('setPasswordStatus');
+      if (!pw || pw.length < 6) { status.textContent = 'Password must be at least 6 characters.'; return; }
+      if (pw !== pwConfirm) { status.textContent = 'Passwords do not match.'; return; }
+      try {
+        await setPasswordForCurrentUser(pw);
+        status.textContent = 'Password set!';
+        refreshAccessState(auth.currentUser);
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Something went wrong setting your password. Try again.';
+      }
+    });
+    document.getElementById('skipPasswordBtn').addEventListener('click', () => {
       refreshAccessState(auth.currentUser);
     });
 
-    function doSignOut(e) {
+    // ── Toggle links between panels ──
+    document.getElementById('showLoginBtn').addEventListener('click', () => showState(panelLogin));
+    document.getElementById('showRegisterBtn').addEventListener('click', () => showState(panelRegister));
+    document.getElementById('showMagicLinkBtn').addEventListener('click', () => showState(panelMagicLink));
+    document.getElementById('backToLoginBtn').addEventListener('click', () => showState(panelLogin));
+    document.getElementById('backToRegisterLink').addEventListener('click', (e) => {
       e.preventDefault();
-      signOut(auth);
-    }
-    document.getElementById('signOutLinkPending').addEventListener('click', doSignOut);
-    document.getElementById('signOutLinkApproved').addEventListener('click', doSignOut);
+      showState(panelRegister);
+    });
+    document.getElementById('recheckBtn').addEventListener('click', () => {
+      refreshAccessState(auth.currentUser);
+    });
   </script>
 </body>
 </html>

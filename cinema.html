@@ -417,13 +417,21 @@
       text-align: center;
     }
     .chat-disabled-banner.visible { display: block; }
+
+    /* ── Nav account widget ── */
+    #navAccountItem { position: relative; }
+    #navAccountItem a { white-space: nowrap; }
+    #navAccountItem.signed-in a { color: #2a8a4a; }
+    #navAccountItem .nav-signout { margin-left: 8px; color: var(--ink-dim); text-decoration: underline; font-size: inherit; cursor: pointer; background:none; border:none; font-family: var(--font-mono); }
   </style>
 </head>
 <body>
 
+    <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
   <div class="announce-bar">
     <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
   </div>
+  -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="/" class="nav-logo">
@@ -449,9 +457,9 @@
         <li><a href="/">Home</a></li>
         <li><a href="/current.html">Current Series</a></li>
         <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/cinema.html" class="active">Cinema</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
+        <li id="navAccountItem"><a href="#cinemaAccessGate" id="navAccountLink">Sign In</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
@@ -466,15 +474,30 @@
 
     <!-- Seminar access gate -->
     <div id="cinemaAccessGate">
-      <div id="cinemaStateSignedOut">
-        <h3>Access Required</h3>
-        <p class="gate-sub">This screening is reserved for participants registered in the current seminar. Enter your email to sign in — no password needed.</p>
+      <div id="cinemaStateLogin">
+        <h3>Login Required</h3>
+        <p class="gate-sub">This screening is reserved for registered participants. Log in with your email and password.</p>
+        <div class="gate-row">
+          <input type="email" id="cinemaLoginEmail" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="gate-row">
+          <input type="password" id="cinemaLoginPassword" placeholder="Password" autocomplete="current-password" />
+          <button id="cinemaLoginBtn">Log In</button>
+        </div>
+        <p class="gate-status" id="cinemaLoginStatus"></p>
+        <p class="gate-note">Not registered yet? <a href="/current.html#accessPanel">Register for the current seminar →</a></p>
+        <p class="gate-note">First time signing in, or forgot your password? <a href="#" id="cinemaShowMagicLink">Use email link instead →</a></p>
+      </div>
+
+      <div id="cinemaStateMagicLink" class="hidden">
+        <h3>Sign In via Email Link</h3>
+        <p class="gate-sub">We'll send a one-time sign-in link to your email.</p>
         <div class="gate-row">
           <input type="email" id="cinemaSignInEmail" placeholder="you@example.com" autocomplete="email" />
           <button id="cinemaSendLinkBtn">Send Sign-In Link</button>
         </div>
         <p class="gate-status" id="cinemaSignInStatus"></p>
-        <p class="gate-note">Not registered yet? <a href="/current.html#accessPanel">Register for the current seminar →</a></p>
+        <p class="gate-note"><a href="#" id="cinemaBackToLogin">← Back to login</a></p>
       </div>
 
       <div id="cinemaStateNoAccess" class="hidden">
@@ -986,19 +1009,20 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, completeSignInIfNeeded,
-      sendMagicLink, getRegistration
-    } from '/js/academy-auth.js?v=5';
+      sendMagicLink, signInWithPassword, signOut, getRegistration
+    } from '/js/academy-auth.js?v=6';
 
     const CURRENT_SEMINAR_ID = 'sex-and-or-love';
 
-    const gateSignedOut = document.getElementById('cinemaStateSignedOut');
-    const gateNoAccess  = document.getElementById('cinemaStateNoAccess');
-    const gatePending   = document.getElementById('cinemaStatePending');
-    const accessGate    = document.getElementById('cinemaAccessGate');
-    const gatedContent  = document.getElementById('gatedCinemaContent');
+    const gateLogin      = document.getElementById('cinemaStateLogin');
+    const gateMagicLink  = document.getElementById('cinemaStateMagicLink');
+    const gateNoAccess   = document.getElementById('cinemaStateNoAccess');
+    const gatePending    = document.getElementById('cinemaStatePending');
+    const accessGate     = document.getElementById('cinemaAccessGate');
+    const gatedContent   = document.getElementById('gatedCinemaContent');
 
     function showGateState(el) {
-      [gateSignedOut, gateNoAccess, gatePending].forEach(s => s.classList.add('hidden'));
+      [gateLogin, gateMagicLink, gateNoAccess, gatePending].forEach(s => s.classList.add('hidden'));
       if (el) el.classList.remove('hidden');
       accessGate.classList.remove('hidden');
       gatedContent.classList.add('hidden');
@@ -1009,18 +1033,42 @@
       gatedContent.classList.remove('hidden');
     }
 
+    // ── Nav account widget ──
+    const navAccountItem = document.getElementById('navAccountItem');
+    const navAccountLink = document.getElementById('navAccountLink');
+    function updateNavAccount(user) {
+      if (user && user.email) {
+        navAccountItem.classList.add('signed-in');
+        navAccountLink.textContent = `Signed in: ${user.email}`;
+        navAccountLink.removeAttribute('href');
+        if (!document.getElementById('navSignOutLink')) {
+          const btn = document.createElement('button');
+          btn.id = 'navSignOutLink';
+          btn.className = 'nav-signout';
+          btn.textContent = 'Sign out';
+          btn.addEventListener('click', () => signOut(auth));
+          navAccountItem.appendChild(btn);
+        }
+      } else {
+        navAccountItem.classList.remove('signed-in');
+        navAccountLink.textContent = 'Sign In';
+        navAccountLink.setAttribute('href', '#cinemaAccessGate');
+        const existing = document.getElementById('navSignOutLink');
+        if (existing) existing.remove();
+      }
+    }
+
     async function refreshCinemaAccess(user) {
-      if (!user) { showGateState(gateSignedOut); return; }
+      updateNavAccount(user);
+
+      if (!user) { showGateState(gateLogin); return; }
 
       if (!user.email) {
-        // Transitional auth state — email hasn't loaded yet. Wait for the
-        // next onAuthStateChanged call rather than showing anything broken.
         console.log('Auth state fired without an email yet — waiting for the next update.');
         return;
       }
 
       const reg = await getRegistration(user.email);
-      console.log('Registration record for', user.email, ':', reg);
 
       const seminarOk = reg && reg.seminarAccess &&
         (reg.seminarAccess[CURRENT_SEMINAR_ID] === true || reg.seminarAccess[CURRENT_SEMINAR_ID] === 'true');
@@ -1032,8 +1080,6 @@
 
       if (reg) {
         document.getElementById('cinemaEmailNoAccess').textContent = user.email;
-        // If they registered for THIS seminar but aren't approved yet, show pending;
-        // otherwise show "not registered for this seminar"
         if (reg.seminarId === CURRENT_SEMINAR_ID) {
           showGateState(gatePending);
         } else {
@@ -1051,6 +1097,24 @@
       onAuthStateChanged(auth, (user) => { refreshCinemaAccess(user); });
     })();
 
+    document.getElementById('cinemaLoginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('cinemaLoginEmail').value.trim();
+      const password = document.getElementById('cinemaLoginPassword').value;
+      const status = document.getElementById('cinemaLoginStatus');
+      if (!email || !password) { status.textContent = 'Enter both email and password.'; return; }
+      try {
+        await signInWithPassword(email, password);
+        status.textContent = '';
+      } catch (err) {
+        console.error(err);
+        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+          status.textContent = 'Incorrect password. Try the email link option below.';
+        } else {
+          status.textContent = 'Something went wrong signing in. Try again, or use the email link option below.';
+        }
+      }
+    });
+
     document.getElementById('cinemaSendLinkBtn').addEventListener('click', async () => {
       const email = document.getElementById('cinemaSignInEmail').value.trim();
       const status = document.getElementById('cinemaSignInStatus');
@@ -1061,8 +1125,19 @@
         status.classList.add('granted');
       } catch (err) {
         console.error(err);
-        status.textContent = 'Something went wrong. Try again shortly.';
+        status.textContent = err.code === 'auth/quota-exceeded'
+          ? 'Too many sign-in emails sent today — please try again tomorrow.'
+          : 'Something went wrong. Try again shortly.';
       }
+    });
+
+    document.getElementById('cinemaShowMagicLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      showGateState(gateMagicLink);
+    });
+    document.getElementById('cinemaBackToLogin').addEventListener('click', (e) => {
+      e.preventDefault();
+      showGateState(gateLogin);
     });
 
     document.getElementById('cinemaRecheckBtn').addEventListener('click', () => {

@@ -5,6 +5,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 import {
   getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
+  signInWithEmailAndPassword, linkWithCredential, EmailAuthProvider, sendPasswordResetEmail,
   onAuthStateChanged as _onAuthStateChanged, signOut as _signOut
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import {
@@ -53,7 +54,9 @@ export async function sendMagicLink(email) {
 }
 
 // Call this once on every page load. If the URL is a sign-in link,
-// it completes sign-in and cleans the URL.
+// it completes sign-in and cleans the URL. Returns 'magic-link' if a
+// magic-link sign-in was just completed (useful for triggering the
+// "set a password" prompt), or false if this wasn't a sign-in link.
 export async function completeSignInIfNeeded() {
   if (isSignInWithEmailLink(auth, window.location.href)) {
     let email = window.localStorage.getItem('academyEmailForSignIn');
@@ -64,15 +67,37 @@ export async function completeSignInIfNeeded() {
       try {
         await signInWithEmailLink(auth, email, window.location.href);
         window.localStorage.removeItem('academyEmailForSignIn');
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return 'magic-link';
       } catch (err) {
         console.error('Sign-in link error:', err);
         alert('That sign-in link is invalid or expired. Please request a new one.');
       }
     }
     window.history.replaceState({}, document.title, window.location.pathname);
-    return true;
+    return false;
   }
   return false;
+}
+
+// ── Password sign-in (Option C: set once after first magic-link use) ──
+
+export async function signInWithPassword(email, password) {
+  return signInWithEmailAndPassword(auth, email, password);
+}
+
+// Attaches a password to the CURRENTLY signed-in user's account (must
+// already be authenticated, e.g. via a fresh magic-link sign-in). After
+// this, they can sign in with email + password going forward instead of
+// requesting a new magic link every time.
+export async function setPasswordForCurrentUser(password) {
+  if (!auth.currentUser || !auth.currentUser.email) throw new Error('No signed-in user to attach a password to.');
+  const credential = EmailAuthProvider.credential(auth.currentUser.email, password);
+  await linkWithCredential(auth.currentUser, credential);
+}
+
+export async function sendPasswordReset(email) {
+  await sendPasswordResetEmail(auth, email);
 }
 
 // ── Registration + entitlement lookups ──

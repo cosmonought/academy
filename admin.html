@@ -89,6 +89,18 @@
     }
     .approve-btn:hover { background: #333; }
     .approve-btn:disabled { background: #ccc; cursor: default; }
+    .revoke-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      background: transparent;
+      color: #a04848;
+      border: 1px solid #a04848;
+      cursor: pointer;
+    }
+    .revoke-btn:hover { background: rgba(160,72,72,0.1); }
+    .revoke-btn:disabled { color: #ccc; border-color: #ccc; cursor: default; }
     .hidden { display: none; }
   </style>
 </head>
@@ -146,8 +158,8 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, sendMagicLink,
-      getAllRegistrations, approveRegistration, ADMIN_EMAIL
-    } from '/js/academy-auth.js?v=5';
+      getAllRegistrations, approveRegistration, revokeRegistration, ADMIN_EMAIL
+    } from '/js/academy-auth.js?v=6';
 
     const adminSignedOut    = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
@@ -192,7 +204,17 @@
         `;
         const actionCell = tr.lastElementChild;
         if (approved) {
-          actionCell.textContent = '—';
+          const btn = document.createElement('button');
+          btn.className = 'revoke-btn';
+          btn.textContent = 'Revoke';
+          btn.addEventListener('click', async () => {
+            if (!confirm(`Revoke access for ${reg.name || reg.email}? They will lose readings and screening access immediately.`)) return;
+            btn.disabled = true;
+            btn.textContent = 'Revoking…';
+            await revokeRegistration(emailKey, reg.seminarId);
+            loadRegistrations();
+          });
+          actionCell.appendChild(btn);
         } else {
           const btn = document.createElement('button');
           btn.className = 'approve-btn';

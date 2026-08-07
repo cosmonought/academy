@@ -108,37 +108,11 @@ export async function submitRegistration(email, name, xHandle, seminarId) {
 // Fetches the actual reading URLs for a seminar — only succeeds if
 // the signed-in user's registration record has readingsAccess === true.
 export async function getSeminarReadings(seminarId) {
-  const currentEmail = auth.currentUser ? auth.currentUser.email : null;
-  const path = `seminarReadings/${seminarId}`;
-  console.log('Attempting to fetch seminarReadings. Current auth email:', currentEmail, '| Fetch path:', path, '| seminarId param received:', JSON.stringify(seminarId));
-
-  // DIAGNOSTIC: fetch the PARENT node and list the actual keys that exist,
-  // so we can compare against the seminarId string being requested — this
-  // catches invisible character mismatches (e.g. a different dash character)
-  // that look identical visually but don't match programmatically.
   try {
-    const parentSnap = await get(ref(db, 'seminarReadings'));
-    if (parentSnap.exists()) {
-      const actualKeys = Object.keys(parentSnap.val());
-      console.log('DIAGNOSTIC — actual keys under seminarReadings:', actualKeys);
-      actualKeys.forEach(k => {
-        console.log(`  Key "${k}" char codes:`, Array.from(k).map(c => c.charCodeAt(0)).join(','));
-      });
-      console.log('  Requested seminarId char codes:', Array.from(seminarId).map(c => c.charCodeAt(0)).join(','));
-    } else {
-      console.log('DIAGNOSTIC — seminarReadings parent node itself does not exist or is empty.');
-    }
-  } catch (diagErr) {
-    console.error('DIAGNOSTIC fetch of seminarReadings parent FAILED:', diagErr);
-  }
-
-  try {
-    const snap = await get(ref(db, path));
-    console.log('Raw snapshot result — key:', snap.key, '| exists():', snap.exists(), '| val():', snap.val(), '| ref URL:', snap.ref.toString());
+    const snap = await get(ref(db, `seminarReadings/${seminarId}`));
     return snap.exists() ? snap.val() : null;
   } catch (err) {
-    console.error('seminarReadings fetch FAILED. Full error:', err);
-    console.error('Error code:', err.code, '| Error message:', err.message);
+    console.error('seminarReadings fetch failed:', err.code, err.message);
     return null;
   }
 }
@@ -159,5 +133,16 @@ export async function approveRegistration(emailKey, seminarId) {
   await update(ref(db, `academyRegistrations/${emailKey}`), {
     readingsAccess: true,
     [`seminarAccess/${seminarId}`]: true
+  });
+}
+
+// Revokes a person's access entirely — sets readingsAccess to false and
+// clears their seminarAccess for this specific seminar. Does not delete
+// their registration record itself, so their name/handle/history stays
+// visible in the admin list, and they can be re-approved later if needed.
+export async function revokeRegistration(emailKey, seminarId) {
+  await update(ref(db, `academyRegistrations/${emailKey}`), {
+    readingsAccess: false,
+    [`seminarAccess/${seminarId}`]: false
   });
 }

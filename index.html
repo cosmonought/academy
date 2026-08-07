@@ -382,7 +382,6 @@
         <li><a href="/seminar.html">Coining Reason</a></li>
         <li><a href="/cinema.html">Cinema</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
-        <li><a href="/register.html">Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
@@ -471,7 +470,7 @@
         <p class="section-body" style="margin-bottom:20px;">Analyzing sexual desire through psychoanalysis — placing questioning, trust and doubt, obsession and uncertainty at the center of existence. Topics include paid sex, consensual non-consent, the biology of sex, female orgasm, self-harm, self-pleasure, the ungovernable, and the futurity of romance.</p>
         <div style="display:flex;gap:0;flex-wrap:wrap;">
           <a href="/current.html" class="btn btn-primary">Full schedule &amp; readings →</a>
-          <a href="/register.html" class="btn btn-outline" style="border-left:none;">Register</a>
+          <a href="/current.html#accessPanel" class="btn btn-outline" style="border-left:none;">Register</a>
         </div>
       </div>
 
@@ -509,19 +508,59 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
+      <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p>
+
+        <a href="#" id="footerSignupToggle" style="display:inline-block;margin-top:16px;font-family:var(--font-mono);font-size:11px;color:var(--blue);text-decoration:underline;text-underline-offset:2px;">Stay updated / propose a guest lecture →</a>
+
+        <div id="footerSignupForm" class="hidden" style="margin-top:16px;max-width:360px;display:flex;flex-direction:column;gap:8px;">
+          <input type="text" id="fsName" placeholder="Name" style="background:var(--bg);border:1px solid var(--rule-thin);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--ink);outline:none;" />
+          <input type="email" id="fsEmail" placeholder="Email" style="background:var(--bg);border:1px solid var(--rule-thin);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--ink);outline:none;" />
+          <label style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;color:var(--ink-mid);cursor:pointer;">
+            <input type="checkbox" id="fsProposeCheckbox" />
+            Propose a guest lecture
+          </label>
+          <textarea id="fsProposal" class="hidden" placeholder="Briefly describe your proposed topic and background…" rows="3" style="background:var(--bg);border:1px solid var(--rule-thin);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--ink);outline:none;resize:vertical;"></textarea>
+          <button id="fsSubmit" style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;text-transform:uppercase;padding:10px 16px;background:var(--ink);color:var(--bg);border:none;cursor:pointer;align-self:flex-start;">Submit</button>
+        </div>
+      </div>
       <div class="footer-links-cell"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li>
         <li><a href="/current.html">Current Series</a></li>
         <li><a href="/seminar.html">Coining Reason</a></li>
         <li><a href="/cinema.html">Cinema</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
-        <li><a href="/register.html">Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
         <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
         <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li></ul></div>
     </div>
     <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p></div>
   </footer>
+
+  <script>
+    const footerSignupToggle = document.getElementById('footerSignupToggle');
+    const footerSignupForm   = document.getElementById('footerSignupForm');
+    const fsProposeCheckbox  = document.getElementById('fsProposeCheckbox');
+    const fsProposal         = document.getElementById('fsProposal');
+
+    footerSignupToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      footerSignupForm.classList.toggle('hidden');
+    });
+    fsProposeCheckbox.addEventListener('change', () => {
+      fsProposal.classList.toggle('hidden', !fsProposeCheckbox.checked);
+    });
+    document.getElementById('fsSubmit').addEventListener('click', () => {
+      const name = document.getElementById('fsName').value.trim();
+      const email = document.getElementById('fsEmail').value.trim();
+      const proposing = fsProposeCheckbox.checked;
+      const proposal = fsProposal.value.trim();
+      if (!email) { alert('Please enter an email address.'); return; }
+      let body = `Name: ${name}\nEmail: ${email}\n`;
+      if (proposing) body += `\nGuest lecture proposal:\n${proposal}`;
+      else body += `\nJust signing up for updates.`;
+      const subject = proposing ? 'Guest Lecture Proposal' : 'Academy Updates Signup';
+      window.location.href = `mailto:academy@netadao.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+  </script>
 
   <script>
   // ── Scroll reveal ──

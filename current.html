@@ -43,7 +43,6 @@
         <li><a href="/seminar.html" >Coining Reason</a></li>
         <li><a href="/cinema.html">Cinema</a></li>
         <li><a href="/forthcoming.html" >Forthcoming</a></li>
-        <li><a href="/register.html" >Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
@@ -74,6 +73,61 @@
     .reading-list a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
     .reading-list a:hover { color: var(--pink); }
     .reading-list .optional { color: var(--ink-dim); font-style: italic; }
+    .reading-locked { color: var(--ink-dim); font-size: 12px; font-style: italic; cursor: default; }
+
+    /* ── Seminar access panel ── */
+    #accessPanel {
+      background: var(--bg-raised);
+      border: 1px solid var(--rule-thin);
+      padding: 24px 28px;
+      margin-bottom: 28px;
+    }
+    #accessPanel h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    #accessPanel p.access-sub {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    #accessPanel .access-row {
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    #accessPanel input {
+      flex: 1;
+      min-width: 200px;
+      background: var(--bg);
+      border: 1px solid var(--rule-thin);
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+    }
+    #accessPanel input:focus { border-color: var(--pink); }
+    #accessPanel .access-note {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-dim);
+      line-height: 1.6;
+    }
+    #accessPanel .access-status {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink);
+    }
+    #accessPanel .access-status.granted { color: #2a8a4a; }
+    #accessPanel .access-status.pending { color: var(--blue); }
+    #accessPanel a.access-signout { color: var(--ink-dim); font-size: 11px; text-decoration: underline; margin-left: 12px; }
+    .hidden { display: none; }
   </style>
 
   <div style="margin-top:86px;">
@@ -97,7 +151,57 @@
             <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Presented by</p><p style="font-size:13px;color:var(--ink);">Neta DAO Academy</p></div>
           </div>
         </div>
-        <a href="/register.html" class="btn btn-primary">Register / Get Notified</a>
+        <a href="#accessPanel" class="btn btn-primary">Register for This Seminar</a>
+      </div>
+    </div>
+
+    <!-- Seminar access panel -->
+    <div style="border-bottom:var(--panel-border);">
+      <div class="page-wrap" style="padding-top:40px;padding-bottom:8px;">
+        <div id="accessPanel">
+
+          <!-- State: not signed in -->
+          <div id="stateSignedOut">
+            <h3>Seminar Access</h3>
+            <p class="access-sub">Readings and the Cinema screening are reserved for registered participants. Enter your email to get started — we'll send a sign-in link, no password needed.</p>
+            <div class="access-row">
+              <input type="email" id="signInEmail" placeholder="you@example.com" autocomplete="email" />
+              <button id="sendLinkBtn" class="btn btn-primary">Send Sign-In Link</button>
+            </div>
+            <p class="access-note" id="signInStatus"></p>
+          </div>
+
+          <!-- State: signed in, checking / not yet registered -->
+          <div id="stateNeedsRegistration" class="hidden">
+            <h3>Complete Your Registration</h3>
+            <p class="access-sub">You're signed in as <strong id="signedInEmail"></strong>. This seminar covers challenging, sometimes disturbing material — registration confirms you understand that context.</p>
+            <div class="access-row">
+              <input type="text" id="regName" placeholder="Your name" />
+            </div>
+            <div class="access-row">
+              <input type="text" id="regXHandle" placeholder="Your X handle (e.g. @yourname)" />
+            </div>
+            <div class="access-row">
+              <button id="submitRegBtn" class="btn btn-primary">Submit Registration</button>
+            </div>
+            <p class="access-note">After submitting, DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from the handle above to verify and complete your registration.</p>
+          </div>
+
+          <!-- State: registered, awaiting approval -->
+          <div id="statePending" class="hidden">
+            <h3>Registration Pending</h3>
+            <p class="access-sub access-status pending">Thanks, <span id="pendingName"></span> — your registration is in. Please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="pendingHandle"></strong> to verify. Access unlocks once confirmed.</p>
+            <button id="recheckBtn" class="btn btn-outline">Check Status Again</button>
+            <a href="#" id="signOutLinkPending" class="access-signout">Sign out</a>
+          </div>
+
+          <!-- State: approved -->
+          <div id="stateApproved" class="hidden">
+            <p class="access-status granted">✓ Signed in as <span id="approvedEmail"></span> — readings unlocked below.</p>
+            <a href="#" id="signOutLinkApproved" class="access-signout">Sign out</a>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -107,17 +211,17 @@
         <p class="section-label">Schedule</p>
         <h2 class="section-title-sm" style="font-family:var(--font-display);font-size:32px;font-weight:900;text-transform:uppercase;margin-bottom:24px;">Sessions</h2>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 0</span><span class="session-title">Seduction</span><span class="session-date">18 Feb 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Lydia Davis, "Break It Down," from <em>Break It Down: Stories</em> — <a href="https://raw.githubusercontent.com/cosmonought/readings/main/Lydia%20Davis%20Break%20It%20Down.pdf" target="_blank" rel="noopener">Text ↗</a> · <a href="https://www.thisamericanlife.org/88/numbers/act-five-1" target="_blank" rel="noopener">Audio ↗</a></li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 0</span><span class="session-title">Seduction</span><span class="session-date">18 Feb 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Lydia Davis, "Break It Down," from <em>Break It Down: Stories</em> — <span class="reading-locked" data-key="session0.text">🔒 Register to unlock</span> · <span class="reading-locked" data-key="session0.audio">🔒 Register to unlock</span></li></ul></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 1</span><span class="session-title">The Origin of Sexuality</span><span class="session-date">4 Mar 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Sigmund Freud, <em>Three Essays on the Theory of Sexuality</em> — <a href="https://www.dropbox.com/scl/fi/v5lhi7b8pndmu0k30j6ov/three-essays.pdf" target="_blank" rel="noopener">Click Here ↗</a></li><li>Jean Laplanche, selections from <em>Life and Death in Psychoanalysis</em> and <em>Freud and the Sexual</em> — <a href="https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/Laplanche.pdf" target="_blank" rel="noopener">Click Here ↗</a></li></ul><p style="font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.65;"><strong style="color:var(--ink-mid);">Note:</strong> Essential in sequence: (1) "The Sexual Aberrations," then (2) "The Order of Life and the Genesis of Human Sexuality," then (3) "Gender, Sex, and the <em>Sexual</em>."</p></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 1</span><span class="session-title">The Origin of Sexuality</span><span class="session-date">4 Mar 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Sigmund Freud, <em>Three Essays on the Theory of Sexuality</em> — <span class="reading-locked" data-key="session1.freud">🔒 Register to unlock</span></li><li>Jean Laplanche, selections from <em>Life and Death in Psychoanalysis</em> and <em>Freud and the Sexual</em> — <span class="reading-locked" data-key="session1.laplanche">🔒 Register to unlock</span></li></ul><p style="font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.65;"><strong style="color:var(--ink-mid);">Note:</strong> Essential in sequence: (1) "The Sexual Aberrations," then (2) "The Order of Life and the Genesis of Human Sexuality," then (3) "Gender, Sex, and the <em>Sexual</em>."</p></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 2</span><span class="session-title">Sexual Difference</span><span class="session-date">8 Apr 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Lynn Margulis, "Evolutionary Striptease" and "Phallic Psyche," from <em>Mystery Dance: On the Evolution of Human Sexuality</em> — <a href="https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/Margulis_Mystery%20Dance_excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li><li>Stella Sandford, "Plant Philosophy and Plant Sex: Aristotle to Albertus" and "What are 'Male' and 'Female' in Botany?," from <em>Vegetal Sex: Philosophy of Plants</em> — <a href="https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/Sandford_Vegetal%20Sex_excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li><li>Lucy Cooke, "Introduction" and "The Anarchy of Sex: What is a Female?," from <em>Bitch: On the Female of the Species</em> — <a href="https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/Cooke_Bitch%20excerpts.pdf" target="_blank" rel="noopener">Click Here ↗</a></li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 2</span><span class="session-title">Sexual Difference</span><span class="session-date">8 Apr 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Lynn Margulis, "Evolutionary Striptease" and "Phallic Psyche," from <em>Mystery Dance: On the Evolution of Human Sexuality</em> — <span class="reading-locked" data-key="session2.margulis">🔒 Register to unlock</span></li><li>Stella Sandford, "Plant Philosophy and Plant Sex: Aristotle to Albertus" and "What are 'Male' and 'Female' in Botany?," from <em>Vegetal Sex: Philosophy of Plants</em> — <span class="reading-locked" data-key="session2.sandford">🔒 Register to unlock</span></li><li>Lucy Cooke, "Introduction" and "The Anarchy of Sex: What is a Female?," from <em>Bitch: On the Female of the Species</em> — <span class="reading-locked" data-key="session2.cooke">🔒 Register to unlock</span></li></ul></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 3</span><span class="session-title">Lacanian Sexuality</span><span class="session-date">27 May 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Tim Dean, "Beyond the Couch," "How to Read Lacan," and "Bodies That Mutter," from <em>Beyond Sexuality</em> — <a href="https://raw.githubusercontent.com/cosmonought/academy/main/assets/Dean_Beyond%20Sexuality_selections.pdf" target="_blank" rel="noopener">Click Here ↗</a></li><li>Jacques Lacan, "The Signification of the Phallus," from <em>Écrits</em> — <a href="https://share.google/MnUgXt3Jmzn0jAnXO" target="_blank" rel="noopener">Click Here ↗</a></li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 3</span><span class="session-title">Lacanian Sexuality</span><span class="session-date">27 May 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Tim Dean, "Beyond the Couch," "How to Read Lacan," and "Bodies That Mutter," from <em>Beyond Sexuality</em> — <span class="reading-locked" data-key="session3.dean">🔒 Register to unlock</span></li><li>Jacques Lacan, "The Signification of the Phallus," from <em>Écrits</em> — <span class="reading-locked" data-key="session3.lacan">🔒 Register to unlock</span></li></ul></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 4</span><span class="session-title">Traumatophilia</span><span class="session-date">Screening 22 Jul · Discussion 29 Jul 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Sigmund Freud, <em>Beyond the Pleasure Principle</em> — <a href="https://www.sas.upenn.edu/~cavitch/pdf-library/Freud_Beyond_P_P.pdf" target="_blank" rel="noopener">Click Here ↗</a></li><li>Avgi Saketapoulou, "To Suffer Pleasure: Limit Experience and Transgression" and "Toward a Theory of Traumatophilia," from <em>Sexuality Beyond Consent: Risk, Race, Traumatophilia</em> — <a href="https://raw.githubusercontent.com/cosmonought/academy/main/assets/Saketopoulous_Sexuality%20Beyond%20Consent_selections.pdf" target="_blank" rel="noopener">Click Here ↗</a></li><li>Film: <em>Dans Ma Peau</em>, dir. Marina de Van (screening 22 July 2026)</li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 4</span><span class="session-title">Traumatophilia</span><span class="session-date">Screening 22 Jul · Discussion 29 Jul 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Sigmund Freud, <em>Beyond the Pleasure Principle</em> — <span class="reading-locked" data-key="session4.freud">🔒 Register to unlock</span></li><li>Avgi Saketapoulou, "To Suffer Pleasure: Limit Experience and Transgression" and "Toward a Theory of Traumatophilia," from <em>Sexuality Beyond Consent: Risk, Race, Traumatophilia</em> — <span class="reading-locked" data-key="session4.saketapoulou">🔒 Register to unlock</span></li><li>Film: <em>Dans Ma Peau</em>, dir. Marina de Van (screening 22 July 2026)</li></ul></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 5</span><span class="session-title">Feminine Sexuality</span><span class="session-date">Screening 5 Aug · Discussion 12 Aug 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Sigmund Freud, "Femininity," from <em>New Introductory Lectures on Psycho-Analysis</em> — <a href="https://lacantoronto.ca/wp-content/uploads/2012/08/Femininity-Freud.pdf" target="_blank" rel="noopener">Click Here ↗</a></li><li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em> — <a href="https://github.com/cosmonought/academy/blob/main/assets/Malabou_Pleasure%20Erased%20(English).pdf" target="_blank" rel="noopener">Click Here ↗</a></li><li>Film: <em>À ma sœur!</em>, dir. Catherine Breillat (screening 5 August 2026, 10pm EST / 7pm PST)</li></ul></div>
+        <div class="session-block"><div class="session-header"><span class="session-num">Session 5</span><span class="session-title">Feminine Sexuality</span><span class="session-date">Screening 5 Aug · Discussion 12 Aug 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Sigmund Freud, "Femininity," from <em>New Introductory Lectures on Psycho-Analysis</em> — <span class="reading-locked" data-key="session5.freud">🔒 Register to unlock</span></li><li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em> — <span class="reading-locked" data-key="session5.malabou">🔒 Register to unlock</span></li><li>Film: <em>À ma sœur!</em>, dir. Catherine Breillat (screening 5 August 2026, 10pm EST / 7pm PST)</li></ul></div>
 
         <div class="session-block"><div class="session-header"><span class="session-num">Session 6</span><span class="session-title">The Measure of Love</span><span class="session-date">Upcoming</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Lauren Berlant, <em>Desire/Love</em></li><li>Alain Badiou, <em>In Praise of Love</em></li></ul></div>
 
@@ -135,7 +239,6 @@
         <li><a href="/seminar.html">Coining Reason</a></li>
         <li><a href="/cinema.html">Cinema</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
-        <li><a href="/register.html">Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
         <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
         <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li>
@@ -154,6 +257,106 @@
     const h = document.querySelector('.nav-hamburger');
     const n = document.querySelector('.nav-links');
     if (h && n) h.addEventListener('click', () => n.classList.toggle('open'));
+  </script>
+
+  <!-- ── Seminar access + gated readings ── -->
+  <script type="module">
+    import {
+      auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
+      sendMagicLink, getRegistration, submitRegistration, getSeminarReadings
+    } from '/js/academy-auth.js';
+
+    const CURRENT_SEMINAR_ID = 'sex-and-or-love';
+
+    const stateSignedOut        = document.getElementById('stateSignedOut');
+    const stateNeedsRegistration = document.getElementById('stateNeedsRegistration');
+    const statePending          = document.getElementById('statePending');
+    const stateApproved         = document.getElementById('stateApproved');
+
+    function showState(el) {
+      [stateSignedOut, stateNeedsRegistration, statePending, stateApproved].forEach(s => s.classList.add('hidden'));
+      el.classList.remove('hidden');
+    }
+
+    async function unlockReadings() {
+      const readings = await getSeminarReadings(CURRENT_SEMINAR_ID);
+      if (!readings) return;
+      document.querySelectorAll('.reading-locked').forEach(span => {
+        const key = span.getAttribute('data-key'); // e.g. "session1.freud"
+        const [session, item] = key.split('.');
+        const url = readings[session] && readings[session][item];
+        if (url) {
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = 'Click Here ↗';
+          span.replaceWith(a);
+        }
+      });
+    }
+
+    async function refreshAccessState(user) {
+      if (!user) { showState(stateSignedOut); return; }
+
+      const reg = await getRegistration(user.email);
+
+      if (!reg) {
+        document.getElementById('signedInEmail').textContent = user.email;
+        showState(stateNeedsRegistration);
+        return;
+      }
+
+      if (reg.readingsAccess === true) {
+        document.getElementById('approvedEmail').textContent = user.email;
+        showState(stateApproved);
+        unlockReadings();
+        return;
+      }
+
+      document.getElementById('pendingName').textContent = reg.name || '';
+      document.getElementById('pendingHandle').textContent = reg.xHandle || '';
+      showState(statePending);
+    }
+
+    (async () => {
+      await completeSignInIfNeeded();
+      onAuthStateChanged(auth, (user) => { refreshAccessState(user); });
+    })();
+
+    document.getElementById('sendLinkBtn').addEventListener('click', async () => {
+      const email = document.getElementById('signInEmail').value.trim();
+      const status = document.getElementById('signInStatus');
+      if (!email) { status.textContent = 'Enter an email address first.'; return; }
+      try {
+        await sendMagicLink(email);
+        status.textContent = 'Check your inbox — we sent a sign-in link to ' + email + '.';
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Something went wrong sending that link. Try again in a moment.';
+      }
+    });
+
+    document.getElementById('submitRegBtn').addEventListener('click', async () => {
+      const name = document.getElementById('regName').value.trim();
+      const xHandle = document.getElementById('regXHandle').value.trim();
+      if (!name || !xHandle) { alert('Please fill in both your name and X handle.'); return; }
+      const user = auth.currentUser;
+      if (!user) return;
+      await submitRegistration(user.email, name, xHandle, CURRENT_SEMINAR_ID);
+      refreshAccessState(user);
+    });
+
+    document.getElementById('recheckBtn').addEventListener('click', () => {
+      refreshAccessState(auth.currentUser);
+    });
+
+    function doSignOut(e) {
+      e.preventDefault();
+      signOut(auth);
+    }
+    document.getElementById('signOutLinkPending').addEventListener('click', doSignOut);
+    document.getElementById('signOutLinkApproved').addEventListener('click', doSignOut);
   </script>
 </body>
 </html>

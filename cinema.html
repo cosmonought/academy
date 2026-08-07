@@ -315,6 +315,75 @@
     .end-screening-btn.visible { display: block; }
     .end-screening-btn:hover { background: rgba(160,72,72,0.12); color: #e08080; }
 
+    /* ── Seminar access gate ── */
+    #cinemaAccessGate {
+      max-width: 640px;
+      margin: 48px auto 80px;
+      padding: 40px 36px;
+      background: #0a0a0a;
+      border: var(--panel-border);
+    }
+    #cinemaAccessGate h3 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #f2f0eb;
+      margin-bottom: 10px;
+    }
+    #cinemaAccessGate p.gate-sub {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #9aa0b8;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+    #cinemaAccessGate .gate-row {
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    #cinemaAccessGate input {
+      flex: 1;
+      min-width: 200px;
+      background: transparent;
+      border: 1px solid #333;
+      padding: 13px 16px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #f2f0eb;
+      outline: none;
+    }
+    #cinemaAccessGate input:focus { border-color: var(--pink); }
+    #cinemaAccessGate button {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 13px 22px;
+      background: #f2f0eb;
+      color: #111;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #cinemaAccessGate button:hover { background: #d8d6d0; }
+    #cinemaAccessGate .gate-note {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #666;
+      line-height: 1.7;
+    }
+    #cinemaAccessGate .gate-note a { color: var(--blue); }
+    #cinemaAccessGate .gate-status {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #d4a017;
+      margin-top: 14px;
+    }
+    #cinemaAccessGate .gate-status.granted { color: #2a8a4a; }
+
     /* ── Host-only: Disable Chat toggle ── */
     .disable-chat-btn {
       display: none;
@@ -382,7 +451,6 @@
         <li><a href="/seminar.html">Coining Reason</a></li>
         <li><a href="/cinema.html" class="active">Cinema</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
-        <li><a href="/register.html">Register</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
@@ -395,6 +463,34 @@
       <h1 class="cinema-title">Neta DAO <span class="grad-text">Cinema</span></h1>
       <p class="cinema-sub">Live film screening, streamed to the Academy community.</p>
     </div>
+
+    <!-- Seminar access gate -->
+    <div id="cinemaAccessGate">
+      <div id="cinemaStateSignedOut">
+        <h3>Access Required</h3>
+        <p class="gate-sub">This screening is reserved for participants registered in the current seminar. Enter your email to sign in — no password needed.</p>
+        <div class="gate-row">
+          <input type="email" id="cinemaSignInEmail" placeholder="you@example.com" autocomplete="email" />
+          <button id="cinemaSendLinkBtn">Send Sign-In Link</button>
+        </div>
+        <p class="gate-status" id="cinemaSignInStatus"></p>
+        <p class="gate-note">Not registered yet? <a href="/current.html#accessPanel">Register for the current seminar →</a></p>
+      </div>
+
+      <div id="cinemaStateNoAccess" class="hidden">
+        <h3>Not Registered for This Seminar</h3>
+        <p class="gate-sub">You're signed in as <strong id="cinemaEmailNoAccess"></strong>, but you don't have access to this seminar's screening yet.</p>
+        <p class="gate-note"><a href="/current.html#accessPanel">Register for the current seminar →</a></p>
+      </div>
+
+      <div id="cinemaStatePending" class="hidden">
+        <h3>Registration Pending</h3>
+        <p class="gate-sub">Your registration is submitted but not yet verified. DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy</a> from your registered X handle to complete it.</p>
+        <button id="cinemaRecheckBtn">Check Again</button>
+      </div>
+    </div>
+
+    <div id="gatedCinemaContent" class="hidden">
 
     <div class="live-layout">
     <div class="player-section">
@@ -452,6 +548,8 @@
     <div class="player-meta">
       <p id="liveIndicator" style="display:none;"><span class="live-dot"></span>Live now</p>
       <p>This is a live feed — no pause or rewind. Having trouble? Try refreshing, or watch in <a href="#" id="vlcLink" style="color:var(--blue);">VLC</a> using the MediaMTX RTMP/RTSP address.</p>
+    </div>
+
     </div>
   </div>
 
@@ -881,6 +979,83 @@
     disableChatBtn.addEventListener('click', () => {
       set(chatDisabledRef, !chatDisabled)
         .catch((err) => { console.error('Failed to toggle chat:', err); alert('Could not update chat status — check console.'); });
+    });
+  </script>
+
+  <!-- ── Seminar access gate ── -->
+  <script type="module">
+    import {
+      auth, onAuthStateChanged, completeSignInIfNeeded,
+      sendMagicLink, getRegistration
+    } from '/js/academy-auth.js';
+
+    const CURRENT_SEMINAR_ID = 'sex-and-or-love';
+
+    const gateSignedOut = document.getElementById('cinemaStateSignedOut');
+    const gateNoAccess  = document.getElementById('cinemaStateNoAccess');
+    const gatePending   = document.getElementById('cinemaStatePending');
+    const accessGate    = document.getElementById('cinemaAccessGate');
+    const gatedContent  = document.getElementById('gatedCinemaContent');
+
+    function showGateState(el) {
+      [gateSignedOut, gateNoAccess, gatePending].forEach(s => s.classList.add('hidden'));
+      if (el) el.classList.remove('hidden');
+      accessGate.classList.remove('hidden');
+      gatedContent.classList.add('hidden');
+    }
+
+    function grantAccess() {
+      accessGate.classList.add('hidden');
+      gatedContent.classList.remove('hidden');
+    }
+
+    async function refreshCinemaAccess(user) {
+      if (!user) { showGateState(gateSignedOut); return; }
+
+      const reg = await getRegistration(user.email);
+
+      if (reg && reg.seminarAccess && reg.seminarAccess[CURRENT_SEMINAR_ID] === true) {
+        grantAccess();
+        return;
+      }
+
+      if (reg) {
+        document.getElementById('cinemaEmailNoAccess').textContent = user.email;
+        // If they registered for THIS seminar but aren't approved yet, show pending;
+        // otherwise show "not registered for this seminar"
+        if (reg.seminarId === CURRENT_SEMINAR_ID) {
+          showGateState(gatePending);
+        } else {
+          showGateState(gateNoAccess);
+        }
+        return;
+      }
+
+      showGateState(gateNoAccess);
+      document.getElementById('cinemaEmailNoAccess').textContent = user.email;
+    }
+
+    (async () => {
+      await completeSignInIfNeeded();
+      onAuthStateChanged(auth, (user) => { refreshCinemaAccess(user); });
+    })();
+
+    document.getElementById('cinemaSendLinkBtn').addEventListener('click', async () => {
+      const email = document.getElementById('cinemaSignInEmail').value.trim();
+      const status = document.getElementById('cinemaSignInStatus');
+      if (!email) { status.textContent = 'Enter an email address first.'; return; }
+      try {
+        await sendMagicLink(email);
+        status.textContent = 'Check your inbox for a sign-in link.';
+        status.classList.add('granted');
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Something went wrong. Try again shortly.';
+      }
+    });
+
+    document.getElementById('cinemaRecheckBtn').addEventListener('click', () => {
+      refreshCinemaAccess(auth.currentUser);
     });
   </script>
 </body>

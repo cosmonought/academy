@@ -148,7 +148,7 @@
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
             <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Dates</p><p style="font-size:13px;color:var(--ink);">18 February – 29 July 2026</p></div>
             <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Time</p><p style="font-size:13px;color:var(--ink);">12AM EST / 5AM UTC</p></div>
-            <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Location</p><p style="font-size:13px;color:var(--ink);"><a href="https://x.com/netadaoacademy" target="_blank" rel="noopener" style="color:var(--blue);">x.com/netadaoacademy ↗</a></p></div>
+            <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Location</p><p style="font-size:13px;color:var(--ink);"><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">x.com/NetaDAO_Academy ↗</a></p></div>
             <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Presented by</p><p style="font-size:13px;color:var(--ink);">Neta DAO Academy</p></div>
           </div>
         </div>
@@ -329,11 +329,19 @@
     async function refreshAccessState(user) {
       if (!user) { showState(stateSignedOut); return; }
 
+      if (!user.email) {
+        // Transitional auth state (e.g. mid magic-link exchange) — the
+        // email hasn't loaded yet. Don't show anything broken; a follow-up
+        // onAuthStateChanged call with the full user object will arrive shortly.
+        console.log('Auth state fired without an email yet — waiting for the next update.');
+        return;
+      }
+
       const reg = await getRegistration(user.email);
       console.log('Registration record for', user.email, ':', reg);
 
       if (!reg) {
-        document.getElementById('signedInEmail').textContent = user.email;
+        document.getElementById('signedInEmail').textContent = user.email || '(no email found on this session — try signing in again)';
         showState(stateNeedsRegistration);
         return;
       }

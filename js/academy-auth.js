@@ -31,7 +31,11 @@ export const ADMIN_EMAIL = 'academy@netadao.org';
 
 // Firebase Realtime Database keys can't contain "." — this is the
 // standard safe encoding for using an email address as a key.
+// Returns null if email is missing (guards against Firebase's
+// onAuthStateChanged occasionally firing with a transitional user
+// object that hasn't finished loading its email yet).
 export function emailToKey(email) {
+  if (!email) return null;
   return email.toLowerCase().trim().replace(/\./g, ',');
 }
 
@@ -73,11 +77,14 @@ export async function completeSignInIfNeeded() {
 
 // ── Registration + entitlement lookups ──
 
-// Returns null if this email has never registered. Requires the
-// caller to be signed in as that same email (or as the admin).
+// Returns null if this email has never registered, OR if email is
+// missing/not-yet-loaded on the auth object — callers should treat
+// both cases as "nothing to show yet."
 export async function getRegistration(email) {
+  const key = emailToKey(email);
+  if (!key) return null;
   try {
-    const snap = await get(ref(db, `academyRegistrations/${emailToKey(email)}`));
+    const snap = await get(ref(db, `academyRegistrations/${key}`));
     return snap.exists() ? snap.val() : null;
   } catch (err) {
     console.error('getRegistration failed:', err);

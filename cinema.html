@@ -1012,6 +1012,13 @@
     async function refreshCinemaAccess(user) {
       if (!user) { showGateState(gateSignedOut); return; }
 
+      if (!user.email) {
+        // Transitional auth state — email hasn't loaded yet. Wait for the
+        // next onAuthStateChanged call rather than showing anything broken.
+        console.log('Auth state fired without an email yet — waiting for the next update.');
+        return;
+      }
+
       const reg = await getRegistration(user.email);
       console.log('Registration record for', user.email, ':', reg);
 

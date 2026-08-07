@@ -108,11 +108,15 @@ export async function submitRegistration(email, name, xHandle, seminarId) {
 // Fetches the actual reading URLs for a seminar — only succeeds if
 // the signed-in user's registration record has readingsAccess === true.
 export async function getSeminarReadings(seminarId) {
+  const currentEmail = auth.currentUser ? auth.currentUser.email : null;
+  console.log('Attempting to fetch seminarReadings. Current auth email:', currentEmail, '| Computed key that the RULE should be checking:', emailToKey(currentEmail));
   try {
     const snap = await get(ref(db, `seminarReadings/${seminarId}`));
     return snap.exists() ? snap.val() : null;
   } catch (err) {
-    return null; // permission denied just means: not entitled yet
+    console.error('seminarReadings fetch FAILED. Full error:', err);
+    console.error('Error code:', err.code, '| Error message:', err.message);
+    return null;
   }
 }
 

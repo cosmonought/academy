@@ -1013,8 +1013,12 @@
       if (!user) { showGateState(gateSignedOut); return; }
 
       const reg = await getRegistration(user.email);
+      console.log('Registration record for', user.email, ':', reg);
 
-      if (reg && reg.seminarAccess && reg.seminarAccess[CURRENT_SEMINAR_ID] === true) {
+      const seminarOk = reg && reg.seminarAccess &&
+        (reg.seminarAccess[CURRENT_SEMINAR_ID] === true || reg.seminarAccess[CURRENT_SEMINAR_ID] === 'true');
+
+      if (seminarOk) {
         grantAccess();
         return;
       }
@@ -1046,7 +1050,7 @@
       if (!email) { status.textContent = 'Enter an email address first.'; return; }
       try {
         await sendMagicLink(email);
-        status.textContent = 'Check your inbox for a sign-in link.';
+        status.textContent = 'Check your inbox for a sign-in link — if you don\'t see it within a minute or two, check your spam/junk folder.';
         status.classList.add('granted');
       } catch (err) {
         console.error(err);

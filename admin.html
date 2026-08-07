@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Neta DAO Academy</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <style>
+    body { background: var(--bg); }
+    .admin-wrap {
+      max-width: 900px;
+      margin: 86px auto 80px;
+      padding: 0 24px;
+    }
+    .admin-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .admin-signin {
+      background: var(--bg-raised);
+      border: 1px solid var(--rule-thin);
+      padding: 24px 28px;
+      max-width: 480px;
+    }
+    .admin-signin input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--rule-thin);
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .admin-signin button {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      padding: 12px 20px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+    }
+    .admin-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); margin-top: 10px; }
+
+    table.reg-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 20px;
+    }
+    table.reg-table th, table.reg-table td {
+      border: 1px solid var(--rule-thin);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.reg-table th {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--bg-raised);
+    }
+    .status-pill {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border: 1px solid;
+      display: inline-block;
+    }
+    .status-pill.approved { border-color: #2a8a4a; color: #2a8a4a; }
+    .status-pill.pending { border-color: var(--blue); color: var(--blue); }
+    .approve-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+    }
+    .approve-btn:hover { background: #333; }
+    .approve-btn:disabled { background: #ccc; cursor: default; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
+          <rect width="40" height="40" fill="#080808"/>
+          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
+        </svg>
+      </a>
+      <ul class="nav-links"><li><a href="/">Home</a></li></ul>
+    </div>
+  </nav>
+
+  <div class="admin-wrap">
+    <h1 class="admin-title">Registration Admin</h1>
+
+    <div id="adminSignedOut">
+      <div class="admin-signin">
+        <p style="font-family:var(--font-mono);font-size:12px;margin-bottom:14px;">Sign in with the admin email to view and approve registrations.</p>
+        <input type="email" id="adminEmail" placeholder="admin email" autocomplete="email" />
+        <button id="adminSendLinkBtn">Send Sign-In Link</button>
+        <p class="admin-note" id="adminSignInStatus"></p>
+      </div>
+    </div>
+
+    <div id="adminNotAuthorized" class="hidden">
+      <p style="font-family:var(--font-mono);font-size:13px;color:#a04848;">Signed in, but this account isn't authorized to view registrations.</p>
+    </div>
+
+    <div id="adminApproved" class="hidden">
+      <p class="admin-note" id="adminStatusLine" style="margin-bottom:16px;"></p>
+      <button id="adminRefreshBtn" style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;padding:8px 14px;background:transparent;border:1px solid var(--rule-thin);cursor:pointer;">Refresh List</button>
+
+      <table class="reg-table" id="regTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>X Handle</th>
+            <th>Seminar</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="regTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      auth, onAuthStateChanged, completeSignInIfNeeded, sendMagicLink,
+      getAllRegistrations, approveRegistration, ADMIN_EMAIL
+    } from '/js/academy-auth.js';
+
+    const adminSignedOut    = document.getElementById('adminSignedOut');
+    const adminNotAuthorized = document.getElementById('adminNotAuthorized');
+    const adminApproved     = document.getElementById('adminApproved');
+
+    function showAdminState(el) {
+      [adminSignedOut, adminNotAuthorized, adminApproved].forEach(s => s.classList.add('hidden'));
+      el.classList.remove('hidden');
+    }
+
+    function isApproved(val) {
+      return val === true || val === 'true';
+    }
+
+    async function loadRegistrations() {
+      const all = await getAllRegistrations();
+      const tbody = document.getElementById('regTableBody');
+      tbody.innerHTML = '';
+
+      if (!all) {
+        document.getElementById('adminStatusLine').textContent = 'Could not load registrations — check console for errors.';
+        return;
+      }
+
+      const entries = Object.entries(all);
+      document.getElementById('adminStatusLine').textContent =
+        `${entries.length} total registration(s) — ${entries.filter(([,r]) => isApproved(r.readingsAccess)).length} approved.`;
+
+      // Most recent first
+      entries.sort((a, b) => (b[1].requestedAt || 0) - (a[1].requestedAt || 0));
+
+      for (const [emailKey, reg] of entries) {
+        const approved = isApproved(reg.readingsAccess);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(reg.name || '')}</td>
+          <td>${escapeHtml(reg.email || '')}</td>
+          <td>${escapeHtml(reg.xHandle || '')}</td>
+          <td>${escapeHtml(reg.seminarId || '')}</td>
+          <td><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Approved' : 'Pending'}</span></td>
+          <td></td>
+        `;
+        const actionCell = tr.lastElementChild;
+        if (approved) {
+          actionCell.textContent = '—';
+        } else {
+          const btn = document.createElement('button');
+          btn.className = 'approve-btn';
+          btn.textContent = 'Approve';
+          btn.addEventListener('click', async () => {
+            btn.disabled = true;
+            btn.textContent = 'Approving…';
+            await approveRegistration(emailKey, reg.seminarId);
+            loadRegistrations();
+          });
+          actionCell.appendChild(btn);
+        }
+        tbody.appendChild(tr);
+      }
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    (async () => {
+      await completeSignInIfNeeded();
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) { showAdminState(adminSignedOut); return; }
+        if (user.email !== ADMIN_EMAIL) { showAdminState(adminNotAuthorized); return; }
+        showAdminState(adminApproved);
+        loadRegistrations();
+      });
+    })();
+
+    document.getElementById('adminSendLinkBtn').addEventListener('click', async () => {
+      const email = document.getElementById('adminEmail').value.trim();
+      const status = document.getElementById('adminSignInStatus');
+      if (!email) { status.textContent = 'Enter the admin email first.'; return; }
+      try {
+        await sendMagicLink(email);
+        status.textContent = 'Check your inbox for a sign-in link — check spam/junk if you don\'t see it soon.';
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Something went wrong. Try again shortly.';
+      }
+    });
+
+    document.getElementById('adminRefreshBtn').addEventListener('click', loadRegistrations);
+  </script>
+</body>
+</html>

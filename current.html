@@ -127,6 +127,7 @@
     #accessPanel .access-status.granted { color: #2a8a4a; }
     #accessPanel .access-status.pending { color: var(--blue); }
     #accessPanel a.access-signout { color: var(--ink-dim); font-size: 11px; text-decoration: underline; margin-left: 12px; }
+    #accessPanel .access-divider { border-top: 1px solid var(--rule-thin); margin: 20px 0; padding-top: 20px; }
     .hidden { display: none; }
   </style>
 
@@ -160,31 +161,49 @@
       <div class="page-wrap" style="padding-top:40px;padding-bottom:8px;">
         <div id="accessPanel">
 
-          <!-- State: not signed in -->
+          <!-- State: not signed in — register in one step, or sign in if already registered -->
           <div id="stateSignedOut">
             <h3>Seminar Access</h3>
-            <p class="access-sub">Readings and the Cinema screening are reserved for registered participants. Enter your email to get started — we'll send a sign-in link, no password needed.</p>
-            <div class="access-row">
-              <input type="email" id="signInEmail" placeholder="you@example.com" autocomplete="email" />
-              <button id="sendLinkBtn" class="btn btn-primary">Send Sign-In Link</button>
-            </div>
-            <p class="access-note" id="signInStatus"></p>
-          </div>
-
-          <!-- State: signed in, checking / not yet registered -->
-          <div id="stateNeedsRegistration" class="hidden">
-            <h3>Complete Your Registration</h3>
-            <p class="access-sub">You're signed in as <strong id="signedInEmail"></strong>. This seminar covers challenging, sometimes disturbing material — registration confirms you understand that context.</p>
+            <p class="access-sub">Readings and the Cinema screening are reserved for registered participants. This seminar covers challenging, sometimes disturbing material — registering confirms you understand that context.</p>
             <div class="access-row">
               <input type="text" id="regName" placeholder="Your name" />
+            </div>
+            <div class="access-row">
+              <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" />
             </div>
             <div class="access-row">
               <input type="text" id="regXHandle" placeholder="Your X handle (e.g. @yourname)" />
             </div>
             <div class="access-row">
-              <button id="submitRegBtn" class="btn btn-primary">Submit Registration</button>
+              <button id="submitRegBtn" class="btn btn-primary">Register</button>
             </div>
-            <p class="access-note">After submitting, DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from the handle above to verify and complete your registration.</p>
+            <p class="access-note" id="regStatus"></p>
+
+            <div class="access-divider">
+              <p class="access-note" style="margin-bottom:10px;">Already registered? Sign in to check your status or view unlocked materials.</p>
+              <div class="access-row">
+                <input type="email" id="signInEmail" placeholder="you@example.com" autocomplete="email" />
+                <button id="sendLinkBtn" class="btn btn-outline">Send Sign-In Link</button>
+              </div>
+              <p class="access-note" id="signInStatus"></p>
+            </div>
+          </div>
+
+          <!-- State: just submitted a new registration (no sign-in needed yet) -->
+          <div id="stateJustRegistered" class="hidden">
+            <h3>Registration Submitted</h3>
+            <p class="access-sub access-status pending">Thanks, <span id="justRegName"></span> — your registration is in. Please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="justRegHandle"></strong> to verify. Once approved, come back and sign in below with the email you registered with — no need to fill out the form again.</p>
+            <div class="access-row">
+              <input type="email" id="signInEmail2" placeholder="you@example.com" autocomplete="email" />
+              <button id="sendLinkBtn2" class="btn btn-primary">Send Sign-In Link</button>
+            </div>
+            <p class="access-note" id="signInStatus2"></p>
+          </div>
+
+          <!-- State: signed in, but no registration found for this email -->
+          <div id="stateNeedsRegistration" class="hidden">
+            <h3>No Registration Found</h3>
+            <p class="access-sub">You're signed in as <strong id="signedInEmail"></strong>, but we don't have a registration on file for this email. <a href="#" id="backToRegisterLink" style="color:var(--blue);">Register now →</a></p>
           </div>
 
           <!-- State: registered, awaiting approval -->
@@ -268,19 +287,23 @@
 
     const CURRENT_SEMINAR_ID = 'sex-and-or-love';
 
-    const stateSignedOut        = document.getElementById('stateSignedOut');
+    const stateSignedOut         = document.getElementById('stateSignedOut');
+    const stateJustRegistered    = document.getElementById('stateJustRegistered');
     const stateNeedsRegistration = document.getElementById('stateNeedsRegistration');
-    const statePending          = document.getElementById('statePending');
-    const stateApproved         = document.getElementById('stateApproved');
+    const statePending           = document.getElementById('statePending');
+    const stateApproved          = document.getElementById('stateApproved');
 
     function showState(el) {
-      [stateSignedOut, stateNeedsRegistration, statePending, stateApproved].forEach(s => s.classList.add('hidden'));
+      [stateSignedOut, stateJustRegistered, stateNeedsRegistration, statePending, stateApproved].forEach(s => s.classList.add('hidden'));
       el.classList.remove('hidden');
     }
 
     async function unlockReadings() {
       const readings = await getSeminarReadings(CURRENT_SEMINAR_ID);
-      if (!readings) return;
+      if (!readings) {
+        console.warn('Readings fetch returned nothing — either not entitled yet, or a permissions/rules issue.');
+        return;
+      }
       document.querySelectorAll('.reading-locked').forEach(span => {
         const key = span.getAttribute('data-key'); // e.g. "session1.freud"
         const [session, item] = key.split('.');
@@ -296,10 +319,18 @@
       });
     }
 
+    // Accepts boolean true OR the string "true" — guards against values
+    // that got typed into the Firebase console without switching the
+    // field type to Boolean.
+    function isApproved(val) {
+      return val === true || val === 'true';
+    }
+
     async function refreshAccessState(user) {
       if (!user) { showState(stateSignedOut); return; }
 
       const reg = await getRegistration(user.email);
+      console.log('Registration record for', user.email, ':', reg);
 
       if (!reg) {
         document.getElementById('signedInEmail').textContent = user.email;
@@ -307,7 +338,7 @@
         return;
       }
 
-      if (reg.readingsAccess === true) {
+      if (isApproved(reg.readingsAccess)) {
         document.getElementById('approvedEmail').textContent = user.email;
         showState(stateApproved);
         unlockReadings();
@@ -324,27 +355,43 @@
       onAuthStateChanged(auth, (user) => { refreshAccessState(user); });
     })();
 
-    document.getElementById('sendLinkBtn').addEventListener('click', async () => {
-      const email = document.getElementById('signInEmail').value.trim();
-      const status = document.getElementById('signInStatus');
+    // ── One-step registration (no sign-in required to submit) ──
+    document.getElementById('submitRegBtn').addEventListener('click', async () => {
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const xHandle = document.getElementById('regXHandle').value.trim();
+      const status = document.getElementById('regStatus');
+      if (!name || !email || !xHandle) { alert('Please fill in your name, email, and X handle.'); return; }
+      try {
+        await submitRegistration(email, name, xHandle, CURRENT_SEMINAR_ID);
+        document.getElementById('justRegName').textContent = name;
+        document.getElementById('justRegHandle').textContent = xHandle;
+        showState(stateJustRegistered);
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Something went wrong submitting that. Please try again.';
+      }
+    });
+
+    // ── Sign-in (three separate buttons across different states, same logic) ──
+    async function handleSendLink(emailInputId, statusId) {
+      const email = document.getElementById(emailInputId).value.trim();
+      const status = document.getElementById(statusId);
       if (!email) { status.textContent = 'Enter an email address first.'; return; }
       try {
         await sendMagicLink(email);
-        status.textContent = 'Check your inbox — we sent a sign-in link to ' + email + '.';
+        status.textContent = 'Check your inbox for a sign-in link — if you don\'t see it within a minute or two, check your spam/junk folder.';
       } catch (err) {
         console.error(err);
         status.textContent = 'Something went wrong sending that link. Try again in a moment.';
       }
-    });
+    }
+    document.getElementById('sendLinkBtn').addEventListener('click', () => handleSendLink('signInEmail', 'signInStatus'));
+    document.getElementById('sendLinkBtn2').addEventListener('click', () => handleSendLink('signInEmail2', 'signInStatus2'));
 
-    document.getElementById('submitRegBtn').addEventListener('click', async () => {
-      const name = document.getElementById('regName').value.trim();
-      const xHandle = document.getElementById('regXHandle').value.trim();
-      if (!name || !xHandle) { alert('Please fill in both your name and X handle.'); return; }
-      const user = auth.currentUser;
-      if (!user) return;
-      await submitRegistration(user.email, name, xHandle, CURRENT_SEMINAR_ID);
-      refreshAccessState(user);
+    document.getElementById('backToRegisterLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      showState(stateSignedOut);
     });
 
     document.getElementById('recheckBtn').addEventListener('click', () => {

@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════
 // Neta DAO Academy — shared authentication + entitlement module
-// Used by current.html and cinema.html for gated seminar access
+// Used by current.html, cinema.html, and admin.html
 // ════════════════════════════════════════════════════════════
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 import {
@@ -8,7 +8,7 @@ import {
   onAuthStateChanged as _onAuthStateChanged, signOut as _signOut
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import {
-  getDatabase, ref, get, update
+  getDatabase, ref, get, update, set
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -26,6 +26,8 @@ export const auth = getAuth(app);
 export const db = getDatabase(app);
 export const onAuthStateChanged = _onAuthStateChanged;
 export const signOut = _signOut;
+
+export const ADMIN_EMAIL = 'academy@netadao.org';
 
 // Firebase Realtime Database keys can't contain "." — this is the
 // standard safe encoding for using an email address as a key.
@@ -47,8 +49,7 @@ export async function sendMagicLink(email) {
 }
 
 // Call this once on every page load. If the URL is a sign-in link,
-// it completes sign-in and cleans the URL. Returns true if a
-// sign-in was just completed (useful for showing a "welcome" state).
+// it completes sign-in and cleans the URL.
 export async function completeSignInIfNeeded() {
   if (isSignInWithEmailLink(auth, window.location.href)) {
     let email = window.localStorage.getItem('academyEmailForSignIn');
@@ -64,7 +65,6 @@ export async function completeSignInIfNeeded() {
         alert('That sign-in link is invalid or expired. Please request a new one.');
       }
     }
-    // Clean the long Firebase auth params out of the visible URL either way
     window.history.replaceState({}, document.title, window.location.pathname);
     return true;
   }
@@ -72,15 +72,24 @@ export async function completeSignInIfNeeded() {
 }
 
 // ── Registration + entitlement lookups ──
-// Returns null if this email has never registered.
+
+// Returns null if this email has never registered. Requires the
+// caller to be signed in as that same email (or as the admin).
 export async function getRegistration(email) {
-  const snap = await get(ref(db, `academyRegistrations/${emailToKey(email)}`));
-  return snap.exists() ? snap.val() : null;
+  try {
+    const snap = await get(ref(db, `academyRegistrations/${emailToKey(email)}`));
+    return snap.exists() ? snap.val() : null;
+  } catch (err) {
+    console.error('getRegistration failed:', err);
+    return null;
+  }
 }
 
-// Creates or updates a registration request. Only touches the fields
-// a registrant is allowed to set — approval fields (readingsAccess,
-// seminarAccess) are admin-only and set manually in the Firebase console.
+// Creates a NEW registration. Does NOT require prior sign-in — this
+// is intentional, so people can register in one step before ever
+// touching the magic-link flow. Security rules only allow this to
+// succeed for a brand-new entry; once created, only the verified
+// owner (or admin) can modify it further.
 export async function submitRegistration(email, name, xHandle, seminarId) {
   const key = emailToKey(email);
   await update(ref(db, `academyRegistrations/${key}`), {
@@ -89,16 +98,32 @@ export async function submitRegistration(email, name, xHandle, seminarId) {
   });
 }
 
-// Fetches the actual reading URLs for a seminar. Firebase security
-// rules only allow this to succeed if the signed-in user's
-// registration record has readingsAccess === true — so the real
-// URLs never sit in this site's HTML source at all.
+// Fetches the actual reading URLs for a seminar — only succeeds if
+// the signed-in user's registration record has readingsAccess === true.
 export async function getSeminarReadings(seminarId) {
   try {
     const snap = await get(ref(db, `seminarReadings/${seminarId}`));
     return snap.exists() ? snap.val() : null;
   } catch (err) {
-    // Permission denied simply means: not entitled yet. Not an error to alarm over.
+    return null; // permission denied just means: not entitled yet
+  }
+}
+
+// ── Admin-only functions (require signing in as ADMIN_EMAIL) ──
+
+export async function getAllRegistrations() {
+  try {
+    const snap = await get(ref(db, 'academyRegistrations'));
+    return snap.exists() ? snap.val() : {};
+  } catch (err) {
+    console.error('getAllRegistrations failed (are you signed in as the admin email?):', err);
     return null;
   }
+}
+
+export async function approveRegistration(emailKey, seminarId) {
+  await update(ref(db, `academyRegistrations/${emailKey}`), {
+    readingsAccess: true,
+    [`seminarAccess/${seminarId}`]: true
+  });
 }

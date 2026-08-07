@@ -11,6 +11,10 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
+  </script>
 </head>
 <body>
   <nav class="site-nav">
@@ -234,11 +238,6 @@
             <button id="recheckBtn" class="btn btn-outline">Check Status Again</button>
           </div>
 
-          <!-- Approved — kept minimal since account status now lives in the nav -->
-          <div id="stateApproved" class="hidden">
-            <p class="access-status granted">✓ Readings unlocked below.</p>
-          </div>
-
         </div>
       </div>
     </div>
@@ -247,7 +246,7 @@
     <div style="border-bottom:var(--panel-border);">
       <div class="page-wrap" style="padding-top:40px;padding-bottom:40px;">
         <p class="section-label">Schedule</p>
-        <h2 class="section-title-sm" style="font-family:var(--font-display);font-size:32px;font-weight:900;text-transform:uppercase;margin-bottom:24px;">Sessions</h2>
+        <h2 class="section-title-sm" style="font-family:var(--font-display);font-size:32px;font-weight:900;text-transform:uppercase;margin-bottom:24px;">Sessions <span id="readingsUnlockedTag" class="hidden" style="font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0.06em;color:#2a8a4a;border:1px solid #2a8a4a;padding:3px 9px;text-transform:uppercase;vertical-align:middle;margin-left:8px;">✓ Readings Unlocked</span></h2>
 
         <div class="session-block"><div class="session-header"><span class="session-num">Session 0</span><span class="session-title">Seduction</span><span class="session-date">18 Feb 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Lydia Davis, "Break It Down," from <em>Break It Down: Stories</em> — <span class="reading-locked" data-key="session0.text">🔒 Register to unlock</span> · <span class="reading-locked" data-key="session0.audio">🔒 Register to unlock</span></li></ul></div>
 
@@ -275,7 +274,6 @@
         <li><a href="https://netadao.org">Neta DAO ↗</a></li>
         <li><a href="/current.html">Current Series</a></li>
         <li><a href="/seminar.html">Coining Reason</a></li>
-        <li><a href="/cinema.html">Cinema</a></li>
         <li><a href="/forthcoming.html">Forthcoming</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
         <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
@@ -302,8 +300,10 @@
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       sendMagicLink, signInWithPassword, setPasswordForCurrentUser,
-      getRegistration, submitRegistration, getSeminarReadings
-    } from '/js/academy-auth.js?v=7';
+      getRegistration, submitRegistration, getSeminarReadings, initNavAccountWidget
+    } from '/js/academy-auth.js?v=10';
+
+    initNavAccountWidget('#accessPanel');
 
     const CURRENT_SEMINAR_ID = 'sex-and-or-love';
 
@@ -314,37 +314,20 @@
     const panelSetPassword       = document.getElementById('panelSetPassword');
     const stateNeedsRegistration = document.getElementById('stateNeedsRegistration');
     const statePending           = document.getElementById('statePending');
-    const stateApproved          = document.getElementById('stateApproved');
-    const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, panelSetPassword, stateNeedsRegistration, statePending, stateApproved];
+    const accessPanel            = document.getElementById('accessPanel');
+    const readingsUnlockedTag    = document.getElementById('readingsUnlockedTag');
+    const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, panelSetPassword, stateNeedsRegistration, statePending];
 
     function showState(el) {
+      accessPanel.classList.remove('hidden');
+      readingsUnlockedTag.classList.add('hidden');
       ALL_PANELS.forEach(s => s.classList.add('hidden'));
       el.classList.remove('hidden');
     }
 
-    // ── Nav account widget ──
-    const navAccountItem = document.getElementById('navAccountItem');
-    const navAccountLink = document.getElementById('navAccountLink');
-    function updateNavAccount(user) {
-      if (user && user.email) {
-        navAccountItem.classList.add('signed-in');
-        navAccountLink.textContent = `Signed in: ${user.email}`;
-        navAccountLink.removeAttribute('href');
-        if (!document.getElementById('navSignOutLink')) {
-          const btn = document.createElement('button');
-          btn.id = 'navSignOutLink';
-          btn.className = 'nav-signout';
-          btn.textContent = 'Sign out';
-          btn.addEventListener('click', () => signOut(auth));
-          navAccountItem.appendChild(btn);
-        }
-      } else {
-        navAccountItem.classList.remove('signed-in');
-        navAccountLink.textContent = 'Sign In';
-        navAccountLink.setAttribute('href', '#accessPanel');
-        const existing = document.getElementById('navSignOutLink');
-        if (existing) existing.remove();
-      }
+    function showApproved() {
+      accessPanel.classList.add('hidden');
+      readingsUnlockedTag.classList.remove('hidden');
     }
 
     async function unlockReadings() {
@@ -376,8 +359,6 @@
     let justCompletedMagicLink = false;
 
     async function refreshAccessState(user) {
-      updateNavAccount(user);
-
       if (!user) {
         if (!authInitialized) { showState(panelRegister); authInitialized = true; }
         return;
@@ -404,7 +385,7 @@
       }
 
       if (isApproved(reg.readingsAccess)) {
-        showState(stateApproved);
+        showApproved();
         unlockReadings();
         return;
       }

@@ -9,7 +9,7 @@ import {
   onAuthStateChanged as _onAuthStateChanged, signOut as _signOut
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import {
-  getDatabase, ref, get, update, set
+  getDatabase, ref, get, update, set, push
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -30,8 +30,9 @@ export const signOut = _signOut;
 
 // Wires up the shared nav account widget (#navAccountItem / #navAccountLink)
 // on any page that includes that markup. Shows "Sign In" (linking to
-// signInHref) when signed out, or "Signed in: email · Sign out" when
-// signed in. Safe to call on pages that don't have the markup at all.
+// signInHref) when signed out. When signed in, the link becomes
+// "Signed in: email" and takes you to /profile.html, where account
+// status and sign-out both live.
 export function initNavAccountWidget(signInHref) {
   const navAccountItem = document.getElementById('navAccountItem');
   const navAccountLink = document.getElementById('navAccountLink');
@@ -41,21 +42,11 @@ export function initNavAccountWidget(signInHref) {
     if (user && user.email) {
       navAccountItem.classList.add('signed-in');
       navAccountLink.textContent = `Signed in: ${user.email}`;
-      navAccountLink.removeAttribute('href');
-      if (!document.getElementById('navSignOutLink')) {
-        const btn = document.createElement('button');
-        btn.id = 'navSignOutLink';
-        btn.className = 'nav-signout';
-        btn.textContent = 'Sign out';
-        btn.addEventListener('click', () => _signOut(auth));
-        navAccountItem.appendChild(btn);
-      }
+      navAccountLink.setAttribute('href', '/profile.html');
     } else {
       navAccountItem.classList.remove('signed-in');
       navAccountLink.textContent = 'Sign In';
       navAccountLink.setAttribute('href', signInHref);
-      const existing = document.getElementById('navSignOutLink');
-      if (existing) existing.remove();
     }
   }
 
@@ -66,6 +57,29 @@ export function initNavAccountWidget(signInHref) {
 }
 
 export const ADMIN_EMAIL = 'academy@netadao.org';
+
+// ── EmailJS admin notifications ──
+// Requires the EmailJS SDK to be loaded as a plain <script> tag on the
+// page (not imported as a module — EmailJS's browser build is UMD-style
+// and exposes a global `emailjs`). Fails silently (with a console warning)
+// on any page that hasn't loaded it, and never blocks or throws on the
+// caller — a failed notification should never break an actual registration
+// or signup.
+const EMAILJS_SERVICE_ID = 'service_8szs7ct';
+const EMAILJS_TEMPLATE_ID = 'template_di3sjur';
+
+function notifyAdmin(type, name, email, details) {
+  if (typeof window === 'undefined' || typeof window.emailjs === 'undefined') {
+    console.warn('EmailJS not loaded on this page — skipping admin notification.');
+    return;
+  }
+  window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    notification_type: type,
+    from_name: name || '(no name given)',
+    from_email: email,
+    details: details || ''
+  }).catch((err) => console.error('EmailJS notification failed:', err));
+}
 
 // Firebase Realtime Database keys can't contain "." — this is the
 // standard safe encoding for using an email address as a key.
@@ -165,6 +179,7 @@ export async function submitRegistration(email, name, xHandle, seminarId) {
     email, name, xHandle, seminarId,
     requestedAt: Date.now()
   });
+  notifyAdmin('Seminar Registration', name, email, `X handle: ${xHandle}\nSeminar: ${seminarId}`);
 }
 
 // Fetches the actual reading URLs for a seminar — only succeeds if
@@ -207,4 +222,34 @@ export async function revokeRegistration(emailKey, seminarId) {
     readingsAccess: false,
     [`seminarAccess/${seminarId}`]: false
   });
+}
+
+// ── General interest signups (homepage footer form) ──
+// Public, no sign-in required — anyone can submit. Security rules only
+// allow creating a brand-new entry (never editing/reading others' entries),
+// so this is safe to leave fully open to unauthenticated visitors.
+
+export async function submitInterestSignup(name, email, proposingLecture, proposal) {
+  const newRef = push(ref(db, 'interestSignups'));
+  await set(newRef, {
+    name: name || '',
+    email,
+    proposingLecture: !!proposingLecture,
+    proposal: proposingLecture ? (proposal || '') : '',
+    submittedAt: Date.now()
+  });
+  const type = proposingLecture ? 'Guest Lecture Proposal' : 'General Interest Signup';
+  const details = proposingLecture ? (proposal || '(no details given)') : '(general updates signup, no proposal)';
+  notifyAdmin(type, name, email, details);
+}
+
+// Admin-only (requires signing in as ADMIN_EMAIL)
+export async function getAllInterestSignups() {
+  try {
+    const snap = await get(ref(db, 'interestSignups'));
+    return snap.exists() ? snap.val() : {};
+  } catch (err) {
+    console.error('getAllInterestSignups failed (are you signed in as the admin email?):', err);
+    return null;
+  }
 }

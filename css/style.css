@@ -43,6 +43,8 @@ a { color: inherit; text-decoration: none; }
   background-clip: text;
 }
 
+.hidden { display: none !important; }
+
 /* ── Nav ── */
 /* Always pinned at the very top, regardless of whether the announcement
    bar is present — this means the bar can be toggled on/off without ever
@@ -104,11 +106,6 @@ a { color: inherit; text-decoration: none; }
 #navAccountItem { position: relative; }
 #navAccountItem a { white-space: nowrap; }
 #navAccountItem.signed-in a { color: #2a8a4a; }
-#navAccountItem .nav-signout {
-  margin-left: 8px; color: #9aa0b8; text-decoration: underline;
-  font-size: inherit; cursor: pointer; background: none; border: none;
-  font-family: var(--font-mono);
-}
 
 /* ── Page wrapper — constrained width ── */
 .page-wrap {
@@ -279,7 +276,7 @@ a { color: inherit; text-decoration: none; }
 .footer-links { display: flex; flex-direction: column; gap: 8px; list-style: none; }
 .footer-links a { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa0b8; transition: color 0.15s; }
 .footer-links a:hover { color: #e8e6e0; }
-.footer-bottom { max-width: 1200px; margin: 0 auto; border-top: var(--panel-border); padding: 14px 48px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom { max-width: 1200px; margin: 0 auto; border-top: var(--panel-border); padding: 14px 48px; display: flex; flex-direction: column; gap: 4px; }
 .footer-copy { font-family: var(--font-mono); font-size: 10px; color: #444; }
 
 /* ── Reveal ── */

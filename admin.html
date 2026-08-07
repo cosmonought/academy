@@ -152,14 +152,31 @@
         </thead>
         <tbody id="regTableBody"></tbody>
       </table>
+
+      <h2 class="admin-title" style="font-size:22px;margin-top:48px;margin-bottom:8px;">General Interest Signups</h2>
+      <p class="admin-note" id="signupsStatusLine" style="margin-bottom:16px;"></p>
+      <button id="signupsRefreshBtn" style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;padding:8px 14px;background:transparent;border:1px solid var(--rule-thin);cursor:pointer;">Refresh List</button>
+
+      <table class="reg-table" id="signupsTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Guest Lecture Proposal</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="signupsTableBody"></tbody>
+      </table>
     </div>
   </div>
 
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, sendMagicLink,
-      getAllRegistrations, approveRegistration, revokeRegistration, ADMIN_EMAIL
-    } from '/js/academy-auth.js?v=7';
+      getAllRegistrations, approveRegistration, revokeRegistration,
+      getAllInterestSignups, ADMIN_EMAIL
+    } from '/js/academy-auth.js?v=10';
 
     const adminSignedOut    = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
@@ -237,6 +254,36 @@
       return div.innerHTML;
     }
 
+    async function loadInterestSignups() {
+      const all = await getAllInterestSignups();
+      const tbody = document.getElementById('signupsTableBody');
+      tbody.innerHTML = '';
+
+      if (!all) {
+        document.getElementById('signupsStatusLine').textContent = 'Could not load signups — check console for errors.';
+        return;
+      }
+
+      const entries = Object.entries(all);
+      const proposalCount = entries.filter(([, s]) => s.proposingLecture).length;
+      document.getElementById('signupsStatusLine').textContent =
+        `${entries.length} total signup(s) — ${proposalCount} guest lecture proposal(s).`;
+
+      entries.sort((a, b) => (b[1].submittedAt || 0) - (a[1].submittedAt || 0));
+
+      for (const [, signup] of entries) {
+        const tr = document.createElement('tr');
+        const submittedDate = signup.submittedAt ? new Date(signup.submittedAt).toLocaleString() : '';
+        tr.innerHTML = `
+          <td>${escapeHtml(signup.name || '')}</td>
+          <td>${escapeHtml(signup.email || '')}</td>
+          <td>${signup.proposingLecture ? escapeHtml(signup.proposal || '(no details given)') : '—'}</td>
+          <td>${escapeHtml(submittedDate)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
     (async () => {
       await completeSignInIfNeeded();
       onAuthStateChanged(auth, async (user) => {
@@ -254,6 +301,7 @@
         }
         showAdminState(adminApproved);
         loadRegistrations();
+        loadInterestSignups();
       });
     })();
 
@@ -276,6 +324,7 @@
     });
 
     document.getElementById('adminRefreshBtn').addEventListener('click', loadRegistrations);
+    document.getElementById('signupsRefreshBtn').addEventListener('click', loadInterestSignups);
   </script>
 </body>
 </html>

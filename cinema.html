@@ -1009,8 +1009,10 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, completeSignInIfNeeded,
-      sendMagicLink, signInWithPassword, signOut, getRegistration
-    } from '/js/academy-auth.js?v=7';
+      sendMagicLink, signInWithPassword, signOut, getRegistration, initNavAccountWidget
+    } from '/js/academy-auth.js?v=10';
+
+    initNavAccountWidget('#cinemaAccessGate');
 
     const CURRENT_SEMINAR_ID = 'sex-and-or-love';
 
@@ -1033,34 +1035,7 @@
       gatedContent.classList.remove('hidden');
     }
 
-    // ── Nav account widget ──
-    const navAccountItem = document.getElementById('navAccountItem');
-    const navAccountLink = document.getElementById('navAccountLink');
-    function updateNavAccount(user) {
-      if (user && user.email) {
-        navAccountItem.classList.add('signed-in');
-        navAccountLink.textContent = `Signed in: ${user.email}`;
-        navAccountLink.removeAttribute('href');
-        if (!document.getElementById('navSignOutLink')) {
-          const btn = document.createElement('button');
-          btn.id = 'navSignOutLink';
-          btn.className = 'nav-signout';
-          btn.textContent = 'Sign out';
-          btn.addEventListener('click', () => signOut(auth));
-          navAccountItem.appendChild(btn);
-        }
-      } else {
-        navAccountItem.classList.remove('signed-in');
-        navAccountLink.textContent = 'Sign In';
-        navAccountLink.setAttribute('href', '#cinemaAccessGate');
-        const existing = document.getElementById('navSignOutLink');
-        if (existing) existing.remove();
-      }
-    }
-
     async function refreshCinemaAccess(user) {
-      updateNavAccount(user);
-
       if (!user) { showGateState(gateLogin); return; }
 
       if (!user.email) {

@@ -11,6 +11,10 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
+  </script>
   <style>
 
     /* ── Hero two-col: text left, animation right ── */
@@ -507,7 +511,8 @@
     <div class="footer-inner">
       <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p>
 
-        <div id="footerSignupForm" style="margin-top:16px;max-width:360px;display:flex;flex-direction:column;gap:8px;">
+        <p class="footer-tagline" style="margin-top:16px;color:#e8e6e0;">Sign up to be notified of new seminars and events:</p>
+        <div id="footerSignupForm" style="margin-top:8px;max-width:360px;display:flex;flex-direction:column;gap:8px;">
           <input type="text" id="fsName" placeholder="Name" style="background:var(--bg);border:1px solid var(--rule-thin);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--ink);outline:none;" />
           <input type="email" id="fsEmail" placeholder="Email" style="background:var(--bg);border:1px solid var(--rule-thin);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--ink);outline:none;" />
           <label style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;color:var(--ink-mid);cursor:pointer;">
@@ -516,6 +521,7 @@
           </label>
           <textarea id="fsProposal" class="hidden" placeholder="Briefly describe your proposed topic and background…" rows="3" style="background:var(--bg);border:1px solid var(--rule-thin);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--ink);outline:none;resize:vertical;"></textarea>
           <button id="fsSubmit" style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;text-transform:uppercase;padding:10px 16px;background:var(--ink);color:var(--bg);border:none;cursor:pointer;align-self:flex-start;">Submit</button>
+          <p id="fsStatus" style="font-family:var(--font-mono);font-size:11px;color:#9aa0b8;"></p>
         </div>
       </div>
       <div class="footer-links-cell"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li>
@@ -529,25 +535,43 @@
     <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p><p class="footer-copy" style="margin-top:8px;font-size:11px;">The materials presented on this site are for informational purposes only and should not be construed as financial advice.</p></div>
   </footer>
 
-  <script>
+  <script type="module">
+    import { submitInterestSignup } from '/js/academy-auth.js?v=10';
+
     const footerSignupForm   = document.getElementById('footerSignupForm');
     const fsProposeCheckbox  = document.getElementById('fsProposeCheckbox');
     const fsProposal         = document.getElementById('fsProposal');
+    const fsStatus           = document.getElementById('fsStatus');
+    const fsSubmitBtn        = document.getElementById('fsSubmit');
 
     fsProposeCheckbox.addEventListener('change', () => {
       fsProposal.classList.toggle('hidden', !fsProposeCheckbox.checked);
     });
-    document.getElementById('fsSubmit').addEventListener('click', () => {
+
+    fsSubmitBtn.addEventListener('click', async () => {
       const name = document.getElementById('fsName').value.trim();
       const email = document.getElementById('fsEmail').value.trim();
       const proposing = fsProposeCheckbox.checked;
       const proposal = fsProposal.value.trim();
-      if (!email) { alert('Please enter an email address.'); return; }
-      let body = `Name: ${name}\nEmail: ${email}\n`;
-      if (proposing) body += `\nGuest lecture proposal:\n${proposal}`;
-      else body += `\nJust signing up for updates.`;
-      const subject = proposing ? 'Guest Lecture Proposal' : 'Academy Updates Signup';
-      window.location.href = `mailto:academy@netadao.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      if (!email) { fsStatus.textContent = 'Please enter an email address.'; return; }
+
+      fsSubmitBtn.disabled = true;
+      fsSubmitBtn.textContent = 'Submitting…';
+      try {
+        await submitInterestSignup(name, email, proposing, proposal);
+        fsStatus.textContent = 'Thanks — you\'re on the list!';
+        document.getElementById('fsName').value = '';
+        document.getElementById('fsEmail').value = '';
+        fsProposeCheckbox.checked = false;
+        fsProposal.value = '';
+        fsProposal.classList.add('hidden');
+      } catch (err) {
+        console.error(err);
+        fsStatus.textContent = 'Something went wrong — please try again.';
+      } finally {
+        fsSubmitBtn.disabled = false;
+        fsSubmitBtn.textContent = 'Submit';
+      }
     });
   </script>
 
@@ -866,7 +890,7 @@
 
   <!-- ── Nav sign-in status ── -->
   <script type="module">
-    import { initNavAccountWidget } from '/js/academy-auth.js?v=7';
+    import { initNavAccountWidget } from '/js/academy-auth.js?v=10';
     initNavAccountWidget('/current.html#accessPanel');
   </script>
 </body>

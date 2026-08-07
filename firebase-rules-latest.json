@@ -21,25 +21,25 @@
     "academyRegistrations": {
       ".read": "auth != null && auth.token.email === 'academy@netadao.org'",
       "$emailKey": {
-        ".read": "auth != null && (auth.token.email === 'academy@netadao.org' || $emailKey === auth.token.email.replace('.', ','))",
+        ".read": "auth != null && (auth.token.email === 'academy@netadao.org' || (data.child('email').exists() && data.child('email').val() === auth.token.email))",
         "name": {
-          ".write": "!data.exists() || (auth != null && $emailKey === auth.token.email.replace('.', ','))",
+          ".write": "!data.exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
           ".validate": "newData.isString() && newData.val().length <= 80"
         },
         "email": {
-          ".write": "!data.exists() || (auth != null && $emailKey === auth.token.email.replace('.', ','))",
+          ".write": "!data.exists() || (auth != null && data.val() === auth.token.email)",
           ".validate": "newData.isString() && newData.val().length <= 120"
         },
         "xHandle": {
-          ".write": "!data.exists() || (auth != null && $emailKey === auth.token.email.replace('.', ','))",
+          ".write": "!data.exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
           ".validate": "newData.isString() && newData.val().length <= 40"
         },
         "seminarId": {
-          ".write": "!data.exists() || (auth != null && $emailKey === auth.token.email.replace('.', ','))",
+          ".write": "!data.exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
           ".validate": "newData.isString()"
         },
         "requestedAt": {
-          ".write": "!data.exists() || (auth != null && $emailKey === auth.token.email.replace('.', ','))",
+          ".write": "!data.exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
           ".validate": "newData.isNumber()"
         },
         "readingsAccess": {
@@ -52,7 +52,7 @@
       }
     },
     "seminarReadings": {
-      ".read": "auth != null && root.child('academyRegistrations').child(auth.token.email.replace('.', ',')).child('readingsAccess').val() === true",
+      ".read": "auth != null && root.child('academyRegistrations').child(auth.token.email.replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).child('readingsAccess').val() === true",
       ".write": false
     }
   }

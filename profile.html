@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Profile — Neta DAO Academy</title>
+  <meta name="description" content="View your Neta DAO Academy registration and access status." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+  <style>
+    .profile-wrap {
+      max-width: 720px;
+      margin: 86px auto 80px;
+      padding: 0 24px;
+    }
+    .profile-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .profile-email {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-dim);
+      margin-bottom: 28px;
+    }
+    .profile-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--rule-thin);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+    .profile-card h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .profile-field {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      padding: 6px 0;
+      border-top: 1px solid var(--rule-thin);
+    }
+    .profile-field:first-of-type { border-top: none; margin-top: 12px; }
+    .profile-field-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      width: 120px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+    .status-pill {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border: 1px solid;
+      display: inline-block;
+    }
+    .status-pill.approved { border-color: #2a8a4a; color: #2a8a4a; }
+    .status-pill.pending { border-color: var(--blue); color: var(--blue); }
+    .signout-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      padding: 12px 20px;
+      background: transparent;
+      color: var(--ink-dim);
+      border: 1px solid var(--rule-thin);
+      cursor: pointer;
+    }
+    .signout-btn:hover { color: var(--ink); border-color: var(--ink); }
+    .profile-note {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-dim);
+      line-height: 1.7;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="https://netadao.org" class="nav-logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
+          <rect width="40" height="40" fill="#080808"/>
+          <defs>
+            <linearGradient id="a-grad-NAV" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#C9338A"/>
+              <stop offset="35%" stop-color="#C9338A"/>
+              <stop offset="100%" stop-color="#5B8EF0"/>
+            </linearGradient>
+            <clipPath id="a-clip-NAV">
+              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
+            </clipPath>
+          </defs>
+          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
+          <g clip-path="url(#a-clip-NAV)">
+            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/>
+          </g>
+        </svg>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/current.html">Current Series</a></li>
+        <li><a href="/seminar.html">Coining Reason</a></li>
+        <li><a href="/forthcoming.html">Forthcoming</a></li>
+        <li><a href="https://fork.netadao.org">Fork Journal</a></li>
+        <li id="navAccountItem"><a href="/current.html#accessPanel" id="navAccountLink">Sign In</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="profile-wrap">
+
+    <div id="profileSignedOut">
+      <h1 class="profile-title">Not Signed In</h1>
+      <p class="profile-note">You need to be signed in to view your profile. <a href="/current.html#accessPanel" style="color:var(--blue);">Sign in from the Current Seminar page →</a></p>
+    </div>
+
+    <div id="profileSignedIn" class="hidden">
+      <h1 class="profile-title">Your Profile</h1>
+      <p class="profile-email" id="profileEmailLine"></p>
+
+      <div id="profileNoRegistration" class="profile-card hidden">
+        <h3>No Registration Found</h3>
+        <p class="profile-note" style="margin-top:8px;">You're signed in, but we don't have a registration on file for this email. <a href="/current.html#accessPanel" style="color:var(--blue);">Register for the current seminar →</a></p>
+      </div>
+
+      <div id="profileRegistration" class="profile-card hidden">
+        <h3 id="profileSeminarTitle"></h3>
+        <div class="profile-field"><span class="profile-field-label">Status</span><span id="profileStatusPill"></span></div>
+        <div class="profile-field"><span class="profile-field-label">Name</span><span id="profileName"></span></div>
+        <div class="profile-field"><span class="profile-field-label">X Handle</span><span id="profileXHandle"></span></div>
+        <div class="profile-field"><span class="profile-field-label">Applied</span><span id="profileAppliedDate"></span></div>
+        <p class="profile-note" id="profilePendingNote" style="margin-top:16px;"></p>
+      </div>
+
+      <button class="signout-btn" id="profileSignOutBtn">Sign Out</button>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import {
+      auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
+      initNavAccountWidget, getRegistration
+    } from '/js/academy-auth.js?v=10';
+
+    initNavAccountWidget('/current.html#accessPanel');
+
+    const SEMINAR_TITLES = {
+      'sex-and-or-love': 'Sex, and/or Love'
+    };
+
+    const profileSignedOut     = document.getElementById('profileSignedOut');
+    const profileSignedIn      = document.getElementById('profileSignedIn');
+    const profileNoRegistration = document.getElementById('profileNoRegistration');
+    const profileRegistration  = document.getElementById('profileRegistration');
+
+    function isApproved(val) {
+      return val === true || val === 'true';
+    }
+
+    async function refreshProfile(user) {
+      if (!user || !user.email) {
+        profileSignedOut.classList.remove('hidden');
+        profileSignedIn.classList.add('hidden');
+        return;
+      }
+
+      profileSignedOut.classList.add('hidden');
+      profileSignedIn.classList.remove('hidden');
+      document.getElementById('profileEmailLine').textContent = user.email;
+
+      const reg = await getRegistration(user.email);
+
+      if (!reg) {
+        profileNoRegistration.classList.remove('hidden');
+        profileRegistration.classList.add('hidden');
+        return;
+      }
+
+      profileNoRegistration.classList.add('hidden');
+      profileRegistration.classList.remove('hidden');
+
+      const approved = isApproved(reg.readingsAccess);
+      document.getElementById('profileSeminarTitle').textContent = SEMINAR_TITLES[reg.seminarId] || reg.seminarId || 'Seminar';
+      document.getElementById('profileName').textContent = reg.name || '—';
+      document.getElementById('profileXHandle').textContent = reg.xHandle || '—';
+      document.getElementById('profileAppliedDate').textContent = reg.requestedAt ? new Date(reg.requestedAt).toLocaleDateString() : '—';
+
+      const pill = document.getElementById('profileStatusPill');
+      pill.className = 'status-pill ' + (approved ? 'approved' : 'pending');
+      pill.textContent = approved ? 'Enrolled' : 'Pending Approval';
+
+      document.getElementById('profilePendingNote').textContent = approved
+        ? ''
+        : 'Your registration is submitted but not yet verified. DM @NetaDAO_Academy from your registered X handle to complete it.';
+    }
+
+    (async () => {
+      await completeSignInIfNeeded();
+      onAuthStateChanged(auth, (user) => { refreshProfile(user); });
+    })();
+
+    document.getElementById('profileSignOutBtn').addEventListener('click', () => {
+      signOut(auth);
+    });
+
+    const h = document.querySelector('.nav-hamburger');
+    const n = document.querySelector('.nav-links');
+    if (h && n) h.addEventListener('click', () => n.classList.toggle('open'));
+  </script>
+</body>
+</html>

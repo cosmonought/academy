@@ -72,6 +72,7 @@
     }
     .status-pill.approved { border-color: #2a8a4a; color: #2a8a4a; }
     .status-pill.pending { border-color: var(--blue); color: var(--blue); }
+    .status-pill.completed { border-color: var(--pink); color: var(--pink); }
     .signout-btn {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -159,8 +160,8 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
-      initNavAccountWidget, getRegistrations, SEMINAR_TITLES, computeAttendance
-    } from '/js/academy-auth.js?v=18';
+      initNavAccountWidget, getRegistrations, SEMINAR_TITLES, SEMINAR_COMPLETED, computeAttendance
+    } from '/js/academy-auth.js?v=19';
 
     initNavAccountWidget('/seminars.html');
 
@@ -204,17 +205,24 @@
 
       for (const [seminarId, reg] of entries) {
         const approved = isApproved(reg.enrolled);
+        const completed = SEMINAR_COMPLETED[seminarId] === true;
         const { attended, total } = computeAttendance(seminarId, reg);
         const card = document.createElement('div');
         card.className = 'profile-card';
+
+        let statusHtml;
+        if (!approved) {
+          statusHtml = `<span class="status-pill pending">Registered — Pending Enrollment</span>`;
+        } else if (completed) {
+          statusHtml = `<span class="status-pill completed">Completed</span>`;
+        } else {
+          statusHtml = `<span class="status-pill approved">Enrolled</span>`;
+        }
+
         card.innerHTML = `
           <h3>${escapeHtml(SEMINAR_TITLES[seminarId] || seminarId)}</h3>
-          <div class="profile-field"><span class="profile-field-label">Status</span><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Enrolled' : 'Registered — Pending Enrollment'}</span></div>
-          <div class="profile-field"><span class="profile-field-label">Name</span><span>${escapeHtml(reg.name || '—')}</span></div>
-          <div class="profile-field"><span class="profile-field-label">X Handle</span><span>${escapeHtml(reg.xHandle || '—')}</span></div>
-          <div class="profile-field"><span class="profile-field-label">Reason</span><span>${escapeHtml(reg.reason || '—')}</span></div>
-          <div class="profile-field"><span class="profile-field-label">Applied</span><span>${reg.requestedAt ? new Date(reg.requestedAt).toLocaleDateString() : '—'}</span></div>
-          ${approved ? `<div class="profile-field"><span class="profile-field-label">Attendance</span><span>${attended} / ${total} sessions</span></div>` : ''}
+          <div class="profile-field"><span class="profile-field-label">Status</span>${statusHtml}</div>
+          ${approved ? `<div class="profile-field"><span class="profile-field-label">Progress</span><span>${attended} / ${total} sessions</span></div>` : ''}
           ${approved ? '' : `<p class="profile-note" style="margin-top:16px;">Your registration is submitted, but enrollment is not yet complete. DM @NetaDAO_Academy from your registered X handle to finish enrolling.</p>`}
         `;
         profileRegistrationsList.appendChild(card);

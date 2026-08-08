@@ -341,6 +341,16 @@ export const SEMINAR_TITLES = {
   'coining-reason-unit-2': 'Coining Reason — Unit II'
 };
 
+// Seminars that have fully concluded — every session already happened,
+// nothing left to attend. This is about the SEMINAR's own lifecycle,
+// not any individual participant's attendance count, so it's a flat
+// per-seminar flag rather than derived from attendance data.
+export const SEMINAR_COMPLETED = {
+  'sex-and-or-love': false,
+  'coining-reason-unit-1': true,
+  'coining-reason-unit-2': false
+};
+
 export const SEMINAR_SESSIONS = {
   'sex-and-or-love': [
     { key: 's0', label: '0' }, { key: 's1', label: '1' }, { key: 's2', label: '2' }, { key: 's3', label: '3' },

@@ -199,7 +199,10 @@
           <!-- Login form (password-based, toggled in) -->
           <div id="panelLogin" class="hidden">
             <h3>Login</h3>
-            <p class="access-sub">Sign in with the email and password you set up after your first approval.</p>
+            <div style="background:rgba(91,142,240,0.1);border:1px solid var(--blue);padding:14px 16px;margin-bottom:18px;">
+              <p style="font-size:13px;color:var(--ink);line-height:1.6;"><strong>First time logging in since being enrolled?</strong> You haven't set a password yet — use <button class="toggle-link" id="showMagicLinkBtnTop" style="font-size:13px;">the email link option</button> below instead. You'll set a password there for next time.</p>
+            </div>
+            <p class="access-sub">Already set a password? Sign in with it here.</p>
             <div class="access-row"><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" /></div>
             <div class="access-row"><input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" /></div>
             <div class="access-row"><button id="loginBtn" class="btn btn-primary">Log In</button></div>
@@ -487,6 +490,7 @@
     document.getElementById('showLoginBtn').addEventListener('click', () => showState(panelLogin));
     document.getElementById('showRegisterBtn').addEventListener('click', () => showState(panelRegister));
     document.getElementById('showMagicLinkBtn').addEventListener('click', () => showState(panelMagicLink));
+    document.getElementById('showMagicLinkBtnTop').addEventListener('click', () => showState(panelMagicLink));
     document.getElementById('backToLoginBtn').addEventListener('click', () => showState(panelLogin));
     document.getElementById('backToRegisterLink').addEventListener('click', (e) => {
       e.preventDefault();

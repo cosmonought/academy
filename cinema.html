@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cinema — Neta DAO Academy</title>
   <meta name="description" content="Live film screening — Neta DAO Academy." />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -816,7 +816,13 @@
       appId: "1:857402063474:web:1e3a5c9ea8625cb0a8e0eb"
     };
 
-    const app = initializeApp(firebaseConfig);
+    // Named explicitly ('cinemaChatApp') so this NEVER collides with the
+    // shared academy-auth.js module's default Firebase app on this page.
+    // Two initializeApp() calls targeting the same default app slot throws
+    // "Firebase App named '[DEFAULT]' already exists" and can corrupt the
+    // real signed-in user's session — this keeps anonymous chat auth fully
+    // isolated from real account authentication.
+    const app = initializeApp(firebaseConfig, 'cinemaChatApp');
     const db = getDatabase(app);
     const auth = getAuth(app);
     const messagesRef = ref(db, 'chat/cinema/messages');
@@ -1016,7 +1022,7 @@
     import {
       auth, onAuthStateChanged, completeSignInIfNeeded,
       sendMagicLink, signInWithPassword, signOut, getRegistrationForSeminar, initNavAccountWidget
-    } from '/js/academy-auth.js?v=11';
+    } from '/js/academy-auth.js?v=13';
 
     initNavAccountWidget('#cinemaAccessGate');
 

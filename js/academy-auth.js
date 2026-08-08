@@ -58,7 +58,7 @@ export function initNavAccountWidget(signInHref) {
 
 export const ADMIN_EMAIL = 'academy@netadao.org';
 
-// ── EmailJS admin notifications ──
+// ── EmailJS notifications (admin alerts + participant confirmations) ──
 // Requires the EmailJS SDK to be loaded as a plain <script> tag on the
 // page (not imported as a module — EmailJS's browser build is UMD-style
 // and exposes a global `emailjs`). Fails silently (with a console warning)
@@ -68,17 +68,22 @@ export const ADMIN_EMAIL = 'academy@netadao.org';
 const EMAILJS_SERVICE_ID = 'service_8szs7ct';
 const EMAILJS_TEMPLATE_ID = 'template_di3sjur';
 
-function notifyAdmin(type, name, email, details) {
+function sendNotificationEmail(toEmail, type, name, email, details) {
   if (typeof window === 'undefined' || typeof window.emailjs === 'undefined') {
-    console.warn('EmailJS not loaded on this page — skipping admin notification.');
+    console.warn('EmailJS not loaded on this page — skipping notification.');
     return;
   }
   window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    to_email: toEmail,
     notification_type: type,
     from_name: name || '(no name given)',
     from_email: email,
     details: details || ''
   }).catch((err) => console.error('EmailJS notification failed:', err));
+}
+
+function notifyAdmin(type, name, email, details) {
+  sendNotificationEmail(ADMIN_EMAIL, type, name, email, details);
 }
 
 // Firebase Realtime Database keys can't contain "." — this is the
@@ -190,13 +195,22 @@ export async function getRegistrationForSeminar(email, seminarId) {
 // step before ever touching the magic-link flow. Security rules only
 // allow this to succeed for a brand-new entry at this seminar; once
 // created, only the verified owner (or admin) can modify it further.
-export async function submitRegistration(email, name, xHandle, seminarId, reason) {
+// seminarTitle is just for the confirmation email's wording — pass the
+// human-readable name (e.g. "Sex, and/or Love") rather than the raw id.
+export async function submitRegistration(email, name, xHandle, seminarId, reason, seminarTitle) {
   const key = emailToKey(email);
   await update(ref(db, `academyRegistrations/${key}/${seminarId}`), {
     email, name, xHandle, reason,
     requestedAt: Date.now()
   });
   notifyAdmin('Seminar Registration', name, email, `X handle: ${xHandle}\nSeminar: ${seminarId}\n\nReason for joining:\n${reason}`);
+  sendNotificationEmail(
+    email,
+    'Registration Received',
+    name,
+    email,
+    `Thanks for registering for ${seminarTitle || seminarId}! This does not confirm your enrollment. To complete enrollment, please DM @NetaDAO_Academy on X from your registered handle (${xHandle}).`
+  );
 }
 
 // Fetches the actual reading URLs for a seminar — only succeeds if
@@ -226,10 +240,24 @@ export async function getAllRegistrations() {
   }
 }
 
-export async function approveRegistration(emailKey, seminarId) {
+// Approves (enrolls) a person for a seminar, and sends them a
+// confirmation email if EmailJS is loaded on this page (it's loaded
+// on admin.html) and a participant email is provided. seminarTitle is
+// just for the email's wording — pass the human-readable name, e.g.
+// "Sex, and/or Love" rather than the raw seminarId.
+export async function approveRegistration(emailKey, seminarId, participantEmail, participantName, seminarTitle) {
   await update(ref(db, `academyRegistrations/${emailKey}/${seminarId}`), {
     enrolled: true
   });
+  if (participantEmail) {
+    sendNotificationEmail(
+      participantEmail,
+      'Enrollment Confirmed',
+      participantName,
+      participantEmail,
+      `You're enrolled in ${seminarTitle || seminarId}! Sign in at academy.netadao.org to access readings, the Cinema screening, and speaking access during live X Spaces discussions.`
+    );
+  }
 }
 
 // Revokes a person's enrollment in this specific seminar. Does not delete

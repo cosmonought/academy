@@ -5,8 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — Neta DAO Academy</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
+  </script>
   <style>
     body { background: var(--bg); }
     .admin-wrap {
@@ -177,7 +181,11 @@
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, sendMagicLink,
       getAllRegistrations, approveRegistration, revokeRegistration,
       getAllInterestSignups, ADMIN_EMAIL
-    } from '/js/academy-auth.js?v=11';
+    } from '/js/academy-auth.js?v=13';
+
+    const SEMINAR_TITLES = {
+      'sex-and-or-love': 'Sex, and/or Love'
+    };
 
     const adminSignedOut    = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
@@ -250,7 +258,7 @@
           btn.addEventListener('click', async () => {
             btn.disabled = true;
             btn.textContent = 'Approving…';
-            await approveRegistration(emailKey, seminarId);
+            await approveRegistration(emailKey, seminarId, reg.email, reg.name, SEMINAR_TITLES[seminarId] || seminarId);
             loadRegistrations();
           });
           actionCell.appendChild(btn);

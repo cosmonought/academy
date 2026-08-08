@@ -42,18 +42,24 @@
       transition: filter 0.5s ease, transform 0.5s ease;
       z-index: -2;
     }
-    /* Dark scrim for text legibility, regardless of the image beneath */
+    /* Dark scrim for text legibility, regardless of the image beneath.
+       Transitions alongside the image so hover brightens both together. */
     .seminar-card-left::after {
       content: '';
       position: absolute;
       inset: 0;
       background: linear-gradient(160deg, rgba(8,8,8,0.74) 0%, rgba(8,8,8,0.9) 100%);
+      transition: background 0.5s ease;
       z-index: -1;
     }
-    /* On hover, the image reveals more of its real color */
+    /* On hover, the image reveals more of its real color and the scrim
+       lifts substantially — roughly a 40% brightness boost overall. */
     .seminar-card-left:hover::before {
-      filter: grayscale(8%) brightness(0.7) contrast(1.05);
+      filter: grayscale(5%) brightness(0.95) contrast(1.05);
       transform: scale(1.08);
+    }
+    .seminar-card-left:hover::after {
+      background: linear-gradient(160deg, rgba(8,8,8,0.42) 0%, rgba(8,8,8,0.58) 100%);
     }
     .seminar-card-left h2 { color: #f2f0eb; }
     .seminar-card-right { padding: 40px 48px; }
@@ -210,7 +216,7 @@
   </script>
 
   <script type="module">
-    import { initNavAccountWidget } from '/js/academy-auth.js?v=15';
+    import { initNavAccountWidget } from '/js/academy-auth.js?v=16';
     initNavAccountWidget('/sex-and-or-love.html#accessPanel');
   </script>
 </body>

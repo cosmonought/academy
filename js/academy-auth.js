@@ -33,21 +33,50 @@ export const signOut = _signOut;
 // on any page that includes that markup. Shows "Sign In" (linking to
 // signInHref) when signed out. When signed in, the link becomes
 // "Signed in: email" and takes you to /profile.html, where account
-// status and sign-out both live.
+// status and sign-out both live. If the signed-in email matches
+// ADMIN_EMAIL, also injects "Admin" and "Cinema" nav links visible only
+// to that account — nobody else ever sees them, since they're only
+// added to the DOM when the admin's own auth state is detected.
 export function initNavAccountWidget(signInHref) {
   const navAccountItem = document.getElementById('navAccountItem');
   const navAccountLink = document.getElementById('navAccountLink');
   if (!navAccountItem || !navAccountLink) return;
+
+  function ensureAdminNavLinks() {
+    if (document.getElementById('navAdminLink')) return;
+    const adminLi = document.createElement('li');
+    adminLi.id = 'navAdminLink';
+    adminLi.innerHTML = '<a href="/admin.html">Admin</a>';
+    navAccountItem.parentNode.insertBefore(adminLi, navAccountItem);
+
+    const cinemaLi = document.createElement('li');
+    cinemaLi.id = 'navCinemaAdminLink';
+    cinemaLi.innerHTML = '<a href="/cinema.html">Cinema</a>';
+    navAccountItem.parentNode.insertBefore(cinemaLi, navAccountItem);
+  }
+
+  function removeAdminNavLinks() {
+    const a = document.getElementById('navAdminLink');
+    if (a) a.remove();
+    const c = document.getElementById('navCinemaAdminLink');
+    if (c) c.remove();
+  }
 
   function updateNavAccount(user) {
     if (user && user.email) {
       navAccountItem.classList.add('signed-in');
       navAccountLink.textContent = `Signed in: ${user.email}`;
       navAccountLink.setAttribute('href', '/profile.html');
+      if (user.email === ADMIN_EMAIL) {
+        ensureAdminNavLinks();
+      } else {
+        removeAdminNavLinks();
+      }
     } else {
       navAccountItem.classList.remove('signed-in');
       navAccountLink.textContent = 'Sign In';
       navAccountLink.setAttribute('href', signInHref);
+      removeAdminNavLinks();
     }
   }
 

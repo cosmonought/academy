@@ -219,12 +219,12 @@
     }
     .keynes-quote cite { display: block; margin-top: 8px; font-style: normal; font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
 
-    /* ── Seminar access panel (repeated per-Unit, same pattern as Sex, and/or Love) ── */
-    .access-panel-wrapper { margin: 24px 0 32px; }
+    /* ── Seminar access panel (lives inside the collapsible, per-Unit) ── */
     .access-panel {
       background: var(--bg-raised);
       border: 1px solid var(--rule-thin);
       padding: 24px 28px;
+      margin: 20px 0;
     }
     .access-panel h3 { font-family: var(--font-display); font-size: 20px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; }
     .access-panel p.access-sub { font-size: 13px; color: var(--ink-mid); line-height: 1.6; margin-bottom: 18px; }
@@ -241,6 +241,7 @@
     .access-panel .toggle-link { color: var(--blue); text-decoration: underline; cursor: pointer; background: none; border: none; font-family: var(--font-mono); font-size: 12px; padding: 0; }
     .access-panel .toggle-link:hover { color: var(--pink); }
     .access-panel .fallback-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); margin-top: 14px; }
+    .access-panel .lock-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); margin-bottom: 18px; }
     .hidden { display: none; }
     .google-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
@@ -253,18 +254,6 @@
     .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--rule-thin); }
     .auth-divider span { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.06em; }
 
-    /* ── Syllabus lock (gates the whole detailed session list, not just links) ── */
-    .syllabus-locked {
-      padding: 24px 0;
-      text-align: center;
-    }
-    .syllabus-locked p {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--ink-dim);
-      line-height: 1.7;
-    }
-    .syllabus-locked a { color: var(--blue); }
     .unlocked-tag {
       font-family: var(--font-mono); font-size: 11px; font-weight: 400; letter-spacing: 0.06em;
       color: #2a8a4a; border: 1px solid #2a8a4a; padding: 3px 9px; text-transform: uppercase;
@@ -307,7 +296,7 @@
           </ul>
         </li>
         <li><a href="https://fork.netadao.org">Fork Journal</a></li>
-        <li id="navAccountItem"><a href="#unit2AccessPanel" id="navAccountLink">Sign In</a></li>
+        <li id="navAccountItem"><a href="#unit2" id="navAccountLink">Sign In</a></li>
       </ul>
       <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
@@ -334,7 +323,7 @@
 
       <div style="max-width:820px;margin-top:16px;">
         <p class="section-body" style="margin-bottom:16px;">Coining Reason is a weekly discussion series exploring ideas connected to Web3 through a deliberately wide range of subject areas — economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. This breadth isn't undisciplined wandering: as financialization comes to touch nearly every part of life, no single field is equipped to catch everything at stake, and a single technology's arrival tends to reshape the whole frame people think within, not just the picture inside it.</p>
-        <p class="section-body">Below is a Roadmap of these subject areas ("Units"), each with its own reading list. Because the depth and scope of each Unit varies, Coining Reason's participants ultimately help shape the pace and direction of the investigation. Each Unit is registered and enrolled in separately — you're welcome to join just one, or both.</p>
+        <p class="section-body">Below is a Roadmap of these subject areas ("Units"), each with its own reading list. Because the depth and scope of each Unit varies, Coining Reason's participants ultimately help shape the pace and direction of the investigation.</p>
       </div>
 
       <!-- ══════════════════════════════════════ -->
@@ -346,75 +335,81 @@
           <span id="unit2UnlockedTag" class="unlocked-tag hidden">✓ Syllabus Unlocked</span>
         </div>
 
-        <!-- Unit II access panel -->
-        <div class="access-panel-wrapper" id="unit2AccessPanelWrapper">
-          <div class="access-panel" id="unit2AccessPanel">
-
-            <div id="unit2PanelRegister">
-              <h3>Unit II Access</h3>
-              <p class="access-sub">The full Unit II syllabus — session-by-session readings, recordings, and lecture notes — is reserved for enrolled participants. The Roadmap below stays open to everyone as a preview. <a href="/seminars.html#policies" style="color:var(--blue);">How registration and enrollment work →</a></p>
-              <div class="access-row"><input type="text" id="unit2RegName" placeholder="Your name" /></div>
-              <div class="access-row"><input type="email" id="unit2RegEmail" placeholder="you@example.com" autocomplete="email" /></div>
-              <div class="access-row"><input type="text" id="unit2RegXHandle" placeholder="Your X handle (e.g. @yourname)" /></div>
-              <div class="access-row"><textarea id="unit2RegReason" placeholder="Why do you want access to Unit II's archive?" rows="3"></textarea></div>
-              <div class="access-row"><button id="unit2SubmitRegBtn" class="btn btn-primary">Register</button></div>
-              <p class="access-note" id="unit2RegStatus"></p>
-              <p class="fallback-note">Already registered? <button class="toggle-link" id="unit2ShowLoginBtn">Login instead →</button></p>
-            </div>
-
-            <div id="unit2PanelLogin" class="hidden">
-              <h3>Login</h3>
-              <button id="unit2GoogleSignInBtn" class="google-btn" type="button">
-                <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-                Sign in with Google
-              </button>
-              <div class="auth-divider"><span>or</span></div>
-              <div style="background:rgba(91,142,240,0.1);border:1px solid var(--blue);padding:14px 16px;margin-bottom:18px;">
-                <p style="font-size:13px;color:var(--ink);line-height:1.6;"><strong>First time logging in since being enrolled?</strong> You haven't set a password yet — use <button class="toggle-link" id="unit2ShowMagicLinkBtnTop" style="font-size:13px;">the email link option</button> below instead. You'll set a password there for next time.</p>
-              </div>
-              <p class="access-sub">Already set a password? Sign in with it here.</p>
-              <div class="access-row"><input type="email" id="unit2LoginEmail" placeholder="you@example.com" autocomplete="email" /></div>
-              <div class="access-row"><input type="password" id="unit2LoginPassword" placeholder="Password" autocomplete="current-password" /></div>
-              <div class="access-row"><button id="unit2LoginBtn" class="btn btn-primary">Log In</button></div>
-              <p class="access-note" id="unit2LoginStatus"></p>
-              <p class="fallback-note">New here? <button class="toggle-link" id="unit2ShowRegisterBtn">Register instead ←</button></p>
-              <p class="fallback-note">Haven't set a password yet, or trouble signing in? <button class="toggle-link" id="unit2ShowMagicLinkBtn">Use email link instead</button></p>
-              <p class="fallback-note">Forgot your password? <button class="toggle-link" id="unit2ForgotPasswordBtn">Send a reset link</button></p>
-            </div>
-
-            <div id="unit2PanelMagicLink" class="hidden">
-              <h3>Sign In via Email Link</h3>
-              <p class="access-sub">We'll send a one-time sign-in link — use this for your very first sign-in after approval, or if you've forgotten your password.</p>
-              <div class="access-row"><input type="email" id="unit2SignInEmail" placeholder="you@example.com" autocomplete="email" /><button id="unit2SendLinkBtn" class="btn btn-primary">Send Sign-In Link</button></div>
-              <p class="access-note" id="unit2SignInStatus"></p>
-              <p class="fallback-note"><button class="toggle-link" id="unit2BackToLoginBtn">← Back to login</button></p>
-            </div>
-
-            <div id="unit2StateJustRegistered" class="hidden">
-              <h3>Registration Submitted</h3>
-              <p class="access-sub access-status pending">Thanks, <span id="unit2JustRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit2JustRegHandle"></strong>. Once enrolled, come back and use the Login link above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
-            </div>
-
-            <div id="unit2StateNeedsRegistration" class="hidden">
-              <h3>No Registration Found</h3>
-              <p class="access-sub">You're signed in as <strong id="unit2SignedInEmail"></strong>, but we don't have a Unit II registration on file for this email. <a href="#" id="unit2BackToRegisterLink" style="color:var(--blue);">Register now →</a></p>
-            </div>
-
-            <div id="unit2StatePending" class="hidden">
-              <h3>Enrollment Pending</h3>
-              <p class="access-sub access-status pending">Thanks, <span id="unit2PendingName"></span> — you're registered. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit2PendingHandle"></strong>. Access unlocks once confirmed.</p>
-              <button id="unit2RecheckBtn" class="btn btn-outline">Check Status Again</button>
-            </div>
-
-          </div>
-        </div>
-
         <div style="border-top:1px solid var(--rule-thin);">
           <div class="collapsible-header" onclick="toggleUnit('unit2',this)"><div><div class="collapsible-title">Unit II — Economics <span style="font-family:var(--font-mono);font-size:9px;border:1px solid var(--rule-thin);padding:2px 6px;margin-left:8px;color:var(--ink-dim);">On Hiatus</span></div><div class="collapsible-meta">11 Sessions held (+ 2 unnumbered) · July 2023 – July 2024</div></div><span class="collapsible-arrow">↓</span></div>
           <div class="collapsible-body" id="unit2">
 
-            <div id="unit2Locked" class="syllabus-locked">
-              <p>🔒 The full Unit II syllabus — session-by-session readings, recordings, and lecture notes — is reserved for enrolled participants. <a href="#unit2AccessPanel">Register above to request access →</a></p>
+            <div class="access-panel" id="unit2AccessPanel">
+              <p class="lock-note">🔒 The full Unit II syllabus — session-by-session readings, recordings, and lecture notes — is reserved for enrolled participants.</p>
+
+              <div id="unit2PanelRegister">
+                <h3>Unit II Access</h3>
+                <p class="access-sub">The Roadmap below stays open to everyone as a preview. <a href="/seminars.html#policies" style="color:var(--blue);">How registration and enrollment work →</a></p>
+                <div class="access-row"><input type="text" id="unit2RegName" placeholder="Your name" /></div>
+                <div class="access-row"><input type="email" id="unit2RegEmail" placeholder="you@example.com" autocomplete="email" /></div>
+                <div class="access-row"><input type="text" id="unit2RegXHandle" placeholder="Your X handle (e.g. @yourname)" /></div>
+                <div class="access-row"><textarea id="unit2RegReason" placeholder="Why do you want access to Unit II's archive?" rows="3"></textarea></div>
+                <div class="access-row"><button id="unit2SubmitRegBtn" class="btn btn-primary">Register</button></div>
+                <p class="access-note" id="unit2RegStatus"></p>
+                <p class="fallback-note">Already registered? <button class="toggle-link" id="unit2ShowLoginBtn">Login instead →</button></p>
+              </div>
+
+              <div id="unit2PanelLogin" class="hidden">
+                <h3>Login</h3>
+                <button id="unit2GoogleSignInBtn" class="google-btn" type="button">
+                  <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+                  Sign in with Google
+                </button>
+                <div class="auth-divider"><span>or</span></div>
+                <div style="background:rgba(91,142,240,0.1);border:1px solid var(--blue);padding:14px 16px;margin-bottom:18px;">
+                  <p style="font-size:13px;color:var(--ink);line-height:1.6;"><strong>First time logging in since being enrolled?</strong> You haven't set a password yet — use <button class="toggle-link" id="unit2ShowMagicLinkBtnTop" style="font-size:13px;">the email link option</button> below instead. You'll set a password there for next time.</p>
+                </div>
+                <p class="access-sub">Already set a password? Sign in with it here.</p>
+                <div class="access-row"><input type="email" id="unit2LoginEmail" placeholder="you@example.com" autocomplete="email" /></div>
+                <div class="access-row"><input type="password" id="unit2LoginPassword" placeholder="Password" autocomplete="current-password" /></div>
+                <div class="access-row"><button id="unit2LoginBtn" class="btn btn-primary">Log In</button></div>
+                <p class="access-note" id="unit2LoginStatus"></p>
+                <p class="fallback-note">New here? <button class="toggle-link" id="unit2ShowRegisterBtn">Register instead ←</button></p>
+                <p class="fallback-note">Haven't set a password yet, or trouble signing in? <button class="toggle-link" id="unit2ShowMagicLinkBtn">Use email link instead</button></p>
+                <p class="fallback-note">Forgot your password? <button class="toggle-link" id="unit2ForgotPasswordBtn">Send a reset link</button></p>
+              </div>
+
+              <div id="unit2PanelMagicLink" class="hidden">
+                <h3>Sign In via Email Link</h3>
+                <p class="access-sub">We'll send a one-time sign-in link — use this for your very first sign-in after approval, or if you've forgotten your password.</p>
+                <div class="access-row"><input type="email" id="unit2SignInEmail" placeholder="you@example.com" autocomplete="email" /><button id="unit2SendLinkBtn" class="btn btn-primary">Send Sign-In Link</button></div>
+                <p class="access-note" id="unit2SignInStatus"></p>
+                <p class="fallback-note"><button class="toggle-link" id="unit2BackToLoginBtn">← Back to login</button></p>
+              </div>
+
+              <div id="unit2StateJustRegistered" class="hidden">
+                <h3>Registration Submitted</h3>
+                <p class="access-sub access-status pending">Thanks, <span id="unit2JustRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit2JustRegHandle"></strong>. Once enrolled, come back and use the Login link above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
+              </div>
+
+              <div id="unit2StateNeedsRegistration" class="hidden">
+                <h3>No Registration Found</h3>
+                <p class="access-sub">You're signed in as <strong id="unit2SignedInEmail"></strong>, but we don't have a Unit II registration on file for this email. <a href="#" id="unit2BackToRegisterLink" style="color:var(--blue);">Register now →</a></p>
+              </div>
+
+              <div id="unit2StateQuickEnroll" class="hidden">
+                <h3 id="unit2QuickEnrollTitle">Register for Unit II</h3>
+                <p class="access-sub">You're signed in as <strong id="unit2QuickEnrollEmail"></strong>. Since you're already registered elsewhere, we'll reuse your name and X handle — no need to re-enter them.</p>
+                <div class="access-row"><textarea id="unit2QuickEnrollReason" placeholder="Why do you want access to this Unit?" rows="3"></textarea></div>
+                <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink-mid);margin-bottom:14px;cursor:pointer;">
+                  <input type="checkbox" id="unit2QuickEnrollCheckbox" style="margin-top:3px;" />
+                  <span id="unit2QuickEnrollCheckboxLabel">I'd like to register for this Unit</span>
+                </label>
+                <button id="unit2QuickEnrollSubmitBtn" class="btn btn-primary" disabled>Submit</button>
+                <p class="access-note" id="unit2QuickEnrollStatus"></p>
+              </div>
+
+              <div id="unit2StatePending" class="hidden">
+                <h3>Enrollment Pending</h3>
+                <p class="access-sub access-status pending">Thanks, <span id="unit2PendingName"></span> — you're registered. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit2PendingHandle"></strong>. Access unlocks once confirmed.</p>
+                <button id="unit2RecheckBtn" class="btn btn-outline">Check Status Again</button>
+              </div>
+
             </div>
 
             <div id="unit2Content" class="hidden">
@@ -455,75 +450,81 @@
           <span id="unit1UnlockedTag" class="unlocked-tag hidden">✓ Syllabus Unlocked</span>
         </div>
 
-        <!-- Unit I access panel -->
-        <div class="access-panel-wrapper" id="unit1AccessPanelWrapper">
-          <div class="access-panel" id="unit1AccessPanel">
-
-            <div id="unit1PanelRegister">
-              <h3>Unit I Access</h3>
-              <p class="access-sub">The full Unit I syllabus — session-by-session readings and recordings — is reserved for enrolled participants. The Roadmap below stays open to everyone as a preview. <a href="/seminars.html#policies" style="color:var(--blue);">How registration and enrollment work →</a></p>
-              <div class="access-row"><input type="text" id="unit1RegName" placeholder="Your name" /></div>
-              <div class="access-row"><input type="email" id="unit1RegEmail" placeholder="you@example.com" autocomplete="email" /></div>
-              <div class="access-row"><input type="text" id="unit1RegXHandle" placeholder="Your X handle (e.g. @yourname)" /></div>
-              <div class="access-row"><textarea id="unit1RegReason" placeholder="Why do you want access to Unit I's archive?" rows="3"></textarea></div>
-              <div class="access-row"><button id="unit1SubmitRegBtn" class="btn btn-primary">Register</button></div>
-              <p class="access-note" id="unit1RegStatus"></p>
-              <p class="fallback-note">Already registered? <button class="toggle-link" id="unit1ShowLoginBtn">Login instead →</button></p>
-            </div>
-
-            <div id="unit1PanelLogin" class="hidden">
-              <h3>Login</h3>
-              <button id="unit1GoogleSignInBtn" class="google-btn" type="button">
-                <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-                Sign in with Google
-              </button>
-              <div class="auth-divider"><span>or</span></div>
-              <div style="background:rgba(91,142,240,0.1);border:1px solid var(--blue);padding:14px 16px;margin-bottom:18px;">
-                <p style="font-size:13px;color:var(--ink);line-height:1.6;"><strong>First time logging in since being enrolled?</strong> You haven't set a password yet — use <button class="toggle-link" id="unit1ShowMagicLinkBtnTop" style="font-size:13px;">the email link option</button> below instead. You'll set a password there for next time.</p>
-              </div>
-              <p class="access-sub">Already set a password? Sign in with it here.</p>
-              <div class="access-row"><input type="email" id="unit1LoginEmail" placeholder="you@example.com" autocomplete="email" /></div>
-              <div class="access-row"><input type="password" id="unit1LoginPassword" placeholder="Password" autocomplete="current-password" /></div>
-              <div class="access-row"><button id="unit1LoginBtn" class="btn btn-primary">Log In</button></div>
-              <p class="access-note" id="unit1LoginStatus"></p>
-              <p class="fallback-note">New here? <button class="toggle-link" id="unit1ShowRegisterBtn">Register instead ←</button></p>
-              <p class="fallback-note">Haven't set a password yet, or trouble signing in? <button class="toggle-link" id="unit1ShowMagicLinkBtn">Use email link instead</button></p>
-              <p class="fallback-note">Forgot your password? <button class="toggle-link" id="unit1ForgotPasswordBtn">Send a reset link</button></p>
-            </div>
-
-            <div id="unit1PanelMagicLink" class="hidden">
-              <h3>Sign In via Email Link</h3>
-              <p class="access-sub">We'll send a one-time sign-in link — use this for your very first sign-in after approval, or if you've forgotten your password.</p>
-              <div class="access-row"><input type="email" id="unit1SignInEmail" placeholder="you@example.com" autocomplete="email" /><button id="unit1SendLinkBtn" class="btn btn-primary">Send Sign-In Link</button></div>
-              <p class="access-note" id="unit1SignInStatus"></p>
-              <p class="fallback-note"><button class="toggle-link" id="unit1BackToLoginBtn">← Back to login</button></p>
-            </div>
-
-            <div id="unit1StateJustRegistered" class="hidden">
-              <h3>Registration Submitted</h3>
-              <p class="access-sub access-status pending">Thanks, <span id="unit1JustRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit1JustRegHandle"></strong>. Once enrolled, come back and use the Login link above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
-            </div>
-
-            <div id="unit1StateNeedsRegistration" class="hidden">
-              <h3>No Registration Found</h3>
-              <p class="access-sub">You're signed in as <strong id="unit1SignedInEmail"></strong>, but we don't have a Unit I registration on file for this email. <a href="#" id="unit1BackToRegisterLink" style="color:var(--blue);">Register now →</a></p>
-            </div>
-
-            <div id="unit1StatePending" class="hidden">
-              <h3>Enrollment Pending</h3>
-              <p class="access-sub access-status pending">Thanks, <span id="unit1PendingName"></span> — you're registered. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit1PendingHandle"></strong>. Access unlocks once confirmed.</p>
-              <button id="unit1RecheckBtn" class="btn btn-outline">Check Status Again</button>
-            </div>
-
-          </div>
-        </div>
-
         <div style="border-top:1px solid var(--rule-thin);">
           <div class="collapsible-header" onclick="toggleUnit('unit1',this)"><div><div class="collapsible-title">Unit I — The Internet</div><div class="collapsible-meta">9 Sessions · April – June 2023 · Completed</div></div><span class="collapsible-arrow">↓</span></div>
           <div class="collapsible-body" id="unit1">
 
-            <div id="unit1Locked" class="syllabus-locked">
-              <p>🔒 The full Unit I syllabus — session-by-session readings and recordings — is reserved for enrolled participants. <a href="#unit1AccessPanel">Register above to request access →</a></p>
+            <div class="access-panel" id="unit1AccessPanel">
+              <p class="lock-note">🔒 The full Unit I syllabus — session-by-session readings and recordings — is reserved for enrolled participants.</p>
+
+              <div id="unit1PanelRegister">
+                <h3>Unit I Access</h3>
+                <p class="access-sub">The Roadmap below stays open to everyone as a preview. <a href="/seminars.html#policies" style="color:var(--blue);">How registration and enrollment work →</a></p>
+                <div class="access-row"><input type="text" id="unit1RegName" placeholder="Your name" /></div>
+                <div class="access-row"><input type="email" id="unit1RegEmail" placeholder="you@example.com" autocomplete="email" /></div>
+                <div class="access-row"><input type="text" id="unit1RegXHandle" placeholder="Your X handle (e.g. @yourname)" /></div>
+                <div class="access-row"><textarea id="unit1RegReason" placeholder="Why do you want access to Unit I's archive?" rows="3"></textarea></div>
+                <div class="access-row"><button id="unit1SubmitRegBtn" class="btn btn-primary">Register</button></div>
+                <p class="access-note" id="unit1RegStatus"></p>
+                <p class="fallback-note">Already registered? <button class="toggle-link" id="unit1ShowLoginBtn">Login instead →</button></p>
+              </div>
+
+              <div id="unit1PanelLogin" class="hidden">
+                <h3>Login</h3>
+                <button id="unit1GoogleSignInBtn" class="google-btn" type="button">
+                  <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+                  Sign in with Google
+                </button>
+                <div class="auth-divider"><span>or</span></div>
+                <div style="background:rgba(91,142,240,0.1);border:1px solid var(--blue);padding:14px 16px;margin-bottom:18px;">
+                  <p style="font-size:13px;color:var(--ink);line-height:1.6;"><strong>First time logging in since being enrolled?</strong> You haven't set a password yet — use <button class="toggle-link" id="unit1ShowMagicLinkBtnTop" style="font-size:13px;">the email link option</button> below instead. You'll set a password there for next time.</p>
+                </div>
+                <p class="access-sub">Already set a password? Sign in with it here.</p>
+                <div class="access-row"><input type="email" id="unit1LoginEmail" placeholder="you@example.com" autocomplete="email" /></div>
+                <div class="access-row"><input type="password" id="unit1LoginPassword" placeholder="Password" autocomplete="current-password" /></div>
+                <div class="access-row"><button id="unit1LoginBtn" class="btn btn-primary">Log In</button></div>
+                <p class="access-note" id="unit1LoginStatus"></p>
+                <p class="fallback-note">New here? <button class="toggle-link" id="unit1ShowRegisterBtn">Register instead ←</button></p>
+                <p class="fallback-note">Haven't set a password yet, or trouble signing in? <button class="toggle-link" id="unit1ShowMagicLinkBtn">Use email link instead</button></p>
+                <p class="fallback-note">Forgot your password? <button class="toggle-link" id="unit1ForgotPasswordBtn">Send a reset link</button></p>
+              </div>
+
+              <div id="unit1PanelMagicLink" class="hidden">
+                <h3>Sign In via Email Link</h3>
+                <p class="access-sub">We'll send a one-time sign-in link — use this for your very first sign-in after approval, or if you've forgotten your password.</p>
+                <div class="access-row"><input type="email" id="unit1SignInEmail" placeholder="you@example.com" autocomplete="email" /><button id="unit1SendLinkBtn" class="btn btn-primary">Send Sign-In Link</button></div>
+                <p class="access-note" id="unit1SignInStatus"></p>
+                <p class="fallback-note"><button class="toggle-link" id="unit1BackToLoginBtn">← Back to login</button></p>
+              </div>
+
+              <div id="unit1StateJustRegistered" class="hidden">
+                <h3>Registration Submitted</h3>
+                <p class="access-sub access-status pending">Thanks, <span id="unit1JustRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit1JustRegHandle"></strong>. Once enrolled, come back and use the Login link above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
+              </div>
+
+              <div id="unit1StateNeedsRegistration" class="hidden">
+                <h3>No Registration Found</h3>
+                <p class="access-sub">You're signed in as <strong id="unit1SignedInEmail"></strong>, but we don't have a Unit I registration on file for this email. <a href="#" id="unit1BackToRegisterLink" style="color:var(--blue);">Register now →</a></p>
+              </div>
+
+              <div id="unit1StateQuickEnroll" class="hidden">
+                <h3 id="unit1QuickEnrollTitle">Register for Unit I</h3>
+                <p class="access-sub">You're signed in as <strong id="unit1QuickEnrollEmail"></strong>. Since you're already registered elsewhere, we'll reuse your name and X handle — no need to re-enter them.</p>
+                <div class="access-row"><textarea id="unit1QuickEnrollReason" placeholder="Why do you want access to this Unit?" rows="3"></textarea></div>
+                <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink-mid);margin-bottom:14px;cursor:pointer;">
+                  <input type="checkbox" id="unit1QuickEnrollCheckbox" style="margin-top:3px;" />
+                  <span id="unit1QuickEnrollCheckboxLabel">I'd like to register for this Unit</span>
+                </label>
+                <button id="unit1QuickEnrollSubmitBtn" class="btn btn-primary" disabled>Submit</button>
+                <p class="access-note" id="unit1QuickEnrollStatus"></p>
+              </div>
+
+              <div id="unit1StatePending" class="hidden">
+                <h3>Enrollment Pending</h3>
+                <p class="access-sub access-status pending">Thanks, <span id="unit1PendingName"></span> — you're registered. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit1PendingHandle"></strong>. Access unlocks once confirmed.</p>
+                <button id="unit1RecheckBtn" class="btn btn-outline">Check Status Again</button>
+              </div>
+
             </div>
 
             <div id="unit1Content" class="hidden">
@@ -535,7 +536,7 @@
               <div class="session-block"><div class="session-header"><span class="session-num">1.5</span><span class="session-title">Psychoanalyzing Cyberspace</span><span class="session-date">10 May 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>André Nusselder, "The Question Concerning Technology and Desire" and "The Technologization of Human Virtuality," from <em>Interface Fantasy: A Lacanian Cybertheory</em> — <a href="https://bafybeic3elqxzrhirmc2kgw5rjmyrunb4yro65jnfcipn4sylwl6ma7e2m.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1658985960326012931" target="_blank" rel="noopener">Listen ↗</a></div>
               <div class="session-block"><div class="session-header"><span class="session-num">1.6</span><span class="session-title">Digital Bodies</span><span class="session-date">24 May 2023</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Slavoj Žižek, "How Real Is Reality?" from <em>Looking Awry: An Introduction to Jacques Lacan Through Popular Culture</em> (see Discord)</li><li>Clint Burnham, "Is the Internet a Thing?" from <em>Does the Internet Have an Unconscious? Slavoj Žižek and Digital Culture</em> — <a href="https://bafybeiarqqrjbl3hlunwnibkenk4k2545ulawuvcq42lbwtoru2w7rvpci.ipfs.nftstorage.link/" target="_blank" rel="noopener">Click Here ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1661523165397254145" target="_blank" rel="noopener">Listen ↗</a></div>
               <div class="session-block"><div class="session-header"><span class="session-num">1.7</span><span class="session-title">Web 3.0</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Joel Monegro, <a href="https://www.coindesk.com/markets/2014/11/30/the-blockchain-application-stack/" target="_blank" rel="noopener">"The Blockchain Application Stack" ↗</a></li><li>Joel Monegro, <a href="https://jmonegro.tumblr.com/post/104755282493/the-shared-data-layer-of-the-blockchain" target="_blank" rel="noopener">"The Shared Data Layer of the Blockchain Application Stack" ↗</a></li><li>Joel Monegro, <a href="https://www.usv.com/blog/fat-protocols" target="_blank" rel="noopener">"Fat Protocols" ↗</a></li><li>Joel Monegro, <a href="https://www.placeholder.vc/blog/2020/1/30/thin-applications" target="_blank" rel="noopener">"Thin Applications" ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1664059235309633538" target="_blank" rel="noopener">Listen ↗</a></div>
-              <div class="session-block"><div class="session-header"><span class="session-num">1.8</span><span class="session-title">Digital Commons</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Nick Szabo, <a href="https://nakamotoinstitute.org/money-blockchains-and-social-scalability/" target="_blank" rel="noopener">"Money, Blockchains, and Social Scalability" ↗</a></li><li>Jameson Lopp, <a href="https://blog.lopp.net/who-controls-bitcoin-core-/" target="_blank" rel="noopener">"Who Controls Bitcoin Core?" ↗</a></li><li>Jae Kwon and Ethan Buchman, <a href="https://v1.cosmos.network/resources/whitepaper" target="_blank" rel="noopener">"Cosmos Whitepaper" ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1666596944846659584" target="_blank" rel="noopener">Listen ↗</a></div>
+              <div class="session-block"><div class="session-header"><span class="session-num">1.8</span><span class="session-title">Digital Commons</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Nick Szabo, <a href="https://nakamotoinstitute.org/money-blockchains-and-social-scalability/" target="_blank" rel="noopener">"Money, Blockchains, and Social Scalability" ↗</a></li><li>Jameson Lopp, <a href="https://blog.lopp.net/who-controls-bitcoin-core-/" target="_blank" rel="noopener">"Who Controls Bitcoin Core?" ↗</a></li><li>Jae Kwon and Ethan Buchman, <a href="https://v1.cosmos.network/resources/whitepaper" target="_blank" rel="noopener">"Cosmos Whitepaper" ↗</a></li></ul><a class="listen-link" href="https://twitter.com/CoiningReason/status/1666596944796659584" target="_blank" rel="noopener">Listen ↗</a></div>
             </div>
 
           </div>
@@ -595,6 +596,20 @@
       const open=body.classList.toggle('open');
       header.classList.toggle('open',open);
     }
+    // Auto-expand a Unit's collapsible if arriving via #unit1 or #unit2
+    // anchor (e.g. from the nav's "Sign In" link) — otherwise the target
+    // panel would be invisible inside a collapsed section.
+    (function () {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'unit1' || hash === 'unit2') {
+        const header = document.querySelector(`[onclick="toggleUnit('${hash}',this)"]`);
+        const body = document.getElementById(hash);
+        if (header && body) {
+          body.classList.add('open');
+          header.classList.add('open');
+        }
+      }
+    })();
     const ROADMAP_DATA = [
     {
       num: 'Unit I', title: 'The Internet',
@@ -806,10 +821,10 @@
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       sendMagicLink, signInWithPassword, sendPasswordReset, signInWithGoogle,
-      getRegistrationForSeminar, submitRegistration, initNavAccountWidget
-    } from '/js/academy-auth.js?v=16';
+      getRegistrationForSeminar, submitRegistration, getExistingProfile, initNavAccountWidget
+    } from '/js/academy-auth.js?v=17';
 
-    initNavAccountWidget('#unit2AccessPanel');
+    initNavAccountWidget('#unit2');
 
     function isApproved(val) {
       return val === true || val === 'true';
@@ -828,32 +843,29 @@
       const panelMagicLink         = el('PanelMagicLink');
       const stateJustRegistered    = el('StateJustRegistered');
       const stateNeedsRegistration = el('StateNeedsRegistration');
+      const stateQuickEnroll       = el('StateQuickEnroll');
       const statePending           = el('StatePending');
       const accessPanel            = el('AccessPanel');
-      const accessPanelWrapper     = el('AccessPanelWrapper');
-      const unlockedTag             = document.getElementById(prefix + 'UnlockedTag');
-      const lockedEl                = document.getElementById(prefix + 'Locked');
-      const contentEl               = document.getElementById(prefix + 'Content');
-      const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, stateNeedsRegistration, statePending];
+      const unlockedTag            = document.getElementById(prefix + 'UnlockedTag');
+      const contentEl              = document.getElementById(prefix + 'Content');
+      const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, stateNeedsRegistration, stateQuickEnroll, statePending];
 
       function showState(target) {
-        accessPanelWrapper.classList.remove('hidden');
         accessPanel.classList.remove('hidden');
         unlockedTag.classList.add('hidden');
-        lockedEl.classList.remove('hidden');
         contentEl.classList.add('hidden');
         ALL_PANELS.forEach(s => s.classList.add('hidden'));
         target.classList.remove('hidden');
       }
 
       function showApproved() {
-        accessPanelWrapper.classList.add('hidden');
+        accessPanel.classList.add('hidden');
         unlockedTag.classList.remove('hidden');
-        lockedEl.classList.add('hidden');
         contentEl.classList.remove('hidden');
       }
 
       let authInitialized = false;
+      let cachedProfile = null;
 
       async function refreshAccessState(user) {
         if (!user) {
@@ -867,8 +879,19 @@
         const reg = await getRegistrationForSeminar(user.email, seminarId);
 
         if (!reg) {
-          el('SignedInEmail').textContent = user.email || '(no email found on this session — try signing in again)';
-          showState(stateNeedsRegistration);
+          const existing = await getExistingProfile(user.email);
+          if (existing) {
+            el('QuickEnrollEmail').textContent = user.email;
+            el('QuickEnrollReason').value = '';
+            const cb = el('QuickEnrollCheckbox');
+            cb.checked = false;
+            el('QuickEnrollSubmitBtn').disabled = true;
+            cachedProfile = existing;
+            showState(stateQuickEnroll);
+          } else {
+            el('SignedInEmail').textContent = user.email || '(no email found on this session — try signing in again)';
+            showState(stateNeedsRegistration);
+          }
           return;
         }
 
@@ -969,6 +992,31 @@
           } else {
             status.textContent = 'Something went wrong signing in with Google. Try again.';
           }
+        }
+      });
+
+      el('QuickEnrollCheckbox').addEventListener('change', (e) => {
+        el('QuickEnrollSubmitBtn').disabled = !e.target.checked;
+      });
+
+      el('QuickEnrollSubmitBtn').addEventListener('click', async () => {
+        const reason = el('QuickEnrollReason').value.trim();
+        const status = el('QuickEnrollStatus');
+        if (!reason) { status.textContent = 'Please add a brief reason for wanting to enroll.'; return; }
+        if (!cachedProfile) { status.textContent = 'Something went wrong — please refresh and try again.'; return; }
+        const btn = el('QuickEnrollSubmitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Submitting…';
+        try {
+          await submitRegistration(auth.currentUser.email, cachedProfile.name, cachedProfile.xHandle, seminarId, reason, seminarTitle);
+          el('JustRegName').textContent = cachedProfile.name;
+          el('JustRegHandle').textContent = cachedProfile.xHandle;
+          showState(stateJustRegistered);
+        } catch (err) {
+          console.error(err);
+          status.textContent = 'Something went wrong submitting that. Please try again.';
+          btn.disabled = false;
+          btn.textContent = 'Submit';
         }
       });
 

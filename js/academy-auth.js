@@ -237,6 +237,19 @@ export async function getRegistrationForSeminar(email, seminarId) {
   }
 }
 
+// Pulls name/xHandle from ANY of a person's existing registrations, so a
+// second (or third) registration for a different seminar doesn't need to
+// ask for that info again. Returns null if they have no registrations
+// anywhere yet (a genuinely new person).
+export async function getExistingProfile(email) {
+  const regs = await getRegistrations(email);
+  if (!regs) return null;
+  const values = Object.values(regs);
+  if (values.length === 0) return null;
+  const first = values[0];
+  return { name: first.name || '', xHandle: first.xHandle || '' };
+}
+
 // Creates a NEW registration for a specific seminar. Does NOT require
 // prior sign-in — this is intentional, so people can register in one
 // step before ever touching the magic-link flow. Security rules only

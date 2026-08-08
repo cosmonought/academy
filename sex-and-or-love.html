@@ -260,6 +260,19 @@
             <p class="access-sub">You're signed in as <strong id="signedInEmail"></strong>, but we don't have a registration on file for this email. <a href="#" id="backToRegisterLink" style="color:var(--blue);">Register now →</a></p>
           </div>
 
+          <!-- Signed in, no registration for THIS seminar, but has an existing profile from another seminar -->
+          <div id="stateQuickEnroll" class="hidden">
+            <h3>Register for Sex, and/or Love</h3>
+            <p class="access-sub">You're signed in as <strong id="quickEnrollEmail"></strong>. Since you're already registered elsewhere, we'll reuse your name and X handle — no need to re-enter them.</p>
+            <div class="access-row"><textarea id="quickEnrollReason" placeholder="Why do you want to join this seminar?" rows="3"></textarea></div>
+            <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink-mid);margin-bottom:14px;cursor:pointer;">
+              <input type="checkbox" id="quickEnrollCheckbox" style="margin-top:3px;" />
+              <span>I'd like to register for this seminar</span>
+            </label>
+            <button id="quickEnrollSubmitBtn" class="btn btn-primary" disabled>Submit</button>
+            <p class="access-note" id="quickEnrollStatus"></p>
+          </div>
+
           <!-- Registered, awaiting enrollment -->
           <div id="statePending" class="hidden">
             <h3>Enrollment Pending</h3>
@@ -327,8 +340,8 @@
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       sendMagicLink, signInWithPassword, sendPasswordReset, signInWithGoogle,
-      getRegistrationForSeminar, submitRegistration, getSeminarReadings, initNavAccountWidget
-    } from '/js/academy-auth.js?v=16';
+      getRegistrationForSeminar, submitRegistration, getExistingProfile, getSeminarReadings, initNavAccountWidget
+    } from '/js/academy-auth.js?v=17';
 
     initNavAccountWidget('#accessPanel');
 
@@ -339,11 +352,12 @@
     const panelMagicLink         = document.getElementById('panelMagicLink');
     const stateJustRegistered    = document.getElementById('stateJustRegistered');
     const stateNeedsRegistration = document.getElementById('stateNeedsRegistration');
+    const stateQuickEnroll       = document.getElementById('stateQuickEnroll');
     const statePending           = document.getElementById('statePending');
     const accessPanel            = document.getElementById('accessPanel');
     const accessPanelWrapper     = document.getElementById('accessPanelWrapper');
     const readingsUnlockedTag    = document.getElementById('readingsUnlockedTag');
-    const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, stateNeedsRegistration, statePending];
+    const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, stateNeedsRegistration, stateQuickEnroll, statePending];
 
     function showState(el) {
       accessPanelWrapper.classList.remove('hidden');
@@ -403,6 +417,7 @@
     }
 
     let authInitialized = false;
+    let cachedProfile = null;
 
     async function refreshAccessState(user) {
       if (!user) {
@@ -419,8 +434,19 @@
       const reg = await getRegistrationForSeminar(user.email, CURRENT_SEMINAR_ID);
 
       if (!reg) {
-        document.getElementById('signedInEmail').textContent = user.email || '(no email found on this session — try signing in again)';
-        showState(stateNeedsRegistration);
+        const existing = await getExistingProfile(user.email);
+        if (existing) {
+          document.getElementById('quickEnrollEmail').textContent = user.email;
+          document.getElementById('quickEnrollReason').value = '';
+          const cb = document.getElementById('quickEnrollCheckbox');
+          cb.checked = false;
+          document.getElementById('quickEnrollSubmitBtn').disabled = true;
+          cachedProfile = existing;
+          showState(stateQuickEnroll);
+        } else {
+          document.getElementById('signedInEmail').textContent = user.email || '(no email found on this session — try signing in again)';
+          showState(stateNeedsRegistration);
+        }
         return;
       }
 
@@ -527,6 +553,32 @@
         } else {
           status.textContent = 'Something went wrong signing in with Google. Try again.';
         }
+      }
+    });
+
+    // ── Quick enroll (already have an account from another seminar) ──
+    document.getElementById('quickEnrollCheckbox').addEventListener('change', (e) => {
+      document.getElementById('quickEnrollSubmitBtn').disabled = !e.target.checked;
+    });
+
+    document.getElementById('quickEnrollSubmitBtn').addEventListener('click', async () => {
+      const reason = document.getElementById('quickEnrollReason').value.trim();
+      const status = document.getElementById('quickEnrollStatus');
+      if (!reason) { status.textContent = 'Please add a brief reason for wanting to join.'; return; }
+      if (!cachedProfile) { status.textContent = 'Something went wrong — please refresh and try again.'; return; }
+      const btn = document.getElementById('quickEnrollSubmitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+      try {
+        await submitRegistration(auth.currentUser.email, cachedProfile.name, cachedProfile.xHandle, CURRENT_SEMINAR_ID, reason, 'Sex, and/or Love');
+        document.getElementById('justRegName').textContent = cachedProfile.name;
+        document.getElementById('justRegHandle').textContent = cachedProfile.xHandle;
+        showState(stateJustRegistered);
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Something went wrong submitting that. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Submit';
       }
     });
 

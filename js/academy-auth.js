@@ -329,6 +329,56 @@ export async function revokeRegistration(emailKey, seminarId) {
   });
 }
 
+// ── Session lists + attendance ──
+// Single source of truth for each seminar's session list, shared between
+// admin.html (tracking) and profile.html (the participant-facing X/Y
+// transcript). Keys are simple ('s0', 's1'...) since Firebase keys can't
+// contain '.' — the display label carries the real session numbering
+// (e.g. "1.0", "2.X").
+export const SEMINAR_TITLES = {
+  'sex-and-or-love': 'Sex, and/or Love',
+  'coining-reason-unit-1': 'Coining Reason — Unit I',
+  'coining-reason-unit-2': 'Coining Reason — Unit II'
+};
+
+export const SEMINAR_SESSIONS = {
+  'sex-and-or-love': [
+    { key: 's0', label: '0' }, { key: 's1', label: '1' }, { key: 's2', label: '2' }, { key: 's3', label: '3' },
+    { key: 's4', label: '4' }, { key: 's5', label: '5' }, { key: 's6', label: '6' }, { key: 's7', label: '7' }
+  ],
+  'coining-reason-unit-1': [
+    { key: 's0', label: '1.0' }, { key: 's1', label: '1.1' }, { key: 's2', label: '1.2' }, { key: 's3', label: '1.3' },
+    { key: 's4', label: '1.4' }, { key: 's5', label: '1.5' }, { key: 's6', label: '1.6' }, { key: 's7', label: '1.7' },
+    { key: 's8', label: '1.8' }
+  ],
+  'coining-reason-unit-2': [
+    { key: 's0', label: '2.0' }, { key: 's1', label: '2.1' }, { key: 's2', label: '2.2' }, { key: 's3', label: '2.3' },
+    { key: 's4', label: '2.4' }, { key: 's5', label: '2.5' }, { key: 's6', label: '2.6' }, { key: 's7', label: '2.7' },
+    { key: 's8', label: '2.8' }, { key: 's9', label: '2.9' }, { key: 's10', label: '2.X' }, { key: 's11', label: '2.Xb' },
+    { key: 's12', label: '2.10' }, { key: 's13', label: '2.11' }, { key: 's14', label: '2.12' }, { key: 's15', label: '2.13' },
+    { key: 's16', label: '2.14' }, { key: 's17', label: '2.15' }, { key: 's18', label: '2.16' }
+  ]
+};
+
+// Admin-only: marks a single session attended/not-attended for one
+// person's enrollment in a seminar.
+export async function setAttendance(emailKey, seminarId, sessionKey, attended) {
+  await update(ref(db, `academyRegistrations/${emailKey}/${seminarId}/attendance`), {
+    [sessionKey]: attended
+  });
+}
+
+// Computes { attended, total } for one seminar's registration record
+// (as returned by getRegistrations/getRegistrationForSeminar). Counts
+// only sessions defined in SEMINAR_SESSIONS, so stray/legacy keys in
+// the data never inflate the total.
+export function computeAttendance(seminarId, reg) {
+  const sessions = SEMINAR_SESSIONS[seminarId] || [];
+  const attendance = (reg && reg.attendance) || {};
+  const attended = sessions.filter(s => attendance[s.key] === true).length;
+  return { attended, total: sessions.length };
+}
+
 // ── General interest signups (homepage footer form) ──
 // Public, no sign-in required — anyone can submit. Security rules only
 // allow creating a brand-new entry (never editing/reading others' entries),

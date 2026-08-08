@@ -251,7 +251,7 @@
           <!-- Just submitted a new registration -->
           <div id="stateJustRegistered" class="hidden">
             <h3>Registration Submitted</h3>
-            <p class="access-sub access-status pending">Thanks, <span id="justRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="justRegHandle"></strong>. Once enrolled, come back and use the Login link in the nav above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
+            <p class="access-sub access-status pending">Thanks, <span id="justRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="justRegHandle"></strong>. Access unlocks once confirmed.<span id="justRegPasswordNote"> Once enrolled, come back and use the Login link in the nav above — you'll sign in with an email link the first time, then set a password for quick access after that.</span></p>
           </div>
 
           <!-- Signed in, no registration found -->
@@ -341,7 +341,7 @@
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       sendMagicLink, signInWithPassword, sendPasswordReset, signInWithGoogle,
       getRegistrationForSeminar, submitRegistration, getExistingProfile, getSeminarReadings, initNavAccountWidget
-    } from '/js/academy-auth.js?v=17';
+    } from '/js/academy-auth.js?v=18';
 
     initNavAccountWidget('#accessPanel');
 
@@ -478,6 +478,7 @@
         await submitRegistration(email, name, xHandle, CURRENT_SEMINAR_ID, reason, 'Sex, and/or Love');
         document.getElementById('justRegName').textContent = name;
         document.getElementById('justRegHandle').textContent = xHandle;
+        document.getElementById('justRegPasswordNote').classList.remove('hidden');
         showState(stateJustRegistered);
       } catch (err) {
         console.error(err);
@@ -573,6 +574,7 @@
         await submitRegistration(auth.currentUser.email, cachedProfile.name, cachedProfile.xHandle, CURRENT_SEMINAR_ID, reason, 'Sex, and/or Love');
         document.getElementById('justRegName').textContent = cachedProfile.name;
         document.getElementById('justRegHandle').textContent = cachedProfile.xHandle;
+        document.getElementById('justRegPasswordNote').classList.add('hidden');
         showState(stateJustRegistered);
       } catch (err) {
         console.error(err);

@@ -384,7 +384,7 @@
 
               <div id="unit2StateJustRegistered" class="hidden">
                 <h3>Registration Submitted</h3>
-                <p class="access-sub access-status pending">Thanks, <span id="unit2JustRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit2JustRegHandle"></strong>. Once enrolled, come back and use the Login link above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
+                <p class="access-sub access-status pending">Thanks, <span id="unit2JustRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit2JustRegHandle"></strong>. Access unlocks once confirmed.<span id="unit2JustRegPasswordNote"> Once enrolled, come back and use the Login link above — you'll sign in with an email link the first time, then set a password for quick access after that.</span></p>
               </div>
 
               <div id="unit2StateNeedsRegistration" class="hidden">
@@ -499,7 +499,7 @@
 
               <div id="unit1StateJustRegistered" class="hidden">
                 <h3>Registration Submitted</h3>
-                <p class="access-sub access-status pending">Thanks, <span id="unit1JustRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit1JustRegHandle"></strong>. Once enrolled, come back and use the Login link above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
+                <p class="access-sub access-status pending">Thanks, <span id="unit1JustRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="unit1JustRegHandle"></strong>. Access unlocks once confirmed.<span id="unit1JustRegPasswordNote"> Once enrolled, come back and use the Login link above — you'll sign in with an email link the first time, then set a password for quick access after that.</span></p>
               </div>
 
               <div id="unit1StateNeedsRegistration" class="hidden">
@@ -822,7 +822,7 @@
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       sendMagicLink, signInWithPassword, sendPasswordReset, signInWithGoogle,
       getRegistrationForSeminar, submitRegistration, getExistingProfile, initNavAccountWidget
-    } from '/js/academy-auth.js?v=17';
+    } from '/js/academy-auth.js?v=18';
 
     initNavAccountWidget('#unit2');
 
@@ -921,6 +921,7 @@
           await submitRegistration(email, name, xHandle, seminarId, reason, seminarTitle);
           el('JustRegName').textContent = name;
           el('JustRegHandle').textContent = xHandle;
+          el('JustRegPasswordNote').classList.remove('hidden');
           showState(stateJustRegistered);
         } catch (err) {
           console.error(err);
@@ -1011,6 +1012,7 @@
           await submitRegistration(auth.currentUser.email, cachedProfile.name, cachedProfile.xHandle, seminarId, reason, seminarTitle);
           el('JustRegName').textContent = cachedProfile.name;
           el('JustRegHandle').textContent = cachedProfile.xHandle;
+          el('JustRegPasswordNote').classList.add('hidden');
           showState(stateJustRegistered);
         } catch (err) {
           console.error(err);

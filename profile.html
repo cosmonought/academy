@@ -159,14 +159,10 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
-      initNavAccountWidget, getRegistrations
-    } from '/js/academy-auth.js?v=17';
+      initNavAccountWidget, getRegistrations, SEMINAR_TITLES, computeAttendance
+    } from '/js/academy-auth.js?v=18';
 
     initNavAccountWidget('/seminars.html');
-
-    const SEMINAR_TITLES = {
-      'sex-and-or-love': 'Sex, and/or Love'
-    };
 
     const profileSignedOut      = document.getElementById('profileSignedOut');
     const profileSignedIn       = document.getElementById('profileSignedIn');
@@ -208,6 +204,7 @@
 
       for (const [seminarId, reg] of entries) {
         const approved = isApproved(reg.enrolled);
+        const { attended, total } = computeAttendance(seminarId, reg);
         const card = document.createElement('div');
         card.className = 'profile-card';
         card.innerHTML = `
@@ -217,6 +214,7 @@
           <div class="profile-field"><span class="profile-field-label">X Handle</span><span>${escapeHtml(reg.xHandle || '—')}</span></div>
           <div class="profile-field"><span class="profile-field-label">Reason</span><span>${escapeHtml(reg.reason || '—')}</span></div>
           <div class="profile-field"><span class="profile-field-label">Applied</span><span>${reg.requestedAt ? new Date(reg.requestedAt).toLocaleDateString() : '—'}</span></div>
+          ${approved ? `<div class="profile-field"><span class="profile-field-label">Attendance</span><span>${attended} / ${total} sessions</span></div>` : ''}
           ${approved ? '' : `<p class="profile-note" style="margin-top:16px;">Your registration is submitted, but enrollment is not yet complete. DM @NetaDAO_Academy from your registered X handle to finish enrolling.</p>`}
         `;
         profileRegistrationsList.appendChild(card);

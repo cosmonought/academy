@@ -14,7 +14,7 @@
   <style>
     body { background: var(--bg); }
     .admin-wrap {
-      max-width: 900px;
+      max-width: 1100px;
       margin: 86px auto 80px;
       padding: 0 24px;
     }
@@ -52,11 +52,28 @@
     }
     .admin-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); margin-top: 10px; }
 
+    /* ── Seminar tabs ── */
+    .seminar-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--ink); margin-bottom: 24px; flex-wrap: wrap; }
+    .seminar-tab {
+      font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 10px 18px; background: transparent; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; cursor: pointer; color: var(--ink-dim);
+    }
+    .seminar-tab:hover { color: var(--ink); }
+    .seminar-tab.active { color: var(--ink); border-bottom-color: var(--pink); font-weight: 700; }
+    .seminar-panel { display: none; }
+    .seminar-panel.active { display: block; }
+    .seminar-panel h2 {
+      font-family: var(--font-display); font-size: 22px; font-weight: 900; text-transform: uppercase;
+      margin-top: 40px; margin-bottom: 8px;
+    }
+    .seminar-panel h2:first-child { margin-top: 0; }
+
     table.reg-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
-      margin-top: 20px;
+      margin-top: 16px;
     }
     table.reg-table th, table.reg-table td {
       border: 1px solid var(--rule-thin);
@@ -105,6 +122,41 @@
     }
     .revoke-btn:hover { background: rgba(160,72,72,0.1); }
     .revoke-btn:disabled { color: #ccc; border-color: #ccc; cursor: default; }
+
+    /* ── Attendance matrix ── */
+    .attendance-wrap { overflow-x: auto; margin-top: 16px; }
+    table.attendance-table {
+      border-collapse: collapse;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    table.attendance-table th, table.attendance-table td {
+      border: 1px solid var(--rule-thin);
+      padding: 6px 8px;
+      text-align: center;
+    }
+    table.attendance-table th {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: var(--bg-raised);
+    }
+    table.attendance-table td.name-cell, table.attendance-table th.name-th {
+      text-align: left;
+      position: sticky;
+      left: 0;
+      background: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      min-width: 160px;
+    }
+    table.attendance-table th.name-th { background: var(--bg-raised); }
+    table.attendance-table td.total-cell {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      background: var(--bg-raised);
+    }
+    table.attendance-table input[type="checkbox"] { cursor: pointer; width: 15px; height: 15px; }
+    .attendance-empty { font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim); margin-top: 16px; }
     .hidden { display: none; }
   </style>
 </head>
@@ -140,34 +192,33 @@
     </div>
 
     <div id="adminApproved" class="hidden">
-      <p class="admin-note" id="adminStatusLine" style="margin-bottom:16px;"></p>
-      <button id="adminRefreshBtn" style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;padding:8px 14px;background:transparent;border:1px solid var(--rule-thin);cursor:pointer;">Refresh List</button>
 
-      <table class="reg-table" id="regTable">
+      <div class="seminar-tabs" id="seminarTabs"></div>
+      <div id="seminarPanels"></div>
+
+      <h2 class="admin-title" style="font-size:22px;margin-top:56px;margin-bottom:8px;">Guest Lecture Proposals</h2>
+      <p class="admin-note" id="proposalsStatusLine" style="margin-bottom:16px;"></p>
+      <table class="reg-table" id="proposalsTable">
         <thead>
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>X Handle</th>
-            <th>Reason for Joining</th>
-            <th>Seminar</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th>Proposal</th>
+            <th>Submitted</th>
           </tr>
         </thead>
-        <tbody id="regTableBody"></tbody>
+        <tbody id="proposalsTableBody"></tbody>
       </table>
 
-      <h2 class="admin-title" style="font-size:22px;margin-top:48px;margin-bottom:8px;">General Interest Signups</h2>
+      <h2 class="admin-title" style="font-size:22px;margin-top:40px;margin-bottom:8px;">General Interest Signups</h2>
       <p class="admin-note" id="signupsStatusLine" style="margin-bottom:16px;"></p>
-      <button id="signupsRefreshBtn" style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;padding:8px 14px;background:transparent;border:1px solid var(--rule-thin);cursor:pointer;">Refresh List</button>
+      <button id="signupsRefreshBtn" style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;padding:8px 14px;background:transparent;border:1px solid var(--rule-thin);cursor:pointer;">Refresh Both Lists</button>
 
       <table class="reg-table" id="signupsTable">
         <thead>
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Guest Lecture Proposal</th>
             <th>Submitted</th>
           </tr>
         </thead>
@@ -179,17 +230,13 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, sendMagicLink,
-      getAllRegistrations, approveRegistration, revokeRegistration,
-      getAllInterestSignups, ADMIN_EMAIL
-    } from '/js/academy-auth.js?v=17';
+      getAllRegistrations, approveRegistration, revokeRegistration, setAttendance,
+      getAllInterestSignups, ADMIN_EMAIL, SEMINAR_TITLES, SEMINAR_SESSIONS
+    } from '/js/academy-auth.js?v=18';
 
-    const SEMINAR_TITLES = {
-      'sex-and-or-love': 'Sex, and/or Love'
-    };
-
-    const adminSignedOut    = document.getElementById('adminSignedOut');
+    const adminSignedOut     = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
-    const adminApproved     = document.getElementById('adminApproved');
+    const adminApproved      = document.getElementById('adminApproved');
 
     function showAdminState(el) {
       [adminSignedOut, adminNotAuthorized, adminApproved].forEach(s => s.classList.add('hidden'));
@@ -200,33 +247,100 @@
       return val === true || val === 'true';
     }
 
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    const SEMINAR_IDS = Object.keys(SEMINAR_TITLES);
+    let activeSeminar = SEMINAR_IDS[0];
+    let allRegistrationsFlat = []; // [{ emailKey, seminarId, reg }]
+
+    // ── Build tabs + panel shells once ──
+    function buildTabsAndPanels() {
+      const tabsEl = document.getElementById('seminarTabs');
+      const panelsEl = document.getElementById('seminarPanels');
+      tabsEl.innerHTML = '';
+      panelsEl.innerHTML = '';
+
+      SEMINAR_IDS.forEach((seminarId, i) => {
+        const tab = document.createElement('button');
+        tab.className = 'seminar-tab' + (i === 0 ? ' active' : '');
+        tab.textContent = SEMINAR_TITLES[seminarId];
+        tab.addEventListener('click', () => switchSeminar(seminarId));
+        tabsEl.appendChild(tab);
+
+        const panel = document.createElement('div');
+        panel.className = 'seminar-panel' + (i === 0 ? ' active' : '');
+        panel.id = `panel-${seminarId}`;
+        panel.innerHTML = `
+          <h2>Registrations</h2>
+          <p class="admin-note" id="statusLine-${seminarId}"></p>
+          <table class="reg-table" id="regTable-${seminarId}">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>X Handle</th>
+                <th>Reason for Joining</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="regTableBody-${seminarId}"></tbody>
+          </table>
+
+          <h2>Attendance</h2>
+          <div class="attendance-wrap" id="attendanceWrap-${seminarId}"></div>
+        `;
+        panelsEl.appendChild(panel);
+      });
+    }
+
+    function switchSeminar(seminarId) {
+      activeSeminar = seminarId;
+      document.querySelectorAll('.seminar-tab').forEach((t, i) => {
+        t.classList.toggle('active', SEMINAR_IDS[i] === seminarId);
+      });
+      document.querySelectorAll('.seminar-panel').forEach(p => {
+        p.classList.toggle('active', p.id === `panel-${seminarId}`);
+      });
+    }
+
     async function loadRegistrations() {
       const all = await getAllRegistrations();
-      const tbody = document.getElementById('regTableBody');
-      tbody.innerHTML = '';
 
       if (!all) {
-        document.getElementById('adminStatusLine').textContent = 'Could not load registrations — check console for errors.';
+        SEMINAR_IDS.forEach(id => {
+          document.getElementById(`statusLine-${id}`).textContent = 'Could not load registrations — check console for errors.';
+        });
         return;
       }
 
-      // Flatten the nested { emailKey: { seminarId: {...} } } tree into a
-      // flat list of [emailKey, seminarId, reg] rows for display.
-      const rows = [];
+      allRegistrationsFlat = [];
       for (const [emailKey, seminars] of Object.entries(all)) {
         if (!seminars || typeof seminars !== 'object') continue;
         for (const [seminarId, reg] of Object.entries(seminars)) {
-          rows.push({ emailKey, seminarId, reg });
+          allRegistrationsFlat.push({ emailKey, seminarId, reg });
         }
       }
 
-      document.getElementById('adminStatusLine').textContent =
-        `${rows.length} total registration(s) — ${rows.filter(r => isApproved(r.reg.enrolled)).length} enrolled.`;
+      SEMINAR_IDS.forEach(renderSeminarSection);
+    }
 
-      // Most recent first
+    function renderSeminarSection(seminarId) {
+      const rows = allRegistrationsFlat.filter(r => r.seminarId === seminarId);
       rows.sort((a, b) => (b.reg.requestedAt || 0) - (a.reg.requestedAt || 0));
 
-      for (const { emailKey, seminarId, reg } of rows) {
+      const enrolledCount = rows.filter(r => isApproved(r.reg.enrolled)).length;
+      document.getElementById(`statusLine-${seminarId}`).textContent =
+        `${rows.length} total registration(s) — ${enrolledCount} enrolled.`;
+
+      // ── Registration table ──
+      const tbody = document.getElementById(`regTableBody-${seminarId}`);
+      tbody.innerHTML = '';
+      for (const { emailKey, reg } of rows) {
         const approved = isApproved(reg.enrolled);
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -234,7 +348,6 @@
           <td>${escapeHtml(reg.email || '')}</td>
           <td>${escapeHtml(reg.xHandle || '')}</td>
           <td>${escapeHtml(reg.reason || '—')}</td>
-          <td>${escapeHtml(seminarId || '')}</td>
           <td><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Enrolled' : 'Pending'}</span></td>
           <td></td>
         `;
@@ -265,41 +378,113 @@
         }
         tbody.appendChild(tr);
       }
-    }
 
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+      // ── Attendance matrix (enrolled participants only) ──
+      const wrap = document.getElementById(`attendanceWrap-${seminarId}`);
+      const enrolledRows = rows.filter(r => isApproved(r.reg.enrolled));
+      const sessions = SEMINAR_SESSIONS[seminarId] || [];
+
+      if (enrolledRows.length === 0) {
+        wrap.innerHTML = '<p class="attendance-empty">No enrolled participants yet.</p>';
+        return;
+      }
+
+      const table = document.createElement('table');
+      table.className = 'attendance-table';
+
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      headRow.innerHTML = '<th class="name-th">Participant</th>' +
+        sessions.map(s => `<th>${escapeHtml(s.label)}</th>`).join('') +
+        '<th>X / Y</th>';
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      const tbodyAtt = document.createElement('tbody');
+      for (const { emailKey, reg } of enrolledRows) {
+        const attendance = reg.attendance || {};
+        const tr = document.createElement('tr');
+
+        const nameTd = document.createElement('td');
+        nameTd.className = 'name-cell';
+        nameTd.textContent = reg.name || reg.email || '(unknown)';
+        tr.appendChild(nameTd);
+
+        sessions.forEach(s => {
+          const td = document.createElement('td');
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = attendance[s.key] === true;
+          cb.addEventListener('change', async () => {
+            await setAttendance(emailKey, seminarId, s.key, cb.checked);
+            totalTd.textContent = countAttendance();
+          });
+          td.appendChild(cb);
+          tr.appendChild(td);
+
+          function countAttendance() {
+            const boxes = tr.querySelectorAll('input[type="checkbox"]');
+            let n = 0;
+            boxes.forEach(b => { if (b.checked) n++; });
+            return `${n} / ${sessions.length}`;
+          }
+        });
+
+        const totalTd = document.createElement('td');
+        totalTd.className = 'total-cell';
+        const attendedCount = sessions.filter(s => attendance[s.key] === true).length;
+        totalTd.textContent = `${attendedCount} / ${sessions.length}`;
+        tr.appendChild(totalTd);
+
+        tbodyAtt.appendChild(tr);
+      }
+      table.appendChild(tbodyAtt);
+
+      wrap.innerHTML = '';
+      wrap.appendChild(table);
     }
 
     async function loadInterestSignups() {
       const all = await getAllInterestSignups();
-      const tbody = document.getElementById('signupsTableBody');
-      tbody.innerHTML = '';
+      const signupsTbody = document.getElementById('signupsTableBody');
+      const proposalsTbody = document.getElementById('proposalsTableBody');
+      signupsTbody.innerHTML = '';
+      proposalsTbody.innerHTML = '';
 
       if (!all) {
         document.getElementById('signupsStatusLine').textContent = 'Could not load signups — check console for errors.';
+        document.getElementById('proposalsStatusLine').textContent = 'Could not load proposals — check console for errors.';
         return;
       }
 
-      const entries = Object.entries(all);
-      const proposalCount = entries.filter(([, s]) => s.proposingLecture).length;
-      document.getElementById('signupsStatusLine').textContent =
-        `${entries.length} total signup(s) — ${proposalCount} guest lecture proposal(s).`;
+      const entries = Object.entries(all).sort((a, b) => (b[1].submittedAt || 0) - (a[1].submittedAt || 0));
+      const proposals = entries.filter(([, s]) => s.proposingLecture);
+      const signups = entries.filter(([, s]) => !s.proposingLecture);
 
-      entries.sort((a, b) => (b[1].submittedAt || 0) - (a[1].submittedAt || 0));
+      document.getElementById('proposalsStatusLine').textContent = `${proposals.length} guest lecture proposal(s).`;
+      document.getElementById('signupsStatusLine').textContent = `${signups.length} general signup(s).`;
 
-      for (const [, signup] of entries) {
+      for (const [, signup] of proposals) {
         const tr = document.createElement('tr');
         const submittedDate = signup.submittedAt ? new Date(signup.submittedAt).toLocaleString() : '';
         tr.innerHTML = `
           <td>${escapeHtml(signup.name || '')}</td>
           <td>${escapeHtml(signup.email || '')}</td>
-          <td>${signup.proposingLecture ? escapeHtml(signup.proposal || '(no details given)') : '—'}</td>
+          <td>${escapeHtml(signup.proposal || '(no details given)')}</td>
           <td>${escapeHtml(submittedDate)}</td>
         `;
-        tbody.appendChild(tr);
+        proposalsTbody.appendChild(tr);
+      }
+
+      for (const [, signup] of signups) {
+        const tr = document.createElement('tr');
+        const submittedDate = signup.submittedAt ? new Date(signup.submittedAt).toLocaleString() : '';
+        tr.innerHTML = `
+          <td>${escapeHtml(signup.name || '')}</td>
+          <td>${escapeHtml(signup.email || '')}</td>
+          <td>${escapeHtml(submittedDate)}</td>
+        `;
+        signupsTbody.appendChild(tr);
       }
     }
 
@@ -308,8 +493,6 @@
       onAuthStateChanged(auth, async (user) => {
         if (!user) { showAdminState(adminSignedOut); return; }
         if (!user.email) {
-          // Transitional auth state — wait for the next update rather than
-          // briefly flashing "not authorized."
           console.log('Auth state fired without an email yet — waiting for the next update.');
           return;
         }
@@ -319,6 +502,7 @@
           return;
         }
         showAdminState(adminApproved);
+        buildTabsAndPanels();
         loadRegistrations();
         loadInterestSignups();
       });
@@ -342,7 +526,6 @@
       }
     });
 
-    document.getElementById('adminRefreshBtn').addEventListener('click', loadRegistrations);
     document.getElementById('signupsRefreshBtn').addEventListener('click', loadInterestSignups);
   </script>
 </body>

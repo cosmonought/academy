@@ -1109,6 +1109,24 @@
       }
     });
 
+    // ── Google sign-in ──
+    document.getElementById('cinemaGoogleSignInBtn').addEventListener('click', async () => {
+      const status = document.getElementById('cinemaLoginStatus');
+      try {
+        await signInWithGoogle();
+        status.textContent = '';
+      } catch (err) {
+        console.error('signInWithGoogle failed:', err.code, err.message);
+        if (err.code === 'auth/account-exists-with-different-credential') {
+          status.textContent = 'An account already exists for this email using password or email-link sign-in. Please use that method instead.';
+        } else if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+          status.textContent = '';
+        } else {
+          status.textContent = 'Something went wrong signing in with Google. Try again.';
+        }
+      }
+    });
+
     document.getElementById('cinemaShowMagicLink').addEventListener('click', (e) => {
       e.preventDefault();
       showGateState(gateMagicLink);

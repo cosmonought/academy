@@ -6,6 +6,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/fireba
 import {
   getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
   signInWithEmailAndPassword, linkWithCredential, EmailAuthProvider, sendPasswordResetEmail,
+  signInWithPopup, GoogleAuthProvider,
   onAuthStateChanged as _onAuthStateChanged, signOut as _signOut
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import {
@@ -158,6 +159,19 @@ export async function setPasswordForCurrentUser(password) {
 
 export async function sendPasswordReset(email) {
   await sendPasswordResetEmail(auth, email);
+}
+
+// ── Google sign-in ──
+// Works both as a first-time sign-in (no password ever needed, since
+// Google itself proves identity each time) and as a returning sign-in.
+// If this email already has an account via password/email-link, Firebase
+// deliberately refuses to sign in via Google (a security measure against
+// account hijacking) and throws 'auth/account-exists-with-different-credential'
+// — callers should catch this and tell the person to use their existing
+// method instead.
+export async function signInWithGoogle() {
+  const provider = new GoogleAuthProvider();
+  return signInWithPopup(auth, provider);
 }
 
 // ── Registration + entitlement lookups ──

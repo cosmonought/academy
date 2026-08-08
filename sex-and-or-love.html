@@ -209,6 +209,7 @@
             <p class="access-note" id="loginStatus"></p>
             <p class="fallback-note">New here? <button class="toggle-link" id="showRegisterBtn">Register instead ←</button></p>
             <p class="fallback-note">Haven't set a password yet, or trouble signing in? <button class="toggle-link" id="showMagicLinkBtn">Use email link instead</button></p>
+            <p class="fallback-note">Forgot your password? <button class="toggle-link" id="forgotPasswordBtn">Send a reset link</button></p>
           </div>
 
           <!-- Magic-link fallback (first-time sign-in, or trouble with password) -->
@@ -224,16 +225,6 @@
           <div id="stateJustRegistered" class="hidden">
             <h3>Registration Submitted</h3>
             <p class="access-sub access-status pending">Thanks, <span id="justRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="justRegHandle"></strong>. Once enrolled, come back and use the Login link in the nav above — you'll sign in with an email link the first time, then set a password for quick access after that.</p>
-          </div>
-
-          <!-- Prompt to set a password, shown right after a first-time magic-link sign-in -->
-          <div id="panelSetPassword" class="hidden">
-            <h3>Set a Password</h3>
-            <p class="access-sub">You're signed in. Set a password now so you won't need an email link next time — just come back and log in directly.</p>
-            <div class="access-row"><input type="password" id="newPassword" placeholder="New password" autocomplete="new-password" /></div>
-            <div class="access-row"><input type="password" id="newPasswordConfirm" placeholder="Confirm password" autocomplete="new-password" /></div>
-            <div class="access-row"><button id="setPasswordBtn" class="btn btn-primary">Set Password</button> <button id="skipPasswordBtn" class="btn btn-outline">Skip for now</button></div>
-            <p class="access-note" id="setPasswordStatus"></p>
           </div>
 
           <!-- Signed in, no registration found -->
@@ -308,9 +299,9 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
-      sendMagicLink, signInWithPassword, setPasswordForCurrentUser,
+      sendMagicLink, signInWithPassword, sendPasswordReset,
       getRegistrationForSeminar, submitRegistration, getSeminarReadings, initNavAccountWidget
-    } from '/js/academy-auth.js?v=13';
+    } from '/js/academy-auth.js?v=14';
 
     initNavAccountWidget('#accessPanel');
 
@@ -320,12 +311,11 @@
     const panelLogin             = document.getElementById('panelLogin');
     const panelMagicLink         = document.getElementById('panelMagicLink');
     const stateJustRegistered    = document.getElementById('stateJustRegistered');
-    const panelSetPassword       = document.getElementById('panelSetPassword');
     const stateNeedsRegistration = document.getElementById('stateNeedsRegistration');
     const statePending           = document.getElementById('statePending');
     const accessPanel            = document.getElementById('accessPanel');
     const readingsUnlockedTag    = document.getElementById('readingsUnlockedTag');
-    const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, panelSetPassword, stateNeedsRegistration, statePending];
+    const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, stateNeedsRegistration, statePending];
 
     function showState(el) {
       accessPanel.classList.remove('hidden');
@@ -365,7 +355,6 @@
     }
 
     let authInitialized = false;
-    let justCompletedMagicLink = false;
 
     async function refreshAccessState(user) {
       if (!user) {
@@ -376,12 +365,6 @@
 
       if (!user.email) {
         console.log('Auth state fired without an email yet — waiting for the next update.');
-        return;
-      }
-
-      if (justCompletedMagicLink) {
-        justCompletedMagicLink = false;
-        showState(panelSetPassword);
         return;
       }
 
@@ -405,8 +388,7 @@
     }
 
     (async () => {
-      const result = await completeSignInIfNeeded();
-      justCompletedMagicLink = (result === 'magic-link');
+      await completeSignInIfNeeded();
       onAuthStateChanged(auth, (user) => { refreshAccessState(user); });
     })();
 
@@ -466,24 +448,20 @@
       }
     });
 
-    // ── Set-password prompt (after first magic-link sign-in) ──
-    document.getElementById('setPasswordBtn').addEventListener('click', async () => {
-      const pw = document.getElementById('newPassword').value;
-      const pwConfirm = document.getElementById('newPasswordConfirm').value;
-      const status = document.getElementById('setPasswordStatus');
-      if (!pw || pw.length < 6) { status.textContent = 'Password must be at least 6 characters.'; return; }
-      if (pw !== pwConfirm) { status.textContent = 'Passwords do not match.'; return; }
+    // ── Forgot password ──
+    document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const status = document.getElementById('loginStatus');
+      if (!email) { status.textContent = 'Enter your email above first, then click "Send a reset link."'; return; }
       try {
-        await setPasswordForCurrentUser(pw);
-        status.textContent = 'Password set!';
-        refreshAccessState(auth.currentUser);
+        await sendPasswordReset(email);
+        status.textContent = 'Check your inbox for a password reset link — if you don\'t see it within a minute or two, check your spam/junk folder.';
       } catch (err) {
-        console.error(err);
-        status.textContent = 'Something went wrong setting your password. Try again.';
+        console.error('sendPasswordReset failed:', err.code, err.message);
+        status.textContent = err.code === 'auth/user-not-found'
+          ? 'No account found for that email.'
+          : 'Something went wrong sending the reset link. Try again in a moment.';
       }
-    });
-    document.getElementById('skipPasswordBtn').addEventListener('click', () => {
-      refreshAccessState(auth.currentUser);
     });
 
     // ── Toggle links between panels ──

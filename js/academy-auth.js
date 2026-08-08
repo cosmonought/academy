@@ -97,9 +97,13 @@ export function emailToKey(email) {
 }
 
 // ── Sending + completing magic-link sign-in ──
+// The magic link always lands on /set-password.html — a dedicated,
+// unmissable page — rather than bouncing back to wherever the person
+// requested it from and burying the "set a password" prompt in the
+// middle of a longer page.
 function actionCodeSettings() {
   return {
-    url: window.location.origin + window.location.pathname,
+    url: window.location.origin + '/set-password.html',
     handleCodeInApp: true,
   };
 }

@@ -201,7 +201,7 @@
     </div>
 
     <!-- Seminar access panel -->
-    <div style="border-bottom:var(--panel-border);">
+    <div id="accessPanelWrapper" style="border-bottom:var(--panel-border);">
       <div class="page-wrap" style="padding-top:40px;padding-bottom:8px;">
         <div id="accessPanel">
 
@@ -341,10 +341,12 @@
     const stateNeedsRegistration = document.getElementById('stateNeedsRegistration');
     const statePending           = document.getElementById('statePending');
     const accessPanel            = document.getElementById('accessPanel');
+    const accessPanelWrapper     = document.getElementById('accessPanelWrapper');
     const readingsUnlockedTag    = document.getElementById('readingsUnlockedTag');
     const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, stateNeedsRegistration, statePending];
 
     function showState(el) {
+      accessPanelWrapper.classList.remove('hidden');
       accessPanel.classList.remove('hidden');
       readingsUnlockedTag.classList.add('hidden');
       ALL_PANELS.forEach(s => s.classList.add('hidden'));
@@ -352,7 +354,7 @@
     }
 
     function showApproved() {
-      accessPanel.classList.add('hidden');
+      accessPanelWrapper.classList.add('hidden');
       readingsUnlockedTag.classList.remove('hidden');
     }
 

@@ -18,7 +18,44 @@
       border-bottom: var(--panel-border);
     }
     .seminar-card:last-child { border-bottom: none; }
-    .seminar-card-left { padding: 40px 48px; border-right: var(--panel-border); }
+    .seminar-card-left {
+      position: relative;
+      overflow: hidden;
+      padding: 40px 48px;
+      border-right: var(--panel-border);
+      isolation: isolate;
+    }
+    /* Background image sits behind everything, washed-out by default.
+       Set per-card via the --card-image custom property inline — if a
+       card has no image, this is simply transparent and the dark scrim
+       (::after) alone provides the panel background, no broken-image
+       glitch or empty gap. */
+    .seminar-card-left::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: var(--card-image, none);
+      background-size: cover;
+      background-position: center;
+      filter: grayscale(92%) brightness(0.5) contrast(1.05);
+      transform: scale(1.05);
+      transition: filter 0.5s ease, transform 0.5s ease;
+      z-index: -2;
+    }
+    /* Dark scrim for text legibility, regardless of the image beneath */
+    .seminar-card-left::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(8,8,8,0.74) 0%, rgba(8,8,8,0.9) 100%);
+      z-index: -1;
+    }
+    /* On hover, the image reveals more of its real color */
+    .seminar-card-left:hover::before {
+      filter: grayscale(8%) brightness(0.7) contrast(1.05);
+      transform: scale(1.08);
+    }
+    .seminar-card-left h2 { color: #f2f0eb; }
     .seminar-card-right { padding: 40px 48px; }
     .seminar-status-badge {
       font-family: var(--font-mono);
@@ -31,9 +68,9 @@
       margin-bottom: 12px;
     }
     .seminar-status-badge.flagship { border-color: var(--pink); color: var(--pink); }
-    .seminar-status-badge.current { border-color: #2a8a4a; color: #2a8a4a; }
-    .seminar-status-badge.forthcoming { border-color: var(--blue); color: var(--blue); }
-    .seminar-status-badge.hiatus { border-color: var(--rule-thin); color: var(--ink-dim); }
+    .seminar-status-badge.current { border-color: #4ecb7a; color: #4ecb7a; }
+    .seminar-status-badge.forthcoming { border-color: #7ea6f5; color: #7ea6f5; }
+    .seminar-status-badge.hiatus { border-color: #666; color: #999; }
     @media (max-width: 900px) {
       .seminar-card { grid-template-columns: 1fr; }
       .seminar-card-left { border-right: none; border-bottom: var(--panel-border); }
@@ -90,10 +127,10 @@
 
     <!-- Current: Sex, and/or Love -->
     <div class="seminar-card">
-      <div class="seminar-card-left">
+      <div class="seminar-card-left" style="--card-image: url('/assets/sex-and-or-love.webp');">
         <span class="seminar-status-badge current">● Current</span>
         <h2 class="section-title-sm" style="font-size:28px;">Sex, and/or Love</h2>
-        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">Psychoanalysis and the Science of Desire</p>
+        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:#c8c6c0;margin-bottom:16px;">Psychoanalysis and the Science of Desire</p>
         <a href="/sex-and-or-love.html" class="btn btn-primary">View Sex, and/or Love →</a>
       </div>
       <div class="seminar-card-right">
@@ -103,10 +140,10 @@
 
     <!-- Flagship: Coining Reason -->
     <div class="seminar-card">
-      <div class="seminar-card-left">
+      <div class="seminar-card-left" style="--card-image: url('https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/img/CNTitle.png');">
         <span class="seminar-status-badge flagship">Flagship · Unit II on Hiatus</span>
         <h2 class="section-title-sm" style="font-size:28px;">Coining Reason</h2>
-        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">A Discussion Series</p>
+        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:#c8c6c0;margin-bottom:16px;">A Discussion Series</p>
         <a href="/seminar.html" class="btn btn-primary">View Coining Reason →</a>
       </div>
       <div class="seminar-card-right">
@@ -116,10 +153,10 @@
 
     <!-- Forthcoming -->
     <div class="seminar-card">
-      <div class="seminar-card-left">
+      <div class="seminar-card-left" style="--card-image: url('/assets/sex-monsters-superheroes.webp');">
         <span class="seminar-status-badge forthcoming">Forthcoming</span>
         <h2 class="section-title-sm" style="font-size:28px;">Sex, Monsters, and Superheroes</h2>
-        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:16px;">On the Graphic</p>
+        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:#c8c6c0;margin-bottom:16px;">On the Graphic</p>
         <a href="/forthcoming.html" class="btn btn-primary">View Forthcoming →</a>
       </div>
       <div class="seminar-card-right">

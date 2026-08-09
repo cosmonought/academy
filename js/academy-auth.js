@@ -5,8 +5,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 import {
   getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
-  signInWithEmailAndPassword, linkWithCredential, EmailAuthProvider, sendPasswordResetEmail,
-  signInWithPopup, GoogleAuthProvider,
+  signInWithEmailAndPassword, sendPasswordResetEmail,
+  updatePassword, signInWithPopup, GoogleAuthProvider,
   onAuthStateChanged as _onAuthStateChanged, signOut as _signOut
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import {
@@ -176,14 +176,25 @@ export async function signInWithPassword(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
-// Attaches a password to the CURRENTLY signed-in user's account (must
-// already be authenticated, e.g. via a fresh magic-link sign-in). After
-// this, they can sign in with email + password going forward instead of
-// requesting a new magic link every time.
+// Sets a password on the CURRENTLY signed-in user's account (must already
+// be authenticated, e.g. via a fresh magic-link sign-in). After this, they
+// can sign in with email + password going forward instead of requesting a
+// new magic link every time.
+//
+// Deliberately uses updatePassword(), NOT linkWithCredential(). Email-link
+// sign-in and email/password sign-in are both surfaced under the SAME
+// Firebase Auth provider ID ('password') — signing in via magic link
+// already registers a 'password' provider entry on the account. Calling
+// linkWithCredential() with a new EmailAuthProvider credential then tries
+// to attach a second credential under that already-claimed provider ID,
+// which Firebase always rejects with 'auth/provider-already-linked' — on
+// literally the first attempt, regardless of whether a real password was
+// ever set. updatePassword() sets the password directly on the existing
+// provider entry instead of trying to link a new one, which is the
+// correct call for this flow and has no such conflict.
 export async function setPasswordForCurrentUser(password) {
   if (!auth.currentUser || !auth.currentUser.email) throw new Error('No signed-in user to attach a password to.');
-  const credential = EmailAuthProvider.credential(auth.currentUser.email, password);
-  await linkWithCredential(auth.currentUser, credential);
+  await updatePassword(auth.currentUser, password);
 }
 
 export async function sendPasswordReset(email) {

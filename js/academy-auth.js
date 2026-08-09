@@ -195,6 +195,37 @@ export async function signInWithPassword(email, password) {
 export async function setPasswordForCurrentUser(password) {
   if (!auth.currentUser || !auth.currentUser.email) throw new Error('No signed-in user to attach a password to.');
   await updatePassword(auth.currentUser, password);
+  const key = emailToKey(auth.currentUser.email);
+  if (key) {
+    try {
+      await set(ref(db, `academyRegistrations/${key}/hasPassword`), true);
+    } catch (err) {
+      // Non-fatal: the password itself is already set above. Losing this
+      // flag just means set-password.html shows "first time" framing
+      // again next time instead of "update your password" — annoying,
+      // not broken.
+      console.error('Failed to record hasPassword flag:', err);
+    }
+  }
+}
+
+// Whether this account has ever actually set a password, as opposed to
+// only ever using passwordless magic-link sign-in. Firebase Auth can't
+// answer this reliably on its own — signInWithEmailLink registers the
+// same 'password' providerId that a real password would, so checking
+// auth.currentUser.providerData can't distinguish the two (this is the
+// same quirk that caused the linkWithCredential bug above). We track it
+// ourselves instead, via the flag set by setPasswordForCurrentUser().
+export async function hasPasswordSet(email) {
+  const key = emailToKey(email);
+  if (!key) return false;
+  try {
+    const snap = await get(ref(db, `academyRegistrations/${key}/hasPassword`));
+    return snap.exists() && snap.val() === true;
+  } catch (err) {
+    console.error('hasPasswordSet check failed:', err);
+    return false;
+  }
 }
 
 export async function sendPasswordReset(email) {

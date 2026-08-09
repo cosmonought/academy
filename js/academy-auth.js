@@ -198,7 +198,13 @@ export async function setPasswordForCurrentUser(password) {
   const key = emailToKey(auth.currentUser.email);
   if (key) {
     try {
-      await set(ref(db, `academyRegistrations/${key}/hasPassword`), true);
+      // Deliberately NOT under academyRegistrations/{key} — that node's
+      // children are iterated as {seminarId: registrationRecord} pairs by
+      // getRegistrations() (profile.html) and getAllRegistrations()
+      // (admin.html), and a stray 'hasPassword' sibling there would show
+      // up as a fake seminar registration in both places. accountMeta is
+      // a separate top-level tree neither of those readers touches.
+      await set(ref(db, `accountMeta/${key}/hasPassword`), true);
     } catch (err) {
       // Non-fatal: the password itself is already set above. Losing this
       // flag just means set-password.html shows "first time" framing
@@ -220,7 +226,7 @@ export async function hasPasswordSet(email) {
   const key = emailToKey(email);
   if (!key) return false;
   try {
-    const snap = await get(ref(db, `academyRegistrations/${key}/hasPassword`));
+    const snap = await get(ref(db, `accountMeta/${key}/hasPassword`));
     return snap.exists() && snap.val() === true;
   } catch (err) {
     console.error('hasPasswordSet check failed:', err);

@@ -21,39 +21,60 @@
     "academyRegistrations": {
       ".read": "auth != null && auth.token.email === 'academy@netadao.org'",
       "$emailKey": {
-        ".read": "auth != null && (auth.token.email === 'academy@netadao.org' || (data.child('email').exists() && data.child('email').val() === auth.token.email))",
-        "name": {
-          ".write": "!data.exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
-          ".validate": "newData.isString() && newData.val().length <= 80"
-        },
-        "email": {
-          ".write": "!data.exists() || (auth != null && data.val() === auth.token.email)",
-          ".validate": "newData.isString() && newData.val().length <= 120"
-        },
-        "xHandle": {
-          ".write": "!data.exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
-          ".validate": "newData.isString() && newData.val().length <= 40"
-        },
-        "seminarId": {
-          ".write": "!data.exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
-          ".validate": "newData.isString()"
-        },
-        "requestedAt": {
-          ".write": "!data.exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
-          ".validate": "newData.isNumber()"
-        },
-        "readingsAccess": {
-          ".write": "auth != null && auth.token.email === 'academy@netadao.org'",
-          ".validate": "newData.isBoolean()"
-        },
-        "seminarAccess": {
-          ".write": "auth != null && auth.token.email === 'academy@netadao.org'"
+        ".read": "auth != null && (auth.token.email === 'academy@netadao.org' || $emailKey === auth.token.email.replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').toLowerCase())",
+        "$seminarId": {
+          ".read": "auth != null && (auth.token.email === 'academy@netadao.org' || (data.child('email').exists() && data.child('email').val() === auth.token.email))",
+          "email": {
+            ".write": "!data.exists() || (auth != null && data.val() === auth.token.email)",
+            ".validate": "newData.isString() && newData.val().length <= 120"
+          },
+          "name": {
+            ".write": "!data.parent().child('email').exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
+            ".validate": "newData.isString() && newData.val().length <= 80"
+          },
+          "xHandle": {
+            ".write": "!data.parent().child('email').exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
+            ".validate": "newData.isString() && newData.val().length <= 40"
+          },
+          "reason": {
+            ".write": "!data.parent().child('email').exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
+            ".validate": "newData.isString() && newData.val().length <= 1000"
+          },
+          "requestedAt": {
+            ".write": "!data.parent().child('email').exists() || (auth != null && data.parent().child('email').val() === auth.token.email)",
+            ".validate": "newData.isNumber()"
+          },
+          "enrolled": {
+            ".write": "auth != null && auth.token.email === 'academy@netadao.org'",
+            ".validate": "newData.isBoolean()"
+          },
+          "attendance": {
+            "$sessionKey": {
+              ".write": "auth != null && auth.token.email === 'academy@netadao.org'",
+              ".validate": "newData.isBoolean()"
+            }
+          }
         }
       }
     },
     "seminarReadings": {
-      ".read": "auth != null && root.child('academyRegistrations').child(auth.token.email.replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).child('readingsAccess').val() === true",
-      ".write": false
+      "$seminarId": {
+        ".read": "auth != null && root.child('academyRegistrations').child(auth.token.email.replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').toLowerCase()).child($seminarId).child('enrolled').val() === true",
+        ".write": false
+      }
+    },
+    "interestSignups": {
+      ".read": "auth != null && auth.token.email === 'academy@netadao.org'",
+      ".write": false,
+      "$signupId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['email','submittedAt']) && newData.child('email').isString() && newData.child('email').val().length <= 120 && newData.child('email').val().length > 0",
+        "name": { ".validate": "newData.isString() && newData.val().length <= 80" },
+        "email": { ".validate": "newData.isString() && newData.val().length <= 120" },
+        "proposingLecture": { ".validate": "newData.isBoolean()" },
+        "proposal": { ".validate": "newData.isString() && newData.val().length <= 1000" },
+        "submittedAt": { ".validate": "newData.isNumber()" }
+      }
     }
   }
 }

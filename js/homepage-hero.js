@@ -19,7 +19,7 @@ if (discipline && wordFill && surface) {
   const finalFadeDuration = 280;
   const sequenceStartDelay = 250;
   const sequenceDuration = finalIndex * (fadeInDuration + holdDuration + fadeOutDuration) + finalFadeDuration;
-  const fillDuration = sequenceDuration + sequenceStartDelay;
+  const masterDuration = sequenceStartDelay + sequenceDuration;
   let liquidFrame = 0;
   let cancelled = false;
 
@@ -74,10 +74,9 @@ if (discipline && wordFill && surface) {
 
     const animateLiquid = (now) => {
       if (cancelled) return;
-      const elapsed = Math.min(now - fillStartedAt, fillDuration);
-      const progress = Math.min(elapsed / fillDuration, 1);
-      const easedProgress = 1 - Math.pow(1 - progress, 1.45);
-      const level = initialLevel + (finalLevel - initialLevel) * easedProgress;
+      const elapsed = Math.min(now - fillStartedAt, masterDuration);
+      const progress = Math.min(elapsed / masterDuration, 1);
+      const level = initialLevel + (finalLevel - initialLevel) * progress;
       surface.setAttribute('d', surfacePath(level, elapsed, progress < 1 ? 1 : 0));
 
       if (progress < 1) {
@@ -117,7 +116,7 @@ if (discipline && wordFill && surface) {
           if (cancelled || !await animateOpacity(1, 0, fadeOutDuration)) return;
           discipline.style.opacity = '0';
         } else {
-          surface.setAttribute('d', surfacePath(-0.08, fillDuration, 0));
+          surface.setAttribute('d', surfacePath(-0.08, masterDuration, 0));
         }
       }
     };

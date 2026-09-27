@@ -1,0 +1,96 @@
+/* Event type is conveyed by a labeled icon, a tinted panel, and dividing rules. */
+.seminar-sessions .session-block {
+  --screening-paper: #eaf0f8;
+  --screening-rule: #aabbd2;
+  --screening-ink: #294665;
+  padding-block: 32px;
+}
+.seminar-sessions .session-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #929aa5;
+  margin-bottom: 16px;
+}
+.seminar-sessions .session-title { font-size: 26px; }
+.seminar-sessions .session-date { grid-column: 2; font-size: 13px; color: #4d5158; }
+.seminar-sessions .session-status { grid-column: 3; grid-row: 1; justify-self: end; }
+.seminar-sessions .status-upcoming { color: #294665; border-color: #8797aa; }
+.seminar-sessions .session-current .session-header { border-bottom: 3px solid #ae246f; }
+.seminar-sessions .status-current { background: #ae246f; color: #fff; border-color: #ae246f; }
+.seminar-sessions .session-past .session-header { border-bottom-color: #c6c3bb; }
+.seminar-sessions .session-past .session-title { color: #565752; }
+.seminar-sessions .status-past { color: #565752; background: #e3e1db; border-color: #bcbab3; }
+.seminar-sessions .session-phase {
+  margin-top: 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.seminar-sessions .session-phase-label {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--screening-ink);
+}
+.seminar-sessions .session-phase-label::before,
+.seminar-sessions .screenings-label::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Crect x='3' y='3' width='18' height='18' rx='1'/%3E%3Cpath d='M7 3v18M17 3v18M3 8h4m-4 8h4M17 8h4m-4 8h4M7 12h10'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.seminar-sessions .session-lecture > .session-phase-label { color: var(--ink); font: 500 14px/1.4 var(--font-body); text-transform: none; letter-spacing: 0; }
+.seminar-sessions .session-lecture .session-phase-label::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M12 5C9 3 5 3 2 4v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15'/%3E%3C/svg%3E");
+}
+.seminar-sessions .lecture-date { grid-column: 2; color: #44484d; font: 500 14px/1.5 var(--font-body); margin-top: 5px; }
+.seminar-sessions .session-screenings { margin: 10px 0 0 30px; padding: 14px 16px; border: 1px solid #bdcce0; background: var(--screening-paper); }
+.seminar-sessions .screenings-label::before { width: 16px; height: 16px; }
+.seminar-sessions .screenings-label { display: flex; align-items: center; gap: 8px; font: 500 12px/1.5 var(--font-mono); text-transform: uppercase; letter-spacing: .04em; color: #50555b; }
+.seminar-sessions .screening-note { margin-top: 6px; font-size: 12px; line-height: 1.5; color: #555b63; }
+.seminar-sessions .screening-list { border: 0; padding: 0; margin-top: 12px; }
+.seminar-sessions .screening-list li { padding: 10px 0; }
+.seminar-sessions .screening-list li + li { border-top: 1px solid var(--screening-rule); }
+.seminar-sessions .screening-list li:first-child { padding-top: 0; }
+.seminar-sessions .screening-list li:last-child { padding-bottom: 0; }
+.seminar-sessions .screening-title { margin: 0 0 3px; line-height: 1.5; }
+.seminar-sessions .screening-title-lead { display: inline; font: 500 14px/1.5 var(--font-body); }
+.seminar-sessions .screening-title-subtitle { display: inline; font: 400 14px/1.5 var(--font-body); margin: 0; }
+.seminar-sessions .screening-date { font: 400 12px/1.5 var(--font-body); color: #44484d; margin-bottom: 0; }
+.seminar-sessions .film-locked, .seminar-sessions .reading-locked { color: #555b63; }
+.seminar-sessions .session-screenings .film-locked:not(.film-revealed) { display: none; }
+.seminar-sessions .session-screenings .film-revealed { display: block; font-size: 13px; margin-top: 3px; }
+.seminar-sessions .session-lecture .reading-list { margin: 12px 0 0 30px; }
+.seminar-sessions .session-lecture .reading-list li { font-size: 17px; }
+.seminar-sessions .session-past .screening-note { color: #565752; }
+@media (max-width: 760px) {
+  .seminar-sessions .session-header { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+  .seminar-sessions .session-num { grid-column: 1; grid-row: 1; }
+  .seminar-sessions .session-status { grid-column: 2; grid-row: 1; }
+  .seminar-sessions .session-title { grid-column: 1 / -1; grid-row: 2; font-size: 24px; }
+  .seminar-sessions .session-date { grid-column: 1 / -1; grid-row: 3; }
+  .seminar-sessions .session-phase { padding: 0; }
+  .seminar-sessions .session-lecture .reading-list { margin-left: 0; }
+  .seminar-sessions .session-screenings { margin-left: 0; padding: 12px; }
+}
+
+/* Completed screenings recede without reducing text contrast or hiding titles. */
+.seminar-sessions .screening-list li { padding-inline: 10px; }
+.seminar-sessions .screening-past .screening-title,
+.seminar-sessions .screening-past .film-revealed { color: #5b5c57; }
+.seminar-sessions .screening-state { color: #555b57; }
+.seminar-sessions .session-screenings .screening-link { margin-top: 5px; font-size: 13px; }
+.seminar-sessions .screening-link a { text-decoration: underline; text-underline-offset: 3px; }
+
+.seminar-sessions .session-lecture > .session-phase-label .lecture-date { display: inline; margin: 0; font: 400 14px/1.4 var(--font-body); color: inherit; }
+
+.seminar-sessions .screening-summary { margin-top: 24px; display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; font: 500 14px/1.5 var(--font-body); text-transform: none; letter-spacing: 0; color: var(--ink); }
+.seminar-sessions .screening-summary-dates { font-weight: 400; }

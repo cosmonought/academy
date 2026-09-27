@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <title>Account recovery — Neta DAO Academy</title>
+  <link rel="stylesheet" href="/css/style.css?v=3">
+  <link rel="stylesheet" href="/css/account.css?v=2">
+</head>
+<body><main class="account-wrap">
+  <h1>Neta DAO Academy</h1>
+  <p role="status">Opening your account link…</p>
+  <p><a href="/account.html">Return to sign in</a></p>
+  <noscript><p>Enable JavaScript to complete your account request.</p></noscript>
+</main>
+<script type="module">
+  import { emailActionDestination } from '/js/auth-action-route.js';
+  location.replace(emailActionDestination(location.search));
+</script>
+</body></html>

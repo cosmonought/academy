@@ -1,0 +1,26 @@
+.account-wrap { max-width: 620px; padding: 56px 28px 80px; margin: auto; }
+.account-heading { padding-bottom: 28px; border-bottom: 2px solid var(--ink); }
+.account-heading h1 { font-family: var(--font-display); font-size: clamp(42px, 8vw, 64px); line-height: 1.05; text-transform: uppercase; margin: 12px 0; }
+.account-wrap h2 { font-family: var(--font-display); font-size: 32px; margin-bottom: 12px; }
+.account-wrap h3 { font-size: 19px; margin-bottom: 10px; }
+.account-wrap p { line-height: 1.65; margin-bottom: 20px; overflow-wrap: anywhere; }
+.account-wrap a:not(.btn) { text-decoration: underline; text-underline-offset: 4px; }
+.account-context { padding: 16px 0; border-bottom: 1px solid var(--rule-thin); }
+.account-modes { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 28px 0; }
+.account-modes a { padding: 10px 0; }
+.account-modes [aria-current] { font-weight: bold; text-decoration-thickness: 3px !important; }
+.account-wrap label { display: block; font-size: 15px; font-weight: 600; margin: 20px 0 8px; }
+.account-wrap input, .account-wrap textarea { display: block; width: 100%; min-width: 0; background: var(--bg); border: 1px solid var(--ink-dim); border-radius: 0; color: var(--ink); padding: 13px; font: inherit; font-size: 17px; }
+.password-field { display: flex; }
+.password-field input { flex: 1; width: 0; }
+.password-field button { padding: 0 14px; border: 1px solid var(--ink-dim); border-left: 0; background: var(--bg-raised); color: var(--ink); cursor: pointer; font: inherit; }
+.account-wrap form > .btn { margin-top: 24px; width: 100%; justify-content: center; }
+.account-wrap .field-hint { font-size: 14px; color: var(--ink-dim); margin-top: 10px; }
+.account-help { border-top: 1px solid var(--rule-thin); margin-top: 28px; padding-top: 24px; }
+.account-help p { font-size: 15px; }
+.form-status:not(:empty) { margin-top: 18px; border-left: 3px solid var(--blue); padding: 10px 14px; background: var(--bg-raised); }
+.account-wrap button:disabled { opacity: .6; cursor: wait; }
+#accountMember, #accountReset, #accountResetDone, #accountLoading { margin-top: 28px; }
+#accountResetDone .btn { white-space: normal; margin-bottom: 24px; }
+[hidden] { display: none !important; }
+@media (max-width: 480px) { .account-wrap { padding: 32px 20px 56px; } }

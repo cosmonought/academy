@@ -1,0 +1,16 @@
+{
+  "name": "neta-dao-academy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:rules": "firebase emulators:exec --only database,auth --project demo-academy \"node --test tests/rules.mjs tests/auth-emulator.mjs\"",
+    "sync:schedule": "node scripts/sync-schedule.mjs",
+    "check:schedule": "node scripts/sync-schedule.mjs --check"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase": "^12.0.0",
+    "firebase-tools": "^15.0.0"
+  }
+}

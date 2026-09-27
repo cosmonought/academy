@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sex, and/or Love — Neta DAO Academy</title>
   <meta name="description" content="The current Neta DAO Academy seminar: Sex, and/or Love: Psychoanalysis and the Science of Desire." />
-  <link rel="stylesheet" href="css/style.css?v=2" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -15,78 +15,8 @@
   <script type="text/javascript">
     (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
   </script>
-</head>
-<body>
-  <nav class="site-nav">
-    <div class="nav-inner">
-      <a href="https://netadao.org" class="nav-logo">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
-          <rect width="40" height="40" fill="#080808"/>
-          <defs>
-            <linearGradient id="a-grad-NAV" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#C9338A"/>
-              <stop offset="35%" stop-color="#C9338A"/>
-              <stop offset="100%" stop-color="#5B8EF0"/>
-            </linearGradient>
-            <clipPath id="a-clip-NAV">
-              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
-            </clipPath>
-          </defs>
-          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
-          <g clip-path="url(#a-clip-NAV)">
-            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/>
-          </g>
-        </svg>
-      </a>
-      <ul class="nav-links">
-        <li><a href="/" >Home</a></li>
-        <li class="nav-dropdown-item">
-          <a href="/seminars.html">Seminars</a>
-          <ul class="nav-dropdown-menu">
-            <li><a href="/sex-and-or-love.html" class="active">Current: Sex, and/or Love</a></li>
-            <li><a href="/seminar.html">Flagship: Coining Reason</a></li>
-            <li><a href="/forthcoming.html">Forthcoming</a></li>
-            <li><a href="/seminars.html#archive">Archive</a></li>
-          </ul>
-        </li>
-        <li><a href="https://fork.netadao.org">Fork Journal</a></li>
-        <li id="navAccountItem"><a href="#accessPanel" id="navAccountLink">Sign In</a></li>
-      </ul>
-      <button class="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
-    </div>
-  </nav>
-  <!-- Announcement banner hidden until Session 6's screening (19 Aug 2026) — restore by removing this comment wrapper and updating the date/text
-  <div class="announce-bar">
-    <a href="/cinema.html"><span class="dot"></span>Live screening — 5 August, 10pm EST / 7pm PST — Watch →</a>
-  </div>
-  -->
-
+  <script src="/js/site.js?v=4" defer></script>
   <style>
-    .series-hero-img {
-      width: 100%;
-      max-height: 500px;
-      object-fit: cover;
-      object-position: top center;
-      display: block;
-      border-bottom: var(--panel-border);
-    }
-    .session-block { padding: 20px 0; border-bottom: 1px solid var(--rule-thin); }
-    .session-block:last-child { border-bottom: none; }
-    .session-header { display: flex; gap: 14px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
-    .session-num { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.06em; white-space: nowrap; }
-    .session-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; text-transform: uppercase; }
-    .session-date { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); white-space: nowrap; }
-    .session-status { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border: 1px solid; }
-    .status-past { border-color: #2a8a4a; color: #2a8a4a; }
-    .status-upcoming { border-color: var(--blue); color: var(--blue); }
-    .reading-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-    .reading-list li { font-size: 13px; color: var(--ink-mid); line-height: 1.65; padding-left: 16px; position: relative; }
-    .reading-list li::before { content: '—'; position: absolute; left: 0; color: var(--ink-dim); }
-    .reading-list a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
-    .reading-list a:hover { color: var(--pink); }
-    .reading-list .optional { color: var(--ink-dim); font-style: italic; }
-    .reading-locked { color: var(--ink-dim); font-size: 12px; font-style: italic; cursor: default; }
-
     /* ── Seminar access panel ── */
     #accessPanel {
       background: var(--bg-raised);
@@ -174,140 +104,170 @@
     #navAccountItem.signed-in a { color: #2a8a4a; }
     #navAccountItem .nav-signout { margin-left: 8px; color: var(--ink-dim); text-decoration: underline; font-size: inherit; cursor: pointer; }
   </style>
-
-  <div style="margin-top:54px;">
-    <!-- Hero image -->
-    <img src="assets/sex-and-or-love.webp" alt="Sex, and/or Love — Neta DAO Academy" class="series-hero-img" />
-
-    <div style="border-bottom:var(--panel-border);">
-      <div class="page-wrap" style="padding-top:48px;padding-bottom:40px;">
-        <p class="section-label" style="color:var(--pink);">● Active Series</p>
-        <h1 class="section-title">Sex, and/or Love</h1>
-        <p style="font-family:var(--font-display);font-size:22px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:24px;">Psychoanalysis and the Science of Desire</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:28px;">
-          <p class="section-body">This seminar analyzes sexual desire through its principal science: psychoanalysis. Because desire is a force rather than an object, this "science of desire" questions the limits of ordinary empiricism by placing questioning — with its attendant themes of trust and doubt, obsession and uncertainty — at the center of existence. Thus, we will reinscribe the reality of reality through the unconscious.</p>
-          <p class="section-body">In addition to psychoanalytical texts from Freud, Laplanche, and Lacan, we will also read from scholars Lynn Margulis, Stella Sandford, Tim Dean, Avgi Saketopoulou, Catherine Malabou, Lauren Berlant, Alain Badiou, Jean-Luc Nancy, and Irving Goh, alongside selected short stories, poetry, films, and more.</p>
-        </div>
-        <div style="background:var(--bg-raised);border:1px solid var(--rule-thin);padding:20px 24px;margin-bottom:28px;">
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-            <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Dates</p><p style="font-size:13px;color:var(--ink);">18 February – 26 August 2026</p></div>
-            <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Time</p><p style="font-size:13px;color:var(--ink);">12AM EST / 5AM UTC</p></div>
-            <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Location</p><p style="font-size:13px;color:var(--ink);"><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">x.com/NetaDAO_Academy ↗</a></p></div>
-            <div><p style="font-family:var(--font-mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Presented by</p><p style="font-size:13px;color:var(--ink);">Neta DAO Academy</p></div>
-          </div>
-        </div>
-        <a href="#accessPanel" class="btn btn-primary">Register for This Seminar</a>
-      </div>
+  <link rel="stylesheet" href="/css/editorial.css?v=6" />
+  <link rel="stylesheet" href="/css/participant.css?v=1">
+  <link rel="stylesheet" href="/css/syllabus.css?v=7">
+  <link rel="stylesheet" href="/css/screening-banner.css?v=3">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="Neta DAO Academy home">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
+          <rect width="40" height="40" fill="#080808"/>
+          <defs>
+            <linearGradient id="a-grad-NAV" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#C9338A"/>
+              <stop offset="35%" stop-color="#C9338A"/>
+              <stop offset="100%" stop-color="#5B8EF0"/>
+            </linearGradient>
+            <clipPath id="a-clip-NAV">
+              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
+            </clipPath>
+          </defs>
+          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
+          <g clip-path="url(#a-clip-NAV)">
+            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/>
+          </g>
+        </svg>
+      </a>
+      <ul class="nav-links" id="site-menu">
+        <li><a href="/" >Home</a></li>
+        <li class="nav-dropdown-item">
+          <a href="/seminars.html">Seminars</a>
+          <ul class="nav-dropdown-menu">
+            <li><a href="/sex-and-or-love.html" class="active">Current: Sex, and/or Love</a></li>
+            <li><a href="/seminar.html">Flagship: Coining Reason</a></li>
+            <li><a href="/forthcoming.html">Forthcoming</a></li>
+            <li><a href="/seminars.html#archive">Archive</a></li>
+          </ul>
+        </li>
+        <li><a href="https://fork.netadao.org">Fork Journal</a></li>
+        <li id="navAccountItem"><a href="/account.html" id="navAccountLink">Sign In</a></li>
+      </ul>
+      <button class="nav-hamburger" type="button" aria-label="Open menu" aria-controls="site-menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
-
-    <!-- Seminar access panel -->
-    <div id="accessPanelWrapper" style="border-bottom:var(--panel-border);">
-      <div class="page-wrap" style="padding-top:40px;padding-bottom:8px;">
-        <div id="accessPanel">
-
-          <!-- Register form (default view when signed out) -->
-          <div id="panelRegister">
-            <h3>Seminar Access</h3>
-            <p class="access-sub">Readings, the Cinema screening, and speaking access during live X Spaces discussions are reserved for enrolled participants. Registering below submits your interest — enrollment is confirmed once you complete the verification step that follows. This seminar covers challenging, sometimes disturbing material — registering confirms you understand that context. <a href="/seminars.html#policies" style="color:var(--blue);">How registration and enrollment work →</a></p>
-            <div class="access-row"><input type="text" id="regName" placeholder="Your name" /></div>
-            <div class="access-row"><input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" /></div>
-            <div class="access-row"><input type="text" id="regXHandle" placeholder="Your X handle (e.g. @yourname)" /></div>
-            <div class="access-row"><textarea id="regReason" placeholder="Why do you want to join this seminar?" rows="3"></textarea></div>
-            <div class="access-row"><button id="submitRegBtn" class="btn btn-primary">Register</button></div>
-            <p class="access-note" id="regStatus"></p>
-            <p class="fallback-note">Already registered? <button class="toggle-link" id="showLoginBtn">Login instead →</button></p>
-          </div>
-
-          <!-- Login form (password-based, toggled in) -->
-          <div id="panelLogin" class="hidden">
-            <h3>Login</h3>
-            <button id="googleSignInBtn" class="google-btn" type="button">
-              <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-              Sign in with Google
-            </button>
-            <div class="auth-divider"><span>or</span></div>
-            <div style="background:rgba(91,142,240,0.1);border:1px solid var(--blue);padding:14px 16px;margin-bottom:18px;">
-              <p style="font-size:13px;color:var(--ink);line-height:1.6;"><strong>First time logging in since being enrolled?</strong> You haven't set a password yet — use <button class="toggle-link" id="showMagicLinkBtnTop" style="font-size:13px;">the email link option</button> below instead. You'll set a password there for next time.</p>
-            </div>
-            <p class="access-sub">Already set a password? Sign in with it here.</p>
-            <div class="access-row"><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" /></div>
-            <div class="access-row"><input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" /></div>
-            <div class="access-row"><button id="loginBtn" class="btn btn-primary">Log In</button></div>
-            <p class="access-note" id="loginStatus"></p>
-            <p class="fallback-note">New here? <button class="toggle-link" id="showRegisterBtn">Register instead ←</button></p>
-            <p class="fallback-note">Haven't set a password yet, or trouble signing in? <button class="toggle-link" id="showMagicLinkBtn">Use email link instead</button></p>
-            <p class="fallback-note">Forgot your password? <button class="toggle-link" id="forgotPasswordBtn">Send a reset link</button></p>
-          </div>
-
-          <!-- Magic-link fallback (first-time sign-in, or trouble with password) -->
-          <div id="panelMagicLink" class="hidden">
-            <h3>Sign In via Email Link</h3>
-            <p class="access-sub">We'll send a one-time sign-in link — use this for your very first sign-in after approval, or if you've forgotten your password.</p>
-            <div class="access-row"><input type="email" id="signInEmail" placeholder="you@example.com" autocomplete="email" /><button id="sendLinkBtn" class="btn btn-primary">Send Sign-In Link</button></div>
-            <p class="access-note" id="signInStatus"></p>
-            <p class="fallback-note"><button class="toggle-link" id="backToLoginBtn">← Back to login</button></p>
-          </div>
-
-          <!-- Just submitted a new registration -->
-          <div id="stateJustRegistered" class="hidden">
-            <h3>Registration Submitted</h3>
-            <p class="access-sub access-status pending">Thanks, <span id="justRegName"></span> — your registration is in. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="justRegHandle"></strong>. Access unlocks once confirmed.<span id="justRegPasswordNote"> Once enrolled, come back and use the Login link in the nav above — you'll sign in with an email link the first time, then set a password for quick access after that.</span></p>
-          </div>
-
-          <!-- Signed in, no registration found -->
-          <div id="stateNeedsRegistration" class="hidden">
-            <h3>No Registration Found</h3>
-            <p class="access-sub">You're signed in as <strong id="signedInEmail"></strong>, but we don't have a registration on file for this email. <a href="#" id="backToRegisterLink" style="color:var(--blue);">Register now →</a></p>
-          </div>
-
-          <!-- Signed in, no registration for THIS seminar, but has an existing profile from another seminar -->
-          <div id="stateQuickEnroll" class="hidden">
-            <h3>Register for Sex, and/or Love</h3>
-            <p class="access-sub">You're signed in as <strong id="quickEnrollEmail"></strong>. Since you're already registered elsewhere, we'll reuse your name and X handle — no need to re-enter them.</p>
-            <div class="access-row"><textarea id="quickEnrollReason" placeholder="Why do you want to join this seminar?" rows="3"></textarea></div>
-            <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink-mid);margin-bottom:14px;cursor:pointer;">
-              <input type="checkbox" id="quickEnrollCheckbox" style="margin-top:3px;" />
-              <span>I'd like to register for this seminar</span>
-            </label>
-            <button id="quickEnrollSubmitBtn" class="btn btn-primary" disabled>Submit</button>
-            <p class="access-note" id="quickEnrollStatus"></p>
-          </div>
-
-          <!-- Registered, awaiting enrollment -->
-          <div id="statePending" class="hidden">
-            <h3>Enrollment Pending</h3>
-            <p class="access-sub access-status pending">Thanks, <span id="pendingName"></span> — you're registered. To complete enrollment, please DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> from <strong id="pendingHandle"></strong>. Access unlocks once confirmed.</p>
-            <button id="recheckBtn" class="btn btn-outline">Check Status Again</button>
-          </div>
-
+  </nav>
+<main id="main-content" class="seminar-page">
+    <header class="seminar-hero content-wide">
+      <div>
+        <p class="section-label">Neta DAO Academy · Ongoing seminar</p>
+        <h1>Sex, and/or Love</h1>
+        <p class="seminar-subtitle">Psychoanalysis and the Science of Desire</p>
+        <p class="seminar-deck">An inquiry into sexual desire, the unconscious, and the limits of knowledge — through psychoanalysis, philosophy, literature, and film.</p>
+        <div class="action-row">
+          <a href="#accessPanel" class="btn btn-primary" id="seminarRegisterLink">Register for this seminar</a>
+          <a href="/account.html?seminar=sex-and-or-love" class="text-link">Already enrolled? Sign in</a>
         </div>
       </div>
+      <div class="seminar-art" aria-hidden="true"></div>
+    </header>
+    <section id="participantPanel" class="participant-panel content-wide" aria-labelledby="participantPanelTitle" hidden></section>
+    <div class="content-wide">
+      <dl class="seminar-facts">
+        <div><dt>Dates</dt><dd>February 2026 – ongoing</dd></div>
+        <div><dt>Screening time</dt><dd>10 p.m. Eastern / 7 p.m. Pacific</dd></div>
+        <div><dt>Discussions</dt><dd><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">X Spaces ↗</a></dd></div>
+        <div><dt>Participation</dt><dd>Free · Enrollment required for materials</dd></div>
+      </dl>
     </div>
-
-    <!-- Schedule -->
-    <div style="border-bottom:var(--panel-border);">
+      <nav class="section-nav content-wide" aria-label="Seminar navigation">
+        <a href="#overview">Overview</a><a href="#sessions">Sessions &amp; readings</a><a href="/cinema.html">Cinema</a><a href="#participation">Access</a>
+      </nav>
+    <section id="overview" class="page-wrap seminar-overview">
+      <p class="section-label">The seminar</p>
+      <h2 class="section-title-sm">A science of desire</h2>
+      <div class="overview-columns">
+        <p>This seminar analyzes sexual desire through its principal science: psychoanalysis. Because desire is a force rather than an object, this “science of desire” questions the limits of ordinary empiricism by placing questioning — with its attendant themes of trust and doubt, obsession and uncertainty — at the center of existence. Thus, we will reinscribe the reality of reality through the unconscious.</p>
+        <p>In addition to psychoanalytical texts from Freud, Laplanche, and Lacan, we will also read from scholars Lynn Margulis, Stella Sandford, Tim Dean, Avgi Saketopoulou, Catherine Malabou, Lauren Berlant, Alain Badiou, Jean-Luc Nancy, and Irving Goh, alongside selected short stories, poetry, films, and more.</p>
+      </div>
+    </section>
+    <section id="sessions" class="seminar-sessions">
       <div class="page-wrap" style="padding-top:40px;padding-bottom:40px;">
-        <p class="section-label">Schedule</p>
-        <h2 class="section-title-sm" style="font-family:var(--font-display);font-size:32px;font-weight:900;text-transform:uppercase;margin-bottom:24px;">Sessions <span id="readingsUnlockedTag" class="hidden" style="font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0.06em;color:#2a8a4a;border:1px solid #2a8a4a;padding:3px 9px;text-transform:uppercase;vertical-align:middle;margin-left:8px;">✓ Readings Unlocked</span></h2>
+        <p class="section-label">The syllabus</p>
+        <h2 class="section-title-sm" style="margin-bottom:24px;">Sessions <span id="readingsUnlockedTag" class="hidden" style="font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0.06em;color:#2a8a4a;border:1px solid #2a8a4a;padding:3px 9px;text-transform:uppercase;vertical-align:middle;margin-left:8px;">✓ Readings Unlocked</span></h2>
+        <p id="screeningCinemaLink" class="screening-link hidden"><a class="text-link" href="/cinema.html">Stream here →</a></p>
+        <p class="syllabus-note">Readings and film access are available to enrolled participants. <a href="#participation">How to participate →</a></p>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 0</span><span class="session-title">Seduction</span><span class="session-date">18 Feb 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Lydia Davis, "Break It Down," from <em>Break It Down: Stories</em> — <span class="reading-locked" data-key="session0.text">🔒 Register to unlock</span> · <span class="reading-locked" data-key="session0.audio">🔒 Register to unlock</span></li></ul></div>
+        <div class="session-block session-past" id="session0"><div class="session-header"><span class="session-num">Session 0</span><h3 class="session-title">Seduction</h3><span class="session-status status-past">Past</span></div><div class="session-phase session-lecture"><h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session0">18 February 2026</span></span></h4><ul class="reading-list"><li>Lydia Davis, "Break It Down," from <em>Break It Down: Stories</em> — <span class="reading-locked" data-key="session0.text">Enrollment required</span> · <span class="reading-locked" data-key="session0.audio">Enrollment required</span></li></ul></div></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 1</span><span class="session-title">The Origin of Sexuality</span><span class="session-date">4 Mar 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Sigmund Freud, <em>Three Essays on the Theory of Sexuality</em> — <span class="reading-locked" data-key="session1.freud">🔒 Register to unlock</span></li><li>Jean Laplanche, selections from <em>Life and Death in Psychoanalysis</em> and <em>Freud and the Sexual</em> — <span class="reading-locked" data-key="session1.laplanche">🔒 Register to unlock</span></li></ul><p style="font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.65;"><strong style="color:var(--ink-mid);">Note:</strong> Essential in sequence: (1) "The Sexual Aberrations," then (2) "The Order of Life and the Genesis of Human Sexuality," then (3) "Gender, Sex, and the <em>Sexual</em>."</p></div>
+        <div class="session-block session-past" id="session1"><div class="session-header"><span class="session-num">Session 1</span><h3 class="session-title">The Origin of Sexuality</h3><span class="session-status status-past">Past</span></div><div class="session-phase session-lecture"><h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session1">4 March 2026</span></span></h4><ul class="reading-list"><li>Sigmund Freud, <em>Three Essays on the Theory of Sexuality</em> — <span class="reading-locked" data-key="session1.freud">Enrollment required</span></li><li>Jean Laplanche, selections from <em>Life and Death in Psychoanalysis</em> and <em>Freud and the Sexual</em> — <span class="reading-locked" data-key="session1.laplanche">Enrollment required</span></li></ul><p style="font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.65;"><strong style="color:var(--ink-mid);">Note:</strong> Essential in sequence: (1) "The Sexual Aberrations," then (2) "The Order of Life and the Genesis of Human Sexuality," then (3) "Gender, Sex, and the <em>Sexual</em>."</p></div></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 2</span><span class="session-title">Sexual Difference</span><span class="session-date">8 Apr 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Lynn Margulis, "Evolutionary Striptease" and "Phallic Psyche," from <em>Mystery Dance: On the Evolution of Human Sexuality</em> — <span class="reading-locked" data-key="session2.margulis">🔒 Register to unlock</span></li><li>Stella Sandford, "Plant Philosophy and Plant Sex: Aristotle to Albertus" and "What are 'Male' and 'Female' in Botany?," from <em>Vegetal Sex: Philosophy of Plants</em> — <span class="reading-locked" data-key="session2.sandford">🔒 Register to unlock</span></li><li>Lucy Cooke, "Introduction" and "The Anarchy of Sex: What is a Female?," from <em>Bitch: On the Female of the Species</em> — <span class="reading-locked" data-key="session2.cooke">🔒 Register to unlock</span></li></ul></div>
+        <div class="session-block session-past" id="session2"><div class="session-header"><span class="session-num">Session 2</span><h3 class="session-title">Sexual Difference</h3><span class="session-status status-past">Past</span></div><div class="session-phase session-lecture"><h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session2">8 April 2026</span></span></h4><ul class="reading-list"><li>Lynn Margulis, "Evolutionary Striptease" and "Phallic Psyche," from <em>Mystery Dance: On the Evolution of Human Sexuality</em> — <span class="reading-locked" data-key="session2.margulis">Enrollment required</span></li><li>Stella Sandford, "Plant Philosophy and Plant Sex: Aristotle to Albertus" and "What are 'Male' and 'Female' in Botany?," from <em>Vegetal Sex: Philosophy of Plants</em> — <span class="reading-locked" data-key="session2.sandford">Enrollment required</span></li><li>Lucy Cooke, "Introduction" and "The Anarchy of Sex: What is a Female?," from <em>Bitch: On the Female of the Species</em> — <span class="reading-locked" data-key="session2.cooke">Enrollment required</span></li></ul></div></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 3</span><span class="session-title">Lacanian Sexuality</span><span class="session-date">27 May 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Tim Dean, "Beyond the Couch," "How to Read Lacan," and "Bodies That Mutter," from <em>Beyond Sexuality</em> — <span class="reading-locked" data-key="session3.dean">🔒 Register to unlock</span></li><li>Jacques Lacan, "The Signification of the Phallus," from <em>Écrits</em> — <span class="reading-locked" data-key="session3.lacan">🔒 Register to unlock</span></li></ul></div>
+        <div class="session-block session-past" id="session3"><div class="session-header"><span class="session-num">Session 3</span><h3 class="session-title">Lacanian Sexuality</h3><span class="session-status status-past">Past</span></div><div class="session-phase session-lecture"><h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session3">27 May 2026</span></span></h4><ul class="reading-list"><li>Tim Dean, "Beyond the Couch," "How to Read Lacan," and "Bodies That Mutter," from <em>Beyond Sexuality</em> — <span class="reading-locked" data-key="session3.dean">Enrollment required</span></li><li>Jacques Lacan, "The Signification of the Phallus," from <em>Écrits</em> — <span class="reading-locked" data-key="session3.lacan">Enrollment required</span></li></ul></div></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 4</span><span class="session-title">Traumatophilia</span><span class="session-date">Screening 22 Jul · Discussion 29 Jul 2026</span><span class="session-status status-past">Past</span></div><ul class="reading-list"><li>Sigmund Freud, <em>Beyond the Pleasure Principle</em> — <span class="reading-locked" data-key="session4.freud">🔒 Register to unlock</span></li><li>Avgi Saketapoulou, "To Suffer Pleasure: Limit Experience and Transgression" and "Toward a Theory of Traumatophilia," from <em>Sexuality Beyond Consent: Risk, Race, Traumatophilia</em> — <span class="reading-locked" data-key="session4.saketapoulou">🔒 Register to unlock</span></li><li>Film: <span class="film-locked" data-session="session4">🔒 Enroll to unlock film details</span></li></ul></div>
+        <div class="session-block session-past" id="session4"><div class="session-header"><span class="session-num">Session 4</span><h3 class="session-title">Traumatophilia</h3><span class="session-status status-past">Past</span></div>
+          <div class="session-phase session-lecture">
+            <h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session4">29 July 2026</span></span></h4>
+            <ul class="reading-list"><li>Sigmund Freud, <em>Beyond the Pleasure Principle</em> — <span class="reading-locked" data-key="session4.freud">Enrollment required</span></li><li>Avgi Saketapoulou, "To Suffer Pleasure: Limit Experience and Transgression" and "Toward a Theory of Traumatophilia," from <em>Sexuality Beyond Consent: Risk, Race, Traumatophilia</em> — <span class="reading-locked" data-key="session4.saketapoulou">Enrollment required</span></li></ul>
+            <h5 class="screenings-label screening-summary"><span>Screening — <span class="screening-summary-dates" data-screening-summary="session4">22 July 2026</span></span></h5>
+            <div class="session-screenings">
+            <p class="screening-note">Screenings precede the lecture. Film titles appear here for enrolled participants at screening time.</p>
+            <ol class="screening-list" aria-label="Film screenings"><li><span class="screening-date"><span data-screening-date="skin">22 July 2026</span><span class="screening-state"> · Screened</span></span><span class="film-locked" data-screening="skin" aria-live="polite"></span></li></ol>
+            </div>
+          </div></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 5</span><span class="session-title">Feminine Sexuality</span><span class="session-date">Screening 5 Aug · Discussion 12 Aug 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Sigmund Freud, "Femininity," from <em>New Introductory Lectures on Psycho-Analysis</em> — <span class="reading-locked" data-key="session5.freud">🔒 Register to unlock</span></li><li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em> — <span class="reading-locked" data-key="session5.malabou">🔒 Register to unlock</span></li><li>Film: <span class="film-locked" data-session="session5">🔒 Enroll to unlock film details</span></li></ul></div>
+        <div class="session-block session-past" id="session5"><div class="session-header"><span class="session-num">Session 5</span><h3 class="session-title">Feminine Sexuality</h3><span class="session-status status-past">Past</span></div>
+          <div class="session-phase session-lecture">
+            <h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session5">12 August 2026</span></span></h4>
+            <ul class="reading-list"><li>Sigmund Freud, "Femininity," from <em>New Introductory Lectures on Psycho-Analysis</em> — <span class="reading-locked" data-key="session5.freud">Enrollment required</span></li><li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em> — <span class="reading-locked" data-key="session5.malabou">Enrollment required</span></li></ul>
+            <h5 class="screenings-label screening-summary"><span>Screening — <span class="screening-summary-dates" data-screening-summary="session5">5 August 2026</span></span></h5>
+            <div class="session-screenings">
+            <p class="screening-note">Screenings precede the lecture. Film titles appear here for enrolled participants at screening time.</p>
+            <ol class="screening-list" aria-label="Film screenings"><li><span class="screening-date"><span data-screening-date="sister">5 August 2026</span><span class="screening-state"> · Screened</span></span><span class="film-locked" data-screening="sister" aria-live="polite"></span></li></ol>
+            </div>
+          </div></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 6</span><span class="session-title">The Measure of Love</span><span class="session-date">Screening 19 Aug · Discussion 26 Aug 2026</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Lauren Berlant, <em>Desire/Love</em></li><li>Alain Badiou, <em>In Praise of Love</em></li><li>Film: <span class="film-locked" data-session="session6">🔒 Enroll to unlock film details</span></li></ul></div>
+        <div class="session-block session-current" id="session6"><div class="session-header"><span class="session-num">Session 6</span><h3 class="session-title">Love’s Measure</h3><span class="session-status status-current">In progress</span></div>
+          <div class="session-phase session-lecture">
+            <h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session6">14 October 2026</span></span></h4>
+            <ul class="reading-list"><li>Lauren Berlant, <em>Desire/Love</em> — <span class="reading-locked" data-key="session6.berlant">Enrollment required</span></li><li>Alain Badiou, <em>In Praise of Love</em> — <span class="reading-locked" data-key="session6.badiou">Enrollment required</span></li></ul>
+            <h5 class="screenings-label screening-summary"><span>Screenings — <span class="screening-summary-dates" data-screening-summary="session6">16 September, 23 September, 30 September, 7 October 2026</span></span></h5>
+            <div class="session-screenings">
+            <p class="screening-note">Screenings precede the lecture. Film titles appear here for enrolled participants at screening time.</p>
+            <ol class="screening-list" aria-label="Film screenings"><li><h6 class="screening-title"><span class="screening-title-lead">Haute Gout,</span> <span class="screening-title-subtitle">Love’s Gastronomy, or—the Mouth</span></h6><span class="screening-date"><span data-screening-date="cook">16 September 2026</span><span class="screening-state"> · Screened</span></span><span class="film-locked" data-screening="cook" aria-live="polite"></span></li><li><h6 class="screening-title"><span class="screening-title-lead">Peccatum Originale,</span> <span class="screening-title-subtitle">Love’s Genealogy, or—the Mother</span></h6><span class="screening-date"><span data-screening-date="mother">23 September 2026</span><span class="screening-state"> · Screened</span></span><span class="film-locked" data-screening="mother" aria-live="polite"></span></li><li><h6 class="screening-title"><span class="screening-title-lead">Bad Company,</span> <span class="screening-title-subtitle">Love’s Education, or—the Other</span></h6><span class="screening-date"><span data-screening-date="park">30 September 2026 · 10:00 PM Eastern / 7:00 PM Pacific</span></span><span class="film-locked" data-screening="park" aria-live="polite"></span></li><li><h6 class="screening-title"><span class="screening-title-lead">Apres-Coup,</span> <span class="screening-title-subtitle">Love’s Oblivion, or—the Eye</span></h6><span class="screening-date"><span data-screening-date="hiroshima">7 October 2026 · 10:00 PM Eastern / 7:00 PM Pacific</span></span><span class="film-locked" data-screening="hiroshima" aria-live="polite"></span></li></ol>
+            </div>
+          </div></div>
 
-        <div class="session-block"><div class="session-header"><span class="session-num">Session 7</span><span class="session-title">The End of Ends: Sex, Reason, Being</span><span class="session-date">Upcoming</span><span class="session-status status-upcoming">Upcoming</span></div><ul class="reading-list"><li>Joan Copjec, "Sex and the Euthanasia of Reason," from <em>Read My Desire: Lacan Against the Historicists</em></li><li>Alenka Zupančič, <em>What IS Sex?</em></li></ul></div>
+        <div class="session-block session-upcoming" id="session7"><div class="session-header"><span class="session-num">Session 7</span><h3 class="session-title">The End of Ends: Sex, Reason, Being</h3><span class="session-status status-upcoming">Upcoming</span></div>
+          <div class="session-phase session-lecture">
+            <h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session7">Date TBD</span></span></h4>
+            <ul class="reading-list"><li>Joan Copjec, "Sex and the Euthanasia of Reason," from <em>Read My Desire: Lacan Against the Historicists</em> — <span class="reading-locked" data-key="session7.copjec">Enrollment required</span></li><li>Alenka Zupančič, <em>What IS Sex?</em> — <span class="reading-locked" data-key="session7.zupancic">Enrollment required</span></li></ul>
+            <h5 class="screenings-label screening-summary"><span>Screening — <span class="screening-summary-dates" data-screening-summary="session7">Date TBD</span></span></h5>
+            <div class="session-screenings">
+            <p class="screening-note">Screenings precede the lecture. Film titles appear here for enrolled participants at screening time.</p>
+            <ol class="screening-list" aria-label="Film screenings"><li><span class="screening-date"><span data-screening-date="tambien">Date TBD</span></span><span class="film-locked" data-screening="tambien" aria-live="polite"></span></li></ol>
+            </div>
+          </div></div>
+<div class="session-block session-upcoming" id="session8"><div class="session-header"><span class="session-num">Session 8</span><h3 class="session-title">A Touch, a Bid, a Kiss: on Parting</h3><span class="session-status status-upcoming">Upcoming</span></div>
+          <div class="session-phase session-lecture">
+            <h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session8">Date TBD</span></span></h4>
+            <ul class="reading-list"><li>Jean-Luc Nancy, <em>Sexistence</em> — <span class="reading-locked" data-key="session8.nancy">Enrollment required</span></li></ul>
+            <h5 class="screenings-label screening-summary"><span>Screening — <span class="screening-summary-dates" data-screening-summary="session8">Date TBD</span></span></h5>
+            <div class="session-screenings">
+            <p class="screening-note">Screenings precede the lecture. Film titles appear here for enrolled participants at screening time.</p>
+            <ol class="screening-list" aria-label="Film screenings"><li><span class="screening-date"><span data-screening-date="someone">Date TBD</span></span><span class="film-locked" data-screening="someone" aria-live="polite"></span></li></ol>
+            </div>
+          </div></div>
       </div>
-    </div>
-  </div>
+    </section>
+    <section id="participation" aria-labelledby="participation-title">
+      <div class="page-wrap participation-intro">
+        <p class="section-label">Join the conversation</p>
+        <h2 class="section-title-sm" id="participation-title">Participation &amp; access</h2>
+        <ol class="enrollment-steps">
+          <li><strong>Create your account.</strong> Choose an email and password, then request enrollment.</li>
+          <li><strong>Verify on X.</strong> DM @NetaDAO_Academy from your registered handle.</li>
+          <li><strong>Access your materials.</strong> Once enrollment is confirmed, sign in with your email and password.</li>
+        </ol>
+        <p id="enrollmentSummary" class="hidden" role="status">You’re enrolled. Your readings are available in the syllabus above. <a href="/profile.html">View your profile →</a></p>
+      </div>
+<div class="page-wrap" style="padding-block:28px;"><div id="accessPanel" class="access-panel"><h3>Your seminar access</h3><p role="status" aria-live="polite">Sign in to access materials, or create an account to request enrollment.</p><p><a data-account-link class="btn btn-primary" href="/account.html?seminar=sex-and-or-love">Sign in / create an account →</a></p><button type="button" class="btn btn-outline" data-check-enrollment hidden>Check enrollment status</button></div></div>
+    <!-- Schedule -->
+    </section>
+  </main>
 
   <footer class="site-footer">
     <div class="footer-inner">
@@ -332,271 +292,51 @@
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
     const h = document.querySelector('.nav-hamburger');
     const n = document.querySelector('.nav-links');
-    if (h && n) h.addEventListener('click', () => n.classList.toggle('open'));
   </script>
 
-  <!-- ── Seminar access + gated readings ── -->
+  <script type="module" src="/js/seminar-public.js?v=1"></script>
   <script type="module">
-    import {
-      auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
-      sendMagicLink, signInWithPassword, sendPasswordReset, signInWithGoogle,
-      getRegistrationForSeminar, submitRegistration, getExistingProfile, getSeminarReadings, initNavAccountWidget
-    } from '/js/academy-auth.js?v=21';
-
-    initNavAccountWidget('#accessPanel');
-
-    const CURRENT_SEMINAR_ID = 'sex-and-or-love';
-
-    const panelRegister          = document.getElementById('panelRegister');
-    const panelLogin             = document.getElementById('panelLogin');
-    const panelMagicLink         = document.getElementById('panelMagicLink');
-    const stateJustRegistered    = document.getElementById('stateJustRegistered');
-    const stateNeedsRegistration = document.getElementById('stateNeedsRegistration');
-    const stateQuickEnroll       = document.getElementById('stateQuickEnroll');
-    const statePending           = document.getElementById('statePending');
-    const accessPanel            = document.getElementById('accessPanel');
-    const accessPanelWrapper     = document.getElementById('accessPanelWrapper');
-    const readingsUnlockedTag    = document.getElementById('readingsUnlockedTag');
-    const ALL_PANELS = [panelRegister, panelLogin, panelMagicLink, stateJustRegistered, stateNeedsRegistration, stateQuickEnroll, statePending];
-
-    function showState(el) {
-      accessPanelWrapper.classList.remove('hidden');
-      accessPanel.classList.remove('hidden');
-      readingsUnlockedTag.classList.add('hidden');
-      ALL_PANELS.forEach(s => s.classList.add('hidden'));
-      el.classList.remove('hidden');
-    }
-
-    function showApproved() {
-      accessPanelWrapper.classList.add('hidden');
-      readingsUnlockedTag.classList.remove('hidden');
-    }
-
-    const FILM_DATA = {
-      session4: { title: 'Dans Ma Peau', director: 'Marina de Van', note: 'screening 22 July 2026' },
-      session5: { title: 'À ma sœur!', director: 'Catherine Breillat', note: 'screening 5 August 2026, 10pm EST / 7pm PST' },
-      session6: { title: 'The Cook, the Thief, His Wife & Her Lover', director: 'Peter Greenaway', note: 'screening 19 August 2026' }
-    };
-
-    async function unlockReadings() {
-      const readings = await getSeminarReadings(CURRENT_SEMINAR_ID);
+    import { auth, initNavAccountWidget, getSeminarReadings } from '/js/academy-auth.js?v=23';
+    import { watchEnrollment } from '/js/enrollment-gate.js';
+    import { renderScreeningSchedule } from '/js/screening-schedule.js?v=2';
+    import { renderScreenings } from '/js/seminar-screenings.js?v=3';
+    import { createParticipantPanel } from '/js/participant-panel.js?v=3';
+    import { localReadings } from '/js/seminar-readings.js';
+    initNavAccountWidget();
+    const participantPanel = createParticipantPanel();
+    let enrolled = false, generation = 0;
+    const placeholders = new Map([...document.querySelectorAll('.reading-locked')].map(node => [node.dataset.key, node.cloneNode(true)]));
+    const films = () => { renderScreenings(document, enrolled); renderScreeningSchedule(document, enrolled); participantPanel.tick(); };
+    films();
+    setInterval(films, 1000);
+    document.addEventListener('visibilitychange', films);
+    watchEnrollment('sex-and-or-love', document.getElementById('accessPanel'), async approved => {
+      const request = ++generation;
+      enrolled = approved;
+      participantPanel.setEnrolled(approved);
+      films();
+      for (const id of ['readingsUnlockedTag', 'enrollmentSummary']) document.getElementById(id).classList.toggle('hidden', !approved);
+      const action = document.getElementById('seminarRegisterLink');
+      action.href = approved ? '#participantPanel' : '/account.html?seminar=sex-and-or-love&view=create';
+      action.textContent = approved ? 'Your next session' : 'Join this seminar';
+      document.querySelectorAll('[data-reading-key]').forEach(link => link.replaceWith(placeholders.get(link.dataset.readingKey).cloneNode(true)));
+      if (!approved) return;
+      const readings = await getSeminarReadings('sex-and-or-love');
+      if (request !== generation || !enrolled) return;
       if (!readings) {
-        console.warn('Readings fetch returned nothing — either not entitled yet, or a permissions/rules issue.');
-      } else {
-        document.querySelectorAll('.reading-locked').forEach(span => {
-          const key = span.getAttribute('data-key');
-          const [session, item] = key.split('.');
-          const url = readings[session] && readings[session][item];
-          if (url) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.target = '_blank';
-            a.rel = 'noopener';
-            a.textContent = 'Click Here ↗';
-            span.replaceWith(a);
-          }
-        });
+        document.querySelector('#accessPanel [role="status"]').textContent = 'Some readings could not be loaded. Available readings are linked below. Check enrollment status to retry, or contact the Academy.';
       }
-
-      document.querySelectorAll('.film-locked').forEach(span => {
-        const session = span.getAttribute('data-session');
-        const film = FILM_DATA[session];
-        if (!film) return;
-        const em = document.createElement('em');
-        em.textContent = film.title;
+      document.querySelectorAll('.reading-locked').forEach(span => {
+        const [session, item] = span.dataset.key.split('.');
+        const localUrl = localReadings[span.dataset.key];
+        const url = localUrl || readings?.[session]?.[item];
+        if (!url || (!localUrl && !/^https?:\/\//i.test(url))) return;
         const link = document.createElement('a');
-        link.href = '/cinema.html';
-        link.style.color = 'var(--blue)';
-        link.textContent = 'Stream here →';
-        span.replaceWith(em, document.createTextNode(`, dir. ${film.director} (${film.note}) — `), link);
+        link.dataset.readingKey = span.dataset.key;
+        link.href = url; link.target = '_blank'; link.rel = 'noopener';
+        link.textContent = 'Open reading ↗'; span.replaceWith(link);
       });
-    }
-
-    function isApproved(val) {
-      return val === true || val === 'true';
-    }
-
-    let authInitialized = false;
-    let cachedProfile = null;
-
-    async function refreshAccessState(user) {
-      if (!user) {
-        if (!authInitialized) { showState(panelRegister); authInitialized = true; }
-        return;
-      }
-      authInitialized = true;
-
-      if (!user.email) {
-        console.log('Auth state fired without an email yet — waiting for the next update.');
-        return;
-      }
-
-      const reg = await getRegistrationForSeminar(user.email, CURRENT_SEMINAR_ID);
-
-      if (!reg) {
-        const existing = await getExistingProfile(user.email);
-        if (existing) {
-          document.getElementById('quickEnrollEmail').textContent = user.email;
-          document.getElementById('quickEnrollReason').value = '';
-          const cb = document.getElementById('quickEnrollCheckbox');
-          cb.checked = false;
-          document.getElementById('quickEnrollSubmitBtn').disabled = true;
-          cachedProfile = existing;
-          showState(stateQuickEnroll);
-        } else {
-          document.getElementById('signedInEmail').textContent = user.email || '(no email found on this session — try signing in again)';
-          showState(stateNeedsRegistration);
-        }
-        return;
-      }
-
-      if (isApproved(reg.enrolled)) {
-        showApproved();
-        unlockReadings();
-        return;
-      }
-
-      document.getElementById('pendingName').textContent = reg.name || '';
-      document.getElementById('pendingHandle').textContent = reg.xHandle || '';
-      showState(statePending);
-    }
-
-    (async () => {
-      await completeSignInIfNeeded();
-      onAuthStateChanged(auth, (user) => { refreshAccessState(user); });
-    })();
-
-    // ── One-step registration (no sign-in required to submit) ──
-    document.getElementById('submitRegBtn').addEventListener('click', async () => {
-      const name = document.getElementById('regName').value.trim();
-      const email = document.getElementById('regEmail').value.trim();
-      const xHandle = document.getElementById('regXHandle').value.trim();
-      const reason = document.getElementById('regReason').value.trim();
-      const status = document.getElementById('regStatus');
-      if (!name || !email || !xHandle || !reason) { alert('Please fill in your name, email, X handle, and a brief reason for joining.'); return; }
-      try {
-        await submitRegistration(email, name, xHandle, CURRENT_SEMINAR_ID, reason, 'Sex, and/or Love');
-        document.getElementById('justRegName').textContent = name;
-        document.getElementById('justRegHandle').textContent = xHandle;
-        document.getElementById('justRegPasswordNote').classList.remove('hidden');
-        showState(stateJustRegistered);
-      } catch (err) {
-        console.error(err);
-        status.textContent = 'Something went wrong submitting that. Please try again.';
-      }
-    });
-
-    // ── Password login ──
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      const status = document.getElementById('loginStatus');
-      if (!email || !password) { status.textContent = 'Enter both email and password.'; return; }
-      try {
-        await signInWithPassword(email, password);
-        status.textContent = '';
-      } catch (err) {
-        console.error(err);
-        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-          status.textContent = 'Incorrect password. Try again, or use the email link option below.';
-        } else if (err.code === 'auth/user-not-found') {
-          status.textContent = "No account found for that email. Try registering, or use the email link if you're already approved.";
-        } else {
-          status.textContent = 'Something went wrong signing in. Try again.';
-        }
-      }
-    });
-
-    // ── Magic-link fallback ──
-    document.getElementById('sendLinkBtn').addEventListener('click', async () => {
-      const email = document.getElementById('signInEmail').value.trim();
-      const status = document.getElementById('signInStatus');
-      if (!email) { status.textContent = 'Enter an email address first.'; return; }
-      try {
-        await sendMagicLink(email);
-        status.textContent = 'Check your inbox for a sign-in link — if you don\'t see it within a minute or two, check your spam/junk folder.';
-      } catch (err) {
-        console.error(err);
-        status.textContent = err.code === 'auth/quota-exceeded'
-          ? 'Too many sign-in emails sent today — please try again tomorrow, or contact us directly.'
-          : 'Something went wrong sending that link. Try again in a moment.';
-      }
-    });
-
-    // ── Forgot password ──
-    document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
-      const email = document.getElementById('loginEmail').value.trim();
-      const status = document.getElementById('loginStatus');
-      if (!email) { status.textContent = 'Enter your email above first, then click "Send a reset link."'; return; }
-      try {
-        await sendPasswordReset(email);
-        status.textContent = 'Check your inbox for a password reset link — if you don\'t see it within a minute or two, check your spam/junk folder.';
-      } catch (err) {
-        console.error('sendPasswordReset failed:', err.code, err.message);
-        status.textContent = err.code === 'auth/user-not-found'
-          ? 'No account found for that email.'
-          : 'Something went wrong sending the reset link. Try again in a moment.';
-      }
-    });
-
-    // ── Google sign-in ──
-    document.getElementById('googleSignInBtn').addEventListener('click', async () => {
-      const status = document.getElementById('loginStatus');
-      try {
-        await signInWithGoogle();
-        status.textContent = '';
-      } catch (err) {
-        console.error('signInWithGoogle failed:', err.code, err.message);
-        if (err.code === 'auth/account-exists-with-different-credential') {
-          status.textContent = 'An account already exists for this email using password or email-link sign-in. Please use that method instead.';
-        } else if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
-          status.textContent = '';
-        } else {
-          status.textContent = 'Something went wrong signing in with Google. Try again.';
-        }
-      }
-    });
-
-    // ── Quick enroll (already have an account from another seminar) ──
-    document.getElementById('quickEnrollCheckbox').addEventListener('change', (e) => {
-      document.getElementById('quickEnrollSubmitBtn').disabled = !e.target.checked;
-    });
-
-    document.getElementById('quickEnrollSubmitBtn').addEventListener('click', async () => {
-      const reason = document.getElementById('quickEnrollReason').value.trim();
-      const status = document.getElementById('quickEnrollStatus');
-      if (!reason) { status.textContent = 'Please add a brief reason for wanting to join.'; return; }
-      if (!cachedProfile) { status.textContent = 'Something went wrong — please refresh and try again.'; return; }
-      const btn = document.getElementById('quickEnrollSubmitBtn');
-      btn.disabled = true;
-      btn.textContent = 'Submitting…';
-      try {
-        await submitRegistration(auth.currentUser.email, cachedProfile.name, cachedProfile.xHandle, CURRENT_SEMINAR_ID, reason, 'Sex, and/or Love');
-        document.getElementById('justRegName').textContent = cachedProfile.name;
-        document.getElementById('justRegHandle').textContent = cachedProfile.xHandle;
-        document.getElementById('justRegPasswordNote').classList.add('hidden');
-        showState(stateJustRegistered);
-      } catch (err) {
-        console.error(err);
-        status.textContent = 'Something went wrong submitting that. Please try again.';
-        btn.disabled = false;
-        btn.textContent = 'Submit';
-      }
-    });
-
-    // ── Toggle links between panels ──
-    document.getElementById('showLoginBtn').addEventListener('click', () => showState(panelLogin));
-    document.getElementById('showRegisterBtn').addEventListener('click', () => showState(panelRegister));
-    document.getElementById('showMagicLinkBtn').addEventListener('click', () => showState(panelMagicLink));
-    document.getElementById('showMagicLinkBtnTop').addEventListener('click', () => showState(panelMagicLink));
-    document.getElementById('backToLoginBtn').addEventListener('click', () => showState(panelLogin));
-    document.getElementById('backToRegisterLink').addEventListener('click', (e) => {
-      e.preventDefault();
-      showState(panelRegister);
-    });
-    document.getElementById('recheckBtn').addEventListener('click', () => {
-      refreshAccessState(auth.currentUser);
+      participantPanel.refresh();
     });
   </script>
-</body>
-</html>
+</body></html>

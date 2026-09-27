@@ -1,10 +1,10 @@
 // ════════════════════════════════════════════════════════════
 // Neta DAO Academy — shared authentication + entitlement module
-// Used by current.html, cinema.html, and admin.html
+// Shared by the account, seminar, profile, cinema, and admin pages.
 // ════════════════════════════════════════════════════════════
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 import {
-  getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
+  getAuth, createUserWithEmailAndPassword, verifyPasswordResetCode, confirmPasswordReset, isSignInWithEmailLink, signInWithEmailLink,
   signInWithEmailAndPassword, sendPasswordResetEmail,
   updatePassword, signInWithPopup, GoogleAuthProvider,
   onAuthStateChanged as _onAuthStateChanged, signOut as _signOut
@@ -31,13 +31,14 @@ export const signOut = _signOut;
 
 // Wires up the shared nav account widget (#navAccountItem / #navAccountLink)
 // on any page that includes that markup. Shows "Sign In" (linking to
-// signInHref) when signed out. When signed in, the link becomes
-// "Signed in: email" and takes you to /profile.html, where account
+// the account page) when signed out. When signed in, the link becomes
+// "Your profile" and takes you to /profile.html, where account
 // status and sign-out both live. If the signed-in email matches
 // ADMIN_EMAIL, also injects "Admin" and "Cinema" nav links visible only
 // to that account — nobody else ever sees them, since they're only
 // added to the DOM when the admin's own auth state is detected.
-export function initNavAccountWidget(signInHref) {
+export function initNavAccountWidget() {
+  const signInHref = '/account.html?returnTo=' + encodeURIComponent(location.pathname + location.hash);
   const navAccountItem = document.getElementById('navAccountItem');
   const navAccountLink = document.getElementById('navAccountLink');
   if (!navAccountItem || !navAccountLink) return;
@@ -65,9 +66,10 @@ export function initNavAccountWidget(signInHref) {
   function updateNavAccount(user) {
     if (user && user.email) {
       navAccountItem.classList.add('signed-in');
-      navAccountLink.textContent = `Signed in: ${user.email}`;
+      navAccountLink.textContent = 'Your profile';
+      navAccountLink.setAttribute('aria-label', `Your profile, signed in as ${user.email}`);
       navAccountLink.setAttribute('href', '/profile.html');
-      if (user.email === ADMIN_EMAIL) {
+      if (user.email === ADMIN_EMAIL && user.emailVerified) {
         ensureAdminNavLinks();
       } else {
         removeAdminNavLinks();
@@ -75,6 +77,7 @@ export function initNavAccountWidget(signInHref) {
     } else {
       navAccountItem.classList.remove('signed-in');
       navAccountLink.textContent = 'Sign In';
+      navAccountLink.removeAttribute('aria-label');
       navAccountLink.setAttribute('href', signInHref);
       removeAdminNavLinks();
     }
@@ -126,23 +129,8 @@ export function emailToKey(email) {
   return email.toLowerCase().trim().replace(/\./g, ',');
 }
 
-// ── Sending + completing magic-link sign-in ──
-// The magic link always lands on /set-password.html — a dedicated,
-// unmissable page — rather than bouncing back to wherever the person
-// requested it from and burying the "set a password" prompt in the
-// middle of a longer page.
-function actionCodeSettings() {
-  return {
-    url: window.location.origin + '/set-password.html',
-    handleCodeInApp: true,
-  };
-}
-
-export async function sendMagicLink(email) {
-  await sendSignInLinkToEmail(auth, email, actionCodeSettings());
-  window.localStorage.setItem('academyEmailForSignIn', email);
-}
-
+// Compatibility for email sign-in links issued before password-first signup.
+// New sign-in links are no longer sent by the site.
 // Call this once on every page load. If the URL is a sign-in link,
 // it completes sign-in and cleans the URL. Returns 'magic-link' if a
 // magic-link sign-in was just completed (useful for triggering the
@@ -161,7 +149,7 @@ export async function completeSignInIfNeeded() {
         return 'magic-link';
       } catch (err) {
         console.error('Sign-in link error:', err);
-        alert('That sign-in link is invalid or expired. Please request a new one.');
+        alert('That sign-in link is invalid or expired. Use Set or reset a password on the account page.');
       }
     }
     window.history.replaceState({}, document.title, window.location.pathname);
@@ -170,11 +158,24 @@ export async function completeSignInIfNeeded() {
   return false;
 }
 
-// ── Password sign-in (Option C: set once after first magic-link use) ──
+// Password-first accounts. Enable only after deploying the matching database rules.
+export async function createPasswordAccount(email, password) {
+  let ready;
+  try { ready = await get(ref(db, 'academyConfig/passwordAccountsEnabled')); }
+  catch (error) {
+    if (error.code !== 'PERMISSION_DENIED' && error.code !== 'database/permission-denied') throw error;
+    throw Object.assign(new Error('Signup not enabled'), { code: 'academy/signup-unavailable' });
+  }
+  if (ready.val() !== true) throw Object.assign(new Error('Signup not enabled'), { code: 'academy/signup-unavailable' });
+  return createUserWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+}
 
 export async function signInWithPassword(email, password) {
-  return signInWithEmailAndPassword(auth, email, password);
+  return signInWithEmailAndPassword(auth, email.trim(), password);
 }
+
+export function checkPasswordReset(code) { return verifyPasswordResetCode(auth, code); }
+export function finishPasswordReset(code, password) { return confirmPasswordReset(auth, code, password); }
 
 // Sets a password on the CURRENTLY signed-in user's account (must already
 // be authenticated, e.g. via a fresh magic-link sign-in). After this, they
@@ -261,28 +262,18 @@ export async function signInWithGoogle() {
 // Returns null if they've never registered for anything, or if email is
 // missing/not-yet-loaded on the auth object.
 export async function getRegistrations(email) {
-  const key = emailToKey(email);
-  if (!key) return null;
-  try {
-    const snap = await get(ref(db, `academyRegistrations/${key}`));
-    return snap.exists() ? snap.val() : null;
-  } catch (err) {
-    console.error('getRegistrations failed:', err);
-    return null;
-  }
+  if (!email) return null;
+  const pairs = await Promise.all(Object.keys(SEMINAR_TITLES).map(async id => [id, await getRegistrationForSeminar(email, id)]));
+  const registrations = Object.fromEntries(pairs.filter(([, record]) => record));
+  return Object.keys(registrations).length ? registrations : null;
 }
 
-// Returns a single seminar's registration record for this person, or null.
+// Do not hide a denied or failed lookup as “not registered.” The UI must offer recovery.
 export async function getRegistrationForSeminar(email, seminarId) {
   const key = emailToKey(email);
   if (!key) return null;
-  try {
-    const snap = await get(ref(db, `academyRegistrations/${key}/${seminarId}`));
-    return snap.exists() ? snap.val() : null;
-  } catch (err) {
-    console.error('getRegistrationForSeminar failed:', err);
-    return null;
-  }
+  const snap = await get(ref(db, `academyRegistrations/${key}/${seminarId}`));
+  return snap.exists() ? snap.val() : null;
 }
 
 // Pulls name/xHandle from ANY of a person's existing registrations, so a
@@ -298,18 +289,15 @@ export async function getExistingProfile(email) {
   return { name: first.name || '', xHandle: first.xHandle || '' };
 }
 
-// Creates a NEW registration for a specific seminar. Does NOT require
-// prior sign-in — this is intentional, so people can register in one
-// step before ever touching the magic-link flow. Security rules only
-// allow this to succeed for a brand-new entry at this seminar; once
-// created, only the verified owner (or admin) can modify it further.
-// seminarTitle is just for the confirmation email's wording — pass the
-// human-readable name (e.g. "Sex, and/or Love") rather than the raw id.
+// New registrations belong to the authenticated UID from the outset.
+// The rules reject attempts to overwrite or claim an existing registration.
 export async function submitRegistration(email, name, xHandle, seminarId, reason, seminarTitle) {
-  const key = emailToKey(email);
+  const user = auth.currentUser;
+  if (!user?.email || user.email.toLowerCase() !== email.toLowerCase()) throw new Error('Sign in first.');
+  const key = emailToKey(user.email);
   await update(ref(db, `academyRegistrations/${key}/${seminarId}`), {
-    email, name, xHandle, reason,
-    requestedAt: Date.now()
+    email: user.email.toLowerCase(), name, xHandle, reason,
+    accountUid: user.uid, requestedAt: Date.now()
   });
   notifyAdmin('Seminar Registration', name, email, `X handle: ${xHandle}\nSeminar: ${seminarId}\n\nReason for joining:\n${reason}`);
   sendNotificationEmail(
@@ -402,7 +390,7 @@ export const SEMINAR_COMPLETED = {
 export const SEMINAR_SESSIONS = {
   'sex-and-or-love': [
     { key: 's0', label: '0' }, { key: 's1', label: '1' }, { key: 's2', label: '2' }, { key: 's3', label: '3' },
-    { key: 's4', label: '4' }, { key: 's5', label: '5' }, { key: 's6', label: '6' }, { key: 's7', label: '7' }
+    { key: 's4', label: '4' }, { key: 's5', label: '5' }, { key: 's6', label: '6' }, { key: 's7', label: '7' }, { key: 's8', label: '8' }
   ],
   'coining-reason-unit-1': [
     { key: 's0', label: '1.0' }, { key: 's1', label: '1.1' }, { key: 's2', label: '1.2' }, { key: 's3', label: '1.3' },

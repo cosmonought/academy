@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — Neta DAO Academy</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="stylesheet" href="css/style.css?v=2" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script type="text/javascript">
@@ -159,33 +159,28 @@
     .attendance-empty { font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim); margin-top: 16px; }
     .hidden { display: none; }
   </style>
+  <script src="/js/site.js?v=4" defer></script>
+  <link rel="stylesheet" href="/css/editorial.css?v=6" />
+  <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
 <body>
 
-  <nav class="site-nav">
+  <nav class="site-nav" aria-label="Main navigation">
     <div class="nav-inner">
-      <a href="/" class="nav-logo">
+      <a href="/" class="nav-logo" aria-label="Neta DAO Academy home">
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
           <rect width="40" height="40" fill="#080808"/>
           <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
         </svg>
       </a>
-      <ul class="nav-links"><li><a href="/">Home</a></li></ul>
+      <ul class="nav-links" id="site-menu"><li><a href="/">Home</a></li></ul>
     </div>
   </nav>
 
   <div class="admin-wrap">
     <h1 class="admin-title">Registration Admin</h1>
 
-    <div id="adminSignedOut">
-      <div class="admin-signin">
-        <p style="font-family:var(--font-mono);font-size:12px;margin-bottom:14px;">Sign in with the admin email to view and approve registrations.</p>
-        <input type="email" id="adminEmail" placeholder="admin email" autocomplete="email" />
-        <button id="adminSendLinkBtn">Send Sign-In Link</button>
-        <p class="admin-note" id="adminSignInStatus"></p>
-      </div>
-    </div>
-
+<div id="adminSignedOut"><p>Sign in with the Academy administrator account.</p><a class="btn btn-primary" href="/account.html?returnTo=%2Fadmin.html">Sign in →</a></div>
     <div id="adminNotAuthorized" class="hidden">
       <p style="font-family:var(--font-mono);font-size:13px;color:#a04848;margin-bottom:14px;">Signed in as <span id="unauthorizedEmail"></span>, but this account isn't authorized to view registrations.</p>
       <a href="#" id="adminSignOutLink" style="font-family:var(--font-mono);font-size:12px;color:var(--blue);text-decoration:underline;">Sign out and try a different email</a>
@@ -229,10 +224,10 @@
 
   <script type="module">
     import {
-      auth, onAuthStateChanged, signOut, completeSignInIfNeeded, sendMagicLink,
+      auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       getAllRegistrations, approveRegistration, revokeRegistration, setAttendance,
       getAllInterestSignups, ADMIN_EMAIL, SEMINAR_TITLES, SEMINAR_SESSIONS
-    } from '/js/academy-auth.js?v=21';
+    } from '/js/academy-auth.js?v=23';
 
     const adminSignedOut     = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
@@ -496,7 +491,7 @@
           console.log('Auth state fired without an email yet — waiting for the next update.');
           return;
         }
-        if (user.email !== ADMIN_EMAIL) {
+        if (user.email !== ADMIN_EMAIL || !user.emailVerified) {
           document.getElementById('unauthorizedEmail').textContent = user.email || '(unknown)';
           showAdminState(adminNotAuthorized);
           return;
@@ -511,19 +506,6 @@
     document.getElementById('adminSignOutLink').addEventListener('click', (e) => {
       e.preventDefault();
       signOut(auth);
-    });
-
-    document.getElementById('adminSendLinkBtn').addEventListener('click', async () => {
-      const email = document.getElementById('adminEmail').value.trim();
-      const status = document.getElementById('adminSignInStatus');
-      if (!email) { status.textContent = 'Enter the admin email first.'; return; }
-      try {
-        await sendMagicLink(email);
-        status.textContent = 'Check your inbox for a sign-in link — check spam/junk if you don\'t see it soon.';
-      } catch (err) {
-        console.error(err);
-        status.textContent = 'Something went wrong. Try again shortly.';
-      }
     });
 
     document.getElementById('signupsRefreshBtn').addEventListener('click', loadInterestSignups);

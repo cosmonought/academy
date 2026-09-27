@@ -1,0 +1,12 @@
+body { padding-top: var(--screening-banner-height, 0px); }
+html { scroll-padding-top: calc(var(--academy-nav-height, 54px) + var(--screening-banner-height, 0px) + var(--section-nav-height, 0px) + 16px); }
+.screening-banner { position: fixed; z-index: 90; top: var(--academy-nav-height, 54px); left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 12px 32px; flex-wrap: wrap; padding: 12px 24px; background: #e5eafa; color: #111827; border-bottom: 2px solid #111827; }
+.screening-banner[hidden] { display: none !important; }
+.screening-banner p { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 16px; margin: 0; font-size: 15px; line-height: 1.5; }
+.screening-banner strong { font-size: 15px; font-weight: 700; }
+.screening-banner a { padding: 6px 12px; border: 1px solid currentColor; font-size: 15px; font-weight: 500; white-space: nowrap; }
+@media (max-width: 760px) {
+  .screening-banner { padding: 10px 20px; justify-content: space-between; gap: 8px 16px; }
+  .screening-banner p { flex: 1 1 220px; }
+  .screening-banner span { font-size: 14px; }
+}

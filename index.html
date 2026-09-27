@@ -15,8 +15,9 @@
   <script type="text/javascript">
     (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
   </script>
+  <script src="/js/homepage-hero.js?v=1" defer></script>
   <script src="/js/site.js?v=4" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=6" />
+  <link rel="stylesheet" href="/css/editorial.css?v=7" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
 <body>
@@ -62,14 +63,46 @@
     </div>
   </nav>
 <main id="main-content">
-    <header class="academy-hero content-wide">
-      <p class="section-label">An educational subDAO of Neta DAO</p>
-      <h1>Neta DAO <span class="grad-text">Academy</span></h1>
-      <div class="academy-intro">
-        <p>Free public seminars exploring Web3 through philosophy, economics, psychoanalysis, politics, and the arts.</p>
-        <p class="academy-welcome">No prerequisites.<br>Everyone welcome.</p>
+    <header class="academy-hero" aria-label="Neta DAO Academy">
+      <div class="academy-hero-copy">
+        <p class="section-label">An educational subDAO of Neta DAO</p>
+        <h1>Neta DAO <span class="grad-text">Academy</span></h1>
+        <div class="academy-intro">
+          <p>Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion.</p>
+          <p class="academy-welcome">No prerequisites. Everyone welcome.</p>
+        </div>
+        <a class="text-link" href="/seminars.html">Explore all seminars <span aria-hidden="true">↗</span></a>
       </div>
-      <a class="text-link" href="/seminars.html">Explore all seminars <span aria-hidden="true">↗</span></a>
+      <div class="academy-hero-visual">
+        <svg class="academy-hero-mark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="academy-liquid-gradient" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#C9338A" />
+              <stop offset="35%" stop-color="#C9338A" />
+              <stop offset="100%" stop-color="#5B8EF0" />
+            </linearGradient>
+            <clipPath id="academy-letter-clip">
+              <text x="100" y="155" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="170">A</text>
+            </clipPath>
+          </defs>
+          <rect width="200" height="200" fill="#0f0f0f" />
+          <g clip-path="url(#academy-letter-clip)">
+            <rect width="200" height="200" fill="#2a2a2a" />
+            <g data-academy-liquid>
+              <rect x="-10" y="0" width="220" height="220" fill="url(#academy-liquid-gradient)" />
+              <path d="M -10,0 C 15,-6 35,6 60,0 C 85,-6 105,6 130,0 C 155,-6 175,6 210,0 L 210,8 C 175,14 155,2 130,8 C 105,14 85,2 60,8 C 35,14 15,2 -10,8 Z" fill="#fff" opacity=".16" />
+            </g>
+          </g>
+          <g stroke="#333" stroke-width="1">
+            <path d="M0 14V0H14 M186 0h14v14 M0 186v14h14 M186 200h14v-14" fill="none" />
+          </g>
+        </svg>
+        <p class="tw-label">Neta DAO Academy is the home of</p>
+        <div class="tw-line" role="img" aria-label="Web3 and Thought">
+          <span class="tw-static" aria-hidden="true">Web3 and</span>
+          <span class="tw-word-wrap" aria-hidden="true"><span class="tw-word" data-academy-discipline>Thought</span></span>
+        </div>
+      </div>
     </header>
 
     <section class="featured-seminar content-wide" aria-labelledby="featured-title">

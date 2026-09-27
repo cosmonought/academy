@@ -31,12 +31,12 @@
 .participant-actions a { font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
 .seminar-intro-grid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; padding-top: 28px; margin-bottom: 12px; }
 .seminar-intro-grid .seminar-hero { grid-column: 1; grid-row: 1; display: block; padding: 0 32px 20px 0; min-width: 0; }
-.seminar-intro-grid .seminar-art { grid-column: 2; grid-row: 1 / 4; align-self: stretch; min-height: 0; }
+.seminar-intro-grid .seminar-art { grid-column: 2; grid-row: 1 / 3; align-self: stretch; min-height: 0; }
 .seminar-logistics { grid-column: 1; grid-row: 2; min-width: 0; }
 .seminar-intro-grid .seminar-facts { grid-template-columns: 1.1fr 1.2fr .8fr 1fr; gap: 14px; padding: 12px 20px 12px 0; margin: 0; }
 .seminar-intro-grid .seminar-facts dt { margin-bottom: 4px; font-size: 10px; }
 .seminar-intro-grid .seminar-facts dd { font-size: 13px; }
-.seminar-intro-grid .participant-panel { grid-column: 1; grid-row: 3; margin: 0; border-right: 0; gap: 16px; }
+.seminar-intro-grid .participant-panel { grid-column: 1 / -1; grid-row: 3; margin: 0; gap: 16px; }
 .seminar-intro-grid .participant-kicker { flex-basis: 72px; }
 @media (max-width: 760px) {
   .seminar-intro-grid { grid-template-columns: minmax(0, 1fr); padding-top: 24px; }

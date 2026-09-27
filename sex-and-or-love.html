@@ -105,7 +105,7 @@
     #navAccountItem .nav-signout { margin-left: 8px; color: var(--ink-dim); text-decoration: underline; font-size: inherit; cursor: pointer; }
   </style>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
-  <link rel="stylesheet" href="/css/participant.css?v=1">
+  <link rel="stylesheet" href="/css/participant.css?v=2">
   <link rel="stylesheet" href="/css/syllabus.css?v=9">
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
@@ -158,7 +158,7 @@
         <p class="seminar-deck">An inquiry into sexual desire, the unconscious, and the limits of knowledge — through psychoanalysis, philosophy, literature, and film.</p>
         <div class="action-row">
           <a href="#accessPanel" class="btn btn-primary" id="seminarRegisterLink">Register for this seminar</a>
-          <a href="/account.html?seminar=sex-and-or-love" class="text-link">Already enrolled? Sign in</a>
+          <a id="seminarAccountLink" href="/account.html?seminar=sex-and-or-love" class="text-link">Already enrolled? Sign in</a>
         </div>
       </div>
       <div class="seminar-art" aria-hidden="true"></div>
@@ -295,7 +295,7 @@
     import { watchEnrollment } from '/js/enrollment-gate.js?v=2';
     import { renderScreeningSchedule } from '/js/screening-schedule.js?v=2';
     import { renderScreenings } from '/js/seminar-screenings.js?v=3';
-    import { createParticipantPanel } from '/js/participant-panel.js?v=3';
+    import { createParticipantPanel } from '/js/participant-panel.js?v=4';
     import { localReadings } from '/js/seminar-readings.js';
     initNavAccountWidget();
     const participantPanel = createParticipantPanel();
@@ -314,6 +314,9 @@
       const action = document.getElementById('seminarRegisterLink');
       action.href = approved ? '#participantPanel' : '/account.html?seminar=sex-and-or-love&view=create';
       action.textContent = approved ? 'Your next session' : 'Join this seminar';
+      const accountLink = document.getElementById('seminarAccountLink');
+      accountLink.href = approved ? '/profile.html' : '/account.html?seminar=sex-and-or-love';
+      accountLink.textContent = approved ? 'Your profile →' : 'Already enrolled? Sign in';
       document.querySelectorAll('[data-reading-key]').forEach(link => link.replaceWith(placeholders.get(link.dataset.readingKey).cloneNode(true)));
       if (!approved) return;
       const readings = await getSeminarReadings('sex-and-or-love');

@@ -1,27 +1,19 @@
-.seminar-page.is-enrolled .seminar-hero { display: block; padding-block: 24px; }
-.seminar-page.is-enrolled .seminar-hero h1 { font-size: 42px; margin-block: 10px 8px; }
-.seminar-page.is-enrolled .seminar-hero .seminar-deck,
-.seminar-page.is-enrolled .seminar-hero .action-row,
-.seminar-page.is-enrolled .seminar-art { display: none; }
-.participant-panel { border: 2px solid var(--ink); border-top: 6px solid var(--pink); padding: 26px 30px 30px; background: var(--bg-raised); margin-bottom: 32px; }
-.participant-panel-top { display: flex; gap: 12px 24px; justify-content: space-between; flex-wrap: wrap; margin-bottom: 24px; }
-.participant-kicker { font-family: var(--font-mono); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
-.participant-panel-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; }
-.participant-panel-grid > div { min-width: 0; }
-.participant-panel h2 { font-family: var(--font-display); font-size: 34px; line-height: 1.12; margin: 8px 0; }
-.participant-panel h3 { font-family: var(--font-display); font-size: 24px; line-height: 1.2; margin: 8px 0; }
-.participant-subtitle { font-size: 18px; line-height: 1.45; }
-.participant-event-type { font-size: 14px; color: var(--ink-mid); }
-.participant-date { font-size: 16px; font-weight: 500; line-height: 1.5; margin-block: 14px; }
-.participant-film { font-size: 15px; line-height: 1.5; margin-bottom: 20px; }
-.participant-readings { padding-left: 28px; border-left: 1px solid var(--rule-thin); }
-.participant-panel .reading-list { margin-bottom: 16px; }
-.participant-panel .reading-list li { font-size: 16px; }
-.participant-panel a:not(.btn) { text-decoration: underline; text-underline-offset: 3px; }
+/* Enrollment adds navigation without changing the seminar artwork or header. */
+.participant-panel {
+  display: flex; align-items: center; gap: 16px 24px;
+  border: 0; border-top: 1px solid var(--rule-thin); border-bottom: 1px solid var(--rule-thin);
+  padding: 16px 0; margin-bottom: 24px; background: transparent;
+}
+.participant-kicker { flex: 0 0 100px; font: 500 11px/1.5 var(--font-mono); color: #a51e68; text-transform: uppercase; letter-spacing: .04em; margin: 0; }
+.participant-detail { flex: 1; min-width: 0; }
+.participant-panel h2 { font: 500 16px/1.4 var(--font-body); margin: 0 0 4px; text-transform: none; }
+.participant-date { font-size: 12px; color: var(--ink-mid); line-height: 1.5; margin: 0; }
+.participant-actions { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+.participant-actions a { font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 760px) {
-  .participant-panel { padding: 20px; }
-  .participant-panel-grid { grid-template-columns: 1fr; gap: 24px; }
-  .participant-readings { border-left: 0; border-top: 1px solid var(--rule-thin); padding: 22px 0 0; }
-  .participant-panel h2 { font-size: 30px; }
-  .seminar-page.is-enrolled .seminar-hero h1 { font-size: 36px; }
+  .seminar-page .seminar-art { display: block; min-height: 160px; height: 160px; }
+  .participant-panel { flex-wrap: wrap; gap: 8px 16px; padding-block: 14px; }
+  .participant-kicker { flex-basis: 100%; }
+  .participant-detail { flex-basis: 100%; }
+  .participant-actions { margin-top: 4px; }
 }

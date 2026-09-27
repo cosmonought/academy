@@ -1,0 +1,76 @@
+
+    .seminar-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: var(--panel-border);
+    }
+    .seminar-card:last-child { border-bottom: none; }
+    .seminar-card-left {
+      position: relative;
+      overflow: hidden;
+      padding: 40px 48px;
+      border-right: var(--panel-border);
+      isolation: isolate;
+    }
+    /* Background image sits behind everything, washed-out by default.
+       Set per-card via the --card-image custom property inline — if a
+       card has no image, this is simply transparent and the dark scrim
+       (::after) alone provides the panel background, no broken-image
+       glitch or empty gap. */
+    .seminar-card-left::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: var(--card-image, none);
+      background-size: cover;
+      background-position: center;
+      filter: grayscale(92%) brightness(0.5) contrast(1.05);
+      transform: scale(1.05);
+      transition: filter 0.5s ease, transform 0.5s ease;
+      z-index: -2;
+    }
+    /* Dark scrim for text legibility, regardless of the image beneath.
+       Transitions alongside the image so hover brightens both together. */
+    .seminar-card-left::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(8,8,8,0.74) 0%, rgba(8,8,8,0.9) 100%);
+      transition: background 0.5s ease;
+      z-index: -1;
+    }
+    /* On hover, the image reveals more of its real color and the scrim
+       lifts substantially — roughly a 40% brightness boost overall. */
+    .seminar-card-left:hover::before, .seminar-card-left:focus-within::before {
+      filter: grayscale(5%) brightness(0.95) contrast(1.05);
+      transform: scale(1.08);
+    }
+    .seminar-card-left:hover::after, .seminar-card-left:focus-within::after {
+      background: linear-gradient(160deg, rgba(8,8,8,0.42) 0%, rgba(8,8,8,0.58) 100%);
+    }
+    .seminar-card-left h2 { color: #f2f0eb; }
+    .seminar-card-right { padding: 40px 48px; }
+    .seminar-status-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border: 1px solid;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .seminar-status-badge.flagship { border-color: var(--pink); color: var(--pink); }
+    .seminar-status-badge.current { border-color: #4ecb7a; color: #4ecb7a; }
+    .seminar-status-badge.forthcoming { border-color: #7ea6f5; color: #7ea6f5; }
+    .seminar-status-badge.hiatus { border-color: #666; color: #999; }
+    @media (max-width: 900px) {
+      .seminar-card { grid-template-columns: 1fr; }
+      .seminar-card-left { border-right: none; border-bottom: var(--panel-border); }
+    }
+  
+.seminar-card-left { color: #f2f0eb; }
+.seminar-card-left .text-link { color: #f2f0eb; }
+.seminar-card-left .text-link:hover { color: #ef91c8; }
+
+@media (prefers-reduced-motion: reduce) { .seminar-card-left::before, .seminar-card-left::after { transition: none; } }

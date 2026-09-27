@@ -31,17 +31,18 @@ export function createParticipantPanel(root = document, now = () => Date.now()) 
     if (plan.kind === 'screening') {
       const row = source.querySelector(`[data-screening="${plan.film.id}"]`)?.closest('li');
       const heading = row?.querySelector('.screening-title-lead')?.textContent.replace(/,$/, '');
-      title = heading ? `${heading} · Screening` : `${sessionTitle} · Screening`;
+      title = heading || sessionTitle;
       date = `${plan.film.date} · 10 p.m. Eastern / 7 p.m. Pacific`;
     } else if (plan.kind !== 'unscheduled') {
       title += ' · Lecture';
     }
-    const heading = make('h2', '', title); heading.id = 'participantPanelTitle';
+    const heading = make('h2', '', ''); heading.id = 'participantPanelTitle';
+    heading.append(link(title, '#' + plan.session.id));
+    if (plan.kind === 'screening') {
+      heading.append(root.createTextNode(' · '), link('Screening ↗', '/cinema.html'));
+    }
     detail.append(heading, make('p', 'participant-date', date));
-    const actions = make('div', 'participant-actions');
-    actions.append(link('Session & readings →', '#' + plan.session.id));
-    if (plan.kind === 'screening') actions.append(link('Open Cinema →', '/cinema.html'));
-    panel.replaceChildren(kicker, detail, actions);
+    panel.replaceChildren(kicker, detail);
   }
   return {
     setEnrolled(value) { enrolled = value === true; render(true); },

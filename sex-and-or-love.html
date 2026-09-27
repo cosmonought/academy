@@ -18,62 +18,30 @@
   <script src="/js/site.js?v=4" defer></script>
   <style>
     /* ── Seminar access panel ── */
-    #accessPanel {
-      background: var(--bg-raised);
-      border: 1px solid var(--rule-thin);
-      padding: 24px 28px;
-      margin-bottom: 28px;
-    }
-    #accessPanel h3 {
+#accessPanel h3 {
       font-family: var(--font-display);
       font-size: 20px;
       font-weight: 900;
       text-transform: uppercase;
       margin-bottom: 8px;
     }
-    #accessPanel p.access-sub {
-      font-size: 13px;
-      color: var(--ink-mid);
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-    #accessPanel .access-row {
+#accessPanel .access-row {
       display: flex;
       gap: 0;
       flex-wrap: wrap;
       margin-bottom: 10px;
     }
-    #accessPanel input, #accessPanel textarea {
-      flex: 1;
-      min-width: 200px;
-      background: var(--bg);
-      border: 1px solid var(--rule-thin);
-      padding: 12px 14px;
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--ink);
-      outline: none;
-    }
-    #accessPanel textarea { resize: vertical; font-family: var(--font-body); font-size: 14px; }
-    #accessPanel input:focus, #accessPanel textarea:focus { border-color: var(--pink); }
-    #accessPanel .access-note {
+#accessPanel textarea { resize: vertical; font-family: var(--font-body); font-size: 14px; }
+#accessPanel .access-note {
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--ink-dim);
       line-height: 1.6;
     }
-    #accessPanel .access-status {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--ink);
-    }
-    #accessPanel .access-status.granted { color: #2a8a4a; }
-    #accessPanel .access-status.pending { color: var(--blue); }
-    #accessPanel a.access-signout { color: var(--ink-dim); font-size: 11px; text-decoration: underline; margin-left: 12px; }
-    #accessPanel .access-divider { border-top: 1px solid var(--rule-thin); margin: 20px 0; padding-top: 20px; }
-    #accessPanel .toggle-link { color: var(--blue); text-decoration: underline; cursor: pointer; background: none; border: none; font-family: var(--font-mono); font-size: 12px; padding: 0; }
-    #accessPanel .toggle-link:hover { color: var(--pink); }
-    #accessPanel .fallback-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); margin-top: 14px; }
+#accessPanel .access-status.granted { color: #2a8a4a; }
+#accessPanel a.access-signout { color: var(--ink-dim); font-size: 11px; text-decoration: underline; margin-left: 12px; }
+#accessPanel .toggle-link { color: var(--blue); text-decoration: underline; cursor: pointer; background: none; border: none; font-family: var(--font-mono); font-size: 12px; padding: 0; }
+#accessPanel .fallback-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); margin-top: 14px; }
     .hidden { display: none; }
 
     /* ── Google sign-in button ── */
@@ -105,7 +73,7 @@
     #navAccountItem .nav-signout { margin-left: 8px; color: var(--ink-dim); text-decoration: underline; font-size: inherit; cursor: pointer; }
   </style>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
-  <link rel="stylesheet" href="/css/participant.css?v=2">
+  <link rel="stylesheet" href="/css/participant.css?v=3">
   <link rel="stylesheet" href="/css/syllabus.css?v=9">
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
@@ -153,13 +121,10 @@
     <header class="seminar-hero content-wide">
       <div>
         <p class="section-label">Neta DAO Academy · Ongoing seminar</p>
-        <h1>Sex, and/or Love</h1>
+        <div class="seminar-title-row"><h1>Sex, and/or Love</h1><span id="seminarEnrollmentBadge" class="seminar-enrollment-badge" role="status">Checking access…</span></div>
         <p class="seminar-subtitle">Psychoanalysis and the Science of Desire</p>
         <p class="seminar-deck">An inquiry into sexual desire, the unconscious, and the limits of knowledge — through psychoanalysis, philosophy, literature, and film.</p>
-        <div class="action-row">
-          <a href="#accessPanel" class="btn btn-primary" id="seminarRegisterLink">Register for this seminar</a>
-          <a id="seminarAccountLink" href="/account.html?seminar=sex-and-or-love" class="text-link">Already enrolled? Sign in</a>
-        </div>
+
       </div>
       <div class="seminar-art" aria-hidden="true"></div>
     </header>
@@ -167,14 +132,11 @@
     <div class="content-wide">
       <dl class="seminar-facts">
         <div><dt>Dates</dt><dd>February 2026 – ongoing</dd></div>
-        <div><dt>Screening time</dt><dd>10 p.m. Eastern / 7 p.m. Pacific</dd></div>
+        <div><dt>Time</dt><dd>10 p.m. Eastern / 7 p.m. Pacific</dd></div>
         <div><dt>Discussions</dt><dd><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">X Spaces ↗</a></dd></div>
-        <div><dt>Participation</dt><dd>Free · Enrollment required for materials</dd></div>
+        <div><dt>Participation</dt><dd><span id="accessPanel" class="access-anchor" aria-hidden="true"></span><span id="participationAccount"><a href="/account.html?seminar=sex-and-or-love&amp;view=create&amp;returnTo=%2Fsex-and-or-love.html%23seminarEnrollmentBadge">Register for enrollment</a> · <a href="/account.html?seminar=sex-and-or-love&amp;view=signin&amp;returnTo=%2Fsex-and-or-love.html%23seminarEnrollmentBadge">Login</a></span><span id="participationStatus" hidden></span></dd></div>
       </dl>
     </div>
-      <nav class="section-nav content-wide" aria-label="Seminar navigation">
-        <a href="#overview">Overview</a><a href="#sessions">Sessions &amp; readings</a><a href="/cinema.html">Cinema</a><a href="#participation">Access</a>
-      </nav>
     <section id="overview" class="page-wrap seminar-overview">
       <p class="section-label">The seminar</p>
       <h2 class="section-title-sm">A science of desire</h2>
@@ -188,8 +150,9 @@
         <p class="section-label">The syllabus</p>
         <h2 class="section-title-sm" style="margin-bottom:24px;">Sessions <span id="readingsUnlockedTag" class="hidden" style="font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0.06em;color:#2a8a4a;border:1px solid #2a8a4a;padding:3px 9px;text-transform:uppercase;vertical-align:middle;margin-left:8px;">✓ Readings Unlocked</span></h2>
         <p id="screeningCinemaLink" class="screening-link hidden"><a class="text-link" href="/cinema.html">Stream here →</a></p>
-        <p class="syllabus-note">Readings and film access are available to enrolled participants. <a href="#participation">How to participate →</a></p>
+        <p id="syllabusAccessNote" class="syllabus-note">Readings and film access are available to enrolled participants. <a href="#participation">How to participate →</a></p>
 
+        <p id="readingLoadMessage" role="status"></p>
         <div class="session-block session-past" id="session0"><div class="session-header"><span class="session-num">Session 0</span><h3 class="session-title">Seduction</h3><span class="session-status status-past">Past</span></div><div class="session-phase session-lecture"><h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session0">18 February 2026</span></span></h4><ul class="reading-list"><li>Lydia Davis, "Break It Down," from <em>Break It Down: Stories</em> — <span class="reading-locked" data-key="session0.text">Enrollment required</span> · <span class="reading-locked" data-key="session0.audio">Enrollment required</span></li></ul></div></div>
 
         <div class="session-block session-past" id="session1"><div class="session-header"><span class="session-num">Session 1</span><h3 class="session-title">The Origin of Sexuality</h3><span class="session-status status-past">Past</span></div><div class="session-phase session-lecture"><h4 class="session-phase-label"><span>Lecture — <span class="lecture-date" data-lecture-date="session1">4 March 2026</span></span></h4><ul class="reading-list"><li>Sigmund Freud, <em>Three Essays on the Theory of Sexuality</em> — <span class="reading-locked" data-key="session1.freud">Enrollment required</span></li><li>Jean Laplanche, selections from <em>Life and Death in Psychoanalysis</em> and <em>Freud and the Sexual</em> — <span class="reading-locked" data-key="session1.laplanche">Enrollment required</span></li></ul><p style="font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.65;"><strong style="color:var(--ink-mid);">Note:</strong> Essential in sequence: (1) "The Sexual Aberrations," then (2) "The Order of Life and the Genesis of Human Sexuality," then (3) "Gender, Sex, and the <em>Sexual</em>."</p></div></div>
@@ -204,7 +167,7 @@
             <ul class="reading-list"><li>Sigmund Freud, <em>Beyond the Pleasure Principle</em> — <span class="reading-locked" data-key="session4.freud">Enrollment required</span></li><li>Avgi Saketapoulou, "To Suffer Pleasure: Limit Experience and Transgression" and "Toward a Theory of Traumatophilia," from <em>Sexuality Beyond Consent: Risk, Race, Traumatophilia</em> — <span class="reading-locked" data-key="session4.saketapoulou">Enrollment required</span></li></ul>
             <h5 class="screenings-label screening-summary"><span>Screening — <span class="screening-summary-dates" data-screening-summary="session4">22 July 2026</span></span></h5>
             <div class="session-screenings">
-            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><span class="film-locked" data-screening="skin" aria-live="polite"></span><span class="screening-date"><span data-screening-date="skin">22 July</span></span></div></li></ol>
+            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><span class="film-locked" data-screening="skin" aria-live="polite"></span><span class="screening-date" hidden><span data-screening-date="skin">22 July</span></span></div></li></ol>
             </div>
           </div></div>
 
@@ -214,7 +177,7 @@
             <ul class="reading-list"><li>Sigmund Freud, "Femininity," from <em>New Introductory Lectures on Psycho-Analysis</em> — <span class="reading-locked" data-key="session5.freud">Enrollment required</span></li><li>Catherine Malabou, <em>Pleasure Erased: The Clitoris Unthought</em> — <span class="reading-locked" data-key="session5.malabou">Enrollment required</span></li></ul>
             <h5 class="screenings-label screening-summary"><span>Screening — <span class="screening-summary-dates" data-screening-summary="session5">5 August 2026</span></span></h5>
             <div class="session-screenings">
-            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><span class="film-locked" data-screening="sister" aria-live="polite"></span><span class="screening-date"><span data-screening-date="sister">5 August</span></span></div></li></ol>
+            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><span class="film-locked" data-screening="sister" aria-live="polite"></span><span class="screening-date" hidden><span data-screening-date="sister">5 August</span></span></div></li></ol>
             </div>
           </div></div>
 
@@ -234,7 +197,7 @@
             <ul class="reading-list"><li>Joan Copjec, "Sex and the Euthanasia of Reason," from <em>Read My Desire: Lacan Against the Historicists</em> — <span class="reading-locked" data-key="session7.copjec">Enrollment required</span></li><li>Alenka Zupančič, <em>What IS Sex?</em> — <span class="reading-locked" data-key="session7.zupancic">Enrollment required</span></li></ul>
             <h5 class="screenings-label screening-summary"><span>Screening — <span class="screening-summary-dates" data-screening-summary="session7">Date TBD</span></span></h5>
             <div class="session-screenings">
-            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><span class="film-locked" data-screening="tambien" aria-live="polite"></span><span class="screening-date"><span data-screening-date="tambien">Date TBD</span></span></div></li></ol>
+            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><span class="film-locked" data-screening="tambien" aria-live="polite"></span><span class="screening-date" hidden><span data-screening-date="tambien">Date TBD</span></span></div></li></ol>
             </div>
           </div></div>
 <div class="session-block session-upcoming" id="session8"><div class="session-header"><span class="session-num">Session 8</span><h3 class="session-title">A Touch, a Bid, a Kiss: on Parting</h3><span class="session-status status-upcoming">Upcoming</span></div>
@@ -243,12 +206,12 @@
             <ul class="reading-list"><li>Jean-Luc Nancy, <em>Sexistence</em> — <span class="reading-locked" data-key="session8.nancy">Enrollment required</span></li></ul>
             <h5 class="screenings-label screening-summary"><span>Screening — <span class="screening-summary-dates" data-screening-summary="session8">Date TBD</span></span></h5>
             <div class="session-screenings">
-            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><span class="film-locked" data-screening="someone" aria-live="polite"></span><span class="screening-date"><span data-screening-date="someone">Date TBD</span></span></div></li></ol>
+            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><span class="film-locked" data-screening="someone" aria-live="polite"></span><span class="screening-date" hidden><span data-screening-date="someone">Date TBD</span></span></div></li></ol>
             </div>
           </div></div>
       </div>
     </section>
-    <section id="participation" aria-labelledby="participation-title">
+    <section id="participation" aria-labelledby="participation-title" hidden>
       <div class="page-wrap participation-intro">
         <p class="section-label">Join the conversation</p>
         <h2 class="section-title-sm" id="participation-title">Participation &amp; access</h2>
@@ -257,9 +220,9 @@
           <li><strong>Verify on X.</strong> DM @NetaDAO_Academy from your registered handle.</li>
           <li><strong>Access your materials.</strong> Once enrollment is confirmed, sign in with your email and password.</li>
         </ol>
-        <p id="enrollmentSummary" class="hidden" role="status">You’re enrolled. Your readings are available in the syllabus above. <a href="/profile.html">View your profile →</a></p>
+<p id="seminarAccessMessage" role="status"></p>
       </div>
-<div class="page-wrap" style="padding-block:28px;"><div id="accessPanel" class="access-panel"><h3>Your seminar access</h3><p role="status" aria-live="polite">Sign in to access materials, or create an account to request enrollment.</p><p><a data-account-link class="btn btn-primary" href="/account.html?seminar=sex-and-or-love&amp;view=create&amp;returnTo=%2Fsex-and-or-love.html%23accessPanel">Register →</a></p><p data-login-prompt>Already have an account? <a data-login-link href="/account.html?seminar=sex-and-or-love&amp;view=signin&amp;returnTo=%2Fsex-and-or-love.html%23accessPanel">Sign in →</a></p><button type="button" class="btn btn-outline" data-check-enrollment hidden>Check enrollment status</button></div></div>
+
     <!-- Schedule -->
     </section>
   </main>
@@ -292,10 +255,10 @@
   <script type="module" src="/js/seminar-public.js?v=1"></script>
   <script type="module">
     import { auth, initNavAccountWidget, getSeminarReadings } from '/js/academy-auth.js?v=24';
-    import { watchEnrollment } from '/js/enrollment-gate.js?v=2';
+    import { watchSeminarAccess } from '/js/seminar-access.js';
     import { renderScreeningSchedule } from '/js/screening-schedule.js?v=2';
     import { renderScreenings } from '/js/seminar-screenings.js?v=3';
-    import { createParticipantPanel } from '/js/participant-panel.js?v=4';
+    import { createParticipantPanel } from '/js/participant-panel.js?v=5';
     import { localReadings } from '/js/seminar-readings.js';
     initNavAccountWidget();
     const participantPanel = createParticipantPanel();
@@ -305,24 +268,19 @@
     films();
     setInterval(films, 1000);
     document.addEventListener('visibilitychange', films);
-    watchEnrollment('sex-and-or-love', document.getElementById('accessPanel'), async approved => {
+    watchSeminarAccess(async approved => {
       const request = ++generation;
       enrolled = approved;
       participantPanel.setEnrolled(approved);
       films();
-      for (const id of ['readingsUnlockedTag', 'enrollmentSummary']) document.getElementById(id).classList.toggle('hidden', !approved);
-      const action = document.getElementById('seminarRegisterLink');
-      action.href = approved ? '#participantPanel' : '/account.html?seminar=sex-and-or-love&view=create';
-      action.textContent = approved ? 'Your next session' : 'Join this seminar';
-      const accountLink = document.getElementById('seminarAccountLink');
-      accountLink.href = approved ? '/profile.html' : '/account.html?seminar=sex-and-or-love';
-      accountLink.textContent = approved ? 'Your profile →' : 'Already enrolled? Sign in';
+      document.getElementById('readingsUnlockedTag').classList.toggle('hidden', !approved);
       document.querySelectorAll('[data-reading-key]').forEach(link => link.replaceWith(placeholders.get(link.dataset.readingKey).cloneNode(true)));
+      document.getElementById('readingLoadMessage').textContent = '';
       if (!approved) return;
       const readings = await getSeminarReadings('sex-and-or-love');
       if (request !== generation || !enrolled) return;
       if (!readings) {
-        document.querySelector('#accessPanel [role="status"]').textContent = 'Some readings could not be loaded. Available readings are linked below. Check enrollment status to retry, or contact the Academy.';
+        document.getElementById('readingLoadMessage').textContent = 'Some readings could not be loaded. Reload the page to retry, or contact the Academy.';
       }
       document.querySelectorAll('.reading-locked').forEach(span => {
         const [session, item] = span.dataset.key.split('.');

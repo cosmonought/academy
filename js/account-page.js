@@ -1,12 +1,12 @@
 import { auth, onAuthStateChanged, signOut, initNavAccountWidget, createPasswordAccount,
   signInWithPassword, sendPasswordReset, checkPasswordReset, finishPasswordReset,
-  getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=23';
-import { safeReturnPath, passwordIssue, accountError, seminarPages } from './account-flow.js';
+  getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=24';
+import { signInDestination, destinationLabel, passwordIssue, accountError, seminarPages } from './account-flow.js?v=3';
 
 const el = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const seminar = Object.hasOwn(SEMINAR_TITLES, params.get('seminar')) ? params.get('seminar') : null;
-const returnTo = safeReturnPath(params.get('returnTo') || seminarPages[seminar] || '/profile.html');
+const returnTo = signInDestination(params.get('returnTo') || seminarPages[seminar] || '/profile.html');
 let view = ['create', 'recover'].includes(params.get('view')) ? params.get('view') : 'signin';
 let resetCode = params.get('mode') === 'resetPassword' ? params.get('oobCode') : null;
 let resetActive = params.get('mode') === 'resetPassword';
@@ -43,7 +43,7 @@ async function refresh(user) {
   el('enrollmentFormWrap').hidden = true;
   el('enrollmentPending').hidden = true;
   el('continueLink').href = returnTo;
-  el('continueLink').textContent = returnTo === '/profile.html' ? 'Continue to your profile →' : 'Continue →';
+  el('continueLink').textContent = destinationLabel(returnTo);
   if (!seminar) return;
   el('memberStatus').textContent = 'Checking seminar enrollment…';
   try {

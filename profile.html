@@ -166,8 +166,9 @@
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       initNavAccountWidget, getRegistrations, SEMINAR_TITLES, SEMINAR_COMPLETED, computeAttendance
-    } from '/js/academy-auth.js?v=23';
+    } from '/js/academy-auth.js?v=24';
 
+    import { seminarPages } from '/js/account-flow.js?v=3';
     initNavAccountWidget();
 
     const profileSignedOut      = document.getElementById('profileSignedOut');
@@ -176,7 +177,7 @@
     const profileRegistrationsList = document.getElementById('profileRegistrationsList');
 
     function isApproved(val) {
-      return val === true || val === 'true';
+      return val === true;
     }
 
     function escapeHtml(str) {
@@ -255,6 +256,16 @@
           ${approved ? `<div class="profile-field"><span class="profile-field-label">Progress</span><span>${attended} / ${total} sessions</span></div>` : ''}
           ${approved ? '' : `<p class="profile-note" style="margin-top:16px;">Your registration is submitted, but enrollment is not yet complete. DM @NetaDAO_Academy from your registered X handle to finish enrolling.</p>`}
         `;
+        if (approved && Object.hasOwn(seminarPages, seminarId)) {
+          const jump = document.createElement('a');
+          jump.className = 'btn btn-primary';
+          jump.href = seminarPages[seminarId];
+          jump.textContent = completed ? 'Open seminar archive →' : 'Open seminar →';
+          const row = document.createElement('p');
+          row.style.marginTop = '20px';
+          row.append(jump);
+          card.append(row);
+        }
         profileRegistrationsList.appendChild(card);
       }
     }

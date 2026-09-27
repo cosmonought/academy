@@ -1,6 +1,6 @@
 // Pure helpers shared by the account screen and its tests.
 export const seminarPages = {
-  'sex-and-or-love': '/sex-and-or-love.html#sessions',
+  'sex-and-or-love': '/sex-and-or-love.html',
   'coining-reason-unit-1': '/seminar.html#unit1',
   'coining-reason-unit-2': '/seminar.html#unit2'
 };
@@ -11,6 +11,28 @@ export function safeReturnPath(value) {
   const allowed = ['/', '/profile.html', '/sex-and-or-love.html', '/seminar.html', '/cinema.html', '/admin.html', '/seminars.html'];
   return url.origin === 'https://academy.netadao.org' && allowed.includes(url.pathname)
     ? url.pathname + url.search + url.hash : '/profile.html';
+}
+
+export function signInDestination(value) {
+  return safeReturnPath(value);
+}
+
+export function seminarAccountLink(seminar, view, returnTo) {
+  return '/account.html?' + new URLSearchParams({ seminar, view, returnTo: safeReturnPath(returnTo) });
+}
+
+export function destinationLabel(path) {
+  if (/#(?:accessPanel|unit[12]AccessPanel)$/.test(path)) return 'Return to seminar access →';
+  const page = path.split(/[?#]/)[0];
+  return ({
+    '/profile.html': 'Continue to your profile →',
+    '/sex-and-or-love.html': 'Continue to Sex, and/or Love →',
+    '/seminar.html': 'Continue to Coining Reason →',
+    '/cinema.html': 'Continue to Cinema →',
+    '/admin.html': 'Continue to administration →',
+    '/seminars.html': 'Continue to seminars →',
+    '/': 'Continue to Academy home →'
+  })[page] || 'Continue to your profile →';
 }
 
 export function passwordIssue(password, confirmation) {

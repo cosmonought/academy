@@ -17,14 +17,7 @@ export function renderScreeningSchedule(root, enrolled, now = Date.now()) {
     if (!row) continue;
     const past = pastIds.includes(film.id);
     row.classList.toggle('screening-past', past);
-    let status = row.querySelector('.screening-state');
-    if (!status) {
-      status = root.createElement('span');
-      status.className = 'screening-state';
-      row.querySelector('.screening-date').append(status);
-    }
-    const label = past ? ' · Screened' : '';
-    if (status.textContent !== label) status.textContent = label;
+    row.classList.toggle('screening-current', film.id === nextId);
     if (cinemaLink && film.id === nextId && cinemaLink.parentElement !== row) row.append(cinemaLink);
   }
   // Public schedule refreshes may move or retire the link, but never grant access.

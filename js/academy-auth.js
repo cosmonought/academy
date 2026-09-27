@@ -38,7 +38,7 @@ export const signOut = _signOut;
 // to that account — nobody else ever sees them, since they're only
 // added to the DOM when the admin's own auth state is detected.
 export function initNavAccountWidget() {
-  const signInHref = '/account.html?returnTo=' + encodeURIComponent(location.pathname + location.hash);
+  const signInHref = '/account.html?returnTo=%2Fprofile.html';
   const navAccountItem = document.getElementById('navAccountItem');
   const navAccountLink = document.getElementById('navAccountLink');
   if (!navAccountItem || !navAccountLink) return;

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { screenings, canRevealTitle, screeningText, renderScreenings } from '../js/seminar-screenings.js';
+import { screenings, canRevealTitle, screeningText, filmCredit, renderScreenings } from '../js/seminar-screenings.js';
 
 test('scheduled titles reveal at 10 p.m. Eastern, including the UTC date rollover', () => {
   for (const [id, utc] of [['park', '2026-10-01T02:00:00Z'], ['hiroshima', '2026-10-08T02:00:00Z']]) {
@@ -11,7 +11,7 @@ test('scheduled titles reveal at 10 p.m. Eastern, including the UTC date rollove
     assert.equal(canRevealTitle(film, true, start), true);
     assert.equal(canRevealTitle(film, true, start + 1), true);
     assert.equal(screeningText(film, true, start - 1).includes(film.title), false);
-    assert.equal(screeningText(film, true, start), film.title);
+    assert.equal(screeningText(film, true, start), filmCredit(film));
   }
 });
 
@@ -41,7 +41,7 @@ test('an open page reveals at the boundary and hides again when enrollment is lo
   renderScreenings(root, true, start - 1);
   assert.ok(!node.textContent.includes(film.title));
   renderScreenings(root, true, start);
-  assert.equal(node.textContent, film.title);
+  assert.equal(node.textContent, filmCredit(film));
   assert.ok(classes.has('film-revealed'));
   renderScreenings(root, false, start + 1);
   assert.ok(!node.textContent.includes(film.title));

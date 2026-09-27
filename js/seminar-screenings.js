@@ -11,8 +11,12 @@ export function canRevealTitle(screening, enrolled, now = Date.now()) {
   return Number.isFinite(start) && now >= start;
 }
 
+export function filmCredit(screening) {
+  return screening.director ? `${screening.title} (dir. ${screening.director})` : screening.title;
+}
+
 export function screeningText(screening, enrolled, now = Date.now()) {
-  if (canRevealTitle(screening, enrolled, now)) return screening.title;
+  if (canRevealTitle(screening, enrolled, now)) return filmCredit(screening);
   if (screening.screened) return '';
   return 'Film title revealed to enrolled participants when the screening begins.';
 }
@@ -21,7 +25,7 @@ export function renderScreenings(root, enrolled, now = Date.now()) {
   for (const screening of screenings) {
     const node = root.querySelector(`[data-screening="${screening.id}"]`);
     if (!node) continue;
-    const text = canRevealTitle(screening, enrolled, now) ? screening.title : '';
+    const text = canRevealTitle(screening, enrolled, now) ? filmCredit(screening) : '';
     // Avoid repeated live-region announcements when the minute ticks over.
     if (node.textContent !== text) node.textContent = text;
     node.classList.toggle('film-revealed', canRevealTitle(screening, enrolled, now));

@@ -1,8 +1,8 @@
 const discipline = document.querySelector('[data-academy-discipline]');
-const liquid = document.querySelector('[data-academy-liquid]');
-const academyMark = document.querySelector('.academy-hero-mark');
+const wordFill = document.querySelector('[data-academy-word-fill]');
+const surface = document.querySelector('[data-academy-surface]');
 
-if (discipline && liquid && academyMark) {
+if (discipline && wordFill && surface) {
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
   const words = [
     'Philosophy', 'History of Science', 'Psychoanalysis', 'Sociology',
@@ -12,65 +12,121 @@ if (discipline && liquid && academyMark) {
     'Anthropology', 'Governance', 'Spirituality', 'Social Theory',
     'Science', 'Ethics', 'Civics', 'Design', 'Thought'
   ];
-  let timer;
+  const finalIndex = words.length - 1;
+  const fadeInDuration = 190;
+  const holdDuration = 450;
+  const fadeOutDuration = 125;
+  const finalFadeDuration = 280;
+  const sequenceStartDelay = 250;
+  const sequenceDuration = finalIndex * (fadeInDuration + holdDuration + fadeOutDuration) + finalFadeDuration;
+  const fillDuration = sequenceDuration + sequenceStartDelay;
+  let liquidFrame = 0;
+  let cancelled = false;
 
-  const finalState = () => {
-    window.clearTimeout(timer);
-    academyMark.classList.remove('is-animating');
-    liquid.style.transition = 'none';
-    liquid.style.transform = '';
-    discipline.textContent = 'Thought';
-    discipline.style.backgroundImage = 'linear-gradient(90deg, #C9338A 0%, #5B8EF0 100%)';
+  const surfacePath = (level, elapsed, amplitude = 1) => {
+    const points = [];
+    const segments = 24;
+    const rocking = Math.sin(elapsed * 0.00058) * 0.006 * amplitude;
+
+    for (let index = 0; index <= segments; index += 1) {
+      const x = index / segments;
+      const primary = Math.sin(x * Math.PI * 2 * 1.15 + elapsed * 0.00043) * 0.022;
+      const secondary = Math.sin(x * Math.PI * 2 * 2.35 - elapsed * 0.00061) * 0.009;
+      points.push({ x, y: level + rocking + amplitude * (primary + secondary) });
+    }
+
+    let path = `M ${points[0].x} ${points[0].y}`;
+    for (let index = 0; index < segments; index += 1) {
+      const current = points[index];
+      const next = points[index + 1];
+      const middleX = (current.x + next.x) / 2;
+      const middleY = (current.y + next.y) / 2;
+      path += ` Q ${current.x} ${current.y} ${middleX} ${middleY}`;
+    }
+    path += ` L 1 ${points[segments].y} L 1 1 L 0 1 Z`;
+    return path;
   };
 
-  if (!motionPreference.matches) {
+  const setDisciplineColor = (index) => {
     const mix = (start, end, amount) => Math.round(start + (end - start) * amount);
-    const setColor = (index) => {
-      const amount = index / (words.length - 1);
-      const pink = [mix(242, 201, amount), mix(240, 51, amount), mix(235, 138, amount)];
-      const blue = [mix(242, 91, amount), mix(240, 142, amount), mix(235, 240, amount)];
-      discipline.style.backgroundImage = `linear-gradient(90deg, rgb(${pink.join(',')}) 0%, rgb(${blue.join(',')}) 100%)`;
-    };
-    const typeSpeed = (index) => index === words.length - 1 ? 55 : 22;
-    const deleteSpeed = () => 13;
+    const amount = index / finalIndex;
+    const pink = [mix(242, 201, amount), mix(240, 51, amount), mix(235, 138, amount)];
+    const blue = [mix(242, 91, amount), mix(240, 142, amount), mix(235, 240, amount)];
+    discipline.style.backgroundImage = `linear-gradient(90deg, rgb(${pink.join(',')}) 0%, rgb(${blue.join(',')}) 100%)`;
+  };
 
-    let index = 0;
-    liquid.style.transform = 'translateY(210px)';
-    academyMark.classList.add('is-animating');
+  const finishImmediately = () => {
+    cancelled = true;
+    window.cancelAnimationFrame(liquidFrame);
+    discipline.getAnimations().forEach((animation) => animation.cancel());
+    surface.setAttribute('d', surfacePath(-0.08, 0, 0));
+    discipline.style.opacity = '1';
+    discipline.textContent = 'Thought';
+    setDisciplineColor(finalIndex);
+  };
 
-    const fillForWord = (wordIndex) => {
-      const completion = wordIndex / (words.length - 1);
-      const offset = 210 * (1 - completion);
-      liquid.style.transitionDuration = `${wordIndex === words.length - 1 ? 760 : 480}ms`;
-      liquid.style.transform = `translateY(${offset}px)`;
-    };
-    const typeWord = (word, position = 0) => {
-      discipline.textContent = word.slice(0, position + 1);
-      if (position + 1 < word.length) {
-        timer = window.setTimeout(() => typeWord(word, position + 1), typeSpeed(index));
-      } else if (index < words.length - 1) {
-        timer = window.setTimeout(() => deleteWord(word, word.length), 360);
-      }
-    };
-    const deleteWord = (word, length) => {
-      discipline.textContent = word.slice(0, length - 1);
-      if (length > 1) {
-        timer = window.setTimeout(() => deleteWord(word, length - 1), deleteSpeed(index));
+  if (!motionPreference.matches && typeof window.requestAnimationFrame === 'function' && typeof discipline.animate === 'function') {
+    const fillStartedAt = performance.now();
+    const initialLevel = 0.84;
+    const finalLevel = -0.04;
+    surface.setAttribute('d', surfacePath(initialLevel, 0, 1));
+    discipline.style.opacity = '0';
+
+    const animateLiquid = (now) => {
+      if (cancelled) return;
+      const elapsed = Math.min(now - fillStartedAt, fillDuration);
+      const progress = Math.min(elapsed / fillDuration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 1.45);
+      const level = initialLevel + (finalLevel - initialLevel) * easedProgress;
+      surface.setAttribute('d', surfacePath(level, elapsed, progress < 1 ? 1 : 0));
+
+      if (progress < 1) {
+        liquidFrame = window.requestAnimationFrame(animateLiquid);
       } else {
-        index += 1;
-        setColor(index);
-        fillForWord(index);
-        timer = window.setTimeout(() => typeWord(words[index]), 0);
+        surface.setAttribute('d', surfacePath(-0.08, elapsed, 0));
+      }
+    };
+    liquidFrame = window.requestAnimationFrame(animateLiquid);
+
+    const animateOpacity = async (from, to, duration) => {
+      const animation = discipline.animate([{ opacity: from }, { opacity: to }], {
+        duration,
+        easing: 'cubic-bezier(.2, .65, .3, 1)',
+        fill: 'forwards'
+      });
+      try {
+        await animation.finished;
+      } catch {
+        // Reduced motion can cancel a transition in progress.
+      }
+      animation.cancel();
+      return !cancelled;
+    };
+
+    const playSequence = async () => {
+      for (let index = 0; index <= finalIndex && !cancelled; index += 1) {
+        discipline.textContent = words[index];
+        setDisciplineColor(index);
+        discipline.style.opacity = '0';
+        const duration = index === finalIndex ? finalFadeDuration : fadeInDuration;
+        if (!await animateOpacity(0, 1, duration)) return;
+        discipline.style.opacity = '1';
+
+        if (index < finalIndex) {
+          await new Promise((resolve) => window.setTimeout(resolve, holdDuration));
+          if (cancelled || !await animateOpacity(1, 0, fadeOutDuration)) return;
+          discipline.style.opacity = '0';
+        } else {
+          surface.setAttribute('d', surfacePath(-0.08, fillDuration, 0));
+        }
       }
     };
 
-    timer = window.setTimeout(() => {
-      setColor(index);
-      fillForWord(index);
-      typeWord(words[index]);
-    }, 250);
     motionPreference.addEventListener('change', (event) => {
-      if (event.matches) finalState();
+      if (event.matches) finishImmediately();
     }, { once: true });
+    window.setTimeout(() => {
+      if (!cancelled) playSequence();
+    }, sequenceStartDelay);
   }
 }

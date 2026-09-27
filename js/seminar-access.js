@@ -1,7 +1,7 @@
 import { auth, onAuthStateChanged, getRegistrationForSeminar } from './academy-auth.js?v=24';
 import { accountError } from './account-flow.js?v=3';
 
-// This seminar communicates access at the title, without an account-management panel.
+// This seminar communicates access beside Sessions, without an account-management panel.
 export function watchSeminarAccess(onChange, root = document) {
   const el = id => root.getElementById(id);
   let generation = 0;
@@ -11,6 +11,8 @@ export function watchSeminarAccess(onChange, root = document) {
     const loading = state === 'Checking access…';
     el('seminarEnrollmentBadge').textContent = state;
     el('seminarEnrollmentBadge').classList.toggle('is-enrolled', enrolled);
+    el('seminarEnrollmentBadge').classList.toggle('is-registered', pending);
+    el('seminarEnrollmentBadge').classList.toggle('is-not-enrolled', state === 'Not enrolled');
     el('participation').hidden = enrolled || loading;
     el('syllabusAccessNote').hidden = enrolled;
     el('participationAccount').hidden = enrolled || pending || loading;

@@ -30,7 +30,7 @@ export function createParticipantPanel(root = document, now = () => Date.now()) 
     let date = source.querySelector('.lecture-date')?.textContent || 'Date TBD';
     if (plan.kind === 'screening') {
       const row = source.querySelector(`[data-screening="${plan.film.id}"]`)?.closest('li');
-      const heading = row?.querySelector('.screening-title-lead')?.textContent.replace(/,$/, '');
+      const heading = row?.querySelector('.screening-title')?.textContent.trim();
       title = heading || sessionTitle;
       date = `${plan.film.date} · 10 p.m. Eastern / 7 p.m. Pacific`;
     } else if (plan.kind !== 'unscheduled') {

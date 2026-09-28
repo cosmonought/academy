@@ -68,6 +68,44 @@
 .seminar-sessions .session-past .session-status { color: #71766e; }
 .seminar-sessions .session-past .session-screenings { background: #efefec; }
 .seminar-sessions .session-past .screening-summary { color: #656963; }
+
+/* Past sessions are an openable archive index: titles stay in view, while the
+   original lecture, readings, and screenings remain available on demand. */
+.seminar-sessions details.session-past { display: block; padding: 0; border: 0; }
+.seminar-sessions .session-summary {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr) auto 18px;
+  column-gap: 32px;
+  row-gap: 4px;
+  align-items: start;
+  padding: 17px 0;
+  border-top: 1px solid #c9c7c1;
+  cursor: pointer;
+  list-style: none;
+}
+.seminar-sessions .session-summary::-webkit-details-marker { display: none; }
+.seminar-sessions .session-summary:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+.seminar-sessions details.session-past:not([open]) > .session-phase { display: none; }
+.seminar-sessions .session-summary .session-num { grid-column: 1; grid-row: 1; padding-top: 3px; }
+.seminar-sessions .session-summary .session-title { grid-column: 2; grid-row: 1; font-size: 23px; }
+.seminar-sessions .session-summary .session-status { grid-column: 3; grid-row: 1; padding-top: 3px; }
+.seminar-sessions .session-toggle { grid-column: 4; grid-row: 1; padding-top: 1px; color: #71766e; font: 400 19px/1 var(--font-body); }
+.seminar-sessions .session-toggle::before { content: '+'; }
+.seminar-sessions details[open] > .session-summary .session-toggle::before { content: '−'; }
+.seminar-sessions details.session-past > .session-phase {
+  display: block;
+  margin: 0 0 26px 132px;
+  padding: 18px 0 2px;
+  border-top: 1px solid #dddcd7;
+}
+
+/* The present gets the strongest typographic and rule treatment; the horizon
+   remains fully readable but deliberately quieter. */
+.seminar-sessions .session-current { margin-top: 14px; padding-top: 36px; border-top-width: 3px; }
+.seminar-sessions .session-current .session-title { color: #8e1d5d; font-size: 34px; font-weight: 900; }
+.seminar-sessions .session-current .session-status { color: #8e1d5d; font-weight: 600; }
+.seminar-sessions .session-upcoming { padding-block: 25px 30px; }
+.seminar-sessions .session-upcoming .session-title { font-size: 25px; }
 @media (max-width: 760px) {
   .seminar-sessions .session-block { grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; row-gap: 12px; padding-block: 26px 30px; }
   .seminar-sessions .session-num { grid-column: 1; grid-row: 1; padding: 0; }
@@ -76,4 +114,12 @@
   .seminar-sessions .session-phase { grid-column: 1 / -1; grid-row: 3; }
   .seminar-sessions .session-screenings { margin-left: 12px; padding-inline: 0; }
   .seminar-sessions .screening-title { flex-basis: 100%; }
+  .seminar-sessions .session-summary { grid-template-columns: minmax(0, 1fr) auto 18px; column-gap: 12px; row-gap: 8px; padding-block: 15px; }
+  .seminar-sessions .session-summary .session-num { grid-column: 1; grid-row: 1; padding: 0; }
+  .seminar-sessions .session-summary .session-status { grid-column: 2; grid-row: 1; padding: 0; }
+  .seminar-sessions .session-summary .session-toggle { grid-column: 3; grid-row: 1; }
+  .seminar-sessions .session-summary .session-title { grid-column: 1 / -1; grid-row: 2; font-size: 22px; }
+  .seminar-sessions details.session-past > .session-phase { margin-left: 0; padding-top: 16px; }
+  .seminar-sessions .session-current { margin-top: 8px; padding-top: 28px; }
+  .seminar-sessions .session-current .session-title { font-size: 30px; }
 }

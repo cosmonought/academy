@@ -4,7 +4,7 @@
   // Compact live Academy radio player, shared across every site nav.
   const navInner = document.querySelector('.site-nav .nav-inner');
   if (navInner && !navInner.querySelector('.nav-radio')) {
-    const STREAM_URL = 'https://stream.rcs.revma.com/fg_on_the_road.mp3';
+    const STREAM_URL = 'https://stream.rcs.revma.com/fg_on_the_road';
     const VOLUME_KEY = 'academy-radio-volume';
     const player = document.createElement('div');
     player.className = 'nav-radio';

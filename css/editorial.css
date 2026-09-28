@@ -102,7 +102,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 /* The seminar template separates orientation, syllabus, and participation. */
 .seminar-page { margin-top: 54px; }
 .seminar-hero { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 56px; padding-block: 56px 40px; align-items: stretch; }
-.seminar-hero h1 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(50px, 6.2vw, 82px); font-weight: 900; line-height: .96; letter-spacing: -.02em; margin-block: 20px 14px; }
+.seminar-hero h1 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(50px, 6.2vw, 82px); font-weight: 900; line-height: .96; letter-spacing: -.02em; margin-block: 0 14px; }
 .seminar-subtitle { font-family: var(--font-display); font-size: clamp(22px, 2.3vw, 28px); line-height: 1.2; }
 .seminar-deck { font-size: 19px; line-height: 1.6; max-width: 640px; margin-top: 24px; color: var(--ink-mid); }
 .seminar-art {

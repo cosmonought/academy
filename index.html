@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neta DAO Academy — Free Public Seminars</title>
   <meta name="description" content="Free public seminars in philosophy, psychoanalysis, economics, and the arts. Explore Sex, and/or Love, Coining Reason, and Fork Journal." />
-  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/style.css?v=4" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -16,8 +16,8 @@
     (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
   </script>
   <script src="/js/homepage-hero.js?v=10" defer></script>
-  <script src="/js/site.js?v=4" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=40" />
+  <script src="/js/site.js?v=5" defer></script>
+  <link rel="stylesheet" href="/css/editorial.css?v=41" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
 <body>
@@ -127,13 +127,10 @@
     </section>
   </main>
 
-  <footer class="site-footer homepage-footer">
-    <div class="footer-inner">
-      <div class="footer-brand-cell" id="updates">
-        <p class="footer-brand">Neta DAO Academy</p>
-        <p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p>
-        <p class="footer-signup-intro">Sign up to be notified of new seminars and events:</p>
-        <form id="footerSignupForm" class="signup-form">
+  <section class="homepage-updates" id="updates" aria-labelledby="updates-title">
+    <div class="homepage-updates-inner">
+      <p class="homepage-updates-intro" id="updates-title">Sign up to be notified of new seminars and events:</p>
+      <form id="footerSignupForm" class="signup-form">
           <div class="signup-fields">
             <div class="signup-field">
               <label class="field-label" for="fsName">Name (optional)</label>
@@ -152,15 +149,10 @@
           <textarea id="fsProposal" class="hidden" rows="3"></textarea>
           <p id="fsStatus" role="status" aria-live="polite"></p>
         </form>
-      </div>
-      <nav class="footer-links-cell" aria-label="Utility links"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li>
-        <li><a href="/seminars.html">Seminars</a></li>
-        <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
-        <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NETADAO_ACADEMY ↗</a></li>
-        <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li></ul></nav>
     </div>
-    <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p><p class="footer-copy footer-legal">The materials presented on this site are for informational purposes only and should not be construed as financial advice.</p></div>
-  </footer>
+  </section>
+
+  <footer class="site-footer" data-site-footer></footer>
 
   <script type="module">
     import { submitInterestSignup } from '/js/academy-auth.js?v=24';

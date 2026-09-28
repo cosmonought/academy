@@ -43,6 +43,7 @@ export function passwordIssue(password, confirmation) {
 
 export function accountError(error) {
   switch (error?.code) {
+    case 'academy/invalid-password': return error.message;
     case 'auth/invalid-email': return 'Enter a valid email address.';
     case 'auth/invalid-credential':
     case 'auth/wrong-password':

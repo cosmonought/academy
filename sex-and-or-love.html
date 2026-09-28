@@ -73,8 +73,8 @@
     #navAccountItem .nav-signout { margin-left: 8px; color: var(--ink-dim); text-decoration: underline; font-size: inherit; cursor: pointer; }
   </style>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
-  <link rel="stylesheet" href="/css/participant.css?v=9">
-  <link rel="stylesheet" href="/css/syllabus.css?v=11">
+  <link rel="stylesheet" href="/css/participant.css?v=10">
+  <link rel="stylesheet" href="/css/syllabus.css?v=13">
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
 <body>
@@ -121,7 +121,6 @@
     <div class="seminar-intro-grid content-wide">
     <header class="seminar-hero">
       <div>
-        <p class="section-label">Neta DAO Academy · Ongoing seminar</p>
         <h1>Sex, and/or Love</h1>
         <p class="seminar-subtitle">Psychoanalysis and the Science of Desire</p>
         <p class="seminar-deck">An inquiry into desire, the unconscious, and the limits of knowledge — through psychoanalysis, philosophy, literature, and film.</p>
@@ -143,7 +142,6 @@
 
     <section id="sessions" class="seminar-sessions">
       <div class="page-wrap">
-        <p class="section-label">The syllabus</p>
         <div class="sessions-heading"><h2 class="section-title-sm">Sessions</h2><span id="seminarEnrollmentBadge" class="seminar-enrollment-badge" role="status">Checking access…</span></div>
         <p id="screeningCinemaLink" class="screening-link hidden"><a class="text-link" href="/cinema.html">Stream here →</a></p>
         <p id="syllabusAccessNote" class="syllabus-note">Readings and film access are available to enrolled participants. <a href="#participation">How to participate →</a></p>
@@ -183,7 +181,7 @@
             <ul class="reading-list"><li>Lauren Berlant, <em>Desire/Love</em> — <span class="reading-locked" data-key="session6.berlant">Enrollment required</span></li><li>Alain Badiou, <em>In Praise of Love</em> — <span class="reading-locked" data-key="session6.badiou">Enrollment required</span></li></ul>
             <h5 class="screenings-label screening-summary"><span>Screenings — <span class="screening-summary-dates" data-screening-summary="session6">16 September, 23 September, 30 September, 7 October 2026</span></span></h5>
             <div class="session-screenings">
-            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><h6 class="screening-title"><span class="screening-title-lead">Haute Gout,</span> <span class="screening-title-subtitle">Love’s Gastronomy, or—the Mouth</span></h6><span class="screening-date"><span data-screening-date="cook">16 September</span></span></div><span class="film-locked" data-screening="cook" aria-live="polite"></span></li><li><div class="screening-heading"><h6 class="screening-title"><span class="screening-title-lead">Peccatum Originale,</span> <span class="screening-title-subtitle">Love’s Genealogy, or—the Mother</span></h6><span class="screening-date"><span data-screening-date="mother">23 September</span></span></div><span class="film-locked" data-screening="mother" aria-live="polite"></span></li><li><div class="screening-heading"><h6 class="screening-title"><span class="screening-title-lead">Bad Blood,</span> <span class="screening-title-subtitle">Love’s Education, or—the Other</span></h6><span class="screening-date"><span data-screening-date="park">30 September · 10:00 PM Eastern / 7:00 PM Pacific</span></span></div><span class="film-locked" data-screening="park" aria-live="polite"></span></li><li><div class="screening-heading"><h6 class="screening-title"><span class="screening-title-lead">Apres-Coup,</span> <span class="screening-title-subtitle">Love’s Oblivion, or—the Eye</span></h6><span class="screening-date"><span data-screening-date="hiroshima">7 October · 10:00 PM Eastern / 7:00 PM Pacific</span></span></div><span class="film-locked" data-screening="hiroshima" aria-live="polite"></span></li></ol>
+            <ol class="screening-list" aria-label="Film screenings"><li><div class="screening-heading"><h6 class="screening-title"><span class="screening-title-lead">Haute Goût,</span> <span class="screening-title-subtitle">Love’s Gastronomy, or—the Mouth</span></h6><span class="screening-date"><span data-screening-date="cook">16 September</span></span></div><span class="film-locked" data-screening="cook" aria-live="polite"></span></li><li><div class="screening-heading"><h6 class="screening-title"><span class="screening-title-lead">Peccatum Originale,</span> <span class="screening-title-subtitle">Love’s Genealogy, or—the Mother</span></h6><span class="screening-date"><span data-screening-date="mother">23 September</span></span></div><span class="film-locked" data-screening="mother" aria-live="polite"></span></li><li><div class="screening-heading"><h6 class="screening-title"><span class="screening-title-lead">Bad Blood,</span> <span class="screening-title-subtitle">Love’s Education, or—the Other</span></h6><span class="screening-date"><span data-screening-date="park">30 September · 10:00 PM Eastern / 7:00 PM Pacific</span></span></div><span class="film-locked" data-screening="park" aria-live="polite"></span></li><li><div class="screening-heading"><h6 class="screening-title"><span class="screening-title-lead">Après-Coup,</span> <span class="screening-title-subtitle">Love’s Oblivion, or—the Eye</span></h6><span class="screening-date"><span data-screening-date="hiroshima">7 October · 10:00 PM Eastern / 7:00 PM Pacific</span></span></div><span class="film-locked" data-screening="hiroshima" aria-live="polite"></span></li></ol>
             </div>
           </div></div>
 
@@ -209,11 +207,27 @@
     </section>
     <section id="participation" aria-labelledby="participation-title" hidden>
       <div class="page-wrap participation-intro">
-        <p class="section-label">Join the conversation</p>
-        <h2 class="section-title-sm" id="participation-title">Participation &amp; access</h2>
+        <h2 class="section-title-sm" id="participation-title">How to enroll</h2>
         <ol class="enrollment-steps">
-          <li><strong>Create your account.</strong> Choose an email and password, then request enrollment.</li>
-          <li><strong>Verify on X.</strong> DM @NetaDAO_Academy from your registered handle.</li>
+          <li><strong>Create your account.</strong> Use your email and password, then save your enrollment request.
+            <details id="inlineAccountStep" class="inline-account-step">
+              <summary>Create account</summary>
+              <form id="inlineEnrollmentForm" aria-describedby="inlineEnrollmentStatus">
+                <label for="inlineEmail">Email address</label><input id="inlineEmail" name="email" type="email" autocomplete="username" required maxlength="120">
+                <label for="inlinePassword">Choose a password</label><input id="inlinePassword" name="password" type="password" autocomplete="new-password" minlength="8" required aria-describedby="inlinePasswordHint">
+                <p class="field-hint" id="inlinePasswordHint">At least 8 characters. A longer, unique password is best.</p>
+                <label for="inlineConfirm">Confirm password</label><input id="inlineConfirm" name="confirmation" type="password" autocomplete="new-password" minlength="8" required>
+                <label for="inlineName">Your name</label><input id="inlineName" name="name" autocomplete="name" required maxlength="80">
+                <label for="inlineHandle">X handle</label><input id="inlineHandle" name="xHandle" placeholder="@yourname" required maxlength="40" autocapitalize="none">
+                <label for="inlineReason">Why would you like to join?</label><textarea id="inlineReason" name="reason" rows="3" required maxlength="1000"></textarea>
+                <p class="field-hint">Seminars can cover challenging material. <a href="/seminars.html#policies">Read the participation policies.</a></p>
+                <button class="btn btn-primary" type="submit">Create account</button><p class="form-status" id="inlineEnrollmentStatus" role="status"></p>
+              </form>
+            </details>
+            <p id="inlineSignedInNotice" class="inline-signed-in" hidden>You’re already signed in. <a href="/account.html?seminar=sex-and-or-love&amp;view=signin&amp;returnTo=%2Fsex-and-or-love.html%23participation">Complete your enrollment request in your account →</a></p>
+            <p id="inlineEnrollmentResult" class="inline-enrollment-result" role="status" hidden></p>
+          </li>
+          <li><strong>Verify on X.</strong> DM <a href="https://x.com/NetaDAO_Academy">@NetaDAO_Academy</a> from the handle saved with your enrollment request.</li>
           <li><strong>Access your materials.</strong> Once enrollment is confirmed, sign in with your email and password.</li>
         </ol>
 <p id="seminarAccessMessage" role="status"></p>
@@ -223,7 +237,7 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer seminar-footer">
     <div class="footer-inner">
       <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
       <div class="footer-links-cell"><ul class="footer-links">
@@ -253,10 +267,12 @@
     import { auth, initNavAccountWidget, getSeminarReadings } from '/js/academy-auth.js?v=24';
     import { watchSeminarAccess } from '/js/seminar-access.js?v=2';
     import { renderScreeningSchedule } from '/js/screening-schedule.js?v=2';
-    import { renderScreenings } from '/js/seminar-screenings.js?v=3';
+    import { renderScreenings } from '/js/seminar-screenings.js?v=4';
     import { createParticipantPanel } from '/js/participant-panel.js?v=6';
     import { localReadings } from '/js/seminar-readings.js';
+    import { initInlineSeminarEnrollment } from '/js/seminar-inline-enrollment.js?v=2';
     initNavAccountWidget();
+    initInlineSeminarEnrollment();
     const participantPanel = createParticipantPanel();
     let enrolled = false, generation = 0;
     const placeholders = new Map([...document.querySelectorAll('.reading-locked')].map(node => [node.dataset.key, node.cloneNode(true)]));

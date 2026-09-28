@@ -28,6 +28,32 @@
 .participant-date { font-size: 12px; color: var(--ink-mid); line-height: 1.5; margin: 0; }
 .participant-actions { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
 .participant-actions a { font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+.participation-intro { padding-top: 36px; }
+.participation-intro > h2 { margin-bottom: 20px; }
+.enrollment-steps { display: grid; gap: 20px; max-width: 720px; margin: 0; padding-left: 24px; }
+.enrollment-steps li { padding-left: 8px; margin: 0; font-size: 16px; line-height: 1.65; }
+.inline-account-step { margin-top: 10px; }
+.inline-account-step summary { width: max-content; cursor: pointer; color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+.inline-account-step form { max-width: 520px; margin-top: 16px; padding: 16px 0 4px; border-top: 1px solid var(--rule-thin); }
+.inline-account-step label { display: block; margin: 16px 0 6px; font-size: 14px; font-weight: 600; }
+.inline-account-step input, .inline-account-step textarea { display: block; width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--ink-dim); background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; }
+.inline-account-step textarea { resize: vertical; }
+.inline-account-step .field-hint { margin: 7px 0 0; font-size: 13px; color: var(--ink-dim); }
+.inline-account-step .btn { margin-top: 18px; }
+.inline-account-step .form-status, .inline-enrollment-result, .inline-signed-in { margin: 12px 0 0; font-size: 14px; }
+.inline-enrollment-result { color: #24643b; }
+.inline-enrollment-result.is-error { color: #8e1d5d; }
+.inline-signed-in a, .enrollment-steps a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* This footer treatment is intentionally scoped to the seminar page; shared
+   home and other-program footers retain their established compositions. */
+.seminar-footer { border-top: 1px solid #273042; }
+.seminar-footer .footer-inner { max-width: 1160px; grid-template-columns: minmax(0, 1fr) auto; align-items: start; padding: 22px 32px 14px; }
+.seminar-footer .footer-brand-cell, .seminar-footer .footer-links-cell { padding: 0; border: 0; }
+.seminar-footer .footer-tagline { max-width: 400px; line-height: 1.5; }
+.seminar-footer .footer-links { flex-direction: row; flex-wrap: wrap; justify-content: flex-end; gap: 8px 20px; }
+.seminar-footer .footer-bottom { max-width: 1160px; border-top: 1px solid #273042; padding: 10px 32px 16px; display: flex; flex-direction: row; justify-content: space-between; gap: 8px 24px; }
+.seminar-footer .footer-copy { color: #9aa0b8; line-height: 1.45; }
 .seminar-intro-grid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; padding-top: 28px; margin-bottom: 12px; }
 .seminar-intro-grid .seminar-hero { grid-column: 1; grid-row: 1; display: block; padding: 0 32px 20px 0; min-width: 0; }
 .seminar-intro-grid .seminar-art { grid-column: 2; grid-row: 1 / 3; align-self: stretch; min-height: 0; }
@@ -52,4 +78,9 @@
   .participant-kicker { flex-basis: 100%; }
   .participant-detail { flex-basis: 100%; }
   .participant-actions { margin-top: 4px; }
+  .participation-intro { padding-top: 30px; }
+  .enrollment-steps { gap: 18px; }
+  .seminar-footer .footer-inner { grid-template-columns: 1fr; gap: 18px; padding: 22px 24px 14px; }
+  .seminar-footer .footer-links { justify-content: flex-start; gap: 10px 18px; }
+  .seminar-footer .footer-bottom { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 24px 18px; }
 }

@@ -54,7 +54,8 @@
 .seminar-sessions .screening-date { font: 400 12px/1.5 var(--font-body); color: #505965; }
 .seminar-sessions .film-locked, .seminar-sessions .reading-locked { color: #60646a; }
 .seminar-sessions .film-locked:not(.film-revealed) { display: none; }
-.seminar-sessions .film-revealed { display: block; font-size: 13px; line-height: 1.6; margin-top: 4px; }
+.seminar-sessions .film-revealed { display: block; font-size: 13px; font-style: normal; line-height: 1.6; margin-top: 4px; }
+.seminar-sessions .film-revealed em { font-style: italic; }
 .seminar-sessions .screening-heading .film-revealed { margin: 0; }
 .seminar-sessions .session-screenings .screening-link { margin-top: 7px; font-size: 13px; }
 .seminar-sessions .screening-link a { color: #a51e68; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
@@ -66,8 +67,15 @@
 .seminar-sessions .session-past .session-title { color: #555b57; }
 .seminar-sessions .session-past .session-num,
 .seminar-sessions .session-past .session-status { color: #71766e; }
-.seminar-sessions .session-past .session-screenings { background: #efefec; }
-.seminar-sessions .session-past .screening-summary { color: #656963; }
+/* A completed session remains quieter at the row level, but its screening
+   record stays legible as an event rather than receding into a footnote. */
+.seminar-sessions .session-past .session-screenings { background: #edf1f5; }
+.seminar-sessions .session-past .screening-summary { color: #354c65; }
+.seminar-sessions .session-past .screening-past .screening-title,
+.seminar-sessions .session-past .screening-past .screening-title-lead,
+.seminar-sessions .session-past .screening-past .screening-title-subtitle,
+.seminar-sessions .session-past .screening-past .screening-date,
+.seminar-sessions .session-past .screening-past .film-revealed { color: var(--ink-mid); }
 
 /* Past sessions are an openable archive index: titles stay in view, while the
    original lecture, readings, and screenings remain available on demand. */

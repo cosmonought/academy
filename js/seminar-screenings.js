@@ -25,9 +25,22 @@ export function renderScreenings(root, enrolled, now = Date.now()) {
   for (const screening of screenings) {
     const node = root.querySelector(`[data-screening="${screening.id}"]`);
     if (!node) continue;
-    const text = canRevealTitle(screening, enrolled, now) ? filmCredit(screening) : '';
+    const revealed = canRevealTitle(screening, enrolled, now);
+    const text = revealed ? filmCredit(screening) : '';
     // Avoid repeated live-region announcements when the minute ticks over.
-    if (node.textContent !== text) node.textContent = text;
-    node.classList.toggle('film-revealed', canRevealTitle(screening, enrolled, now));
+    if (node.textContent !== text) {
+      if (typeof node.replaceChildren !== 'function' || typeof root.createElement !== 'function') {
+        node.textContent = text;
+      } else if (revealed) {
+        node.replaceChildren();
+        const title = root.createElement('em');
+        title.textContent = screening.title;
+        node.append(title);
+        if (screening.director) node.append(` (dir. ${screening.director})`);
+      } else {
+        node.replaceChildren();
+      }
+    }
+    node.classList.toggle('film-revealed', revealed);
   }
 }

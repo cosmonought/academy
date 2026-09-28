@@ -1,7 +1,8 @@
-import { auth, onAuthStateChanged, signOut, initNavAccountWidget, createPasswordAccount,
+import { auth, onAuthStateChanged, signOut, initNavAccountWidget,
   signInWithPassword, sendPasswordReset, checkPasswordReset, finishPasswordReset,
   getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=24';
 import { signInDestination, destinationLabel, passwordIssue, accountError, seminarPages } from './account-flow.js?v=3';
+import { createAccount } from './account-create.js?v=1';
 
 const el = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -109,9 +110,7 @@ formHandler('signInForm', async form => {
   await refresh(auth.currentUser);
 });
 formHandler('createAccountForm', async (form, status) => {
-  const issue = passwordIssue(form.elements.password.value, form.elements.confirmation.value);
-  if (issue) { status.textContent = issue; return; }
-  await createPasswordAccount(form.elements.email.value, form.elements.password.value);
+  await createAccount(form.elements.email.value, form.elements.password.value, form.elements.confirmation.value);
   form.reset();
   busy = false;
   el('memberHeading').textContent = 'Account created. You’re signed in.';

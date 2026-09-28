@@ -20,6 +20,8 @@ if (discipline && wordFill && surface) {
   const sequenceStartDelay = 250;
   const sequenceDuration = finalIndex * (fadeInDuration + holdDuration + fadeOutDuration) + finalFadeDuration;
   const masterDuration = sequenceStartDelay + sequenceDuration;
+  const initialFillAdvance = 0.08;
+  const earlyFillDuration = 500;
   let liquidFrame = 0;
   let cancelled = false;
 
@@ -75,8 +77,11 @@ if (discipline && wordFill && surface) {
     const animateLiquid = (now) => {
       if (cancelled) return;
       const elapsed = Math.min(now - fillStartedAt, masterDuration);
-      const progress = Math.min(elapsed / masterDuration, 1);
-      const level = initialLevel + (finalLevel - initialLevel) * progress;
+      const remainingProgress = Math.max(0, (elapsed - earlyFillDuration) / (masterDuration - earlyFillDuration));
+      const fillProgress = elapsed < earlyFillDuration
+        ? initialFillAdvance * (elapsed / earlyFillDuration)
+        : initialFillAdvance + (1 - initialFillAdvance) * Math.pow(remainingProgress, 1.7);
+      const level = initialLevel + (finalLevel - initialLevel) * fillProgress;
       surface.setAttribute('d', surfacePath(level, elapsed, progress < 1 ? 1 : 0));
 
       if (progress < 1) {

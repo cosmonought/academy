@@ -58,43 +58,34 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 .academy-word-static { color: transparent; background: var(--gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .academy-intro { min-width: 0; margin-top: clamp(30px, 3.4vw, 48px); }
 .academy-intro > p:first-child { max-width: 700px; font-size: clamp(18px, 1.8vw, 23px); line-height: 1.48; }
-.academy-hero-visual { position: relative; z-index: 1; grid-column: 2; grid-row: 1; min-width: 0; padding: clamp(38px, 4vw, 56px) clamp(16px, 1.6vw, 24px) clamp(24px, 2vw, 28px); color: #f2f0eb; }
+.academy-hero-visual { position: relative; z-index: 1; grid-column: 2; grid-row: 1; min-width: 0; padding: clamp(38px, 4vw, 56px) clamp(28px, 3vw, 48px) clamp(24px, 2vw, 28px) clamp(52px, 5.4vw, 92px); color: #f2f0eb; }
 .academy-hero-visual .tw-label, .academy-hero-visual .tw-word, .academy-hero-visual .tw-word-sizer { margin: 0; font-family: var(--font-display); font-weight: 900; line-height: var(--academy-hero-line); letter-spacing: -.02em; text-transform: uppercase; }
-.academy-hero-visual .tw-label { font-size: var(--academy-hero-type); white-space: nowrap; }
-.academy-hero-visual .tw-label { margin-top: 0; transform: translateX(-12px); }
-.academy-hero-visual .tw-proposition { margin: clamp(42px, 4.5vw, 64px) 0 0; }
+.academy-hero-visual .tw-label { font-size: var(--academy-hero-type); margin-top: 0; max-width: 100%; }
+.academy-hero-visual .tw-proposition { margin: clamp(42px, 4.5vw, 64px) 0 0; text-align: center; }
 .academy-hero-visual .tw-word-wrap { position: relative; isolation: isolate; display: block; min-width: 0; }
-.academy-hero-visual .tw-word-sizer { display: block; min-height: calc(var(--academy-discipline-type) * var(--academy-hero-line) * 2); font-size: var(--academy-discipline-type); visibility: hidden; overflow-wrap: normal; word-break: normal; }
-.academy-hero-visual .tw-bloom { position: absolute; z-index: 0; inset: -.14em -.08em; display: block; pointer-events: none; opacity: 0; transform: scale(.86); transform-origin: 50% 50%; background: var(--discipline-gradient, linear-gradient(90deg, #5b8ef0 0%, #c9338a 100%)); clip-path: polygon(3% 35%, 17% 18%, 39% 24%, 52% 4%, 66% 22%, 91% 13%, 97% 39%, 82% 54%, 96% 79%, 70% 75%, 52% 97%, 34% 76%, 8% 86%, 16% 59%); }
-.academy-hero-visual .tw-word { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; background: var(--discipline-gradient, linear-gradient(90deg, #5b8ef0 0%, #c9338a 100%)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.academy-hero-visual .tw-word-sizer { display: block; min-height: calc(var(--academy-discipline-type) * var(--academy-hero-line) * 2); font-size: var(--academy-discipline-type); visibility: hidden; overflow-wrap: normal; word-break: normal; text-align: center; }
+.academy-hero-visual .tw-word { position: absolute; inset: 0; display: block; width: 100%; background: var(--discipline-gradient, linear-gradient(90deg, #5b8ef0 0%, #c9338a 100%)); background-size: 100% 100%; background-position: 0 0; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
 .academy-hero-visual .tw-word { font-size: var(--academy-discipline-type); white-space: normal; overflow-wrap: normal; word-break: normal; hyphens: none; }
-.featured-seminar { --academy-page-divider: 44%; display: grid; grid-template-columns: var(--academy-page-divider) calc(100% - var(--academy-page-divider)); border-top: var(--panel-border); }
-.feature-copy { padding: clamp(40px, 5vw, 72px) clamp(28px, 5vw, 76px); min-width: 0; }
-.feature-copy h2, .academy-archive h2, .academy-journal h2 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; line-height: 1.02; }
-.feature-copy h2 { font-size: clamp(40px, 5vw, 64px); margin-bottom: 12px; }
-.feature-copy .section-label { color: #ac226f; }
-.feature-copy .section-body { margin-top: 20px; }
-.feature-art, .seminar-art {
-  background-color: #e9b9b2;
-  background-image: url('/assets/sex-and-or-love.webp');
-  background-size: auto 380%;
-  background-position: left 72%;
-  background-repeat: no-repeat;
-}
-.feature-art { min-height: 440px; background-size: auto 150%; background-position: 42% 54%; border-right: 1px solid var(--rule-thin); }
-.featured-seminar .action-row { margin-top: 32px; }
-.academy-archive { --academy-page-divider: 44%; display: grid; grid-template-columns: var(--academy-page-divider) calc(100% - var(--academy-page-divider)); border-top: 1px solid var(--rule-thin); background: var(--bg-raised); }
-.archive-heading { padding: clamp(36px, 4vw, 58px) clamp(28px, 5vw, 76px); border-right: 1px solid var(--rule-thin); }
-.academy-archive .section-label { color: var(--ink-dim); }
-.academy-archive h2 { font-size: clamp(44px, 5.2vw, 72px); color: #3e3d39; }
-.archive-copy { align-self: end; max-width: 680px; padding: clamp(36px, 4vw, 58px) clamp(28px, 5vw, 76px); }
-.archive-copy .section-body { max-width: 570px; color: var(--ink-dim); }
-.archive-copy .text-link { margin-top: 20px; }
-.academy-journal { display: grid; grid-template-columns: minmax(0, 44%) minmax(0, 56%); background: #111; color: #f2f0eb; border-top: var(--panel-border); }
-.journal-wordmark { display: flex; align-items: center; padding: clamp(40px, 5vw, 72px) clamp(28px, 5vw, 76px); border-right: 1px solid #3a3a38; }
+.academy-program-row { --academy-page-divider: 44%; display: grid; grid-template-columns: var(--academy-page-divider) calc(100% - var(--academy-page-divider)); border-top: var(--panel-border); }
+.program-flagship { display: flex; min-width: 0; min-height: 520px; flex-direction: column; align-items: flex-start; padding: clamp(38px, 4.2vw, 62px) clamp(28px, 4.2vw, 62px); background: #111; color: #e8e6e0; }
+.program-flagship h2, .program-current h2, .academy-journal h2 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; line-height: 1.02; }
+.program-flagship .section-label { color: #aab0bd; }
+.program-flagship h2 { max-width: 440px; margin-top: 18px; font-size: clamp(48px, 5.2vw, 74px); }
+.flagship-rule { width: min(100%, 230px); margin: clamp(36px, 6vw, 88px) 0 24px; border-top: 1px solid #687085; }
+.program-flagship .section-body { max-width: 450px; color: #c4c2bc; }
+.program-flagship .text-link { margin-top: auto; padding-top: 30px; color: #f2f0eb; }
+.program-current { display: grid; grid-template-columns: minmax(190px, 36%) minmax(0, 1fr); min-width: 0; background: var(--paper); }
+.current-art { min-height: 520px; background-color: #d69b9b; background-image: url('/assets/sex-and-or-love.webp'); background-repeat: no-repeat; background-size: 290% auto; background-position: 4% 68%; border-right: 1px solid var(--rule-thin); }
+.current-copy { min-width: 0; padding: clamp(38px, 4.5vw, 68px) clamp(26px, 4vw, 64px); }
+.program-current h2 { font-size: clamp(42px, 5vw, 68px); margin: 12px 0; }
+.program-current .section-label { color: #ac226f; }
+.program-current .section-body { margin-top: 20px; }
+.program-current .action-row { margin-top: 30px; }
+.academy-journal { display: grid; grid-template-columns: minmax(0, 44%) minmax(0, 56%); background: #111827; color: #f2f0eb; border-top: var(--panel-border); }
+.journal-wordmark { display: flex; align-items: center; padding: clamp(40px, 5vw, 72px) clamp(28px, 5vw, 76px); background: var(--paper); border-right: 1px solid var(--rule-thin); }
 .journal-wordmark svg { display: block; width: min(100%, 360px); height: auto; }
 .journal-copy { padding: clamp(40px, 5vw, 72px) clamp(28px, 5vw, 76px); }
-.academy-journal .section-label { color: #9aa0b8; }
+.academy-journal .section-label { color: #b8bdd0; }
 .academy-journal h2 { font-size: clamp(42px, 5vw, 68px); margin-bottom: 18px; }
 .academy-journal .section-body { color: #c4c2bc; max-width: 560px; }
 .academy-journal .text-link { margin-top: 22px; color: #f2f0eb; }
@@ -190,8 +181,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   .academy-hero { --academy-hero-type: 52px; --academy-discipline-type: 64px; }
   .academy-title-lines { padding-inline: clamp(26px, 3.4vw, 38px); }
   .academy-hero-visual { padding-inline: clamp(24px, 2.8vw, 30px); }
-  .feature-copy { padding-inline: clamp(28px, 4vw, 48px); }
-  .archive-heading, .archive-copy, .journal-wordmark, .journal-copy { padding-inline: clamp(28px, 4vw, 48px); }
+  .program-flagship, .current-copy, .journal-wordmark, .journal-copy { padding-inline: clamp(28px, 4vw, 48px); }
 }
 @media (min-width: 761px) and (max-width: 1100px) {
   .academy-hero { --academy-hero-type: 54px; --academy-discipline-type: 64px; }
@@ -220,13 +210,16 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   .academy-hero-visual { grid-column: 1; grid-row: 3; padding: 24px 24px 26px; background: #111; }
   .academy-hero-visual .tw-label { margin-top: 0; transform: none; white-space: normal; }
   .academy-hero-visual .tw-proposition { margin-top: 20px; }
-  .academy-hero-visual .tw-bloom { inset: -.08em -.05em; }
   .academy-intro { grid-column: 1; grid-row: 2; margin: 24px 24px 28px; }
-  .featured-seminar, .academy-archive, .academy-journal { grid-template-columns: 1fr; }
-  .feature-art { display: block; min-height: clamp(270px, 75vw, 390px); border-right: 0; border-bottom: 1px solid var(--rule-thin); background-size: auto 145%; background-position: 42% 54%; }
-  .feature-copy { padding: 32px 24px 38px; }
-  .archive-heading { padding: 34px 24px 20px; border-right: 0; }
-  .archive-copy { padding: 0 24px 38px; }
+  .academy-program-row, .academy-journal { grid-template-columns: 1fr; }
+  .program-flagship { min-height: 0; padding: 36px 24px 38px; }
+  .program-flagship h2 { font-size: clamp(52px, 16vw, 70px); }
+  .flagship-rule { margin: 38px 0 22px; }
+  .program-flagship .text-link { margin-top: 22px; padding-top: 0; }
+  .program-current { grid-template-columns: 1fr; }
+  .current-art { min-height: clamp(270px, 75vw, 390px); border-right: 0; border-bottom: 1px solid var(--rule-thin); background-size: 290% auto; background-position: 4% 67%; }
+  .current-copy { padding: 32px 24px 38px; }
+  .program-current h2 { font-size: clamp(48px, 15vw, 68px); }
   .journal-wordmark { padding: 38px 24px 24px; border-right: 0; }
   .journal-wordmark svg { width: min(100%, 300px); }
   .journal-copy { padding: 0 24px 40px; }

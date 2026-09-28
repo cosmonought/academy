@@ -11,17 +11,14 @@ if (discipline) {
     'Science', 'Ethics', 'Civics', 'Design', 'Thought'
   ];
   const finalIndex = words.length - 1;
-  const fadeInDuration = 210;
-  const holdDuration = 450;
-  const fadeOutDuration = 135;
-  const finalFadeDuration = 320;
+  const fadeInDuration = 560;
+  const holdDuration = 520;
+  const fadeOutDuration = 150;
+  const finalFadeDuration = 680;
   const sequenceStartDelay = 250;
   let cancelled = false;
 
-  const wordMarkup = (word) => `
-    <span class="tw-word-base">${word}</span>
-    <span class="tw-word-fill">${word}</span>
-  `;
+  const wordMarkup = (word) => `<span class="tw-word-base">${word}</span><span class="tw-word-fill">${word}</span>`;
 
   const setWord = (word) => {
     discipline.innerHTML = wordMarkup(word);
@@ -29,9 +26,10 @@ if (discipline) {
   };
 
   const settledClip = (fill) => `inset(${100 - fill}% 0 0 0)`;
-  const surgeClip = (fill, surge) => {
-    const boundary = Math.max(0, 100 - Math.min(100, fill + surge));
-    return `polygon(0 ${boundary + 5}%, 15% ${boundary - 2}%, 36% ${boundary + 3}%, 58% ${boundary - 3}%, 78% ${boundary + 2}%, 100% ${boundary - 2}%, 100% 100%, 0 100%)`;
+  const waveClip = (fill, surge, amplitude) => {
+    const boundary = Math.max(0, Math.min(100, 100 - fill - surge));
+    const point = (offset) => Math.max(0, Math.min(100, boundary + offset));
+    return `polygon(0 ${point(amplitude * .35)}%, 12% ${point(-amplitude)}%, 27% ${point(amplitude * .55)}%, 43% ${point(-amplitude * .65)}%, 61% ${point(amplitude)}%, 78% ${point(-amplitude * .45)}%, 100% ${point(amplitude * .7)}%, 100% 100%, 0 100%)`;
   };
 
   const finishImmediately = () => {
@@ -45,11 +43,12 @@ if (discipline) {
 
   const animateFill = async (fill, previousFill, duration, isFinal) => {
     const wordFill = discipline.querySelector('.tw-word-fill');
-    const overshoot = isFinal ? 7 : 5;
+    const overshoot = isFinal ? 14 : 12;
     const animation = wordFill.animate([
-      { clipPath: settledClip(previousFill), backgroundPosition: '0% 0%' },
-      { clipPath: surgeClip(fill, overshoot), backgroundPosition: '36% 0%', offset: .42 },
-      { clipPath: surgeClip(fill, 2), backgroundPosition: '-16% 0%', offset: .7 },
+      { clipPath: waveClip(previousFill, 0, 1), backgroundPosition: '0% 0%' },
+      { clipPath: waveClip(fill, overshoot, 8), backgroundPosition: '55% 0%', offset: .24 },
+      { clipPath: waveClip(fill, -4, 6), backgroundPosition: '-42% 0%', offset: .5 },
+      { clipPath: waveClip(fill, 3, 3), backgroundPosition: '18% 0%', offset: .74 },
       { clipPath: settledClip(fill), backgroundPosition: '0% 0%' }
     ], {
       duration,

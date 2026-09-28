@@ -15,9 +15,9 @@
   <script type="text/javascript">
     (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
   </script>
-  <script src="/js/homepage-hero.js?v=6" defer></script>
+  <script src="/js/homepage-hero.js?v=8" defer></script>
   <script src="/js/site.js?v=4" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=19" />
+  <link rel="stylesheet" href="/css/editorial.css?v=21" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
 <body>
@@ -67,20 +67,10 @@
       <h1 class="academy-hero-accessible-title">Neta DAO Academy is the home of Web3 and Thought</h1>
       <div class="academy-hero-copy">
         <div class="academy-title-lines" aria-hidden="true">
-          <svg class="academy-liquid-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <defs>
-              <mask id="academy-liquid-mask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox" x="0" y="0" width="1" height="1" mask-type="alpha">
-                <path data-academy-surface fill="#fff" d="M0,-.04 L1,-.04 L1,1 L0,1 Z" />
-              </mask>
-            </defs>
-          </svg>
           <span class="academy-title-line academy-title-main">
             <span class="academy-title-netadao">Neta DAO</span>
             <span class="academy-title-academy-is">
-              <span class="academy-word">
-                <span class="academy-word-base">Academy</span>
-                <span class="academy-word-fill" data-academy-word-fill aria-hidden="true">Academy</span>
-              </span>
+              <span class="academy-word academy-word-static">Academy</span>
               <span>is</span>
             </span>
           </span>
@@ -94,13 +84,14 @@
         <p class="tw-proposition">
           <span class="tw-word-wrap">
             <span class="tw-word-sizer">History of Technology</span>
+            <span class="tw-bloom" aria-hidden="true"></span>
             <span class="tw-word" data-academy-discipline>Thought</span>
           </span>
         </p>
       </div>
     </header>
 
-    <section class="featured-seminar content-wide" aria-labelledby="featured-title">
+    <section class="featured-seminar" aria-labelledby="featured-title">
       <div class="feature-art" aria-hidden="true"></div>
       <div class="feature-copy">
         <p class="section-label">Current seminar · 2026–ongoing</p>
@@ -108,27 +99,44 @@
         <p class="seminar-subtitle">Psychoanalysis and the Science of Desire</p>
         <p class="section-body">A seminar on sexual desire, the unconscious, and the limits of knowledge. Readings in psychoanalysis, philosophy, literature, and film place questioning, trust, and uncertainty at the center of existence.</p>
         <div class="action-row">
-          <a href="/sex-and-or-love.html" class="btn btn-primary">View seminar <span aria-hidden="true">↗</span></a>
+          <a href="/sex-and-or-love.html" class="text-link">View seminar <span aria-hidden="true">↗</span></a>
           <a href="/account.html?seminar=sex-and-or-love&amp;view=create" class="text-link">Request enrollment →</a>
           <a href="/sex-and-or-love.html#sessions" class="text-link">Sessions &amp; readings</a>
         </div>
       </div>
     </section>
 
-    <div class="academy-secondary content-wide">
-      <section aria-labelledby="flagship-title">
+    <section class="academy-archive" aria-labelledby="flagship-title">
+      <div class="archive-heading">
         <p class="section-label">Flagship series · Since 2023 · On hiatus</p>
         <h2 id="flagship-title">Coining Reason</h2>
+      </div>
+      <div class="archive-copy">
         <p class="section-body">The Academy’s original discussion series explores Web3 across ten fields of inquiry, from the history of the Internet to economics, art, and religion.</p>
         <a href="/seminar.html" class="text-link">Explore the archive &amp; roadmap <span aria-hidden="true">↗</span></a>
-      </section>
-      <section aria-labelledby="journal-title">
+      </div>
+    </section>
+
+    <section class="academy-journal" aria-labelledby="journal-title">
+      <div class="journal-wordmark">
+        <svg viewBox="0 0 240 100" role="img" aria-labelledby="journal-title">
+          <defs>
+            <clipPath id="fork-top-half"><polygon points="0,0 240,0 240,42 0,57" /></clipPath>
+            <clipPath id="fork-bottom-half"><polygon points="6,60 246,45 246,110 6,110" /></clipPath>
+            <linearGradient id="fork-gap-gradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C9338A" /><stop offset="100%" stop-color="#5B8EF0" /></linearGradient>
+          </defs>
+          <polygon points="0,56 240,41 240,46 0,61" fill="url(#fork-gap-gradient)" opacity="0.9" />
+          <text clip-path="url(#fork-top-half)" x="0" y="84" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="84" fill="#f0ede6" letter-spacing="-2">FORK</text>
+          <text clip-path="url(#fork-bottom-half)" x="6" y="89" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="84" fill="#f0ede6" letter-spacing="-2">FORK</text>
+        </svg>
+      </div>
+      <div class="journal-copy">
         <p class="section-label">Forthcoming · Open access</p>
         <h2 id="journal-title">Fork: The Journal</h2>
         <p class="section-body">A peer-reviewed journal of Interchain Theory and Politics, published by Neta DAO Academy. Free to read. Free to publish in.</p>
         <a href="https://fork.netadao.org" class="text-link">Visit the journal <span aria-hidden="true">↗</span></a>
-      </section>
-    </div>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">

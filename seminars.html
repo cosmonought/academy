@@ -15,9 +15,9 @@
   <script src="/js/site.js?v=9" defer></script>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
-  <link rel="stylesheet" href="/css/seminar-directory.css?v=1">
+  <link rel="stylesheet" href="/css/seminar-directory.css?v=2">
 </head>
-<body>
+<body class="seminar-directory-page">
   <a class="skip-link" href="#main-content">Skip to content</a>
 
   <nav class="site-nav" aria-label="Main navigation">
@@ -60,63 +60,68 @@
   </nav>
 <main id="main-content">
 
-  <div style="margin-top:54px;">
+  <div class="directory-shell">
     <div class="directory-intro">
-      <p class="section-label">Neta DAO Academy</p>
       <h1 class="section-title">Seminars</h1>
       <p class="section-body">Free public seminars in philosophy, psychoanalysis, and the intellectual life of Web3. Explore our current program, return to the flagship series, or discover what’s next.</p>
     </div>
 
     <!-- Current: Sex, and/or Love -->
-    <div class="seminar-card">
-      <div class="seminar-card-left" style="--card-image: url('/assets/sex-and-or-love.webp');">
-        <span class="seminar-status-badge current">Current · 2026–ongoing</span>
-        <h2 class="section-title-sm" style="font-size:28px;">Sex, and/or Love</h2>
-        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:#c9c9c9;margin-bottom:16px;">Psychoanalysis and the Science of Desire</p>
-        <a href="/sex-and-or-love.html" class="text-link">Explore the seminar →</a>
+    <a class="seminar-entry seminar-entry-current" href="/sex-and-or-love.html">
+      <div class="seminar-entry-image" style="--card-image: url('/assets/sex-and-or-love.webp');">
+        <span class="seminar-status current">Current · 2026–ongoing</span>
+        <div class="seminar-entry-heading">
+          <h2 class="section-title-sm">Sex, and/or Love</h2>
+          <p class="seminar-entry-subtitle">Psychoanalysis and the Science of Desire</p>
+        </div>
       </div>
-      <div class="seminar-card-right">
+      <div class="seminar-entry-copy">
         <p class="section-body">An inquiry into sexual desire, the unconscious, and the limits of knowledge through psychoanalysis, philosophy, literature, and film. Enrollment is open.</p>
+        <span class="seminar-entry-action" aria-hidden="true">Explore the seminar →</span>
       </div>
-    </div>
+    </a>
 
     <!-- Flagship: Coining Reason -->
-    <div class="seminar-card">
-      <div class="seminar-card-left" style="--card-image: url('https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/img/CNTitle.png');">
-        <span class="seminar-status-badge flagship">Flagship · Since 2023 · Unit II on hiatus</span>
-        <h2 class="section-title-sm" style="font-size:28px;">Coining Reason</h2>
-        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:#c9c9c9;margin-bottom:16px;">A Discussion Series</p>
-        <a href="/seminar.html" class="text-link">Archive &amp; roadmap →</a>
+    <a class="seminar-entry seminar-entry-flagship" href="/seminar.html">
+      <div class="seminar-entry-image" style="--card-image: url('https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/img/CNTitle.png');">
+        <span class="seminar-status flagship">Flagship · Since 2023 · Unit II on hiatus</span>
+        <div class="seminar-entry-heading">
+          <h2 class="section-title-sm">Coining Reason</h2>
+          <p class="seminar-entry-subtitle">A Discussion Series</p>
+        </div>
       </div>
-      <div class="seminar-card-right">
+      <div class="seminar-entry-copy">
         <p class="section-body">Neta DAO Academy's original, ongoing discussion series — exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Organized into Units, with Unit II currently paused while Sex, and/or Love runs.</p>
+        <span class="seminar-entry-action" aria-hidden="true">Archive &amp; roadmap →</span>
       </div>
-    </div>
+    </a>
 
     <!-- Forthcoming -->
-    <div class="seminar-card">
-      <div class="seminar-card-left" style="--card-image: url('/assets/sex-monsters-superheroes.webp');">
-        <span class="seminar-status-badge forthcoming">Forthcoming · Dates TBD</span>
-        <h2 class="section-title-sm" style="font-size:28px;">Sex, Monsters, and Superheroes</h2>
-        <p style="font-family:var(--font-display);font-size:16px;font-weight:400;text-transform:uppercase;color:#c9c9c9;margin-bottom:16px;">On the Graphic</p>
-        <a href="/forthcoming.html" class="text-link">Explore the proposed syllabus →</a>
+    <a class="seminar-entry seminar-entry-forthcoming" href="/forthcoming.html">
+      <div class="seminar-entry-image" style="--card-image: url('/assets/sex-monsters-superheroes.webp');">
+        <span class="seminar-status forthcoming">Forthcoming · Dates TBD</span>
+        <div class="seminar-entry-heading">
+          <h2 class="section-title-sm">Sex, Monsters, and Superheroes</h2>
+          <p class="seminar-entry-subtitle">On the Graphic</p>
+        </div>
       </div>
-      <div class="seminar-card-right">
+      <div class="seminar-entry-copy">
         <p class="section-body">Comics and graphic novels read as sequential art, revealing both a secret history of our world and the history of a secret world. Announced, not yet open for registration.</p>
+        <span class="seminar-entry-action" aria-hidden="true">Explore the proposed syllabus →</span>
       </div>
-    </div>
+    </a>
 
     <!-- Archive -->
-    <div id="archive" style="border-bottom:var(--panel-border);">
-      <div class="page-wrap" style="padding-top:40px;padding-bottom:40px;">
+    <section id="archive" class="directory-secondary directory-archive">
+      <div class="page-wrap">
         <h2 class="section-title-sm">Archive</h2>
         <p class="section-body">Completed units and recordings are available in the <a class="text-link" href="/seminar.html#unit1-section">Coining Reason archive</a>. Concluded seminar series will be collected here as the Academy grows.</p>
       </div>
-    </div>
+    </section>
 
     <!-- Policies (canonical — linked to from every seminar's own registration panel) -->
-    <div id="policies" style="border-bottom:var(--panel-border);">
-      <div class="page-wrap" style="padding-top:40px;padding-bottom:40px;">
+    <section id="policies" class="directory-secondary directory-policies">
+      <div class="page-wrap">
         <h2 class="section-title-sm">Participation policies</h2>
         <p class="section-body" style="margin-bottom:24px;">These apply across all Academy seminars unless a specific seminar states otherwise.</p>
         <div class="policy-item"><span class="policy-label">Registration</span><p class="policy-text">Create an account with your email and a password, then request enrollment with your name, X handle, and a brief note on why you'd like to join. Creating an account lets you sign in; seminar access follows enrollment confirmation.</p></div>
@@ -125,7 +130,7 @@
         <div class="policy-item"><span class="policy-label">Non-Attribution</span><p class="policy-text">Some seminars address sensitive or disturbing material. To encourage candid study, we observe a policy of non-attribution: you may publicly discuss themes and arguments raised in a session, but should not attribute them to another participant. Learning must include margins for uncertainty, indelicacy, mistake, and dissent.</p></div>
         <div class="policy-item"><span class="policy-label">X Spaces</span><p class="policy-text">Speaking access during the live X Spaces discussion is reserved for enrolled participants. At the host's discretion, the discussion may open to general audience Q&amp;A near the end.</p></div>
       </div>
-    </div>
+    </section>
   </div>
 
   </main>

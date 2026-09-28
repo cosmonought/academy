@@ -15,10 +15,11 @@
   max-width: 610px;
 }
 
+/* Editorial directory rows: image as visual identifier, program information beside it. */
 .seminar-directory-page .seminar-entry {
   display: grid;
-  grid-template-columns: minmax(0, 1.16fr) minmax(300px, .84fr);
-  min-height: 300px;
+  grid-template-columns: minmax(240px, 28%) minmax(0, 72%);
+  min-height: 214px;
   color: inherit;
   text-decoration: none;
   border-bottom: var(--panel-border);
@@ -26,19 +27,16 @@
 }
 
 .seminar-directory-page .seminar-entry-current {
-  grid-template-columns: minmax(0, 1.28fr) minmax(300px, .72fr);
-  min-height: 326px;
+  min-height: 228px;
 }
 
 .seminar-directory-page .seminar-entry-flagship {
-  grid-template-columns: minmax(0, .96fr) minmax(340px, 1.04fr);
-  min-height: 264px;
+  min-height: 204px;
   background: #eeebe3;
 }
 
 .seminar-directory-page .seminar-entry-forthcoming {
-  grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr);
-  min-height: 292px;
+  min-height: 218px;
 }
 
 .seminar-directory-page .seminar-entry:focus-visible {
@@ -50,13 +48,11 @@
 .seminar-directory-page .seminar-entry-image {
   position: relative;
   min-width: 0;
+  min-height: 100%;
   overflow: hidden;
   isolation: isolate;
-  display: flex;
-  align-items: flex-end;
-  padding: 42px 48px;
   border-right: var(--panel-border);
-  color: #f2f0eb;
+  background: #262525;
 }
 
 .seminar-directory-page .seminar-entry-image::before,
@@ -64,136 +60,147 @@
   content: '';
   position: absolute;
   inset: 0;
-  z-index: -2;
 }
 
 .seminar-directory-page .seminar-entry-image::before {
+  z-index: -2;
   background-image: var(--card-image, none);
-  background-size: cover;
-  background-position: center;
-  filter: grayscale(72%) brightness(.58) contrast(1.06);
-  transform: scale(1.025);
-  transition: filter .38s ease, transform .38s ease;
+  background-size: var(--card-size, cover);
+  background-position: var(--card-position, center);
+  background-repeat: no-repeat;
+  filter: grayscale(60%) brightness(.72) contrast(1.04);
+  transform: scale(1.01);
+  transition: filter .32s ease, transform .32s ease;
 }
 
 .seminar-directory-page .seminar-entry-image::after {
   z-index: -1;
-  background: linear-gradient(160deg, rgba(8, 8, 8, .54) 0%, rgba(8, 8, 8, .84) 100%);
-  transition: background .38s ease;
+  background: rgba(12, 12, 12, .07);
+  transition: background-color .32s ease;
+}
+
+/* Current is visibly alive before interaction. */
+.seminar-directory-page .seminar-entry-current .seminar-entry-image {
+  background: #d69b9b;
 }
 
 .seminar-directory-page .seminar-entry-current .seminar-entry-image::before {
-  filter: grayscale(28%) brightness(.78) contrast(1.04);
+  filter: grayscale(18%) brightness(.92) contrast(1.03);
 }
 
 .seminar-directory-page .seminar-entry-current .seminar-entry-image::after {
-  background: linear-gradient(160deg, rgba(8, 8, 8, .38) 0%, rgba(8, 8, 8, .68) 100%);
+  background: rgba(20, 8, 16, .03);
+}
+
+/* Flagship remains important but archival rather than disabled. */
+.seminar-directory-page .seminar-entry-flagship .seminar-entry-image {
+  background: #302f2d;
 }
 
 .seminar-directory-page .seminar-entry-flagship .seminar-entry-image::before {
-  filter: grayscale(92%) sepia(8%) brightness(.47) contrast(1.02);
+  filter: grayscale(88%) sepia(7%) brightness(.64) contrast(1.01);
 }
 
 .seminar-directory-page .seminar-entry-flagship .seminar-entry-image::after {
-  background: linear-gradient(160deg, rgba(20, 19, 18, .69) 0%, rgba(20, 19, 18, .9) 100%);
+  background: rgba(28, 26, 23, .13);
+}
+
+/* Forthcoming stays anticipatory; the crop excludes the poster's Academy/presents line. */
+.seminar-directory-page .seminar-entry-forthcoming .seminar-entry-image {
+  background: #e7e5e1;
 }
 
 .seminar-directory-page .seminar-entry-forthcoming .seminar-entry-image::before {
-  filter: grayscale(52%) brightness(.66) contrast(1.05);
+  filter: grayscale(35%) brightness(.84) contrast(1.03);
 }
 
 .seminar-directory-page .seminar-entry:hover .seminar-entry-image::before,
 .seminar-directory-page .seminar-entry:focus-visible .seminar-entry-image::before {
-  filter: grayscale(4%) brightness(.96) contrast(1.04);
-  transform: scale(1.045);
+  filter: grayscale(0%) brightness(1) contrast(1.02);
+  transform: scale(1.025);
 }
 
 .seminar-directory-page .seminar-entry:hover .seminar-entry-image::after,
 .seminar-directory-page .seminar-entry:focus-visible .seminar-entry-image::after {
-  background: linear-gradient(160deg, rgba(8, 8, 8, .34) 0%, rgba(8, 8, 8, .58) 100%);
+  background: transparent;
 }
 
 .seminar-directory-page .seminar-entry-flagship:hover .seminar-entry-image::before,
 .seminar-directory-page .seminar-entry-flagship:focus-visible .seminar-entry-image::before {
-  filter: grayscale(24%) sepia(4%) brightness(.78) contrast(1.03);
+  filter: grayscale(18%) sepia(3%) brightness(.86) contrast(1.02);
 }
 
-.seminar-directory-page .seminar-entry-flagship:hover .seminar-entry-image::after,
-.seminar-directory-page .seminar-entry-flagship:focus-visible .seminar-entry-image::after {
-  background: linear-gradient(160deg, rgba(18, 17, 16, .5) 0%, rgba(18, 17, 16, .7) 100%);
+/* Program title, subtitle, status, description and action all live in the copy panel. */
+.seminar-directory-page .seminar-entry-copy {
+  min-width: 0;
+  padding: 27px 44px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .seminar-directory-page .seminar-entry-heading {
   min-width: 0;
-  max-width: 620px;
+  max-width: 780px;
 }
 
 .seminar-directory-page .seminar-entry-heading .section-title-sm {
-  color: #f2f0eb;
-  font-size: clamp(30px, 3.1vw, 44px);
-  line-height: .94;
-  margin: 0 0 9px;
+  color: var(--ink);
+  font-size: clamp(29px, 2.8vw, 39px);
+  line-height: .96;
+  margin: 0 0 6px;
 }
 
 .seminar-directory-page .seminar-entry-current .seminar-entry-heading .section-title-sm {
-  font-size: clamp(34px, 3.5vw, 50px);
+  font-size: clamp(32px, 3vw, 43px);
 }
 
 .seminar-directory-page .seminar-entry-subtitle {
   margin: 0;
-  max-width: 34rem;
+  max-width: 40rem;
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.2;
   letter-spacing: .02em;
   text-transform: uppercase;
-  color: #d0cdc7;
+  color: var(--ink-dim);
 }
 
 .seminar-directory-page .seminar-status {
-  position: absolute;
-  top: 26px;
-  right: 30px;
-  max-width: calc(100% - 60px);
-  padding: 4px 8px 3px;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 10px;
+  padding: 3px 7px 2px;
   border: 1px solid currentColor;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 8.5px;
   line-height: 1.35;
-  letter-spacing: .09em;
+  letter-spacing: .08em;
   text-transform: uppercase;
-  text-align: right;
-  color: #d8d8d4;
 }
 
 .seminar-directory-page .seminar-status.current {
-  color: #87dca5;
+  color: #2a8a4a;
 }
 
 .seminar-directory-page .seminar-status.flagship {
-  color: #bbb5ac;
+  color: #706c65;
 }
 
 .seminar-directory-page .seminar-status.forthcoming {
-  color: #a9c2f3;
-}
-
-.seminar-directory-page .seminar-entry-copy {
-  min-width: 0;
-  padding: 42px 48px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 22px;
+  color: #3a6fd8;
 }
 
 .seminar-directory-page .seminar-entry-copy .section-body {
-  max-width: 560px;
+  max-width: 720px;
+  margin-top: 15px;
+  font-size: 14.5px;
+  line-height: 1.65;
 }
 
 .seminar-directory-page .seminar-entry-current .seminar-entry-copy .section-body {
-  font-size: 16px;
   color: var(--ink);
 }
 
@@ -204,8 +211,9 @@
 .seminar-directory-page .seminar-entry-action {
   display: inline-block;
   width: fit-content;
+  margin-top: 15px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9.5px;
   line-height: 1.4;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -255,52 +263,44 @@
   padding-bottom: 15px;
 }
 
-@media (max-width: 1024px) {
-  .seminar-directory-page .seminar-entry,
-  .seminar-directory-page .seminar-entry-current,
-  .seminar-directory-page .seminar-entry-flagship,
-  .seminar-directory-page .seminar-entry-forthcoming {
-    grid-template-columns: minmax(0, 1.08fr) minmax(290px, .92fr);
+@media (max-width: 1100px) {
+  .seminar-directory-page .seminar-entry {
+    grid-template-columns: minmax(230px, 31%) minmax(0, 69%);
   }
 
-  .seminar-directory-page .seminar-entry-image,
   .seminar-directory-page .seminar-entry-copy {
-    padding-left: 38px;
-    padding-right: 38px;
+    padding-left: 36px;
+    padding-right: 36px;
   }
 }
 
 @media (max-width: 820px) {
-  .seminar-directory-page .seminar-entry,
-  .seminar-directory-page .seminar-entry-current,
-  .seminar-directory-page .seminar-entry-flagship,
-  .seminar-directory-page .seminar-entry-forthcoming {
+  .seminar-directory-page .seminar-entry {
     grid-template-columns: 1fr;
     min-height: 0;
   }
 
   .seminar-directory-page .seminar-entry-image {
-    min-height: 250px;
+    min-height: 170px;
     border-right: 0;
     border-bottom: 1px solid #111;
   }
 
   .seminar-directory-page .seminar-entry-current .seminar-entry-image {
-    min-height: 280px;
+    min-height: 190px;
   }
 
   .seminar-directory-page .seminar-entry-flagship .seminar-entry-image {
-    min-height: 220px;
+    min-height: 164px;
   }
 
   .seminar-directory-page .seminar-entry-forthcoming .seminar-entry-image {
-    min-height: 240px;
+    min-height: 184px;
   }
 
   .seminar-directory-page .seminar-entry-copy {
-    padding-top: 30px;
-    padding-bottom: 32px;
-    gap: 18px;
+    padding-top: 25px;
+    padding-bottom: 27px;
   }
 }
 
@@ -309,26 +309,14 @@
     padding: 38px 24px 34px;
   }
 
-  .seminar-directory-page .seminar-entry-image,
   .seminar-directory-page .seminar-entry-copy {
     padding-left: 24px;
     padding-right: 24px;
   }
 
-  .seminar-directory-page .seminar-status {
-    top: 20px;
-    right: 22px;
-    max-width: calc(100% - 44px);
-  }
-
-  .seminar-directory-page .seminar-entry-image {
-    padding-top: 70px;
-    padding-bottom: 28px;
-  }
-
   .seminar-directory-page .seminar-entry-heading .section-title-sm,
   .seminar-directory-page .seminar-entry-current .seminar-entry-heading .section-title-sm {
-    font-size: clamp(32px, 10vw, 44px);
+    font-size: clamp(30px, 9vw, 40px);
   }
 
   .seminar-directory-page .directory-secondary .page-wrap {
@@ -339,19 +327,19 @@
 
 @media (max-width: 420px) {
   .seminar-directory-page .seminar-entry-image {
-    min-height: 215px;
+    min-height: 150px;
   }
 
   .seminar-directory-page .seminar-entry-current .seminar-entry-image {
-    min-height: 240px;
+    min-height: 168px;
   }
 
   .seminar-directory-page .seminar-entry-flagship .seminar-entry-image {
-    min-height: 200px;
+    min-height: 148px;
   }
 
   .seminar-directory-page .seminar-entry-forthcoming .seminar-entry-image {
-    min-height: 225px;
+    min-height: 170px;
   }
 
   .seminar-directory-page .seminar-entry-subtitle {
@@ -360,6 +348,10 @@
 
   .seminar-directory-page .seminar-status {
     font-size: 8px;
+  }
+
+  .seminar-directory-page .seminar-entry-copy .section-body {
+    font-size: 14px;
   }
 }
 
@@ -372,6 +364,6 @@
 
   .seminar-directory-page .seminar-entry:hover .seminar-entry-image::before,
   .seminar-directory-page .seminar-entry:focus-visible .seminar-entry-image::before {
-    transform: scale(1.025);
+    transform: scale(1.01);
   }
 }

@@ -17,7 +17,7 @@
   </script>
   <script src="/js/homepage-hero.js?v=8" defer></script>
   <script src="/js/site.js?v=4" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=21" />
+  <link rel="stylesheet" href="/css/editorial.css?v=22" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
 <body>
@@ -80,13 +80,15 @@
         </div>
       </div>
       <div class="academy-hero-visual" aria-hidden="true">
-        <p class="tw-label">The home of Web3 and</p>
-        <p class="tw-proposition">
-          <span class="tw-word-wrap">
-            <span class="tw-word-sizer">History of Technology</span>
-            <span class="tw-word" data-academy-discipline>Thought</span>
-          </span>
-        </p>
+        <div class="tw-composition">
+          <p class="tw-label">The home of Web3 and</p>
+          <p class="tw-proposition">
+            <span class="tw-word-wrap">
+              <span class="tw-word-sizer">History of Technology</span>
+              <span class="tw-word" data-academy-discipline>Thought</span>
+            </span>
+          </p>
+        </div>
       </div>
     </header>
 
@@ -94,6 +96,7 @@
       <article class="program-flagship" aria-labelledby="flagship-title">
         <p class="section-label">Flagship series · Since 2023 · On hiatus</p>
         <h2 id="flagship-title">Coining Reason</h2>
+        <div class="flagship-art" aria-hidden="true"></div>
         <div class="flagship-rule" aria-hidden="true"></div>
         <p class="section-body">The Academy’s original discussion series explores Web3 across ten fields of inquiry, from the history of the Internet to economics, art, and religion.</p>
         <a href="/seminar.html" class="text-link">Explore the archive &amp; roadmap <span aria-hidden="true">↗</span></a>
@@ -107,8 +110,7 @@
           <p class="section-body">A seminar on sexual desire, the unconscious, and the limits of knowledge. Readings in psychoanalysis, philosophy, literature, and film place questioning, trust, and uncertainty at the center of existence.</p>
           <div class="action-row">
             <a href="/sex-and-or-love.html" class="text-link">View seminar <span aria-hidden="true">↗</span></a>
-            <a href="/account.html?seminar=sex-and-or-love&amp;view=create" class="text-link">Request enrollment →</a>
-            <a href="/sex-and-or-love.html#sessions" class="text-link">Sessions &amp; readings</a>
+            <a href="/account.html?seminar=sex-and-or-love&amp;view=create" class="enrollment-link">Late enroll <span aria-hidden="true">→</span></a>
           </div>
         </div>
       </article>
@@ -123,8 +125,8 @@
             <linearGradient id="fork-gap-gradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C9338A" /><stop offset="100%" stop-color="#5B8EF0" /></linearGradient>
           </defs>
           <polygon points="0,56 240,41 240,46 0,61" fill="url(#fork-gap-gradient)" opacity="0.9" />
-          <text clip-path="url(#fork-top-half)" x="0" y="84" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="84" fill="#111111" letter-spacing="-2">FORK</text>
-          <text clip-path="url(#fork-bottom-half)" x="6" y="89" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="84" fill="#111111" letter-spacing="-2">FORK</text>
+          <text clip-path="url(#fork-top-half)" x="0" y="84" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="84" fill="#f2e7ee" letter-spacing="-2">FORK</text>
+          <text clip-path="url(#fork-bottom-half)" x="6" y="89" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="84" fill="#f2e7ee" letter-spacing="-2">FORK</text>
         </svg>
       </div>
       <div class="journal-copy">
@@ -136,30 +138,39 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer homepage-footer">
     <div class="footer-inner">
-      <div class="footer-brand-cell" id="updates"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p>
-
-        <p class="footer-tagline" style="margin-top:16px;color:#e8e6e0;">Sign up to be notified of new seminars and events:</p>
+      <div class="footer-brand-cell" id="updates">
+        <p class="footer-brand">Neta DAO Academy</p>
+        <p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p>
+        <p class="footer-signup-intro">Sign up to be notified of new seminars and events:</p>
         <form id="footerSignupForm" class="signup-form">
-          <label class="field-label" for="fsName">Name (optional)</label>
-          <input type="text" id="fsName" autocomplete="name" />
-          <label class="field-label" for="fsEmail">Email address</label>
-          <input type="email" id="fsEmail" autocomplete="email" required />
-          <label class="proposal-choice"><input type="checkbox" id="fsProposeCheckbox" /> Propose a guest lecture</label>
+          <div class="signup-fields">
+            <div class="signup-field">
+              <label class="field-label" for="fsName">Name (optional)</label>
+              <input type="text" id="fsName" autocomplete="name" />
+            </div>
+            <div class="signup-field">
+              <label class="field-label" for="fsEmail">Email address</label>
+              <input type="email" id="fsEmail" autocomplete="email" required />
+            </div>
+          </div>
+          <div class="signup-actions">
+            <label class="proposal-choice"><input type="checkbox" id="fsProposeCheckbox" /> Propose a guest lecture</label>
+            <button id="fsSubmit" class="btn" type="submit">Subscribe to updates</button>
+          </div>
           <label class="field-label hidden" id="fsProposalLabel" for="fsProposal">Proposed topic and background</label>
           <textarea id="fsProposal" class="hidden" rows="3"></textarea>
-          <button id="fsSubmit" class="btn" type="submit">Subscribe to updates</button>
           <p id="fsStatus" role="status" aria-live="polite"></p>
         </form>
       </div>
-      <div class="footer-links-cell"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li>
+      <nav class="footer-links-cell" aria-label="Utility links"><ul class="footer-links"><li><a href="https://netadao.org">Neta DAO ↗</a></li>
         <li><a href="/seminars.html">Seminars</a></li>
         <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
-        <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
-        <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li></ul></div>
+        <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NETADAO_ACADEMY ↗</a></li>
+        <li><a href="https://discord.com/invite/gvjC86WXC2" target="_blank" rel="noopener">Discord ↗</a></li></ul></nav>
     </div>
-    <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p><p class="footer-copy" style="margin-top:8px;font-size:11px;">The materials presented on this site are for informational purposes only and should not be construed as financial advice.</p></div>
+    <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p><p class="footer-copy footer-legal">The materials presented on this site are for informational purposes only and should not be construed as financial advice.</p></div>
   </footer>
 
   <script type="module">

@@ -66,22 +66,26 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 .academy-title-sentence .tw-word-base { color: #f2f0eb; }
 .academy-title-sentence .tw-word-fill { position: absolute; top: 50%; right: 0; left: 0; transform: translateY(-50%); color: transparent; background: var(--discipline-gradient, linear-gradient(90deg, #5b8ef0 0%, #c9338a 100%)); background-size: 130% 100%; background-position: 0 0; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; clip-path: inset(0 0 0 0); }
 .academy-program-row { --academy-page-divider: 26%; display: grid; grid-template-columns: var(--academy-page-divider) calc(100% - var(--academy-page-divider)); border-top: 2px solid var(--paper); }
-.program-flagship { display: flex; min-width: 0; min-height: 520px; flex-direction: column; align-items: flex-start; padding: clamp(38px, 4.2vw, 62px) clamp(28px, 4.2vw, 62px); background: #111; color: #e8e6e0; }
+.program-flagship { position: relative; display: flex; min-width: 0; min-height: 0; flex-direction: column; align-items: flex-start; padding: clamp(34px, 3.3vw, 48px) clamp(28px, 4.2vw, 62px); background: #282725; color: #ddd8d0; }
 .program-flagship h2, .program-current h2, .academy-journal h2 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; line-height: 1.02; }
-.program-status { display: inline-flex; align-items: center; width: max-content; border: 1px solid currentColor; padding: 3px 6px 2px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: .08em; line-height: 1.2; text-transform: uppercase; }
-.program-status-hiatus { color: #aab0bd; }
-.program-status-active { color: #a51e68; }
-.program-flagship h2 { max-width: 440px; margin-top: 18px; font-size: clamp(48px, 5.2vw, 74px); }
-.flagship-art { align-self: stretch; min-height: 154px; margin-top: 24px; background: #2b2b2b url('https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/img/CNTitle.png') center center / cover no-repeat; }
-.flagship-rule { width: min(100%, 230px); margin: 24px 0; border-top: 1px solid #687085; }
-.program-flagship .section-body { max-width: 450px; color: #c4c2bc; }
-.program-flagship .text-link { margin-top: auto; padding-top: 30px; color: #f2f0eb; }
-.program-current { display: grid; grid-template-columns: minmax(220px, 34%) minmax(0, 1fr); min-width: 0; background: var(--paper); }
-.academy-program-row .current-art { min-height: 520px; background-color: #d69b9b; background-image: url('/assets/sex-and-or-love.webp'); background-repeat: no-repeat; background-size: 325% auto; background-position: left 66%; border-right: 1px solid var(--rule-thin); }
-.current-copy { display: flex; min-width: 0; flex-direction: column; padding: clamp(38px, 4.2vw, 62px) clamp(26px, 4vw, 64px); }
-.program-current h2 { font-size: clamp(42px, 5vw, 68px); margin: 18px 0 12px; }
+.program-status { position: absolute; top: 14px; right: clamp(16px, 1.8vw, 24px); display: inline-flex; align-items: center; gap: 6px; width: max-content; border: 0; padding: 0; font-family: var(--font-mono); font-size: 9px; font-weight: 500; letter-spacing: .08em; line-height: 1.2; text-transform: uppercase; }
+.program-status::before { width: 6px; height: 6px; border: 1px solid currentColor; content: ''; }
+.program-status-hiatus { color: #a7a39c; }
+.program-status-active { color: #9b235f; }
+.program-status-active::before { background: currentColor; }
+.program-flagship h2 { max-width: 440px; margin-top: 0; font-size: clamp(48px, 5.2vw, 74px); }
+.program-kind { margin-top: 10px; color: #aaa69f; font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; }
+.flagship-art { position: relative; align-self: stretch; min-height: 154px; margin-top: 22px; overflow: hidden; background: #302f2d; }
+.flagship-art::before { position: absolute; inset: 0; background: url('https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/img/CNTitle.png') center center / cover no-repeat; content: ''; filter: saturate(.55) contrast(.9) brightness(.8); transition: filter .18s ease; }
+.program-flagship:is(:hover, :focus-within) .flagship-art::before { filter: saturate(.85) contrast(.97) brightness(.92); }
+.program-flagship .text-link { margin-top: auto; padding-top: 24px; color: #ddd8d0; text-decoration-color: #77736d; transition: color .15s, text-decoration-color .15s; }
+.program-flagship .text-link:hover { color: #fff; text-decoration-color: #c9c4bb; }
+.program-current { display: grid; grid-template-columns: minmax(220px, 34%) minmax(0, 1fr); min-width: 0; min-height: 0; background: var(--paper); }
+.academy-program-row .current-art { min-height: 0; background-color: #d69b9b; background-image: url('/assets/sex-and-or-love.webp'); background-repeat: no-repeat; background-size: 325% auto; background-position: left 66%; border-right: 1px solid var(--rule-thin); }
+.current-copy { position: relative; display: flex; min-width: 0; flex-direction: column; padding: clamp(34px, 3.3vw, 48px) clamp(26px, 4vw, 64px); }
+.program-current h2 { font-size: clamp(42px, 5vw, 68px); margin: 0 0 12px; }
 .program-current .section-body { margin-top: 20px; }
-.program-current .action-row { margin-top: auto; padding-top: 30px; }
+.program-current .action-row { margin-top: auto; padding-top: 24px; }
 .enrollment-link { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #ac226f; color: #8e1d5d; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; padding: 9px 13px; text-transform: uppercase; transition: background-color .15s, color .15s; }
 .enrollment-link:hover { background: #ac226f; color: #fff; }
 .academy-journal { display: grid; grid-template-columns: minmax(0, 44%) minmax(0, 56%); background: #241927; color: #f2f0eb; border-top: var(--panel-border); }
@@ -237,7 +241,6 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   .program-flagship { min-height: 0; padding: 36px 24px 38px; }
   .program-flagship h2 { font-size: clamp(52px, 16vw, 70px); }
   .flagship-art { min-height: clamp(180px, 48vw, 250px); margin-top: 22px; }
-  .flagship-rule { margin: 22px 0; }
   .program-flagship .text-link { margin-top: 22px; padding-top: 0; }
   .program-current { grid-template-columns: 1fr; }
   .academy-program-row .current-art { min-height: clamp(270px, 75vw, 390px); border-right: 0; border-bottom: 1px solid var(--rule-thin); background-size: 325% auto; background-position: left 66%; }

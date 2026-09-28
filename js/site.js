@@ -1,9 +1,42 @@
 // Shared public-page navigation and keyboard interaction.
 (() => {
+  const isFramed = window.self !== window.top;
+
+  // Pages loaded inside the persistent radio shell behave normally, but report
+  // their location/title back to the owning Academy tab so its address bar and
+  // visible navigation stay in sync.
+  const announceFrameLocation = () => {
+    if (!isFramed) return;
+    const activeNavHrefs = [...document.querySelectorAll('.nav-links a.active[href]')]
+      .map(link => link.href);
+    window.parent.postMessage({
+      type: 'academy:frame-location',
+      href: location.href,
+      title: document.title,
+      activeNavHrefs
+    }, location.origin);
+  };
+
+  if (isFramed) {
+    queueMicrotask(announceFrameLocation);
+    window.addEventListener('hashchange', announceFrameLocation);
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('a[href]');
+      if (!link || link.hasAttribute('download')) return;
+      if (link.target && link.target !== '_self') return;
+
+      const destination = new URL(link.href, location.href);
+      if (!['http:', 'https:'].includes(destination.protocol)) return;
+      if (destination.origin !== location.origin) {
+        event.preventDefault();
+        window.top.location.href = destination.href;
+      }
+    }, true);
+  }
 
   // Compact live Academy radio player, shared across every site nav.
   const navInner = document.querySelector('.site-nav .nav-inner');
-  if (navInner && !navInner.querySelector('.nav-radio')) {
+  if (!isFramed && navInner && !navInner.querySelector('.nav-radio')) {
     const STREAM_URL = 'https://s3.radio.co/s39c195d74/listen';
     const VOLUME_KEY = 'academy-radio-volume';
     const player = document.createElement('div');
@@ -94,6 +127,100 @@
 
     audio.addEventListener('error', () => {
       if (playing || starting) stop();
+    });
+
+    // A media element cannot survive a normal document navigation. While the
+    // radio is active, keep this top-level document (and its audio node) alive
+    // and load Academy pages in a full-viewport same-origin frame beneath the
+    // persistent nav. The framed page still runs all of its normal scripts.
+    let shellFrame = null;
+
+    const isAcademyPage = (url) => {
+      if (url.origin !== location.origin) return false;
+      const lastSegment = url.pathname.split('/').filter(Boolean).pop() || '';
+      return url.pathname === '/' || url.pathname.endsWith('.html') || !lastSegment.includes('.');
+    };
+
+    const syncVisibleNav = (activeHrefs = []) => {
+      const activeKeys = new Set(activeHrefs.map((href) => {
+        const url = new URL(href, location.href);
+        return url.pathname + url.search;
+      }));
+      navInner.querySelectorAll('.nav-links a[href]').forEach((link) => {
+        const url = new URL(link.href, location.href);
+        link.classList.toggle('active', activeKeys.has(url.pathname + url.search));
+      });
+    };
+
+    const ensureRadioShell = () => {
+      if (shellFrame) return shellFrame;
+
+      document.querySelectorAll('audio, video').forEach((media) => {
+        if (media !== audio) {
+          try { media.pause(); } catch (_) {}
+        }
+      });
+
+      shellFrame = document.createElement('iframe');
+      shellFrame.className = 'academy-radio-frame';
+      shellFrame.title = 'Neta DAO Academy page content';
+      Object.assign(shellFrame.style, {
+        position: 'fixed',
+        inset: '0',
+        width: '100%',
+        height: '100%',
+        border: '0',
+        background: 'var(--bg)',
+        zIndex: '50'
+      });
+
+      [...document.body.children].forEach((node) => {
+        if (node !== document.querySelector('.site-nav')) node.hidden = true;
+      });
+
+      document.body.style.overflow = 'hidden';
+      document.body.appendChild(shellFrame);
+      return shellFrame;
+    };
+
+    const navigateInRadioShell = (url, pushHistory = true) => {
+      const frame = ensureRadioShell();
+      if (pushHistory) history.pushState({ academyRadioShell: true }, '', url.href);
+      frame.src = url.href;
+    };
+
+    document.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (!shellFrame && !(playing || starting)) return;
+
+      const link = event.target.closest('a[href]');
+      if (!link || link.hasAttribute('download')) return;
+      if (link.target && link.target !== '_self') return;
+
+      const destination = new URL(link.href, location.href);
+      if (!isAcademyPage(destination)) return;
+
+      event.preventDefault();
+      navigateInRadioShell(destination, true);
+    }, true);
+
+    window.addEventListener('message', (event) => {
+      if (!shellFrame || event.origin !== location.origin || event.source !== shellFrame.contentWindow) return;
+      if (event.data?.type !== 'academy:frame-location') return;
+
+      const destination = new URL(event.data.href, location.href);
+      if (!isAcademyPage(destination)) return;
+
+      if (destination.href !== location.href) {
+        history.pushState({ academyRadioShell: true }, '', destination.href);
+      }
+      if (event.data.title) document.title = event.data.title;
+      syncVisibleNav(event.data.activeNavHrefs);
+    });
+
+    window.addEventListener('popstate', () => {
+      if (shellFrame) shellFrame.src = location.href;
     });
   }
 

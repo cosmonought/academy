@@ -1,5 +1,102 @@
 // Shared public-page navigation and keyboard interaction.
 (() => {
+
+  // Compact live Academy radio player, shared across every site nav.
+  const navInner = document.querySelector('.site-nav .nav-inner');
+  if (navInner && !navInner.querySelector('.nav-radio')) {
+    const STREAM_URL = 'https://stream.rcs.revma.com/fg_on_the_road.mp3';
+    const VOLUME_KEY = 'academy-radio-volume';
+    const player = document.createElement('div');
+    player.className = 'nav-radio';
+    player.setAttribute('role', 'group');
+    player.setAttribute('aria-label', 'Academy radio');
+    player.innerHTML = `
+      <button class="nav-radio-button" type="button" aria-label="Play Academy radio" aria-pressed="false" title="Play Academy radio">
+        <span class="nav-radio-icon" aria-hidden="true"></span>
+      </button>
+      <input class="nav-radio-volume" type="range" min="0" max="100" step="5" aria-label="Academy radio volume">
+    `;
+
+    const firstNavControl = navInner.querySelector('.nav-links, .nav-hamburger');
+    navInner.insertBefore(player, firstNavControl);
+
+    const button = player.querySelector('.nav-radio-button');
+    const volumeControl = player.querySelector('.nav-radio-volume');
+    const audio = new Audio();
+    audio.preload = 'none';
+
+    let volume = 0.7;
+    try {
+      const storedVolume = Number(localStorage.getItem(VOLUME_KEY));
+      if (Number.isFinite(storedVolume) && storedVolume >= 0 && storedVolume <= 1) volume = storedVolume;
+    } catch (_) {
+      // Storage can be unavailable in privacy-restricted browsing contexts.
+    }
+
+    audio.volume = volume;
+    volumeControl.value = String(Math.round(volume * 100));
+
+    let playing = false;
+    let starting = false;
+    let playbackRequest = 0;
+
+    const renderPlaybackState = () => {
+      const active = playing || starting;
+      button.setAttribute('aria-pressed', String(active));
+      button.setAttribute('aria-label', active ? 'Stop Academy radio' : 'Play Academy radio');
+      button.title = active ? 'Stop Academy radio' : 'Play Academy radio';
+    };
+
+    const stop = () => {
+      playbackRequest += 1;
+      starting = false;
+      playing = false;
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
+      renderPlaybackState();
+    };
+
+    const start = async () => {
+      const request = ++playbackRequest;
+      starting = true;
+      renderPlaybackState();
+      audio.src = STREAM_URL;
+      audio.volume = Number(volumeControl.value) / 100;
+
+      try {
+        await audio.play();
+        if (request !== playbackRequest) return;
+        starting = false;
+        playing = true;
+        renderPlaybackState();
+      } catch (error) {
+        if (request !== playbackRequest) return;
+        console.warn('Academy radio playback unavailable:', error);
+        stop();
+      }
+    };
+
+    button.addEventListener('click', () => {
+      if (playing || starting) stop();
+      else start();
+    });
+
+    volumeControl.addEventListener('input', () => {
+      const nextVolume = Number(volumeControl.value) / 100;
+      audio.volume = nextVolume;
+      try {
+        localStorage.setItem(VOLUME_KEY, String(nextVolume));
+      } catch (_) {
+        // Volume still works for the current page when storage is unavailable.
+      }
+    });
+
+    audio.addEventListener('error', () => {
+      if (playing || starting) stop();
+    });
+  }
+
   const menu = document.querySelector('.nav-links');
   const toggle = document.querySelector('.nav-hamburger');
   if (menu && toggle) {

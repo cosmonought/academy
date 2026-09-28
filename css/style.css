@@ -98,6 +98,37 @@ a { color: inherit; text-decoration: none; }
 .nav-links a.nav-cta { background: #e8e6e0; color: #111; }
 .nav-links a.nav-cta:hover { background: #c8c6c0; }
 
+
+/* ── Compact Academy radio ── */
+.nav-radio {
+  display: flex; align-items: center; gap: 10px;
+  height: 100%; padding: 0 12px;
+  border-right: var(--panel-border); flex: 0 0 auto;
+}
+.nav-radio-button {
+  width: 28px; height: 28px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid #46506a; border-radius: 0;
+  background: transparent; color: #e8e6e0; cursor: pointer;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+.nav-radio-button:hover { background: #1a2238; border-color: #69748f; }
+.nav-radio-button:focus-visible,
+.nav-radio-volume:focus-visible { outline: 2px solid #e8e6e0; outline-offset: 2px; }
+.nav-radio-icon::before {
+  content: ''; display: block; width: 0; height: 0; margin-left: 2px;
+  border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+  border-left: 8px solid currentColor;
+}
+.nav-radio-button[aria-pressed="true"] .nav-radio-icon::before {
+  width: 8px; height: 8px; margin-left: 0;
+  border: 0; background: currentColor;
+}
+.nav-radio-volume {
+  width: 72px; height: 18px; margin: 0;
+  accent-color: #e8e6e0; cursor: pointer;
+}
+
 /* ── Seminars nav dropdown ──
    The "Seminars" nav item is both a normal link (goes to the hub) and
    a hover trigger for a dropdown of direct links to each seminar. */
@@ -324,6 +355,8 @@ a { color: inherit; text-decoration: none; }
   .roadmap-unit:nth-child(2n) { border-right: none; }
 }
 @media (max-width: 640px) {
+  .nav-radio { padding: 0 10px; gap: 8px; }
+  .nav-radio-volume { width: 58px; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; flex-direction: column; justify-content: center; }
   .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-dark); border-bottom: var(--panel-border); }

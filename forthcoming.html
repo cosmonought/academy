@@ -3,30 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Forthcoming — Neta DAO Academy</title>
-  <meta name="description" content="Forthcoming seminars at Neta DAO Academy, including Sex, Monsters, and Superheroes: On the Graphic." />
+  <title>Sex, Monsters, and Superheroes — Neta DAO Academy</title>
+  <meta name="description" content="Sex, Monsters, and Superheroes: On the Graphic — a forthcoming Neta DAO Academy seminar on comics, graphic form, image, text, and desire." />
   <link rel="stylesheet" href="css/style.css?v=5" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
-  <style>
-    .schedule-item { padding:24px 0; border-bottom:1px solid var(--rule-thin); display:grid; grid-template-columns:56px 1fr; gap:20px; align-items:start; }
-    .schedule-item:last-child { border-bottom:none; }
-    .schedule-num { font-family:var(--font-mono); font-size:12px; color:var(--ink-dim); padding-top:3px; }
-    .schedule-title { font-family:var(--font-display); font-size:17px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
-    .schedule-reading { font-size:13px; color:var(--ink-mid); line-height:1.65; }
-    .policy-item { padding:20px 0; border-bottom:1px solid var(--rule-thin); display:grid; grid-template-columns:120px 1fr; gap:20px; }
-    .policy-item:last-child { border-bottom:none; }
-    .policy-label { font-family:var(--font-mono); font-size:10px; color:var(--ink-dim); letter-spacing:0.08em; text-transform:uppercase; padding-top:2px; }
-    .policy-text { font-size:14px; color:var(--ink-mid); line-height:1.75; }
-  </style>
   <script src="/js/site.js?v=9" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=6" />
+  <link rel="stylesheet" href="/css/editorial.css?v=42" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
+  <link rel="stylesheet" href="/css/graphic.css?v=1">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function () {
+      if (window.emailjs) emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" });
+    })();
+  </script>
 </head>
-<body>
+<body class="graphic-seminar-page">
   <a class="skip-link" href="#main-content">Skip to content</a>
 
   <nav class="site-nav" aria-label="Main navigation">
@@ -45,15 +41,13 @@
             </clipPath>
           </defs>
           <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
-          <g clip-path="url(#a-clip-NAV)">
-            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/>
-          </g>
+          <g clip-path="url(#a-clip-NAV)"><rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/></g>
         </svg>
       </a>
       <ul class="nav-links" id="site-menu">
         <li><a href="/">Home</a></li>
         <li class="nav-dropdown-item">
-          <a href="/seminars.html">Seminars</a>
+          <a href="/seminars.html" class="active">Seminars</a>
           <ul class="nav-dropdown-menu">
             <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
             <li><a href="/seminar.html">Flagship: Coining Reason</a></li>
@@ -67,94 +61,250 @@
       <button class="nav-hamburger" type="button" aria-label="Open menu" aria-controls="site-menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </nav>
-<main id="main-content">
-<div style="margin-top:54px;">
-    <div style="padding:56px 48px;border-bottom:var(--panel-border);border-top:var(--panel-border);">
-      <p class="section-label">Forthcoming</p>
-      <h1 class="section-title">Future Seminars</h1>
-      <p class="section-body">Announced and planned Academy seminars. Registration opens on this site prior to each module's first session.</p>
+
+  <main id="main-content" class="graphic-page">
+    <div class="graphic-canvas">
+      <header class="graphic-cover" aria-labelledby="graphic-title">
+        <div class="graphic-cover-copy">
+          <p class="graphic-caption graphic-status">Forthcoming</p>
+          <h1 id="graphic-title" class="graphic-title">
+            <span class="graphic-title-sex">Sex,</span>
+            <span class="graphic-title-monsters">Monsters,</span>
+            <span class="graphic-title-and">and</span>
+            <span class="graphic-title-superheroes">Superheroes</span>
+          </h1>
+          <p class="graphic-subtitle">On the Graphic</p>
+          <svg class="graphic-mark graphic-mark-cover" viewBox="0 0 180 90" aria-hidden="true" focusable="false">
+            <path d="M8 70 C42 7 81 9 108 40 C122 56 135 60 170 28" />
+            <path d="M157 23 L171 28 L162 42" />
+          </svg>
+        </div>
+        <div class="graphic-cover-art" aria-hidden="true">
+          <span class="graphic-cover-art-label">historical poster fragment</span>
+        </div>
+      </header>
+
+      <section class="graphic-description" aria-labelledby="graphic-description-title">
+        <div class="graphic-spread-heading">
+          <span class="graphic-caption">Opening spread</span>
+          <h2 id="graphic-description-title">The graphic as form, rupture, and world</h2>
+        </div>
+        <div class="graphic-description-grid">
+          <article class="graphic-panel graphic-panel-lead">
+            <p>In 1917, Marcel Duchamp quipped that America's only works of art were "her bridges and her plumbing." A century later, Neil Kendricks, Film Curator for the Museum of Contemporary Art San Diego, argued that "jazz and comics" should be included in this list of uniquely American aesthetic idioms.</p>
+          </article>
+          <article class="graphic-panel graphic-panel-secondary">
+            <p>In this Academy module, we will follow Kendricks' lead and read the comic book or "graphic novel," like jazz music, as revealing both a secret history of our world and the history of a secret world: from the cartoon mirror of the "world of being" in stories about superheroes, monsters, and other fantastical creatures, to the "world of becoming" glimpsed only in the creative process, imaginative acts, and desire's perseverance.</p>
+          </article>
+          <article class="graphic-panel graphic-panel-questions">
+            <p>We will address such questions as: How do comics, as sequential art, work? What is the relation between color and line, the continuous and the discrete, image and text, graphic and explicit, comics and the comical? When and how do comics reflect dominant values and ideals, and when and how do they challenge or subvert them? Where do comics position their readers/viewers, and where do they position their creators? Why do images have the power to appeal to or appall us? And what are the links between comics and other art forms?</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="graphic-structure" aria-labelledby="graphic-structure-title">
+        <div class="graphic-structure-heading">
+          <span class="graphic-caption graphic-caption-light">Seminar structure</span>
+          <h2 id="graphic-structure-title">One meeting, two readings, one conversation</h2>
+        </div>
+        <div class="graphic-structure-copy">
+          <p>This module will consist of (mostly) bimonthly sessions. In the first session, I will provide an orientation to the overall module and then lecture on the next session's readings.</p>
+          <p>Each session thereafter will have two readings — a comic paired with a critical or philosophical essay — and will be organized into two parts: in the first part, an open-ended conversation about the session's texts; in the second part, a lecture on the upcoming session's readings.</p>
+        </div>
+        <svg class="graphic-mark graphic-mark-structure" viewBox="0 0 220 100" aria-hidden="true" focusable="false">
+          <path d="M4 18 C58 22 106 8 145 42 C164 59 177 76 212 74" />
+          <path d="M198 64 L214 75 L198 87" />
+        </svg>
+      </section>
+
+      <section class="graphic-syllabus" aria-labelledby="graphic-syllabus-title">
+        <div class="graphic-syllabus-heading">
+          <div>
+            <span class="graphic-caption">Framed sequence</span>
+            <h2 id="graphic-syllabus-title">Syllabus</h2>
+          </div>
+          <p>Each numbered meeting is one session. The paired works belong together.</p>
+        </div>
+
+        <div class="graphic-session-grid">
+          <article class="graphic-session graphic-session-0">
+            <p class="graphic-session-number">Session 0</p>
+            <h3>Orientation</h3>
+            <p class="graphic-session-note">Begin here: the seminar's frame, method, and shared vocabulary.</p>
+          </article>
+
+          <article class="graphic-session graphic-session-1">
+            <p class="graphic-session-number">Session 1</p>
+            <div class="graphic-reading-grid">
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Graphic / primary reading</span>
+                <p>Scott McCloud, <em>Understanding Comics</em></p>
+              </div>
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Design / critical reading</span>
+                <p>Ellen Lupton, <em>Graphic Design: The New Basics</em></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="graphic-session graphic-session-2">
+            <p class="graphic-session-number">Session 2</p>
+            <div class="graphic-reading-grid">
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Primary work</span>
+                <p>Alan Moore, <em>Batman: The Killing Joke</em></p>
+              </div>
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Theoretical text</span>
+                <p>Roland Barthes, "Rhetoric of the Image," from <em>Image–Music–Text</em></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="graphic-session graphic-session-3">
+            <p class="graphic-session-number">Session 3</p>
+            <div class="graphic-reading-grid">
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Primary work</span>
+                <p>Alison Bechdel, <em>Fun Home: A Family Tragicomic</em></p>
+              </div>
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Theoretical text</span>
+                <p>Robin Lydenberg, "Reading Lessons in Allison Bechdel's Fun Home: A Family Tragicomic"</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="graphic-session graphic-session-4">
+            <p class="graphic-session-number">Session 4</p>
+            <div class="graphic-reading-grid">
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Primary work</span>
+                <p>Marjane Satrapi, <em>Persepolis</em></p>
+              </div>
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Theoretical text</span>
+                <p>Henry Corbin, "Mundus Imaginalis or the Imaginary and the Imaginal"</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="graphic-session graphic-session-5">
+            <p class="graphic-session-number">Session 5</p>
+            <div class="graphic-reading-grid">
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Primary work</span>
+                <p>Emily Carroll, <em>Through the Woods</em></p>
+              </div>
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Theoretical text</span>
+                <p>Eugenie Brinkema, "A Genreless Horror," from <em>Journal of Visual Culture</em></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="graphic-session graphic-session-6">
+            <p class="graphic-session-number">Session 6</p>
+            <div class="graphic-reading-grid graphic-reading-grid-exception">
+              <div class="graphic-reading graphic-reading-primary">
+                <span class="graphic-reading-label">Primary work</span>
+                <p>Martin Vaughn-James, <em>The Cage</em></p>
+              </div>
+              <div class="graphic-reading graphic-reading-critical">
+                <span class="graphic-reading-label">Theoretical / critical texts</span>
+                <p>Domingos Isabelinho, "The Ghost of a Character: The Cage by Martin Vaughn-James," from <em>Indy Magazine</em></p>
+                <p>Eugenie Brinkema, "Horrere Or," from <em>Life-Destroying Diagrams</em></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="graphic-session graphic-session-7">
+            <p class="graphic-session-number">Session 7</p>
+            <div class="graphic-reading-grid graphic-reading-grid-exception">
+              <div class="graphic-reading graphic-reading-primary">
+                <span class="graphic-reading-label">Primary works</span>
+                <p>Grant Morrison, <em>Nameless</em></p>
+                <p>Reza Negarestani and Robin Mackay, <em>Chronosis</em></p>
+              </div>
+              <div class="graphic-reading graphic-reading-critical">
+                <span class="graphic-reading-label">Theoretical text</span>
+                <p>Nadia Bou Ali and Ray Brassier, "After Too Late: The Endgame of Analysis," from <em>Problemi International</em></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="graphic-session graphic-session-8">
+            <p class="graphic-session-number">Session 8</p>
+            <div class="graphic-reading-grid">
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Primary / audiovisual work</span>
+                <p>Don Hertzfeldt, <em>The World of Tomorrow</em></p>
+              </div>
+              <div class="graphic-reading">
+                <span class="graphic-reading-label">Theoretical text</span>
+                <p>Rebecca Schneider, "Hello Dolly Well Hello Dolly: The Double and Its Theatre," from <em>Psychoanalysis and Performance</em></p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="graphic-interest" aria-labelledby="graphic-interest-title">
+        <div class="graphic-interest-copy">
+          <span class="graphic-caption graphic-caption-light">Closing panel</span>
+          <h2 id="graphic-interest-title">Express Interest</h2>
+          <p>Enrollment is not open yet. Leave your email and the Academy can contact you when enrollment opens for this seminar.</p>
+          <p class="graphic-policy-note">Academy Seminar Policies will apply when enrollment opens. <a href="/seminars.html#seminar-policies">Review policies →</a></p>
+        </div>
+        <form id="graphicInterestForm" class="graphic-interest-form" aria-describedby="graphicInterestStatus">
+          <div class="graphic-form-field">
+            <label for="graphicInterestName">Name <span>(optional)</span></label>
+            <input id="graphicInterestName" name="name" type="text" autocomplete="name" maxlength="80">
+          </div>
+          <div class="graphic-form-field">
+            <label for="graphicInterestEmail">Email</label>
+            <input id="graphicInterestEmail" name="email" type="email" autocomplete="email" maxlength="120" required>
+          </div>
+          <button class="graphic-interest-button" type="submit">Express interest</button>
+          <p id="graphicInterestStatus" class="graphic-interest-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
     </div>
-
-    <!-- Sex, Monsters, and Superheroes -->
-    <div style="border-bottom:var(--panel-border);">
-      <div class="editorial-split">
-        <div class="editorial-cell">
-          <p class="section-label">Announced</p>
-          <h2 class="section-title">Sex, Monsters, and Superheroes</h2>
-          <p style="font-family:var(--font-display);font-size:22px;font-weight:400;text-transform:uppercase;color:var(--ink-mid);margin-bottom:24px;line-height:1.2;">On the Graphic</p>
-          <a href="/#updates" class="btn btn-primary">Get seminar updates</a>
-        </div>
-        <div class="editorial-cell">
-          <p class="section-body" style="margin-bottom:20px;">In 1917, Marcel Duchamp quipped that America's only works of art were "her bridges and her plumbing." A century later, Neil Kendricks, Film Curator for the Museum of Contemporary Art San Diego, argued that "jazz and comics" should be included in this list of uniquely American aesthetic idioms.</p>
-          <p class="section-body" style="margin-bottom:20px;">In this Academy module, we will follow Kendricks' lead and read the comic book or "graphic novel," like jazz music, as revealing both a secret history of our world and the history of a secret world: from the cartoon mirror of the "world of being" in stories about superheroes, monsters, and other fantastical creatures, to the "world of becoming" glimpsed only in the creative process, imaginative acts, and desire's perseverance.</p>
-          <p class="section-body">We will address such questions as: How do comics, as sequential art, work? What is the relation between color and line, the continuous and the discrete, image and text, graphic and explicit, comics and the comical? When and how do comics reflect dominant values and ideals, and when and how do they challenge or subvert them? Where do comics position their readers/viewers, and where do they position their creators? Why do images have the power to appeal to or appall us? And what are the links between comics and other art forms?</p>
-        </div>
-      </div>
-
-      <!-- Structure and Policies -->
-      <div class="editorial-split">
-        <div class="editorial-cell">
-          <p class="section-label">Structure</p>
-          <p style="font-size:15px;color:var(--ink-mid);line-height:1.8;">This module will consist of (mostly) bimonthly sessions. In the first session, I will provide an orientation to the overall module and then lecture on the next session's readings.</p>
-          <p style="font-size:15px;color:var(--ink-mid);line-height:1.8;margin-top:16px;">Each session thereafter will have two readings — a comic paired with a critical or philosophical essay — and will be organized into two parts: in the first part, an open-ended conversation about the session's texts; in the second part, a lecture on the upcoming session's readings.</p>
-        </div>
-        <div class="editorial-cell">
-          <p class="section-label">Policies</p>
-          <div class="policy-item"><span class="policy-label">Registration</span><p class="policy-text">Registration is not yet open. <a href="/#updates">Subscribe to Academy updates</a> to hear when enrollment opens.</p></div>
-          <div class="policy-item"><span class="policy-label">Participation</span><p class="policy-text">Participants are expected to read each session's materials and come prepared to discuss them. You must interact during each session to receive the code for the module's proof-of-participation NFT.</p></div>
-          <div class="policy-item"><span class="policy-label">Non-Attribution</span><p class="policy-text">The content in these comics may be sensitive or disturbing. To encourage candid study, we observe a policy of non-attribution: you may publicly discuss themes and arguments raised in a session, but should not attribute them to another participant. Learning must include margins for uncertainty, indelicacy, mistake, and dissent.</p></div>
-        </div>
-      </div>
-
-      <!-- Proposed Schedule -->
-      <div class="editorial-cell">
-        <p class="section-label">Proposed Schedule</p>
-        <h3 style="font-family:var(--font-display);font-size:28px;font-weight:900;text-transform:uppercase;margin-bottom:24px;">Sessions</h3>
-        <div>
-          <div class="schedule-item"><span class="schedule-num">0</span><div><div class="schedule-title">Orientation</div></div></div>
-          <div class="schedule-item"><span class="schedule-num">1</span><div><div class="schedule-title">Understanding Comics</div><div class="schedule-reading">Scott McCloud, <em>Understanding Comics</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">1a</span><div><div class="schedule-title">Graphic Design: The New Basics</div><div class="schedule-reading">Ellen Lupton, <em>Graphic Design: The New Basics</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">2</span><div><div class="schedule-title">Batman: The Killing Joke</div><div class="schedule-reading">Alan Moore, <em>Batman: The Killing Joke</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">2a</span><div><div class="schedule-title">Rhetoric of the Image</div><div class="schedule-reading">Roland Barthes, "Rhetoric of the Image," from <em>Image–Music–Text</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">3</span><div><div class="schedule-title">Fun Home: A Family Tragicomic</div><div class="schedule-reading">Alison Bechdel, <em>Fun Home: A Family Tragicomic</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">3a</span><div><div class="schedule-title">Reading Lessons in Alison Bechdel's Fun Home</div><div class="schedule-reading">Robin Lydenberg, "Reading Lessons in Allison Bechdel's Fun Home: A Family Tragicomic"</div></div></div>
-          <div class="schedule-item"><span class="schedule-num">4</span><div><div class="schedule-title">Persepolis</div><div class="schedule-reading">Marjane Satrapi, <em>Persepolis</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">4a</span><div><div class="schedule-title">Mundus Imaginalis</div><div class="schedule-reading">Henry Corbin, "Mundus Imaginalis or the Imaginary and the Imaginal"</div></div></div>
-          <div class="schedule-item"><span class="schedule-num">5</span><div><div class="schedule-title">Through the Woods</div><div class="schedule-reading">Emily Carroll, <em>Through the Woods</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">5a</span><div><div class="schedule-title">A Genreless Horror</div><div class="schedule-reading">Eugenie Brinkema, "A Genreless Horror," from <em>Journal of Visual Culture</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">6</span><div><div class="schedule-title">The Cage</div><div class="schedule-reading">Martin Vaughn-James, <em>The Cage</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">6a</span><div><div class="schedule-title">The Ghost of a Character: The Cage by Martin Vaughn-James</div><div class="schedule-reading">Domingos Isabelinho, "The Ghost of a Character: The Cage by Martin Vaughn-James," from <em>Indy Magazine</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">6b</span><div><div class="schedule-title">Horrere Or</div><div class="schedule-reading">Eugenie Brinkema, "Horrere Or," from <em>Life-Destroying Diagrams</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">7</span><div><div class="schedule-title">Nameless + Chronosis</div><div class="schedule-reading">Grant Morrison, <em>Nameless</em> + Reza Negarestani and Robin Mackay, <em>Chronosis</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">7a</span><div><div class="schedule-title">After Too Late: The Endgame of Analysis</div><div class="schedule-reading">Nadia Bou Ali and Ray Brassier, "After Too Late: The Endgame of Analysis," from <em>Problemi International</em></div></div></div>
-          <div class="schedule-item"><span class="schedule-num">8</span><div><div class="schedule-title">The World of Tomorrow</div><div class="schedule-reading">Don Hertzfeldt, <em>The World of Tomorrow</em> (animated short film)</div></div></div>
-          <div class="schedule-item"><span class="schedule-num">8a</span><div><div class="schedule-title">Hello Dolly Well Hello Dolly: The Double and Its Theatre</div><div class="schedule-reading">Rebecca Schneider, "Hello Dolly Well Hello Dolly: The Double and Its Theatre," from <em>Psychoanalysis and Performance</em></div></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   </main>
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
-      <div class="footer-links-cell"><ul class="footer-links">
-        <li><a href="https://netadao.org">Neta DAO ↗</a></li>
-        <li><a href="/seminars.html">Seminars</a></li>
-        <li><a href="https://fork.netadao.org">Fork Journal ↗</a></li>
-        <li><a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy ↗</a></li>
-      </ul></div>
-    </div>
-    <div class="footer-bottom"><p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p><p class="footer-copy">academy.netadao.org</p></div>
-  </footer>
-  <script>
-    const h=document.querySelector('.nav-hamburger'),n=document.querySelector('.nav-links');
-  </script>
 
-  <!-- ── Nav sign-in status ── -->
+  <footer class="site-footer" data-site-footer></footer>
+
   <script type="module">
     import { initNavAccountWidget } from '/js/academy-auth.js?v=24';
+    import { submitSeminarInterest } from '/js/seminar-interest.js?v=1';
+
     initNavAccountWidget();
+
+    const form = document.getElementById('graphicInterestForm');
+    const status = document.getElementById('graphicInterestStatus');
+    const submit = form.querySelector('[type="submit"]');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const name = form.elements.name.value.trim();
+      const email = form.elements.email.value.trim().toLowerCase();
+      const originalLabel = submit.textContent;
+      submit.disabled = true;
+      submit.textContent = 'Recording…';
+      status.textContent = '';
+      try {
+        await submitSeminarInterest(name, email, 'sex-monsters-superheroes', 'Sex, Monsters, and Superheroes');
+        form.reset();
+        status.textContent = "Interest recorded. We'll let you know when enrollment opens.";
+      } catch (error) {
+        console.error(error);
+        status.textContent = 'Something went wrong — please try again.';
+      } finally {
+        submit.disabled = false;
+        submit.textContent = originalLabel;
+      }
+    });
   </script>
 </body>
 </html>

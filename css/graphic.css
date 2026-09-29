@@ -1,0 +1,633 @@
+/* The Graphic — seminar-specific presentation layer.
+   Intentionally scoped so comic/editorial gestures do not leak elsewhere. */
+.graphic-seminar-page {
+  --graphic-paper: #fbfaf6;
+  --graphic-ink: #101010;
+  --graphic-red: #cf2733;
+  --graphic-blue: #7bb7c9;
+  --graphic-gutter: var(--bg);
+  background: var(--graphic-gutter);
+}
+
+.graphic-page {
+  margin-top: 54px;
+  overflow: hidden;
+}
+
+.graphic-canvas {
+  width: min(100% - 72px, 1320px);
+  margin-inline: auto;
+  padding: 34px 0 72px;
+}
+
+.graphic-caption,
+.graphic-session-number,
+.graphic-reading-label {
+  display: inline-block;
+  width: fit-content;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: .085em;
+  text-transform: uppercase;
+}
+
+.graphic-caption {
+  padding: 4px 7px 3px;
+  border: 1px solid var(--graphic-ink);
+  background: var(--graphic-paper);
+  color: var(--graphic-ink);
+}
+
+.graphic-caption-light {
+  border-color: rgba(255,255,255,.7);
+  background: transparent;
+  color: #f7f4ed;
+}
+
+.graphic-cover {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.13fr) minmax(330px, .87fr);
+  min-height: 590px;
+  border: 3px solid var(--graphic-ink);
+  background: var(--graphic-paper);
+  overflow: hidden;
+}
+
+.graphic-cover-copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  padding: clamp(34px, 4.6vw, 72px) clamp(30px, 5vw, 74px) 48px;
+}
+
+.graphic-status {
+  margin-bottom: clamp(24px, 3vw, 42px);
+  border-color: var(--graphic-red);
+  color: var(--graphic-red);
+}
+
+.graphic-title {
+  display: grid;
+  width: min(100%, 780px);
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: .82;
+  letter-spacing: -.035em;
+}
+
+.graphic-title > span { display: block; }
+.graphic-title-sex {
+  width: fit-content;
+  font-size: clamp(68px, 8.2vw, 126px);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  text-transform: none;
+  line-height: .72;
+}
+.graphic-title-monsters {
+  z-index: 1;
+  width: fit-content;
+  margin: 7px 0 0 clamp(18px, 5vw, 72px);
+  padding: 4px clamp(14px, 2vw, 26px) 7px;
+  background: var(--graphic-red);
+  color: #fff;
+  font-size: clamp(58px, 7.2vw, 106px);
+  line-height: .84;
+}
+.graphic-title-and {
+  margin: 11px 0 -4px clamp(48px, 8vw, 118px);
+  color: #55524e;
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.3vw, 19px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: .13em;
+}
+.graphic-title-superheroes {
+  margin-left: clamp(12px, 3vw, 42px);
+  font-size: clamp(72px, 9vw, 138px);
+  line-height: .79;
+  text-transform: none;
+}
+
+.graphic-subtitle {
+  margin: clamp(24px, 3vw, 40px) 0 0 clamp(4px, 2vw, 28px);
+  font-family: var(--font-mono);
+  font-size: clamp(17px, 1.8vw, 26px);
+  line-height: 1.25;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.graphic-cover-art {
+  position: relative;
+  min-height: 100%;
+  border-left: 3px solid var(--graphic-ink);
+  background-color: #efeeeb;
+  background-image: url('/assets/sex-monsters-superheroes.webp');
+  background-repeat: no-repeat;
+  background-size: 164% auto;
+  background-position: center 16%;
+  isolation: isolate;
+}
+
+/* This opaque lower field deliberately masks the historical poster's body,
+   dates, registration, URL and schedule. Only the cover/title field survives. */
+.graphic-cover-art::after {
+  position: absolute;
+  inset: 67% 0 0;
+  z-index: 1;
+  border-top: 3px solid var(--graphic-ink);
+  background:
+    linear-gradient(145deg, transparent 0 43%, var(--graphic-paper) 43% 100%),
+    var(--graphic-paper);
+  content: '';
+}
+
+.graphic-cover-art::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(251,250,246,.05), transparent 18% 82%, rgba(251,250,246,.05));
+  content: '';
+  pointer-events: none;
+}
+
+.graphic-cover-art-label {
+  position: absolute;
+  right: 20px;
+  bottom: 23px;
+  z-index: 2;
+  padding: 3px 6px;
+  border: 1px solid #77716a;
+  background: var(--graphic-paper);
+  color: #6a655f;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.graphic-mark {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.graphic-mark-cover {
+  position: absolute;
+  right: clamp(24px, 3vw, 48px);
+  bottom: 36px;
+  width: clamp(118px, 14vw, 190px);
+  color: var(--graphic-red);
+  transform: rotate(-7deg);
+}
+
+.graphic-description {
+  padding: clamp(58px, 6vw, 86px) 0;
+}
+.graphic-spread-heading {
+  display: grid;
+  grid-template-columns: minmax(150px, .28fr) minmax(0, .72fr);
+  align-items: end;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+.graphic-spread-heading h2,
+.graphic-syllabus-heading h2,
+.graphic-interest h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -.025em;
+}
+.graphic-spread-heading h2 {
+  max-width: 880px;
+  font-size: clamp(42px, 5.4vw, 76px);
+  line-height: .92;
+}
+
+.graphic-description-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(16px, 1.9vw, 26px);
+  align-items: start;
+}
+.graphic-panel {
+  background: var(--graphic-paper);
+  border: 2px solid var(--graphic-ink);
+  padding: clamp(25px, 3.1vw, 42px);
+}
+.graphic-panel p {
+  margin: 0;
+  color: #282725;
+  font-size: clamp(16px, 1.45vw, 19px);
+  line-height: 1.72;
+}
+.graphic-panel-lead {
+  grid-column: 1 / span 7;
+  border-top-width: 7px;
+}
+.graphic-panel-lead p {
+  font-size: clamp(19px, 1.8vw, 25px);
+  line-height: 1.57;
+}
+.graphic-panel-secondary {
+  grid-column: 8 / -1;
+  margin-top: 52px;
+  border-right-width: 7px;
+}
+.graphic-panel-questions {
+  grid-column: 3 / span 8;
+  margin-top: -8px;
+  border-bottom-width: 7px;
+}
+
+.graphic-structure {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(250px, .7fr) minmax(0, 1.3fr);
+  gap: clamp(34px, 5vw, 78px);
+  padding: clamp(38px, 4.5vw, 64px);
+  border: 3px solid var(--graphic-ink);
+  background: var(--graphic-ink);
+  color: #f7f4ed;
+  overflow: hidden;
+}
+.graphic-structure-heading { position: relative; z-index: 2; }
+.graphic-structure-heading h2 {
+  margin: 22px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 4.5vw, 66px);
+  font-weight: 900;
+  line-height: .92;
+  letter-spacing: -.025em;
+  text-transform: uppercase;
+}
+.graphic-structure-copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 22px;
+  align-content: center;
+  padding-right: clamp(0px, 3vw, 42px);
+}
+.graphic-structure-copy p {
+  margin: 0;
+  color: #d8d5cf;
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.72;
+}
+.graphic-mark-structure {
+  position: absolute;
+  right: 22px;
+  bottom: 12px;
+  z-index: 1;
+  width: min(20vw, 230px);
+  color: var(--graphic-blue);
+  opacity: .75;
+  transform: rotate(5deg);
+}
+
+.graphic-syllabus {
+  padding: clamp(70px, 7vw, 100px) 0;
+}
+.graphic-syllabus-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 22px;
+}
+.graphic-syllabus-heading h2 {
+  margin-top: 12px;
+  font-size: clamp(62px, 8vw, 116px);
+  line-height: .78;
+}
+.graphic-syllabus-heading > p {
+  max-width: 390px;
+  margin: 0 0 6px;
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.graphic-session-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+  padding: 16px;
+  border: 4px double var(--graphic-ink);
+  background: #ece9e1;
+}
+.graphic-session {
+  min-width: 0;
+  padding: 18px;
+  border: 2px solid var(--graphic-ink);
+  background: var(--graphic-paper);
+}
+.graphic-session-0 { grid-column: 1 / -1; display: grid; grid-template-columns: 120px minmax(0, .8fr) minmax(260px, 1.2fr); gap: 20px; align-items: center; border-left-width: 8px; }
+.graphic-session-1 { grid-column: span 6; }
+.graphic-session-2 { grid-column: span 6; border-top-width: 6px; }
+.graphic-session-3 { grid-column: span 7; }
+.graphic-session-4 { grid-column: span 5; }
+.graphic-session-5 { grid-column: span 5; border-left-width: 6px; }
+.graphic-session-6 { grid-column: span 7; }
+.graphic-session-7 { grid-column: span 7; border-bottom-width: 6px; }
+.graphic-session-8 { grid-column: span 5; }
+.graphic-session-number {
+  margin: 0 0 15px;
+  padding: 4px 7px 3px;
+  background: var(--graphic-ink);
+  color: #fff;
+}
+.graphic-session-0 .graphic-session-number { margin: 0; }
+.graphic-session h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 33px;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.graphic-session-note {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.graphic-reading-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  border: 1px solid var(--graphic-ink);
+}
+.graphic-reading {
+  min-width: 0;
+  padding: 16px;
+}
+.graphic-reading + .graphic-reading { border-left: 1px solid var(--graphic-ink); }
+.graphic-reading-label {
+  margin-bottom: 9px;
+  color: #5f5c57;
+}
+.graphic-reading p {
+  margin: 0;
+  color: #272624;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.graphic-reading p + p {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #d0ccc3;
+}
+.graphic-reading-grid-exception { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+.graphic-reading-critical { background: #f2efe8; }
+
+.graphic-interest {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: clamp(34px, 5vw, 74px);
+  padding: clamp(42px, 5vw, 72px);
+  border: 3px solid var(--graphic-ink);
+  border-bottom-width: 10px;
+  background: #171717;
+  color: #f7f4ed;
+}
+.graphic-interest::before {
+  position: absolute;
+  top: -18px;
+  right: clamp(30px, 7vw, 110px);
+  width: 112px;
+  height: 34px;
+  border: 2px solid var(--graphic-ink);
+  background: var(--graphic-red);
+  content: '';
+  transform: rotate(-2deg);
+}
+.graphic-interest h2 {
+  margin-top: 20px;
+  font-size: clamp(58px, 7vw, 104px);
+  line-height: .8;
+}
+.graphic-interest-copy > p:not(.graphic-policy-note) {
+  max-width: 540px;
+  margin: 28px 0 0;
+  color: #d7d3cd;
+  font-size: 17px;
+  line-height: 1.65;
+}
+.graphic-policy-note {
+  max-width: 580px;
+  margin: 24px 0 0;
+  color: #a9a49d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.graphic-policy-note a {
+  color: #f7f4ed;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.graphic-policy-note a:hover { color: #f29da4; }
+
+.graphic-interest-form {
+  align-self: center;
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: 18px 14px;
+  padding: clamp(24px, 3vw, 36px);
+  border: 2px solid #f7f4ed;
+  background: #f7f4ed;
+  color: var(--graphic-ink);
+}
+.graphic-form-field { min-width: 0; }
+.graphic-form-field label {
+  display: block;
+  margin-bottom: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.graphic-form-field label span { color: #74706a; }
+.graphic-form-field input {
+  width: 100%;
+  min-width: 0;
+  border: 2px solid var(--graphic-ink);
+  border-radius: 0;
+  background: #fff;
+  color: var(--graphic-ink);
+  padding: 12px 11px;
+  font-size: 16px;
+}
+.graphic-interest-button {
+  grid-column: 1 / -1;
+  justify-self: start;
+  border: 2px solid var(--graphic-ink);
+  border-radius: 0;
+  background: var(--graphic-red);
+  color: #fff;
+  padding: 12px 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.graphic-interest-button:hover { background: #ad1f29; }
+.graphic-interest-button:disabled { opacity: .55; cursor: wait; }
+.graphic-interest-status {
+  grid-column: 1 / -1;
+  min-height: 1.5em;
+  margin: 0;
+  color: #3c3935;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.graphic-seminar-page :is(.graphic-form-field input, .graphic-interest-button):focus-visible {
+  outline: 3px solid var(--graphic-blue) !important;
+  outline-offset: 3px;
+}
+
+@media (max-width: 1100px) {
+  .graphic-canvas { width: min(100% - 48px, 1180px); }
+  .graphic-cover { grid-template-columns: minmax(0, 1.18fr) minmax(300px, .82fr); min-height: 540px; }
+  .graphic-title-sex { font-size: clamp(62px, 7.6vw, 100px); }
+  .graphic-title-monsters { font-size: clamp(54px, 6.7vw, 90px); }
+  .graphic-title-superheroes { font-size: clamp(66px, 8.3vw, 110px); }
+  .graphic-panel-secondary { margin-top: 32px; }
+}
+
+@media (max-width: 900px) {
+  .graphic-cover { grid-template-columns: minmax(0, 1fr) 34%; min-height: 500px; }
+  .graphic-cover-copy { padding-left: 34px; padding-right: 30px; }
+  .graphic-title-monsters { margin-left: 24px; }
+  .graphic-title-and { margin-left: 58px; }
+  .graphic-title-superheroes { margin-left: 8px; }
+  .graphic-mark-cover { display: none; }
+  .graphic-spread-heading { grid-template-columns: 1fr; gap: 14px; }
+  .graphic-description-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .graphic-panel-lead, .graphic-panel-secondary, .graphic-panel-questions { grid-column: auto; margin-top: 0; }
+  .graphic-panel-questions { grid-column: 1 / -1; }
+  .graphic-structure { grid-template-columns: 1fr; gap: 28px; }
+  .graphic-structure-copy { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .graphic-syllabus-heading { align-items: start; flex-direction: column; gap: 16px; }
+  .graphic-syllabus-heading > p { max-width: 560px; }
+  .graphic-session-0 { grid-template-columns: 96px minmax(0, .75fr) minmax(220px, 1.25fr); }
+  .graphic-session-3, .graphic-session-6, .graphic-session-7 { grid-column: span 6; }
+  .graphic-session-4, .graphic-session-5, .graphic-session-8 { grid-column: span 6; }
+  .graphic-interest { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+  .graphic-canvas { width: min(100% - 28px, 620px); padding-top: 20px; padding-bottom: 48px; }
+  .graphic-cover { display: flex; min-height: 0; flex-direction: column; }
+  .graphic-cover-copy { padding: 30px 24px 38px; }
+  .graphic-status { margin-bottom: 26px; }
+  .graphic-title { width: 100%; }
+  .graphic-title-sex { font-size: clamp(58px, 21vw, 90px); }
+  .graphic-title-monsters { margin-left: 14px; font-size: clamp(50px, 17.2vw, 74px); }
+  .graphic-title-and { margin-left: 44px; }
+  .graphic-title-superheroes { margin-left: 2px; font-size: clamp(60px, 20vw, 88px); overflow-wrap: anywhere; }
+  .graphic-subtitle { margin-left: 0; font-size: 17px; }
+  .graphic-cover-art { min-height: 270px; border-left: 0; border-top: 3px solid var(--graphic-ink); background-size: 146% auto; background-position: center 13%; }
+  .graphic-cover-art::after { inset: 70% 0 0; }
+  .graphic-description { padding: 52px 0; }
+  .graphic-spread-heading h2 { font-size: 44px; }
+  .graphic-description-grid { grid-template-columns: 1fr; gap: 14px; }
+  .graphic-panel-lead, .graphic-panel-secondary, .graphic-panel-questions { grid-column: 1; }
+  .graphic-panel { padding: 24px 22px; }
+  .graphic-panel-lead p { font-size: 19px; }
+  .graphic-structure { padding: 30px 24px 38px; }
+  .graphic-structure-copy { grid-template-columns: 1fr; }
+  .graphic-mark-structure { width: 150px; opacity: .38; }
+  .graphic-syllabus { padding: 58px 0; }
+  .graphic-syllabus-heading h2 { font-size: 70px; }
+  .graphic-session-grid { display: flex; flex-direction: column; padding: 10px; gap: 10px; }
+  .graphic-session { width: 100%; }
+  .graphic-session-0 { display: block; }
+  .graphic-session-0 .graphic-session-number { margin-bottom: 12px; }
+  .graphic-session-0 h3 { margin-bottom: 10px; }
+  .graphic-reading-grid, .graphic-reading-grid-exception { grid-template-columns: 1fr; }
+  .graphic-reading + .graphic-reading { border-left: 0; border-top: 1px solid var(--graphic-ink); }
+  .graphic-interest { padding: 36px 24px 42px; }
+  .graphic-interest h2 { font-size: clamp(60px, 19vw, 82px); }
+  .graphic-interest-form { grid-template-columns: 1fr; padding: 22px; }
+  .graphic-form-field, .graphic-interest-button, .graphic-interest-status { grid-column: 1; }
+}
+
+@media (max-width: 420px) {
+  .graphic-canvas { width: calc(100% - 20px); }
+  .graphic-cover-copy { padding-left: 19px; padding-right: 19px; }
+  .graphic-title-monsters { margin-left: 5px; padding-inline: 9px; }
+  .graphic-title-and { margin-left: 34px; }
+  .graphic-title-superheroes { font-size: clamp(54px, 19vw, 75px); }
+  .graphic-cover-art { min-height: 240px; }
+  .graphic-spread-heading h2 { font-size: 39px; }
+  .graphic-structure-heading h2 { font-size: 40px; }
+  .graphic-syllabus-heading h2 { font-size: 62px; }
+  .graphic-session { padding: 14px; }
+  .graphic-reading { padding: 14px; }
+  .graphic-interest { padding-left: 18px; padding-right: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .graphic-seminar-page * { scroll-behavior: auto !important; }
+}
+
+/* Intrinsic-size guardrails for narrow viewports and high text scaling. */
+.graphic-interest-copy,
+.graphic-interest-form { min-width: 0; }
+.graphic-interest-form { width: 100%; }
+@media (max-width: 700px) {
+  .graphic-interest h2 {
+    max-width: 100%;
+    font-size: clamp(50px, 15vw, 66px);
+    letter-spacing: -.04em;
+    overflow-wrap: normal;
+  }
+}
+@media (max-width: 420px) {
+  .graphic-interest h2 { font-size: clamp(48px, 14.6vw, 58px); }
+}
+
+/* At the narrower desktop crop, keep both the old Academy header and the
+   historical body copy outside the visible poster fragment. */
+@media (min-width: 701px) and (max-width: 1100px) {
+  .graphic-cover-art { background-position: center 28%; }
+  .graphic-cover-art::after { inset: 55% 0 0; }
+}
+
+/* Long cover words must remain inside the panel even with fallback fonts
+   or aggressive browser text scaling. */
+@media (max-width: 700px) {
+  .graphic-title-monsters {
+    margin-left: 6px;
+    padding-inline: 8px;
+    font-size: clamp(42px, 12vw, 58px);
+  }
+  .graphic-title-and { margin-left: 30px; }
+  .graphic-title-superheroes {
+    margin-left: 0;
+    font-size: clamp(44px, 12.3vw, 60px);
+    overflow-wrap: normal;
+  }
+}
+@media (max-width: 420px) {
+  .graphic-title-monsters { font-size: clamp(40px, 11.8vw, 46px); }
+  .graphic-title-superheroes { font-size: clamp(40px, 11.3vw, 44px); }
+}

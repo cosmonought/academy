@@ -1132,41 +1132,24 @@
 
   <!-- ── Live chat (Firebase Realtime Database) ── -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
     import {
-      getDatabase, ref, push, remove, set, onValue, onChildAdded, query, limitToLast
+      ref, push, remove, set, onValue, onChildAdded, query, limitToLast
     } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
     import {
-      getAuth, signInAnonymously, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+      auth as academyAuth, db, onAuthStateChanged as onAcademyAuth,
+      watchDisplayName, setDisplayName, ADMIN_EMAIL, emailToKey
+    } from '/js/academy-auth.js?v=26';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyC6b9HOs3rB46PloDDvrTg8BIx0T7r5HzA",
-      authDomain: "neta-dao-cinema.firebaseapp.com",
-      databaseURL: "https://neta-dao-cinema-default-rtdb.firebaseio.com",
-      projectId: "neta-dao-cinema",
-      storageBucket: "neta-dao-cinema.firebasestorage.app",
-      messagingSenderId: "857402063474",
-      appId: "1:857402063474:web:1e3a5c9ea8625cb0a8e0eb"
-    };
+    import { staffCall } from '/js/staff-api.js';
 
-    // Named explicitly ('cinemaChatApp') so this NEVER collides with the
-    // shared academy-auth.js module's default Firebase app on this page.
-    // Two initializeApp() calls targeting the same default app slot throws
-    // "Firebase App named '[DEFAULT]' already exists" and can corrupt the
-    // real signed-in user's session — this keeps anonymous chat auth fully
-    // isolated from real account authentication.
-    const app = initializeApp(firebaseConfig, 'cinemaChatApp');
-    const db = getDatabase(app);
-    const auth = getAuth(app);
+    // Chat uses the same signed-in Academy identity as enrollment and Profile.
     const messagesRef = ref(db, 'chat/cinema/messages');
     const chatDisabledRef = ref(db, 'chat/cinema/disabled');
-
     let currentUid = null;
-    signInAnonymously(auth).catch((err) => console.error('Anonymous sign-in failed:', err));
-    onAuthStateChanged(auth, (user) => {
-      currentUid = user ? user.uid : null;
-    });
+    let chatAuthorized = false;
+    let canModerateChat = false;
+    let cinemaAuthGeneration = 0;
+    let stopWatchingEnrollment = null;
 
     const chatMessages   = document.getElementById('chatMessages');
     const chatEmpty      = document.getElementById('chatEmpty');
@@ -1256,7 +1239,12 @@
     });
     function updateChatAvailability() {
       const chatDisabledBanner = document.getElementById('chatDisabledBanner');
-      if (chatDisabled) {
+      if (!chatAuthorized) {
+        chatDisabledBanner.classList.remove('visible');
+        chatMessageInput.disabled = true;
+        chatSendBtn.disabled = true;
+        chatMessageInput.placeholder = 'Sign in with an enrolled Academy account to chat';
+      } else if (chatDisabled) {
         chatDisabledBanner.classList.add('visible');
         chatMessageInput.disabled = true;
         chatMessageInput.placeholder = 'Chat has been disabled by the host';
@@ -1276,10 +1264,6 @@
     updateChatAvailability();
 
     let displayName = '';
-    // Chat uses isolated anonymous auth for message transport, while the Academy
-    // account remains on the default app. Never use the anonymous UID for profile data.
-    const { auth: academyAuth, onAuthStateChanged: onAcademyAuth, watchDisplayName, setDisplayName } =
-      await import('/js/academy-auth.js?v=25');
     let stopWatchingName = null;
     function showNameSetup(user) {
       displayName = '';
@@ -1290,15 +1274,36 @@
       chatNameInput.value = legacy.trim().slice(0,40);
       document.getElementById('chatNameStatus').textContent = legacy
         ? 'Your previous browser name is suggested. Confirm it to use it.'
-        : user ? '' : 'You can chat as a guest; sign in to save this name to your Academy account.';
+        : user ? '' : 'Sign in with your Academy account to chat.';
     }
-    onAcademyAuth(academyAuth, user => {
+    onAcademyAuth(academyAuth, async user => {
+      const generation = ++cinemaAuthGeneration;
       stopWatchingName?.(); stopWatchingName = null;
-      if (!user?.email) {
-        const legacy = (localStorage.getItem('cinemaChatName') || '').trim();
-        if (legacy) { displayName = legacy.slice(0,40); showMessageInput(); }
-        else showNameSetup(null);
-        return;
+      stopWatchingEnrollment?.(); stopWatchingEnrollment = null;
+      currentUid = user?.email && !user.isAnonymous ? user.uid : null;
+      canModerateChat = !!currentUid && user.email === ADMIN_EMAIL && user.emailVerified;
+      chatAuthorized = canModerateChat;
+      updateHostControls();
+      updateChatAvailability();
+      if (!currentUid) { showNameSetup(null); return; }
+      if (!canModerateChat) {
+        let assigned = false;
+        try { assigned = (await staffCall('getTeachingAssignments')).includes('sex-and-or-love'); }
+        catch {} // Backend failure never grants moderation.
+        if (generation !== cinemaAuthGeneration || academyAuth.currentUser?.uid !== user.uid) return;
+        canModerateChat = assigned;
+        chatAuthorized = canModerateChat;
+        updateHostControls();
+        updateChatAvailability();
+      }
+      if (!canModerateChat) {
+        stopWatchingEnrollment = onValue(ref(db, `academyRegistrations/${emailToKey(user.email)}/sex-and-or-love`), snapshot => {
+          if (academyAuth.currentUser?.uid !== user.uid) return;
+          const registration = snapshot.val();
+          chatAuthorized = registration?.enrolled === true &&
+            (registration.accountUid === user.uid || (!registration.accountUid && user.emailVerified));
+          updateChatAvailability();
+        }, () => { if (academyAuth.currentUser?.uid === user.uid) { chatAuthorized = false; updateChatAvailability(); } });
       }
       showNameSetup(user);
       stopWatchingName = watchDisplayName(user.email, name => {
@@ -1321,7 +1326,7 @@
     async function submitName() {
       const name = chatNameInput.value.trim().slice(0, 40);
       if (!name) { document.getElementById('chatNameStatus').textContent = 'Enter a display name.'; return; }
-      if (!academyAuth.currentUser?.email) { displayName = name; localStorage.setItem('cinemaChatName', name); showMessageInput(); return; }
+      if (!currentUid) { document.getElementById('chatNameStatus').textContent = 'Sign in with your Academy account first.'; return; }
       chatNameSubmit.disabled = true;
       try { displayName = await setDisplayName(name); localStorage.removeItem('cinemaChatName'); showMessageInput(); }
       catch { document.getElementById('chatNameStatus').textContent = 'Could not save the name. Please try again.'; }
@@ -1331,7 +1336,7 @@
     chatNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitName(); });
 
     function sendMessage() {
-      if (!streamIsLive || chatDisabled) return;
+      if (!chatAuthorized || !streamIsLive || chatDisabled) return;
       const text = chatMessageInput.value.trim().slice(0, 500);
       if (!text || !displayName || !currentUid) return;
 
@@ -1355,22 +1360,33 @@
     chatSendBtn.addEventListener('click', sendMessage);
     chatMessageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-    // ── Host-only: End Screening button, revealed via secret URL parameter ──
-    // Usage: add ?host=WRxw7EwYkc40Ugb1VDx3jQ to the cinema.html URL
-    const HOST_TOKEN = 'WRxw7EwYkc40Ugb1VDx3jQ';
+    // Host controls follow Academy Admin or assigned Sex/Love instructor authority.
     const endScreeningBtn = document.getElementById('endScreeningBtn');
     const disableChatBtn = document.getElementById('disableChatBtn');
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('host') === HOST_TOKEN) {
-      endScreeningBtn.classList.add('visible');
-      disableChatBtn.classList.add('visible');
+    function updateHostControls() {
+      endScreeningBtn.classList.toggle('visible', canModerateChat);
+      disableChatBtn.classList.toggle('visible', canModerateChat);
+      window.dispatchEvent(new CustomEvent('cinemaModerator', { detail: { authorized: canModerateChat } }));
     }
-    endScreeningBtn.addEventListener('click', () => {
+    async function checkModerator() {
+      const user = academyAuth.currentUser;
+      if (!user?.email || user.isAnonymous || !canModerateChat) return false;
+      if (user.email === ADMIN_EMAIL && user.emailVerified) return true;
+      let assigned = false;
+      try { assigned = (await staffCall('getTeachingAssignments')).includes('sex-and-or-love'); }
+      catch {}
+      if (academyAuth.currentUser?.uid !== user.uid) return false;
+      canModerateChat = assigned;
+      updateHostControls();
+      if (!canModerateChat) { chatAuthorized = false; updateChatAvailability(); }
+      return canModerateChat;
+    }
+    endScreeningBtn.addEventListener('click', async () => {
+      if (!await checkModerator()) return;
       const confirmed = confirm('End the screening and permanently clear all chat messages? This cannot be undone.');
       if (!confirmed) return;
-      window.endCinemaScreeningPresentation?.();
       remove(messagesRef)
-        .then(() => { chatMessages.innerHTML = '<p class="chat-empty">No messages yet — say hello.</p>'; })
+        .then(() => { window.endCinemaScreeningPresentation?.(); chatMessages.innerHTML = '<p class="chat-empty">No messages yet — say hello.</p>'; })
         .catch((err) => { console.error('Failed to clear chat:', err); alert('Could not clear chat — check console for details.'); });
     });
 
@@ -1378,20 +1394,30 @@
       disableChatBtn.textContent = chatDisabled ? 'Re-enable Chat' : 'Disable Chat';
       disableChatBtn.classList.toggle('active', chatDisabled);
     }
-    disableChatBtn.addEventListener('click', () => {
+    disableChatBtn.addEventListener('click', async () => {
+      if (!await checkModerator()) return;
       set(chatDisabledRef, !chatDisabled)
         .catch((err) => { console.error('Failed to toggle chat:', err); alert('Could not update chat status — check console.'); });
     });
   </script>
 
   <script type="module">
-    import { initNavAccountWidget } from '/js/academy-auth.js?v=25';
+    import { initNavAccountWidget, auth, onAuthStateChanged, ADMIN_EMAIL } from '/js/academy-auth.js?v=26';
     import { watchEnrollment } from '/js/enrollment-gate.js';
     initNavAccountWidget();
-    watchEnrollment('sex-and-or-love', document.getElementById('cinemaAccessGate'), approved => {
+    let enrolled = false, moderator = false;
+    window.addEventListener('cinemaModerator', event => { moderator = event.detail.authorized === true; renderCinemaAccess(); });
+    function renderCinemaAccess() {
+      const user = auth.currentUser;
+      const approved = enrolled || moderator || (user?.email === ADMIN_EMAIL && user.emailVerified && !user.isAnonymous);
       document.getElementById('gatedCinemaContent').classList.toggle('hidden', !approved);
       document.getElementById('cinemaEntry').classList.toggle('hidden', approved);
       document.getElementById('cinemaAccessGate').classList.toggle('hidden', approved);
+    }
+    watchEnrollment('sex-and-or-love', document.getElementById('cinemaAccessGate'), approved => {
+      enrolled = approved;
+      renderCinemaAccess();
     });
+    onAuthStateChanged(auth, () => { enrolled = false; moderator = false; renderCinemaAccess(); });
   </script>
 </body></html>

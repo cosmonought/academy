@@ -162,6 +162,7 @@
   <script src="/js/site.js?v=9" defer></script>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
+<link rel="stylesheet" href="/css/staff.css">
 </head>
 <body>
 
@@ -187,6 +188,14 @@
     </div>
 
     <div id="adminApproved" class="hidden">
+      <section id="accountAssistance" class="staff-utility" hidden aria-labelledby="supportHeading">
+        <h2 id="supportHeading">Account Assistance</h2>
+        <form id="accountLookup"><label>Email address<input id="supportEmail" type="email" autocomplete="off" required maxlength="120"></label><button>Look up account</button></form>
+        <p id="supportStatus" class="staff-note" role="status"></p><div id="accountSupportResult"></div>
+        <h2>Instructor assignments</h2><p id="assignmentAccount" class="staff-note">Look up an existing Auth account before granting teaching access.</p>
+        <form id="instructorAssignment"><label>Seminar<select id="assignSeminar"></select></label><button id="assignInstructor" disabled>Grant teaching access</button></form>
+        <p id="assignmentStatus" class="staff-note" role="status"></p><div id="instructorList"></div>
+      </section>
 
       <div class="seminar-tabs" id="seminarTabs"></div>
       <div id="seminarPanels"></div>
@@ -222,12 +231,15 @@
     </div>
   </div>
 
+  <script type="module" src="/js/admin-support.js"></script>
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       getAllRegistrations, approveRegistration, revokeRegistration, setAttendance,
       getAllInterestSignups, getAllEvaluations, setInstructorEvaluation, ADMIN_EMAIL, SEMINAR_TITLES, ATTENDANCE_EVENTS, attendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES
-    } from '/js/academy-auth.js?v=25';
+    } from '/js/academy-auth.js?v=26';
+
+    import { staffCall, staffError } from '/js/staff-api.js';
 
     const adminSignedOut     = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
@@ -346,44 +358,53 @@
           <td>${escapeHtml(reg.email || '')}</td>
           <td>${escapeHtml(reg.xHandle || '')}</td>
           <td>${escapeHtml(reg.reason || '—')}</td>
-          <td><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Enrolled' : 'Pending'}</span></td>
+          <td><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Enrolled' : reg.enrolled === false ? 'Unenrolled' : 'Pending'}</span></td>
           <td></td>
         `;
         const actionCell = tr.lastElementChild;
         if (approved) {
           const btn = document.createElement('button');
           btn.className = 'revoke-btn';
-          btn.textContent = 'Revoke';
+          btn.textContent = 'Unenroll';
           btn.addEventListener('click', async () => {
-            if (!confirm(`Revoke access for ${reg.name || reg.email}? They will lose readings and screening access immediately.`)) return;
+            if (!confirm(`Unenroll ${reg.name || reg.email}? They will lose readings and screening access immediately.`)) return;
             btn.disabled = true;
-            btn.textContent = 'Revoking…';
-            await revokeRegistration(emailKey, seminarId);
-            loadRegistrations();
+            btn.textContent = 'Unenrolling…';
+            try { await revokeRegistration(emailKey, seminarId); await loadRegistrations(); }
+            catch (error) { alert(staffError(error)); btn.disabled = false; btn.textContent = 'Unenroll'; }
           });
           actionCell.appendChild(btn);
         } else {
           const btn = document.createElement('button');
           btn.className = 'approve-btn';
-          btn.textContent = 'Approve';
+          btn.textContent = 'Enroll';
           btn.addEventListener('click', async () => {
             btn.disabled = true;
-            btn.textContent = 'Approving…';
-            await approveRegistration(emailKey, seminarId, reg.email, reg.name, SEMINAR_TITLES[seminarId] || seminarId);
-            loadRegistrations();
+            btn.textContent = 'Enrolling…';
+            try { await approveRegistration(emailKey, seminarId, reg.email, reg.name, SEMINAR_TITLES[seminarId] || seminarId); await loadRegistrations(); }
+            catch (error) { alert(staffError(error)); btn.disabled = false; btn.textContent = 'Enroll'; }
           });
           actionCell.appendChild(btn);
         }
+        const deletion = document.createElement('button');
+        deletion.className = 'revoke-btn'; deletion.textContent = 'Delete registration';
+        deletion.addEventListener('click', async () => {
+          if (!confirm(`Permanently delete ${reg.name || reg.email}’s registration (${reg.email || emailKey}) for ${SEMINAR_TITLES[seminarId] || seminarId}? This removes this seminar’s attendance and evaluation. This cannot be undone. Their account, other registrations, and interests are preserved.`)) return;
+          deletion.disabled = true;
+          try { await staffCall('adminDeleteRegistration', { emailKey, seminarId, confirm: `${emailKey}/${seminarId}` }); await loadRegistrations(); }
+          catch (error) { alert(staffError(error)); deletion.disabled = false; }
+        });
+        actionCell.appendChild(deletion);
         tbody.appendChild(tr);
       }
 
-      // ── Attendance matrix (enrolled participants only) ──
+      // ── Attendance matrix (global administrative corrections) ──
       const wrap = document.getElementById(`attendanceWrap-${seminarId}`);
-      const enrolledRows = rows.filter(r => isApproved(r.reg.enrolled));
+      const enrolledRows = rows; // Admin can correct history even after unenrollment.
       const sessions = ATTENDANCE_EVENTS[seminarId] || [];
 
       if (enrolledRows.length === 0) {
-        wrap.innerHTML = '<p class="attendance-empty">No enrolled participants yet.</p>';
+        wrap.innerHTML = '<p class="attendance-empty">No registrations yet.</p>';
         renderEvaluations(seminarId, enrolledRows);
         return;
       }
@@ -462,7 +483,7 @@
         const form = document.createElement('form');
         form.style.cssText = 'border-top:1px solid var(--rule-thin); padding:14px 0; display:flex; flex-wrap:wrap; gap:10px; align-items:end;';
         form.innerHTML = `<strong>${escapeHtml(reg.name || reg.email)}</strong><span>${escapeHtml(reg.email)}</span><span>Requested: ${escapeHtml(EVALUATION_FORMS[evaluation.request?.form] || '—')}</span>
-          <label>State <select name="state"><option value="agreed">Agreed / in progress</option><option value="completed">Completed</option></select></label>
+          <label>State <select name="state"><option value="agreed">Agreed</option><option value="in-progress">In progress</option><option value="completed">Completed</option></select></label>
           <label>Agreed form <select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join('')}</select></label>
           <label>Outcome <select name="outcome"><option value="">Pending</option>${Object.entries(EVALUATION_OUTCOMES).map(([key,label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join('')}</select></label>
           <label>Instructor feedback <textarea name="feedback" rows="3" style="width:min(430px,80vw)"></textarea></label><button type="submit">Save evaluation</button><span role="status"></span>`;

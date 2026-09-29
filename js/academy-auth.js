@@ -167,11 +167,20 @@ export async function createPasswordAccount(email, password) {
     throw Object.assign(new Error('Signup not enabled'), { code: 'academy/signup-unavailable' });
   }
   if (ready.val() !== true) throw Object.assign(new Error('Signup not enabled'), { code: 'academy/signup-unavailable' });
-  return createUserWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+  const credential = await createUserWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+  await recordPasswordAvailability(credential.user);
+  return credential;
+}
+
+async function recordPasswordAvailability(user) {
+  try { await set(ref(db, `accountMeta/${emailToKey(user.email)}/hasPassword`), true); }
+  catch (error) { console.warn('Password metadata could not be recorded.', error.code); }
 }
 
 export async function signInWithPassword(email, password) {
-  return signInWithEmailAndPassword(auth, email.trim(), password);
+  const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+  await recordPasswordAvailability(credential.user);
+  return credential;
 }
 
 export function checkPasswordReset(code) { return verifyPasswordResetCode(auth, code); }
@@ -342,9 +351,11 @@ export async function getAllRegistrations() {
 // just for the email's wording — pass the human-readable name, e.g.
 // "Sex, and/or Love" rather than the raw seminarId.
 export async function approveRegistration(emailKey, seminarId, participantEmail, participantName, seminarTitle) {
-  await update(ref(db, `academyRegistrations/${emailKey}/${seminarId}`), {
-    enrolled: true
-  });
+  const { staffCall } = await import('./staff-api.js');
+  const result = await staffCall('staffSetEnrollment', { emailKey, seminarId, enrolled: true });
+  if (!result.changed) return;
+  participantEmail = result.email;
+  participantName = result.name;
   if (participantEmail) {
     sendNotificationEmail(
       participantEmail,
@@ -360,9 +371,8 @@ export async function approveRegistration(emailKey, seminarId, participantEmail,
 // the registration record itself, so their name/handle/reason/history
 // stays visible in the admin list, and they can be re-approved later.
 export async function revokeRegistration(emailKey, seminarId) {
-  await update(ref(db, `academyRegistrations/${emailKey}/${seminarId}`), {
-    enrolled: false
-  });
+  const { staffCall } = await import('./staff-api.js');
+  await staffCall('staffSetEnrollment', { emailKey, seminarId, enrolled: false });
 }
 
 // ── Participant record ──
@@ -382,7 +392,8 @@ export const SEMINAR_COMPLETED = {
 };
 export async function setAttendance(emailKey, seminarId, eventKey, attended) {
   if (!ATTENDANCE_EVENTS[seminarId]?.some(event => event.key === eventKey)) throw new Error('Unknown attendance event.');
-  await set(ref(db, `academyRegistrations/${emailKey}/${seminarId}/attendance/${eventKey}`), attended);
+  const { staffCall } = await import('./staff-api.js');
+  await staffCall('staffSetAttendance', { emailKey, seminarId, eventKey, attended });
 }
 export const computeAttendance = attendanceRecord;
 
@@ -421,7 +432,8 @@ export async function getAllEvaluations() {
   return snap.val() || {};
 }
 export async function setInstructorEvaluation(emailKey, seminarId, record) {
-  await set(ref(db, `evaluations/${emailKey}/${seminarId}/instructor`), record);
+  const { staffCall } = await import('./staff-api.js');
+  await staffCall('staffSetEvaluation', { emailKey, seminarId, record });
 }
 export async function getOwnSeminarInterests(email) {
   const seminarId = 'sex-monsters-superheroes';

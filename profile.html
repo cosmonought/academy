@@ -46,6 +46,9 @@
   <script src="/js/site.js?v=9" defer></script>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
+<link rel="stylesheet" href="/css/staff.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>if (window.emailjs) emailjs.init({ publicKey: 'qWT4IiYYkiSwREKOd' });</script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -98,13 +101,18 @@
       <h1 class="profile-title">Your Profile</h1>
       <div class="profile-identity"><strong id="profileDisplayName">Display name not set</strong><span id="profileEmailLine"></span></div>
       <p id="rolloutCheck" class="profile-note" role="status" hidden></p>
+      <p id="teachingAvailability" class="profile-note" role="status"></p>
+      <div id="teachingModes" class="staff-modes" hidden role="group" aria-label="Profile mode"><button id="attendingMode" aria-pressed="true" aria-controls="attendingView">Attending</button><button id="teachingMode" aria-pressed="false" aria-controls="teachingView">Teaching</button></div>
+      <div id="attendingView">
       <section id="profileAttention" class="record-section hidden" aria-labelledby="attentionHeading"><h2 id="attentionHeading">Needs your attention</h2><div id="attentionRows"></div></section>
       <section class="record-section" aria-labelledby="seminarHeading"><h2 id="seminarHeading">Your seminars</h2><div id="profileRegistrationsList"></div><p id="profileNoRegistration" class="profile-note hidden">You aren't enrolled in any seminars yet. <a href="/seminars.html">Browse seminars →</a></p></section>
       <section id="profileInterests" class="record-section hidden" aria-labelledby="interestsHeading"><h2 id="interestsHeading">Forthcoming / interests</h2><div id="interestRows"></div></section>
+      </div>
+      <section id="teachingView" class="staff-utility" hidden aria-labelledby="teachingHeading"><label id="teachingSelector" hidden>Seminar<select id="teachingSeminar"></select></label><h2 id="teachingHeading">Teaching</h2><p id="teachingSummary" class="staff-note"></p><button id="teachingRefresh">Refresh assignments and roster</button><p id="teachingStatus" role="status" class="staff-note"></p><div id="teachingBody"></div></section>
       <section class="record-section" aria-labelledby="accountHeading"><h2 id="accountHeading">Account</h2>
         <div class="account-row"><span>Display name</span><div><span id="accountDisplayName">Not set</span><form id="displayNameForm" class="record-form"><label for="displayNameInput">Change display name<input id="displayNameInput" autocomplete="nickname" maxlength="40" required></label><button type="submit">Save name</button></form><p id="displayNameStatus" class="profile-note" role="status" aria-live="polite"></p></div></div>
         <div class="account-row"><span>Email</span><span id="accountEmail"></span></div>
-        <div class="account-row"><span>Password</span><a href="/set-password.html">Set or change password →</a></div>
+        <div class="account-row" id="profilePasswordRow"><span>Password</span><a href="/set-password.html">Set or change password →</a></div>
         <div class="account-row"><span></span><button class="quiet-btn" id="profileSignOutBtn" type="button">Sign out</button></div>
       </section>
       <p id="profileError" class="profile-note" role="alert"></p>
@@ -112,13 +120,14 @@
   </main>
   <footer class="site-footer" data-site-footer></footer>
 
+  <script type="module" src="/js/profile-teaching.js"></script>
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, initNavAccountWidget,
       getRegistrations, getDisplayName, setDisplayName, getEvaluation, requestEvaluation,
       getOwnSeminarInterests, SEMINAR_TITLES, SEMINAR_COMPLETED, attendanceRecord,
       EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES
-    } from '/js/academy-auth.js?v=25';
+    } from '/js/academy-auth.js?v=26';
     import { seminarPages } from '/js/account-flow.js?v=3';
     initNavAccountWidget();
     const $ = id => document.getElementById(id);
@@ -131,7 +140,7 @@
       const request = evaluation.request;
       const instructor = evaluation.instructor;
       if (instructor?.state === 'completed') return `<div class="record-label">Evaluation · ${escape(EVALUATION_OUTCOMES[instructor.outcome] || 'Completed')}</div><p>Form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p><p class="record-label">Instructor feedback</p><p class="feedback">${escape(instructor.feedback || 'Feedback pending.')}</p>`;
-      if (instructor?.state === 'agreed') return `<div class="record-label">Evaluation · In progress</div><p>Agreed form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p>`;
+      if (['agreed','in-progress'].includes(instructor?.state)) return `<div class="record-label">Evaluation · ${instructor.state === 'agreed' ? 'Agreed' : 'In progress'}</div><p>Agreed form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p>`;
       if (request) return `<div class="record-label">Evaluation · Requested</div><p>Preferred form: ${escape(EVALUATION_FORMS[request.form] || request.form)}. Awaiting arrangement.</p>`;
       return `<div class="record-label">Evaluation · Not requested</div><p>Optional evaluated work is available by arrangement.</p><form class="record-form evaluation-request" data-seminar="${escape(seminarId)}"><label>Preferred form<select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escape(label)}</option>`).join('')}</select></label><button type="submit">Request evaluation →</button></form><p class="profile-note">Papers may be sent to academy@netadao.org; other forms are arranged with the instructor.</p>`;
     }
@@ -147,6 +156,8 @@
       if (!user?.email) return;
       $('profileEmailLine').textContent = user.email;
       $('accountEmail').textContent = user.email;
+      const googleOnly = user.providerData.some(p => p.providerId === 'google.com') && !user.providerData.some(p => p.providerId === 'password');
+      $('profilePasswordRow').hidden = googleOnly;
       if (new URLSearchParams(location.search).get('rollout') === '1') {
         const check = $('rolloutCheck'); check.hidden = false; check.textContent = 'Checking administrator email verification…';
         try { const token = await user.getIdTokenResult(true); if (auth.currentUser?.uid !== user.uid) return;

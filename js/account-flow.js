@@ -44,6 +44,9 @@ export function passwordIssue(password, confirmation) {
 export function accountError(error) {
   switch (error?.code) {
     case 'academy/invalid-password': return error.message;
+    case 'auth/account-exists-with-different-credential': return 'This email already uses another sign-in method. Use your existing email and password, or choose Set or reset a password. Accounts have not been linked.';
+    case 'auth/popup-closed-by-user': return 'Google sign-in was cancelled. You can try again.';
+    case 'auth/popup-blocked': return 'Allow the Google sign-in popup, then try again.';
     case 'auth/invalid-email': return 'Enter a valid email address.';
     case 'auth/invalid-credential':
     case 'auth/wrong-password':

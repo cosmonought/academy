@@ -1,4 +1,25 @@
 {
-  "database": { "rules": "firebase-rules-latest.json" },
-  "emulators": { "database": { "host": "127.0.0.1", "port": 9005 }, "auth": { "host": "127.0.0.1", "port": 9098 }, "ui": { "enabled": false } }
+  "database": {
+    "rules": "firebase-rules-latest.json"
+  },
+  "emulators": {
+    "database": {
+      "host": "127.0.0.1",
+      "port": 9005
+    },
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9098
+    },
+    "ui": {
+      "enabled": false
+    }
+  },
+  "functions": {
+    "source": "functions",
+    "codebase": "academy-staff",
+    "predeploy": [
+      "node scripts/sync-staff-model.mjs"
+    ]
+  }
 }

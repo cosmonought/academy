@@ -51,6 +51,8 @@
   <p id="accountContext" class="account-context" hidden></p>
   <div id="accountLoading" role="status">Checking your account…</div>
   <div id="accountGuest" hidden>
+    <button id="googleSignIn" class="btn" type="button">Continue with Google</button>
+    <p id="googleStatus" role="status" aria-live="polite"></p>
     <nav class="account-modes" aria-label="Account options"><a href="?view=signin" data-view="signin">Sign in</a><a href="?view=create" data-view="create">Create an account</a></nav>
     <section data-panel="signin" hidden><h2>Welcome back</h2><p>Use your email address and password.</p>
       <form id="signInForm"><label for="signInEmail">Email address</label><input id="signInEmail" name="email" type="email" autocomplete="username" required maxlength="120">
@@ -98,4 +100,4 @@
     <button id="accountSignOut" class="toggle-link" type="button">Sign out / use a different account</button>
   </section>
   <noscript><p>Account forms need JavaScript. Enable it or contact academy@netadao.org for help.</p></noscript>
-</main><script type="module" src="/js/account-page.js?v=4"></script></body></html>
+</main><script type="module" src="/js/account-page.js?v=5"></script></body></html>

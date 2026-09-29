@@ -288,3 +288,40 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
 .directory-intro { padding: 48px; border-bottom: var(--panel-border); }
 @media (max-width: 760px) { .directory-intro { padding: 36px 24px; } }
+
+
+/* Shared Academy Seminar Policies dialog */
+.academy-policy-dialog {
+  width: min(760px, calc(100vw - 32px));
+  max-height: min(82vh, 860px);
+  padding: 0;
+  border: 1px solid #242424;
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 28px 90px rgba(0,0,0,.36);
+}
+.academy-policy-dialog::backdrop { background: rgba(8,8,8,.72); backdrop-filter: blur(2px); }
+.academy-policy-dialog-shell { display: grid; grid-template-rows: auto minmax(0,1fr) auto; max-height: inherit; }
+.academy-policy-dialog-header {
+  display:flex; align-items:flex-start; justify-content:space-between; gap:24px;
+  padding:22px 24px 18px; border-bottom:1px solid var(--rule-thin);
+}
+.academy-policy-dialog-kicker { margin:0 0 4px; font:10px var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-dim); }
+.academy-policy-dialog-header h2 { margin:0; font:900 clamp(30px,5vw,44px)/.95 var(--font-display); text-transform:uppercase; }
+.academy-policy-dialog-close {
+  min-height:38px; padding:7px 11px; border:1px solid var(--ink); background:transparent; color:var(--ink);
+  font:10px var(--font-mono); text-transform:uppercase; letter-spacing:.06em; cursor:pointer;
+}
+.academy-policy-dialog-body { overflow:auto; padding:22px 24px 28px; }
+.academy-policy-dialog-body .policy-item { padding:16px 0; border-top:1px solid var(--rule-thin); }
+.academy-policy-dialog-body .policy-label { display:block; margin-bottom:5px; font:10px var(--font-mono); letter-spacing:.07em; text-transform:uppercase; color:var(--ink-dim); }
+.academy-policy-dialog-body .policy-text { margin:0; font-size:14px; line-height:1.7; }
+.academy-policy-dialog-body .policy-version { margin:0 0 12px; font:10px var(--font-mono); color:var(--ink-dim); }
+.academy-policy-dialog-footer { padding:14px 24px 18px; border-top:1px solid var(--rule-thin); font-size:12px; }
+.academy-policy-dialog :focus-visible { outline:3px solid var(--blue); outline-offset:3px; }
+
+@media (max-width:600px) {
+  .academy-policy-dialog { width:calc(100vw - 18px); max-height:88vh; }
+  .academy-policy-dialog-header, .academy-policy-dialog-body, .academy-policy-dialog-footer { padding-left:18px; padding-right:18px; }
+}

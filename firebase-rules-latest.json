@@ -35,7 +35,7 @@
       "$emailKey": {
         "$seminarId": {
           ".read": "(auth != null && auth.token.email_verified === true && auth.token.email === 'academy@netadao.org') || (auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && (!data.exists() || (auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && (data.child('accountUid').val() === auth.uid || (!data.child('accountUid').exists() && auth.token.email_verified === true)))))",
-          ".validate": "newData.hasChildren(['email','name','xHandle','reason','requestedAt']) && ($seminarId !== 'sex-monsters-superheroes' || (newData.child('policyAccepted').val() === true && newData.child('policyVersion').val() === '2026-09-29' && newData.child('policyAcceptedAt').isNumber()))",
+          ".validate": "newData.hasChildren(['email','name','xHandle','reason','requestedAt']) && ($seminarId !== 'sex-monsters-superheroes' || (newData.child('policyAccepted').val() === true && newData.child('policyVersion').val() === '2026-09-29.2' && newData.child('policyAcceptedAt').isNumber()))",
           "email": {
             ".write": "auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && !data.parent().exists() && newData.parent().child('accountUid').val() === auth.uid",
             ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120 && newData.val() === auth.token.email.toLowerCase()"

@@ -121,3 +121,39 @@ test('The Graphic enrollment requires current policy assent while existing semin
     email: 'second@example.org', name: 'Second', xHandle: '@second', reason: 'Study', requestedAt: 1, accountUid: 'second-account'
   }));
 });
+
+test('display name is account-owned and bounded', async () => {
+  const owner = user('owner');
+  await assertSucceeds(set(ref(owner, 'accountMeta/participant@example,org/displayName'), 'Jacques'));
+  await assertFails(set(ref(owner, 'accountMeta/participant@example,org/displayName'), ' padded '));
+  await assertFails(set(ref(owner, 'accountMeta/participant@example,org/displayName'), 'x'.repeat(41)));
+  await assertFails(set(ref(user('other', false, 'different@example.org'), 'accountMeta/participant@example,org/displayName'), 'Intruder'));
+  await assertFails(set(ref(owner, 'accountMeta/participant@example,org/unknown'), 'value'));
+});
+
+test('participant can request Graphic evaluation but cannot write instructor outcome or attendance', async () => {
+  const graphicPath = 'academyRegistrations/participant@example,org/sex-monsters-superheroes';
+  const evalPath = 'evaluations/participant@example,org/sex-monsters-superheroes';
+  await env.withSecurityRulesDisabled(async context => set(ref(context.database(), graphicPath), { ...registration, enrolled: true, accountUid: 'owner', policyAccepted: true, policyVersion: '2026-09-29', policyAcceptedAt: 1 }));
+  const owner = user('owner');
+  await assertSucceeds(set(ref(owner, `${evalPath}/request`), { form: 'essay', requestedAt: 1, accountUid: 'owner' }));
+  await assertSucceeds(get(ref(owner, evalPath)));
+  await assertFails(set(ref(owner, `${evalPath}/instructor`), { state: 'completed', form: 'essay', outcome: 'distinction', feedback: 'Excellent.' }));
+  await assertFails(set(ref(owner, `${graphicPath}/attendance/lecture-s0`), true));
+  await assertFails(get(ref(user('other', true, 'different@example.org'), evalPath)));
+  const admin = user('admin', true, 'academy@netadao.org');
+  await assertSucceeds(set(ref(admin, `${evalPath}/instructor`), { state: 'completed', form: 'essay', outcome: 'merit', feedback: 'Detailed reading.' }));
+  await assertFails(set(ref(owner, `${evalPath}/request`), { form: 'presentation', requestedAt: 2, accountUid: 'owner' }));
+  await assertSucceeds(set(ref(admin, `${graphicPath}/attendance/lecture-s0`), true));
+});
+
+test('interest receipt is visible only to matching account, without exposing anonymous interest list', async () => {
+  const receipt = 'accountSeminarInterests/participant@example,org/sex-monsters-superheroes';
+  const owner = user('owner');
+  await assertSucceeds(set(ref(owner, receipt), { email, accountUid: 'owner', submittedAt: 1 }));
+  await assertSucceeds(get(ref(owner, receipt)));
+  await assertFails(get(ref(owner, 'accountSeminarInterests/participant@example,org')));
+  await assertFails(get(ref(owner, 'seminarInterests')));
+  await assertFails(get(ref(user('other', true, 'different@example.org'), receipt)));
+  await assertFails(set(ref(owner, receipt), { email, accountUid: 'owner', submittedAt: 2 }));
+});

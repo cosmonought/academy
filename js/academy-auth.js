@@ -10,7 +10,7 @@ import {
   onAuthStateChanged as _onAuthStateChanged, signOut as _signOut
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import {
-  getDatabase, ref, get, update, set, push
+  getDatabase, ref, get, update, set, push, onValue
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -365,64 +365,68 @@ export async function revokeRegistration(emailKey, seminarId) {
   });
 }
 
-// ── Session lists + attendance ──
-// Single source of truth for each seminar's session list, shared between
-// admin.html (tracking) and profile.html (the participant-facing X/Y
-// transcript). Keys are simple ('s0', 's1'...) since Firebase keys can't
-// contain '.' — the display label carries the real session numbering
-// (e.g. "1.0", "2.X").
+// ── Participant record ──
+import { ATTENDANCE_EVENTS, attendanceRecord } from './academy-record.js';
+export { ATTENDANCE_EVENTS, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES, attendanceRecord } from './academy-record.js';
 export const SEMINAR_TITLES = {
   'sex-and-or-love': 'Sex, and/or Love',
   'coining-reason-unit-1': 'Coining Reason — Unit I',
-  'coining-reason-unit-2': 'Coining Reason — Unit II'
+  'coining-reason-unit-2': 'Coining Reason — Unit II',
+  'sex-monsters-superheroes': 'Sex, Monsters, and Superheroes'
 };
-
-// Seminars that have fully concluded — every session already happened,
-// nothing left to attend. This is about the SEMINAR's own lifecycle,
-// not any individual participant's attendance count, so it's a flat
-// per-seminar flag rather than derived from attendance data.
 export const SEMINAR_COMPLETED = {
   'sex-and-or-love': false,
   'coining-reason-unit-1': true,
-  'coining-reason-unit-2': false
+  'coining-reason-unit-2': false,
+  'sex-monsters-superheroes': false
 };
+export async function setAttendance(emailKey, seminarId, eventKey, attended) {
+  if (!ATTENDANCE_EVENTS[seminarId]?.some(event => event.key === eventKey)) throw new Error('Unknown attendance event.');
+  await set(ref(db, `academyRegistrations/${emailKey}/${seminarId}/attendance/${eventKey}`), attended);
+}
+export const computeAttendance = attendanceRecord;
 
-export const SEMINAR_SESSIONS = {
-  'sex-and-or-love': [
-    { key: 's0', label: '0' }, { key: 's1', label: '1' }, { key: 's2', label: '2' }, { key: 's3', label: '3' },
-    { key: 's4', label: '4' }, { key: 's5', label: '5' }, { key: 's6', label: '6' }, { key: 's7', label: '7' }, { key: 's8', label: '8' }
-  ],
-  'coining-reason-unit-1': [
-    { key: 's0', label: '1.0' }, { key: 's1', label: '1.1' }, { key: 's2', label: '1.2' }, { key: 's3', label: '1.3' },
-    { key: 's4', label: '1.4' }, { key: 's5', label: '1.5' }, { key: 's6', label: '1.6' }, { key: 's7', label: '1.7' },
-    { key: 's8', label: '1.8' }
-  ],
-  'coining-reason-unit-2': [
-    { key: 's0', label: '2.0' }, { key: 's1', label: '2.1' }, { key: 's2', label: '2.2' }, { key: 's3', label: '2.3' },
-    { key: 's4', label: '2.4' }, { key: 's5', label: '2.5' }, { key: 's6', label: '2.6' }, { key: 's7', label: '2.7' },
-    { key: 's8', label: '2.8' }, { key: 's9', label: '2.9' }, { key: 's10', label: '2.X' }, { key: 's11', label: '2.Xb' },
-    { key: 's12', label: '2.10' }, { key: 's13', label: '2.11' }, { key: 's14', label: '2.12' }, { key: 's15', label: '2.13' },
-    { key: 's16', label: '2.14' }, { key: 's17', label: '2.15' }, { key: 's18', label: '2.16' }
-  ]
-};
-
-// Admin-only: marks a single session attended/not-attended for one
-// person's enrollment in a seminar.
-export async function setAttendance(emailKey, seminarId, sessionKey, attended) {
-  await update(ref(db, `academyRegistrations/${emailKey}/${seminarId}/attendance`), {
-    [sessionKey]: attended
+export async function getDisplayName(email) {
+  const key = emailToKey(email);
+  if (!key) return '';
+  const snap = await get(ref(db, `accountMeta/${key}/displayName`));
+  return snap.exists() ? snap.val() : '';
+}
+export function watchDisplayName(email, onName, onError) {
+  const key = emailToKey(email);
+  if (!key) throw new Error('Account email is required.');
+  return onValue(ref(db, `accountMeta/${key}/displayName`), snapshot => onName(snapshot.val() || ''), onError);
+}
+export async function setDisplayName(name) {
+  const user = auth.currentUser;
+  if (!user?.email) throw new Error('Sign in to set your display name.');
+  const trimmed = String(name).trim();
+  if (!trimmed || trimmed.length > 40 || /[\x00-\x1f\x7f]/.test(trimmed)) throw new Error('Use a name of 1–40 characters.');
+  await set(ref(db, `accountMeta/${emailToKey(user.email)}/displayName`), trimmed);
+  return trimmed;
+}
+export async function getEvaluation(email, seminarId) {
+  const snap = await get(ref(db, `evaluations/${emailToKey(email)}/${seminarId}`));
+  return snap.val() || {};
+}
+export async function requestEvaluation(seminarId, form) {
+  const user = auth.currentUser;
+  if (!user?.email || !['essay','presentation','discussion','other'].includes(form)) throw new Error('Choose an evaluation form.');
+  await set(ref(db, `evaluations/${emailToKey(user.email)}/${seminarId}/request`), {
+    form, requestedAt: Date.now(), accountUid: user.uid
   });
 }
-
-// Computes { attended, total } for one seminar's registration record
-// (as returned by getRegistrations/getRegistrationForSeminar). Counts
-// only sessions defined in SEMINAR_SESSIONS, so stray/legacy keys in
-// the data never inflate the total.
-export function computeAttendance(seminarId, reg) {
-  const sessions = SEMINAR_SESSIONS[seminarId] || [];
-  const attendance = (reg && reg.attendance) || {};
-  const attended = sessions.filter(s => attendance[s.key] === true).length;
-  return { attended, total: sessions.length };
+export async function getAllEvaluations() {
+  const snap = await get(ref(db, 'evaluations'));
+  return snap.val() || {};
+}
+export async function setInstructorEvaluation(emailKey, seminarId, record) {
+  await set(ref(db, `evaluations/${emailKey}/${seminarId}/instructor`), record);
+}
+export async function getOwnSeminarInterests(email) {
+  const seminarId = 'sex-monsters-superheroes';
+  const snap = await get(ref(db, `accountSeminarInterests/${emailToKey(email)}/${seminarId}`));
+  return snap.exists() ? { [seminarId]: snap.val() } : {};
 }
 
 // ── General interest signups (homepage footer form) ──

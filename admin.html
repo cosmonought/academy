@@ -226,8 +226,8 @@
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       getAllRegistrations, approveRegistration, revokeRegistration, setAttendance,
-      getAllInterestSignups, ADMIN_EMAIL, SEMINAR_TITLES, SEMINAR_SESSIONS
-    } from '/js/academy-auth.js?v=24';
+      getAllInterestSignups, getAllEvaluations, setInstructorEvaluation, ADMIN_EMAIL, SEMINAR_TITLES, ATTENDANCE_EVENTS, attendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES
+    } from '/js/academy-auth.js?v=25';
 
     const adminSignedOut     = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
@@ -250,6 +250,7 @@
 
     const SEMINAR_IDS = Object.keys(SEMINAR_TITLES);
     let activeSeminar = SEMINAR_IDS[0];
+    let allEvaluations = {};
     let allRegistrationsFlat = []; // [{ emailKey, seminarId, reg }]
 
     // ── Build tabs + panel shells once ──
@@ -288,6 +289,7 @@
 
           <h2>Attendance</h2>
           <div class="attendance-wrap" id="attendanceWrap-${seminarId}"></div>
+          <h2>Optional evaluation</h2><div id="evaluationWrap-${seminarId}"></div>
         `;
         panelsEl.appendChild(panel);
       });
@@ -305,6 +307,7 @@
 
     async function loadRegistrations() {
       const all = await getAllRegistrations();
+      try { allEvaluations = await getAllEvaluations(); } catch (error) { console.error("Could not load evaluations", error); allEvaluations = {}; }
 
       if (!all) {
         SEMINAR_IDS.forEach(id => {
@@ -377,10 +380,11 @@
       // ── Attendance matrix (enrolled participants only) ──
       const wrap = document.getElementById(`attendanceWrap-${seminarId}`);
       const enrolledRows = rows.filter(r => isApproved(r.reg.enrolled));
-      const sessions = SEMINAR_SESSIONS[seminarId] || [];
+      const sessions = ATTENDANCE_EVENTS[seminarId] || [];
 
       if (enrolledRows.length === 0) {
         wrap.innerHTML = '<p class="attendance-empty">No enrolled participants yet.</p>';
+        renderEvaluations(seminarId, enrolledRows);
         return;
       }
 
@@ -390,7 +394,7 @@
       const thead = document.createElement('thead');
       const headRow = document.createElement('tr');
       headRow.innerHTML = '<th class="name-th">Participant</th>' +
-        sessions.map(s => `<th>${escapeHtml(s.label)}</th>`).join('') +
+        sessions.map(s => `<th title="${escapeHtml(s.type + ": " + s.label)}">${escapeHtml(s.type === "screening" ? "Film · " + s.label : s.type === "lecture" ? "Lecture · " + s.label : s.label)}</th>`).join('') +
         '<th>X / Y</th>';
       thead.appendChild(headRow);
       table.appendChild(thead);
@@ -403,6 +407,8 @@
         const nameTd = document.createElement('td');
         nameTd.className = 'name-cell';
         nameTd.textContent = reg.name || reg.email || '(unknown)';
+        const oldMarks = attendanceRecord(seminarId, reg).legacy;
+        if (oldMarks.length) { const note = document.createElement('small'); note.style.display = 'block'; note.textContent = `${oldMarks.length} legacy syllabus-unit marks (not counted)`; nameTd.append(note); }
         tr.appendChild(nameTd);
 
         sessions.forEach(s => {
@@ -410,9 +416,12 @@
           const cb = document.createElement('input');
           cb.type = 'checkbox';
           cb.checked = attendance[s.key] === true;
+          cb.setAttribute("aria-label", `${reg.name || reg.email}: ${s.type} ${s.label}`);
           cb.addEventListener('change', async () => {
-            await setAttendance(emailKey, seminarId, s.key, cb.checked);
-            totalTd.textContent = countAttendance();
+            cb.disabled = true;
+            try { await setAttendance(emailKey, seminarId, s.key, cb.checked); totalTd.textContent = countAttendance(); }
+            catch { cb.checked = !cb.checked; alert("Attendance could not be saved."); }
+            finally { cb.disabled = false; }
           });
           td.appendChild(cb);
           tr.appendChild(td);
@@ -437,6 +446,43 @@
 
       wrap.innerHTML = '';
       wrap.appendChild(table);
+      renderEvaluations(seminarId, enrolledRows);
+    }
+
+    function renderEvaluations(seminarId, rows) {
+      const wrap = document.getElementById(`evaluationWrap-${seminarId}`);
+      wrap.replaceChildren();
+      if (seminarId !== 'sex-monsters-superheroes') {
+        wrap.textContent = 'Evaluation is not configured for this seminar.';
+        return;
+      }
+      for (const { emailKey, reg } of rows) {
+        const evaluation = allEvaluations[emailKey]?.[seminarId] || {};
+        if (!evaluation.request && !evaluation.instructor) continue;
+        const form = document.createElement('form');
+        form.style.cssText = 'border-top:1px solid var(--rule-thin); padding:14px 0; display:flex; flex-wrap:wrap; gap:10px; align-items:end;';
+        form.innerHTML = `<strong>${escapeHtml(reg.name || reg.email)}</strong><span>${escapeHtml(reg.email)}</span><span>Requested: ${escapeHtml(EVALUATION_FORMS[evaluation.request?.form] || '—')}</span>
+          <label>State <select name="state"><option value="agreed">Agreed / in progress</option><option value="completed">Completed</option></select></label>
+          <label>Agreed form <select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join('')}</select></label>
+          <label>Outcome <select name="outcome"><option value="">Pending</option>${Object.entries(EVALUATION_OUTCOMES).map(([key,label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join('')}</select></label>
+          <label>Instructor feedback <textarea name="feedback" rows="3" style="width:min(430px,80vw)"></textarea></label><button type="submit">Save evaluation</button><span role="status"></span>`;
+        form.elements.state.value = evaluation.instructor?.state || 'agreed';
+        form.elements.namedItem('form').value = evaluation.instructor?.form || evaluation.request?.form || 'other';
+        form.elements.outcome.value = evaluation.instructor?.outcome || '';
+        form.elements.feedback.value = evaluation.instructor?.feedback || '';
+        form.addEventListener('submit', async event => {
+          event.preventDefault(); const status = form.querySelector('[role="status"]');
+          const state = form.elements.namedItem('state'); const workForm = form.elements.namedItem('form');
+          const outcome = form.elements.namedItem('outcome'); const feedback = form.elements.namedItem('feedback');
+          if (state.value === 'completed' && !outcome.value) { status.textContent = 'Choose an outcome for completed work.'; return; }
+          const record = { state: state.value, form: workForm.value, feedback: feedback.value };
+          if (state.value === 'completed') record.outcome = outcome.value;
+          try { await setInstructorEvaluation(emailKey, seminarId, record); status.textContent = 'Saved.'; }
+          catch { status.textContent = 'Could not save evaluation.'; }
+        });
+        wrap.append(form);
+      }
+      if (!wrap.children.length) wrap.textContent = 'No evaluation requests yet.';
     }
 
     async function loadInterestSignups() {

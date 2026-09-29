@@ -383,6 +383,11 @@
       border-top: 1px solid var(--chamber-line-soft);
     }
 
+    .chat-name-row { flex-wrap: wrap; padding: 12px 14px; gap: 8px; align-items: center; }
+    .chat-name-row .field-label, .chat-name-help { flex: 0 0 100%; margin: 0; }
+    .chat-name-help { font-size: 12px; color: #aaa; }
+    .chat-name-row .chat-input { min-width: 180px; }
+    #chatNameStatus { flex-basis: 100%; font-size: 12px; }
     .chat-input {
       flex: 1;
       min-width: 0;
@@ -826,10 +831,11 @@
         </div>
 
         <div class="chat-name-row" id="chatNameRow">
-          <label class="field-label" for="chatNameInput">Your name</label><input type="text" id="chatNameInput" class="chat-input" placeholder="Your name" maxlength="40" />
-          <button id="chatNameSubmit" class="chat-send-btn">Continue</button>
+          <label class="field-label" for="chatNameInput">Choose a chat display name</label><p class="chat-name-help">This name appears beside your Cinema chat messages.</p><input type="text" id="chatNameInput" class="chat-input" placeholder="Display name" maxlength="40" />
+          <button id="chatNameSubmit" class="chat-send-btn">Save display name</button><span id="chatNameStatus" role="status" aria-live="polite"></span>
         </div>
 
+        <div id="chatIdentity" class="hidden" style="padding:8px 14px;font-size:12px;"><span>Chatting as <strong id="chatIdentityName"></strong></span> · <a href="/profile.html#accountHeading">Change</a></div>
         <div class="chat-input-row hidden" id="chatInputRow">
           <label class="field-label" for="chatMessageInput">Message</label><input type="text" id="chatMessageInput" class="chat-input" placeholder="Chat opens once the screening is live" maxlength="500" disabled />
           <button id="chatSendBtn" class="chat-send-btn" disabled>Send</button>
@@ -1269,25 +1275,57 @@
     }
     updateChatAvailability();
 
-    let displayName = localStorage.getItem('cinemaChatName') || '';
+    let displayName = '';
+    // Chat uses isolated anonymous auth for message transport, while the Academy
+    // account remains on the default app. Never use the anonymous UID for profile data.
+    const { auth: academyAuth, onAuthStateChanged: onAcademyAuth, watchDisplayName, setDisplayName } =
+      await import('/js/academy-auth.js?v=25');
+    let stopWatchingName = null;
+    function showNameSetup(user) {
+      displayName = '';
+      chatInputRow.classList.add('hidden');
+      chatNameRow.classList.remove('hidden');
+      document.getElementById('chatIdentity').classList.add('hidden');
+      const legacy = localStorage.getItem('cinemaChatName') || '';
+      chatNameInput.value = legacy.trim().slice(0,40);
+      document.getElementById('chatNameStatus').textContent = legacy
+        ? 'Your previous browser name is suggested. Confirm it to use it.'
+        : user ? '' : 'You can chat as a guest; sign in to save this name to your Academy account.';
+    }
+    onAcademyAuth(academyAuth, user => {
+      stopWatchingName?.(); stopWatchingName = null;
+      if (!user?.email) {
+        const legacy = (localStorage.getItem('cinemaChatName') || '').trim();
+        if (legacy) { displayName = legacy.slice(0,40); showMessageInput(); }
+        else showNameSetup(null);
+        return;
+      }
+      showNameSetup(user);
+      stopWatchingName = watchDisplayName(user.email, name => {
+        if (academyAuth.currentUser?.uid !== user.uid) return;
+        if (name) { displayName = name; localStorage.removeItem('cinemaChatName'); showMessageInput(); }
+        else showNameSetup(user);
+      }, () => { document.getElementById('chatNameStatus').textContent = 'Could not load your Academy display name. Try reloading this page.'; });
+    });
     let lastSendTime = 0;
 
     function showMessageInput() {
+      const wasHidden = chatInputRow.classList.contains('hidden');
       chatNameRow.classList.add('hidden');
       chatInputRow.classList.remove('hidden');
-      chatMessageInput.focus();
+      document.getElementById('chatIdentityName').textContent = displayName;
+      document.getElementById('chatIdentity').classList.remove('hidden');
+      if (wasHidden) chatMessageInput.focus();
     }
 
-    if (displayName) {
-      showMessageInput();
-    }
-
-    function submitName() {
+    async function submitName() {
       const name = chatNameInput.value.trim().slice(0, 40);
-      if (!name) return;
-      displayName = name;
-      localStorage.setItem('cinemaChatName', name);
-      showMessageInput();
+      if (!name) { document.getElementById('chatNameStatus').textContent = 'Enter a display name.'; return; }
+      if (!academyAuth.currentUser?.email) { displayName = name; localStorage.setItem('cinemaChatName', name); showMessageInput(); return; }
+      chatNameSubmit.disabled = true;
+      try { displayName = await setDisplayName(name); localStorage.removeItem('cinemaChatName'); showMessageInput(); }
+      catch { document.getElementById('chatNameStatus').textContent = 'Could not save the name. Please try again.'; }
+      finally { chatNameSubmit.disabled = false; }
     }
     chatNameSubmit.addEventListener('click', submitName);
     chatNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitName(); });
@@ -1347,7 +1385,7 @@
   </script>
 
   <script type="module">
-    import { initNavAccountWidget } from '/js/academy-auth.js?v=24';
+    import { initNavAccountWidget } from '/js/academy-auth.js?v=25';
     import { watchEnrollment } from '/js/enrollment-gate.js';
     initNavAccountWidget();
     watchEnrollment('sex-and-or-love', document.getElementById('cinemaAccessGate'), approved => {

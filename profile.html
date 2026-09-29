@@ -13,84 +13,35 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
   <style>
-    .profile-wrap {
-      max-width: 720px;
-      margin: 86px auto 80px;
-      padding: 0 24px;
-    }
-    .profile-title {
-      font-family: var(--font-display);
-      font-size: 32px;
-      font-weight: 900;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .profile-email {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--ink-dim);
-      margin-bottom: 28px;
-    }
-    .profile-card {
-      background: var(--bg-raised);
-      border: 1px solid var(--rule-thin);
-      padding: 24px 28px;
-      margin-bottom: 20px;
-    }
-    .profile-card h3 {
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 900;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    .profile-field {
-      display: flex;
-      gap: 12px;
-      font-size: 13px;
-      padding: 6px 0;
-      border-top: 1px solid var(--rule-thin);
-    }
-    .profile-field:first-of-type { border-top: none; margin-top: 12px; }
-    .profile-field-label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--ink-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      width: 120px;
-      flex-shrink: 0;
-      padding-top: 2px;
-    }
-    .status-pill {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      text-transform: uppercase;
-      padding: 3px 9px;
-      border: 1px solid;
-      display: inline-block;
-    }
-    .status-pill.approved { border-color: #2a8a4a; color: #2a8a4a; }
-    .status-pill.pending { border-color: var(--blue); color: var(--blue); }
-    .status-pill.completed { border-color: var(--pink); color: var(--pink); }
-    .signout-btn {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      text-transform: uppercase;
-      padding: 12px 20px;
-      background: transparent;
-      color: var(--ink-dim);
-      border: 1px solid var(--rule-thin);
-      cursor: pointer;
-    }
-    .signout-btn:hover { color: var(--ink); border-color: var(--ink); }
-    .profile-note {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--ink-dim);
-      line-height: 1.7;
-    }
-    .hidden { display: none; }
+    .profile-wrap { width:min(100% - 64px, 1120px); margin:94px auto 90px; }
+    .profile-title { font:900 clamp(30px,3.4vw,46px)/1 var(--font-display); text-transform:uppercase; margin:0 0 24px; }
+    .profile-identity { border-top:2px solid var(--ink); padding:18px 0 28px; display:flex; flex-wrap:wrap; gap:8px 32px; align-items:baseline; }
+    .profile-identity strong { font:700 20px var(--font-display); }
+    .profile-identity span, .profile-note { color:var(--ink-dim); font-size:13px; line-height:1.6; }
+    .record-section { margin:25px 0 44px; }
+    .record-section h2 { font:700 13px var(--font-mono); letter-spacing:.08em; text-transform:uppercase; padding-bottom:11px; border-bottom:1px solid var(--ink); }
+    .record-row { display:grid; grid-template-columns:minmax(180px,1fr) minmax(0,2fr); gap:20px 40px; padding:23px 0; border-bottom:1px solid var(--rule-thin); }
+    .record-row h3 { font:900 clamp(20px,2.3vw,28px)/1.1 var(--font-display); text-transform:uppercase; margin:0 0 8px; }
+    .record-status, .record-label { font:11px var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-dim); }
+    .record-content { min-width:0; }
+    .record-grid { display:grid; grid-template-columns:minmax(135px, .7fr) minmax(0,1.3fr); gap:20px; }
+    .record-grid p { margin:7px 0; font-size:14px; line-height:1.55; }
+    .record-content a, .profile-note a { color:var(--blue); text-decoration:underline; text-underline-offset:4px; }
+    .record-action { display:inline-block; margin-top:14px; font-size:13px; }
+    .record-detail { margin-top:11px; font-size:13px; }
+    .record-detail summary { cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
+    .event-list { list-style:none; padding:0; margin:12px 0; }
+    .event-list li { padding:5px 0; display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid var(--rule-thin); }
+    .legacy-note { color:var(--ink-dim); line-height:1.6; }
+    .feedback { white-space:pre-wrap; overflow-wrap:anywhere; }
+    .record-form { display:flex; flex-wrap:wrap; align-items:end; gap:10px; margin-top:10px; }
+    .record-form label { display:grid; gap:6px; font:12px var(--font-mono); }
+    .record-form input, .record-form select { min-height:42px; padding:8px 10px; border:1px solid var(--rule-thin); background:var(--bg); color:var(--ink); min-width:180px; }
+    .record-form button, .quiet-btn { min-height:42px; padding:8px 15px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; font:12px var(--font-mono); }
+    .account-row { display:grid; grid-template-columns:160px 1fr; gap:20px; align-items:baseline; padding:15px 0; border-bottom:1px solid var(--rule-thin); font-size:14px; }
+    .account-row > span:first-child { font:11px var(--font-mono); text-transform:uppercase; color:var(--ink-dim); }
+    .hidden { display:none !important; }
+    @media(max-width:700px) { .profile-wrap { width:min(100% - 36px, 1120px); margin:80px auto 55px; } .record-row, .record-grid, .account-row { grid-template-columns:1fr; gap:10px; } .record-row { gap:16px; } .account-row { gap:4px; } .record-form input, .record-form select { min-width:0; max-width:100%; } .event-list li { display:block; } }
   </style>
   <script src="/js/site.js?v=9" defer></script>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
@@ -139,148 +90,118 @@
   </nav>
 
   <main id="main-content" class="profile-wrap">
-
     <div id="profileSignedOut">
-      <h1 class="profile-title">Not Signed In</h1>
-      <p class="profile-note">You need to be signed in to view your profile. <a href="/account.html" style="color:var(--blue);">Sign in →</a></p>
+      <h1 class="profile-title">Your Profile</h1>
+      <p class="profile-note">Sign in to see your Academy record. <a href="/account.html?returnTo=%2Fprofile.html">Sign in →</a></p>
     </div>
-
     <div id="profileSignedIn" class="hidden">
       <h1 class="profile-title">Your Profile</h1>
-      <p class="profile-email" id="profileEmailLine"></p>
+      <div class="profile-identity"><strong id="profileDisplayName">Display name not set</strong><span id="profileEmailLine"></span></div>
       <p id="rolloutCheck" class="profile-note" role="status" hidden></p>
-
-      <div id="profileNoRegistration" class="profile-card hidden">
-        <h3>No Registrations Found</h3>
-        <p class="profile-note" style="margin-top:8px;">You're signed in, but we don't have any seminar registrations on file for this email. <a href="/seminars.html" style="color:var(--blue);">Browse seminars →</a></p>
-      </div>
-
-      <div id="profileRegistrationsList"></div>
-
-      <p class="profile-note"><a href="/set-password.html">Set or change your password →</a></p><p class="profile-note" id="profileError" role="status"></p><button class="signout-btn" id="profileSignOutBtn">Sign Out</button>
+      <section id="profileAttention" class="record-section hidden" aria-labelledby="attentionHeading"><h2 id="attentionHeading">Needs your attention</h2><div id="attentionRows"></div></section>
+      <section class="record-section" aria-labelledby="seminarHeading"><h2 id="seminarHeading">Your seminars</h2><div id="profileRegistrationsList"></div><p id="profileNoRegistration" class="profile-note hidden">You aren't enrolled in any seminars yet. <a href="/seminars.html">Browse seminars →</a></p></section>
+      <section id="profileInterests" class="record-section hidden" aria-labelledby="interestsHeading"><h2 id="interestsHeading">Forthcoming / interests</h2><div id="interestRows"></div></section>
+      <section class="record-section" aria-labelledby="accountHeading"><h2 id="accountHeading">Account</h2>
+        <div class="account-row"><span>Display name</span><div><span id="accountDisplayName">Not set</span><form id="displayNameForm" class="record-form"><label for="displayNameInput">Change display name<input id="displayNameInput" autocomplete="nickname" maxlength="40" required></label><button type="submit">Save name</button></form><p id="displayNameStatus" class="profile-note" role="status" aria-live="polite"></p></div></div>
+        <div class="account-row"><span>Email</span><span id="accountEmail"></span></div>
+        <div class="account-row"><span>Password</span><a href="/set-password.html">Set or change password →</a></div>
+        <div class="account-row"><span></span><button class="quiet-btn" id="profileSignOutBtn" type="button">Sign out</button></div>
+      </section>
+      <p id="profileError" class="profile-note" role="alert"></p>
     </div>
-
   </main>
+  <footer class="site-footer" data-site-footer></footer>
 
   <script type="module">
     import {
-      auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
-      initNavAccountWidget, getRegistrations, SEMINAR_TITLES, SEMINAR_COMPLETED, computeAttendance
-    } from '/js/academy-auth.js?v=24';
-
+      auth, onAuthStateChanged, signOut, completeSignInIfNeeded, initNavAccountWidget,
+      getRegistrations, getDisplayName, setDisplayName, getEvaluation, requestEvaluation,
+      getOwnSeminarInterests, SEMINAR_TITLES, SEMINAR_COMPLETED, attendanceRecord,
+      EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES
+    } from '/js/academy-auth.js?v=25';
     import { seminarPages } from '/js/account-flow.js?v=3';
     initNavAccountWidget();
+    const $ = id => document.getElementById(id);
+    const escape = value => { const el = document.createElement('span'); el.textContent = String(value ?? ''); return el.innerHTML; };
+    let activeUser = null;
 
-    const profileSignedOut      = document.getElementById('profileSignedOut');
-    const profileSignedIn       = document.getElementById('profileSignedIn');
-    const profileNoRegistration = document.getElementById('profileNoRegistration');
-    const profileRegistrationsList = document.getElementById('profileRegistrationsList');
-
-    function isApproved(val) {
-      return val === true;
+    function evaluationHtml(seminarId, evaluation) {
+      if (evaluation.unavailable) return '<div class="record-label">Evaluation · Unavailable</div><p>Could not load this record. Try again later.</p>';
+      if (!EVALUATION_OFFERED[seminarId]) return '<div class="record-label">Evaluation · Not offered</div><p>Evaluated work was not offered for this seminar.</p>';
+      const request = evaluation.request;
+      const instructor = evaluation.instructor;
+      if (instructor?.state === 'completed') return `<div class="record-label">Evaluation · ${escape(EVALUATION_OUTCOMES[instructor.outcome] || 'Completed')}</div><p>Form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p><p class="record-label">Instructor feedback</p><p class="feedback">${escape(instructor.feedback || 'Feedback pending.')}</p>`;
+      if (instructor?.state === 'agreed') return `<div class="record-label">Evaluation · In progress</div><p>Agreed form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p>`;
+      if (request) return `<div class="record-label">Evaluation · Requested</div><p>Preferred form: ${escape(EVALUATION_FORMS[request.form] || request.form)}. Awaiting arrangement.</p>`;
+      return `<div class="record-label">Evaluation · Not requested</div><p>Optional evaluated work is available by arrangement.</p><form class="record-form evaluation-request" data-seminar="${escape(seminarId)}"><label>Preferred form<select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escape(label)}</option>`).join('')}</select></label><button type="submit">Request evaluation →</button></form><p class="profile-note">Papers may be sent to academy@netadao.org; other forms are arranged with the instructor.</p>`;
     }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+    function makeRow(title, status, content) {
+      const row = document.createElement('article'); row.className = 'record-row';
+      row.innerHTML = `<div><h3>${escape(title)}</h3><span class="record-status">${escape(status)}</span></div><div class="record-content">${content}</div>`;
+      return row;
     }
-
     async function refreshProfile(user) {
-      if (!user || !user.email) {
-        profileSignedOut.classList.remove('hidden');
-        profileSignedIn.classList.add('hidden');
-        return;
-      }
-
-      profileSignedOut.classList.add('hidden');
-      profileSignedIn.classList.remove('hidden');
-      document.getElementById('profileEmailLine').textContent = user.email;
+      activeUser = user;
+      $('profileSignedOut').classList.toggle('hidden', !!user?.email);
+      $('profileSignedIn').classList.toggle('hidden', !user?.email);
+      if (!user?.email) return;
+      $('profileEmailLine').textContent = user.email;
+      $('accountEmail').textContent = user.email;
       if (new URLSearchParams(location.search).get('rollout') === '1') {
-        const check = document.getElementById('rolloutCheck');
-        check.hidden = false;
-        check.textContent = 'Checking administrator email verification…';
-        try {
-          const token = await user.getIdTokenResult(true);
-          if (auth.currentUser?.uid !== user.uid) return;
-          check.textContent = token.claims.email !== 'academy@netadao.org'
-            ? 'Please sign in as academy@netadao.org to check administrator readiness.'
-            : token.claims.email_verified === true
-              ? 'Administrator email verified — ready for the updated rules.'
-              : 'Administrator email is not verified — do not publish the updated rules yet.';
-        } catch {
-          check.textContent = 'Could not check verification. Sign out, sign in again, and reopen this page.';
-        }
+        const check = $('rolloutCheck'); check.hidden = false; check.textContent = 'Checking administrator email verification…';
+        try { const token = await user.getIdTokenResult(true); if (auth.currentUser?.uid !== user.uid) return;
+          check.textContent = token.claims.email !== 'academy@netadao.org' ? 'Please sign in as academy@netadao.org to check administrator readiness.' : token.claims.email_verified === true ? 'Administrator email verified — ready for the updated rules.' : 'Administrator email is not verified — do not publish the updated rules yet.';
+        } catch { check.textContent = 'Could not check verification. Sign out, sign in again, and reopen this page.'; }
       }
-
-      let regs;
-      profileRegistrationsList.innerHTML = '';
-      profileNoRegistration.classList.add('hidden');
-      document.getElementById('profileError').textContent = '';
+      $('profileError').textContent = '';
+      let regs, name, interests;
       try { regs = await getRegistrations(user.email); }
-      catch (error) {
-        document.getElementById('profileError').textContent = 'We couldn’t load your enrollment. Please try again. If you registered before but never signed in, contact @NetaDAO_Academy from your registered X handle to connect your account. Account reference: ' + user.uid;
-        return;
-      }
+      catch (error) { $('profileError').textContent = 'We couldn’t load your Academy record. Please try again. If a prior registration is missing, contact academy@netadao.org. Account reference: ' + user.uid; return; }
+      [name, interests] = await Promise.all([getDisplayName(user.email).catch(() => ''), getOwnSeminarInterests(user.email).catch(() => ({}))]);
       if (auth.currentUser?.uid !== user.uid) return;
-      profileRegistrationsList.innerHTML = '';
-
-      if (!regs) {
-        profileNoRegistration.classList.remove('hidden');
-        return;
-      }
-
-      profileNoRegistration.classList.add('hidden');
-
-      const entries = Object.entries(regs).sort((a, b) => (b[1].requestedAt || 0) - (a[1].requestedAt || 0));
-
+      $('profileDisplayName').textContent = name || 'Display name not set';
+      $('accountDisplayName').textContent = name || 'Not set';
+      $('displayNameInput').value = name || '';
+      const list = $('profileRegistrationsList'); list.replaceChildren();
+      const attention = $('attentionRows'); attention.replaceChildren();
+      const interestRows = $('interestRows'); interestRows.replaceChildren();
+      const entries = Object.entries(regs || {}).sort((a,b) => (b[1].requestedAt || 0) - (a[1].requestedAt || 0));
       for (const [seminarId, reg] of entries) {
-        const approved = isApproved(reg.enrolled);
+        const approved = reg.enrolled === true;
         const completed = SEMINAR_COMPLETED[seminarId] === true;
-        const { attended, total } = computeAttendance(seminarId, reg);
-        const card = document.createElement('div');
-        card.className = 'profile-card';
-
-        let statusHtml;
-        if (!approved) {
-          statusHtml = `<span class="status-pill pending">Registered — Pending Enrollment</span>`;
-        } else if (completed) {
-          statusHtml = `<span class="status-pill completed">Completed</span>`;
-        } else {
-          statusHtml = `<span class="status-pill approved">Enrolled</span>`;
-        }
-
-        card.innerHTML = `
-          <h3>${escapeHtml(SEMINAR_TITLES[seminarId] || seminarId)}</h3>
-          <div class="profile-field"><span class="profile-field-label">Status</span>${statusHtml}</div>
-          ${approved ? `<div class="profile-field"><span class="profile-field-label">Progress</span><span>${attended} / ${total} sessions</span></div>` : ''}
-          ${approved ? '' : `<p class="profile-note" style="margin-top:16px;">Your registration is submitted, but enrollment is not yet complete. DM @NetaDAO_Academy from your registered X handle to finish enrolling.</p>`}
-        `;
-        if (approved && Object.hasOwn(seminarPages, seminarId)) {
-          const jump = document.createElement('a');
-          jump.className = 'btn btn-primary';
-          jump.href = seminarPages[seminarId];
-          jump.textContent = completed ? 'Open seminar archive →' : 'Open seminar →';
-          const row = document.createElement('p');
-          row.style.marginTop = '20px';
-          row.append(jump);
-          card.append(row);
-        }
-        profileRegistrationsList.appendChild(card);
+        const title = SEMINAR_TITLES[seminarId] || seminarId;
+        const record = attendanceRecord(seminarId, reg);
+        let evaluation = {};
+        if (approved) { try { evaluation = await getEvaluation(user.email, seminarId); } catch { evaluation = { unavailable: true }; } }
+        const detail = record.detail.map(event => `<li><span>${escape(event.type.toUpperCase())} — ${escape(event.label)}</span><span>${escape(event.status)}</span></li>`).join('');
+        const legacy = record.legacy.length ? `<p class="legacy-note">${record.legacy.length} historical syllabus-unit marks retained. They cannot distinguish lecture from screening and are excluded from the event count.</p><ul class="event-list">${record.legacy.map(item => `<li><span>${escape(item.label)} · legacy</span><span>${item.value ? 'marked' : 'unmarked'}</span></li>`).join('')}</ul>` : '';
+        const attendance = approved ? `<div><div class="record-label">Attendance</div><p>${record.total ? `${record.attended} / ${record.total} events` : 'Event schedule forthcoming'}</p>${record.detail.length || legacy ? `<details class="record-detail"><summary>View attendance detail</summary><ul class="event-list">${detail}</ul>${legacy}</details>` : ''}</div>` : '<div><div class="record-label">Attendance</div><p>Available after enrollment.</p></div>';
+        const action = approved && seminarPages[seminarId] ? `<a class="record-action" href="${seminarPages[seminarId]}">${completed ? 'Open archive' : 'Open seminar'} →</a>` : '';
+        const content = `<div class="record-grid">${attendance}<div>${approved ? evaluationHtml(seminarId,evaluation) : '<div class="record-label">Evaluation · Pending enrollment</div><p>Available after enrollment where offered.</p>'}</div></div>${!approved ? '<p class="profile-note">Your registration has been submitted. DM @NetaDAO_Academy from your registered X handle to finish enrollment.</p>' : ''}${action}`;
+        list.append(makeRow(title, approved ? completed ? 'Archive access' : 'Enrolled' : 'Enrollment requested', content));
+        if (!approved) attention.append(makeRow(title,'Action required','<p>Enrollment verification required.</p><a href="https://x.com/NetaDAO_Academy">View instructions →</a>'));
       }
+      $('profileNoRegistration').classList.toggle('hidden', entries.length > 0);
+      for (const [id, interest] of Object.entries(interests || {})) {
+        if (regs?.[id] || interest.accountUid !== user.uid) continue;
+        interestRows.append(makeRow(SEMINAR_TITLES[id] || id, 'Interest recorded', '<p>We’ll notify you when enrollment opens.</p>'));
+      }
+      $('profileInterests').classList.toggle('hidden', !interestRows.children.length);
+      $('profileAttention').classList.toggle('hidden', !attention.children.length);
     }
-
-    (async () => {
-      await completeSignInIfNeeded();
-      onAuthStateChanged(auth, (user) => { refreshProfile(user); });
-    })();
-
-    document.getElementById('profileSignOutBtn').addEventListener('click', () => {
-      signOut(auth);
+    $('displayNameForm').addEventListener('submit', async event => {
+      event.preventDefault(); const status = $('displayNameStatus'); status.textContent = 'Saving…';
+      try { const name = await setDisplayName($('displayNameInput').value); status.textContent = 'Display name saved.'; $('profileDisplayName').textContent = name; $('accountDisplayName').textContent = name; }
+      catch (error) { status.textContent = error.message || 'Could not save your display name.'; }
     });
-
-    const h = document.querySelector('.nav-hamburger');
-    const n = document.querySelector('.nav-links');
+    $('profileRegistrationsList').addEventListener('submit', async event => {
+      const form = event.target.closest('.evaluation-request'); if (!form) return; event.preventDefault();
+      const button = form.querySelector('button'); button.disabled = true;
+      try { await requestEvaluation(form.dataset.seminar, form.elements.namedItem('form').value); await refreshProfile(activeUser); }
+      catch { button.disabled = false; form.insertAdjacentHTML('beforeend','<span role="alert">Could not request evaluation. Please try again.</span>'); }
+    });
+    (async () => { await completeSignInIfNeeded(); onAuthStateChanged(auth, refreshProfile); })();
+    $('profileSignOutBtn').addEventListener('click', () => signOut(auth));
   </script>
 </body>
 </html>

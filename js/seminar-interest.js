@@ -1,7 +1,7 @@
 // Forthcoming-seminar interest capture.
 // Reuses the Academy Firebase app/database initialized by academy-auth.js,
 // but stores interest separately from both newsletter signups and enrollment.
-import { db } from './academy-auth.js?v=24';
+import { db, auth, emailToKey } from './academy-auth.js?v=25';
 import { ref, push, set } from 'https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js';
 
 export const GRAPHIC_SEMINAR_ID = 'sex-monsters-superheroes';
@@ -24,6 +24,19 @@ export async function submitSeminarInterest(name, email, seminarId = GRAPHIC_SEM
     notifyWhenEnrollmentOpens: true,
     submittedAt: Date.now()
   });
+
+  // A signed-in matching account can later see its own interest on Profile.
+  // Anonymous/historical submissions stay private in the admin-only inbox.
+  const user = auth.currentUser;
+  if (user?.email?.toLowerCase() === normalizedEmail) {
+    try {
+      await set(ref(db, `accountSeminarInterests/${emailToKey(normalizedEmail)}/${seminarId}`), {
+        accountUid: user.uid, email: normalizedEmail, submittedAt: Date.now()
+      });
+    } catch (error) {
+      if (error.code !== 'PERMISSION_DENIED') console.warn('Could not link seminar interest to account:', error);
+    }
+  }
 
   // Notification is supplementary: persistence above is authoritative.
   // The same EmailJS service/template used elsewhere on the Academy site is

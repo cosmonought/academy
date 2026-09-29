@@ -291,6 +291,137 @@
       </div>`;
     if (!legacyFooter) document.body.appendChild(footer);
   }
+
+
+  // ── Academy information architecture + shared seminar policies ──
+  const routeMap = new Map([
+    ['/seminar.html', '/CoiningReason/'],
+    ['/forthcoming.html', '/SexMonstersSuperheroes/']
+  ]);
+
+  const normalizeAcademyNavigation = () => {
+    document.querySelectorAll('.nav-links a[href]').forEach(link => {
+      let url;
+      try { url = new URL(link.getAttribute('href'), location.origin); } catch (_) { return; }
+
+      // Global nav stays inside the Academy. Fork remains prominently linked
+      // from the homepage journal section instead of unexpectedly exiting here.
+      if (url.hostname === 'fork.netadao.org') {
+        const topItem = link.closest('.nav-links > li');
+        if (topItem) topItem.remove();
+        return;
+      }
+
+      // Legacy generic seminar URLs remain compatibility routes only.
+      if (url.origin === location.origin && routeMap.has(url.pathname)) {
+        link.href = routeMap.get(url.pathname) + url.search + url.hash;
+      }
+
+      // There is no general archive destination yet.
+      if (link.closest('.nav-dropdown-menu') && /^archive$/i.test(link.textContent.trim())) {
+        link.closest('li')?.remove();
+        return;
+      }
+
+      if (link.closest('.nav-dropdown-menu') && /forthcoming/i.test(link.textContent)) {
+        link.textContent = 'Forthcoming: Sex, Monsters, and Superheroes';
+      }
+    });
+
+    // Standard link notation: external destinations get ↗. Internal action
+    // arrows remain authored per-CTA; ordinary internal links stay plain.
+    document.querySelectorAll('a[href]').forEach(link => {
+      if (link.classList.contains('footer-icon-link') || link.classList.contains('nav-logo')) return;
+      let url;
+      try { url = new URL(link.href, location.href); } catch (_) { return; }
+      if (!/^https?:$/.test(url.protocol) || url.origin === location.origin) return;
+      if (!link.textContent.trim() || /↗\s*$/.test(link.textContent.trim())) return;
+      const arrow = document.createElement('span');
+      arrow.setAttribute('aria-hidden', 'true');
+      arrow.textContent = ' ↗';
+      link.appendChild(arrow);
+      if (link.target === '_blank') {
+        const rel = new Set((link.rel || '').split(/\s+/).filter(Boolean));
+        rel.add('noopener'); rel.add('noreferrer');
+        link.rel = [...rel].join(' ');
+      }
+    });
+  };
+
+  normalizeAcademyNavigation();
+
+  const ACADEMY_POLICY_VERSION = '2026-09-29.2';
+  const academyPolicyMarkup = () => `
+    <p class="policy-version">Policy version ${ACADEMY_POLICY_VERSION}</p>
+    <p class="section-body">These policies apply across Academy seminars unless a specific seminar states otherwise. Expressing interest in a forthcoming seminar is not enrollment and does not create an Academy account.</p>
+    <div class="policy-item"><span class="policy-label">Registration</span><p class="policy-text">When enrollment is open, sign in to or create your Academy account, then request enrollment with the information required by that seminar. Creating an account does not itself grant seminar access.</p></div>
+    <div class="policy-item"><span class="policy-label">Enrollment</span><p class="policy-text">Enrollment requires explicit agreement to the current Academy Seminar Policies. Where a seminar uses X-handle verification, complete that verification from the handle associated with your registration. Once enrolled, access is limited to the seminar materials and activities made available to participants.</p></div>
+    <div class="policy-item"><span class="policy-label">Attendance</span><p class="policy-text">Enrollment assumes an intention to participate. A participant who does not attend any sessions, or who ceases participating without notice, may be disenrolled at the instructor's discretion.</p></div>
+    <div class="policy-item"><span class="policy-label">Participation</span><p class="policy-text">Participants are expected to engage thoughtfully with each session's materials. Specific participation requirements may vary by seminar and will be stated on that seminar's page.</p></div>
+    <div class="policy-item"><span class="policy-label">Conduct</span><p class="policy-text">Participants are expected to engage with one another, instructors, and seminar materials in good faith and with respect. Harassment, deliberate disruption, or persistently bad-faith participation may result in disenrollment.</p></div>
+    <div class="policy-item"><span class="policy-label">Non-Attribution</span><p class="policy-text">Some seminars address sensitive or disturbing material. To encourage candid study, we observe a policy of non-attribution: you may publicly discuss themes and arguments raised in a session, but should not attribute them to another participant. Learning must include margins for uncertainty, indelicacy, mistake, and dissent.</p></div>
+    <div class="policy-item"><span class="policy-label">X Spaces</span><p class="policy-text">Speaking access during live X Spaces discussion is reserved for enrolled participants unless the host opens the floor more broadly.</p></div>
+  `;
+
+  const canonicalPolicy = document.querySelector('.seminar-policy-disclosure');
+  if (canonicalPolicy) {
+    canonicalPolicy.dataset.policyVersion = ACADEMY_POLICY_VERSION;
+    const body = canonicalPolicy.querySelector('.policy-disclosure-body');
+    if (body) body.innerHTML = academyPolicyMarkup();
+    if (location.hash === '#seminar-policies' || location.hash === '#policies') canonicalPolicy.open = true;
+  }
+
+  const policyDialog = document.createElement('dialog');
+  policyDialog.className = 'academy-policy-dialog';
+  policyDialog.id = 'academyPolicyDialog';
+  policyDialog.setAttribute('aria-labelledby', 'academyPolicyDialogTitle');
+  policyDialog.innerHTML = `
+    <div class="academy-policy-dialog-shell">
+      <header class="academy-policy-dialog-header">
+        <div>
+          <p class="academy-policy-dialog-kicker">Academy-wide</p>
+          <h2 id="academyPolicyDialogTitle">Seminar Policies</h2>
+        </div>
+        <button type="button" class="academy-policy-dialog-close" aria-label="Close seminar policies">Close</button>
+      </header>
+      <div class="academy-policy-dialog-body">${academyPolicyMarkup()}</div>
+      <footer class="academy-policy-dialog-footer">
+        <a href="/seminars.html#seminar-policies">Open shareable policy page →</a>
+      </footer>
+    </div>
+  `;
+  document.body.appendChild(policyDialog);
+
+  let policyInvoker = null;
+  const openPolicyDialog = trigger => {
+    policyInvoker = trigger || document.activeElement;
+    if (typeof policyDialog.showModal === 'function') {
+      policyDialog.showModal();
+      policyDialog.querySelector('.academy-policy-dialog-close')?.focus();
+    } else {
+      location.href = '/seminars.html#seminar-policies';
+    }
+  };
+  const closePolicyDialog = () => {
+    if (policyDialog.open) policyDialog.close();
+  };
+  policyDialog.querySelector('.academy-policy-dialog-close')?.addEventListener('click', closePolicyDialog);
+  policyDialog.addEventListener('click', event => {
+    if (event.target === policyDialog) closePolicyDialog();
+  });
+  policyDialog.addEventListener('close', () => {
+    if (policyInvoker && typeof policyInvoker.focus === 'function') policyInvoker.focus();
+    policyInvoker = null;
+  });
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href], button[data-policy-dialog]');
+    if (!link) return;
+    const href = link.matches('a[href]') ? link.getAttribute('href') || '' : '';
+    if (link.hasAttribute('data-policy-dialog') || /\/seminars\.html#(?:seminar-policies|policies)$/.test(href)) {
+      event.preventDefault();
+      openPolicyDialog(link);
+    }
+  });
 })();
 
 // Time-based gathering navigation; independent of broadcast availability.

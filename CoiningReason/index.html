@@ -1061,7 +1061,17 @@
       button.addEventListener('click', () => setCoiningView(button.dataset.coiningView));
     });
     const initialCoiningHash = location.hash.slice(1);
-    setCoiningView(coiningViews.includes(initialCoiningHash) ? initialCoiningHash : 'unit2-section', false);
+    const coiningHashAliases = {
+      'unit1': 'unit1-section',
+      'unit1AccessPanel': 'unit1-section',
+      'unit2': 'unit2-section',
+      'unit2AccessPanel': 'unit2-section',
+      'roadmap': 'roadmap'
+    };
+    const initialCoiningView = coiningViews.includes(initialCoiningHash)
+      ? initialCoiningHash
+      : coiningHashAliases[initialCoiningHash] || 'unit2-section';
+    setCoiningView(initialCoiningView, false);
 
     const ROADMAP_DATA = [
     {

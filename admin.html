@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — Neta DAO Academy</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <link rel="stylesheet" href="/css/style.css?v=5" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script type="text/javascript">
@@ -123,44 +123,96 @@
     .revoke-btn:hover { background: rgba(160,72,72,0.1); }
     .revoke-btn:disabled { color: #ccc; border-color: #ccc; cursor: default; }
 
-    /* ── Attendance matrix ── */
-    .attendance-wrap { overflow-x: auto; margin-top: 16px; }
-    table.attendance-table {
-      border-collapse: collapse;
-      font-size: 12px;
-      white-space: nowrap;
+    /* ── Admin primary sections ── */
+    .admin-section-tabs { display:flex; gap:0; margin:0 0 28px; border-bottom:1px solid var(--ink); }
+    .admin-section-tab {
+      padding:10px 18px; border:0; border-bottom:2px solid transparent; margin-bottom:-1px;
+      background:transparent; color:var(--ink-dim); cursor:pointer;
+      font:11px var(--font-mono); text-transform:uppercase; letter-spacing:.06em;
     }
-    table.attendance-table th, table.attendance-table td {
-      border: 1px solid var(--rule-thin);
-      padding: 6px 8px;
-      text-align: center;
+    .admin-section-tab[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--pink); font-weight:700; }
+    .admin-section-panel[hidden] { display:none !important; }
+
+    /* ── Session-centric attendance ── */
+    .attendance-wrap { margin-top:16px; overflow:visible; }
+    .attendance-editor { border-top:1px solid var(--ink); }
+    .attendance-section-label {
+      margin:18px 0 8px; color:var(--ink-dim);
+      font:10px var(--font-mono); letter-spacing:.07em; text-transform:uppercase;
     }
-    table.attendance-table th {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      background: var(--bg-raised);
+    .attendance-session {
+      border-bottom:1px solid var(--rule-thin);
+      background:var(--bg);
     }
-    table.attendance-table td.name-cell, table.attendance-table th.name-th {
-      text-align: left;
-      position: sticky;
-      left: 0;
-      background: var(--bg);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      min-width: 160px;
+    .attendance-session > summary {
+      display:flex; align-items:center; justify-content:space-between; gap:20px;
+      padding:14px 0; cursor:pointer; list-style:none;
     }
-    table.attendance-table th.name-th { background: var(--bg-raised); }
-    table.attendance-table td.total-cell {
-      font-family: var(--font-mono);
-      font-weight: 700;
-      background: var(--bg-raised);
+    .attendance-session > summary::-webkit-details-marker { display:none; }
+    .attendance-session > summary::after { content:'+'; flex:0 0 auto; font:18px var(--font-mono); color:var(--ink-dim); }
+    .attendance-session[open] > summary::after { content:'−'; }
+    .attendance-session-current > summary { padding:18px 0; }
+    .attendance-session-heading { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:baseline; min-width:0; }
+    .attendance-session-number {
+      color:var(--ink-dim); font:10px var(--font-mono); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;
     }
-    table.attendance-table input[type="checkbox"] { cursor: pointer; width: 15px; height: 15px; }
-    .attendance-empty { font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim); margin-top: 16px; }
+    .attendance-session-heading strong {
+      font:800 clamp(18px,2vw,24px)/1.05 var(--font-display); text-transform:uppercase;
+    }
+    .attendance-session-meta {
+      flex:0 0 auto; color:var(--ink-dim); font:9px var(--font-mono); letter-spacing:.05em; text-transform:uppercase;
+    }
+    .attendance-session-current .attendance-session-meta { color:var(--pink); }
+    .attendance-session-body { padding:0 0 16px; }
+    .attendance-event { margin:0 0 16px; border:1px solid var(--rule-thin); }
+    .attendance-event:last-child { margin-bottom:0; }
+    .attendance-event-heading {
+      padding:9px 12px; background:var(--bg-raised); border-bottom:1px solid var(--rule-thin);
+    }
+    .attendance-event-heading h4 {
+      margin:0; font:10px var(--font-mono); letter-spacing:.045em; text-transform:uppercase; color:var(--ink-mid);
+    }
+    .attendance-roster { display:grid; }
+    .attendance-person {
+      display:grid; grid-template-columns:minmax(180px,1fr) auto minmax(150px,.7fr);
+      gap:14px; align-items:center; padding:10px 12px; border-bottom:1px solid var(--rule-thin);
+    }
+    .attendance-person:last-child { border-bottom:0; }
+    .attendance-person-name { min-width:0; font:600 13px var(--font-body); }
+    .attendance-person-name span { display:block; margin-top:2px; color:var(--ink-dim); font:10px var(--font-mono); overflow-wrap:anywhere; }
+    .attendance-state { display:inline-flex; border:1px solid var(--rule-thin); }
+    .attendance-state-btn {
+      width:38px; height:34px; border:0; border-right:1px solid var(--rule-thin);
+      background:transparent; color:var(--ink-dim); cursor:pointer; font:700 14px var(--font-mono);
+    }
+    .attendance-state-btn:last-child { border-right:0; }
+    .attendance-state-btn[data-state="attended"][aria-pressed="true"] { background:#e6f2e8; color:#216c38; }
+    .attendance-state-btn[data-state="absent"][aria-pressed="true"] { background:#f3e7e7; color:#8e3e46; }
+    .attendance-state-btn[data-state="unrecorded"][aria-pressed="true"] { background:#ecebe8; color:#555; }
+    .attendance-state-btn:disabled { opacity:.55; cursor:wait; }
+    .attendance-state-legend { color:var(--ink-dim); font:9px/1.45 var(--font-mono); }
+    .attendance-save-status { min-height:1em; color:#a04848; font:9px var(--font-mono); }
+    .attendance-history { margin-top:16px; border-top:1px solid var(--rule-thin); }
+    .attendance-history > summary {
+      padding:13px 0; cursor:pointer; color:var(--ink-mid);
+      font:10px var(--font-mono); text-transform:uppercase; letter-spacing:.06em;
+    }
+    .attendance-history-body { padding-bottom:8px; }
+    .attendance-upcoming { margin-top:8px; }
+    .attendance-empty { font:12px var(--font-mono); color:var(--ink-dim); margin-top:16px; }
     .hidden { display: none; }
+
+    @media(max-width:760px) {
+      .admin-wrap { padding-inline:16px; }
+      .attendance-person { grid-template-columns:1fr auto; gap:7px 10px; }
+      .attendance-state-legend { grid-column:1/-1; }
+      .attendance-save-status { grid-column:1/-1; }
+      table.reg-table { display:block; overflow-x:auto; }
+    }
+
   </style>
-  <script src="/js/site.js?v=9" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=6" />
+  <script src="/js/site.js?v=10" defer></script>
+  <link rel="stylesheet" href="/css/editorial.css?v=43" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
 <body>
@@ -187,11 +239,18 @@
     </div>
 
     <div id="adminApproved" class="hidden">
+      <nav class="admin-section-tabs" role="tablist" aria-label="Administration sections">
+        <button type="button" class="admin-section-tab" role="tab" aria-selected="true" aria-controls="adminSectionSeminars" data-admin-section="seminars">Seminars</button>
+        <button type="button" class="admin-section-tab" role="tab" aria-selected="false" aria-controls="adminSectionInquiries" data-admin-section="inquiries">Inquiries</button>
+      </nav>
 
-      <div class="seminar-tabs" id="seminarTabs"></div>
-      <div id="seminarPanels"></div>
+      <section id="adminSectionSeminars" class="admin-section-panel" role="tabpanel" data-admin-panel="seminars">
+        <div class="seminar-tabs" id="seminarTabs"></div>
+        <div id="seminarPanels"></div>
+      </section>
 
-      <h2 class="admin-title" style="font-size:22px;margin-top:56px;margin-bottom:8px;">Guest Lecture Proposals</h2>
+      <section id="adminSectionInquiries" class="admin-section-panel" role="tabpanel" data-admin-panel="inquiries" hidden>
+        <h2 class="admin-title" style="font-size:22px;margin-top:56px;margin-bottom:8px;">Guest Lecture Proposals</h2>
       <p class="admin-note" id="proposalsStatusLine" style="margin-bottom:16px;"></p>
       <table class="reg-table" id="proposalsTable">
         <thead>
@@ -219,6 +278,8 @@
         </thead>
         <tbody id="signupsTableBody"></tbody>
       </table>
+    
+      </section>
     </div>
   </div>
 
@@ -226,8 +287,9 @@
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
       getAllRegistrations, approveRegistration, revokeRegistration, setAttendance,
-      getAllInterestSignups, getAllEvaluations, setInstructorEvaluation, ADMIN_EMAIL, SEMINAR_TITLES, ATTENDANCE_EVENTS, attendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES
-    } from '/js/academy-auth.js?v=25';
+      getAllInterestSignups, getAllEvaluations, setInstructorEvaluation, ADMIN_EMAIL, SEMINAR_TITLES, ATTENDANCE_EVENTS, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES
+    } from '/js/academy-auth.js?v=26';
+    import { renderAttendanceEditor } from '/js/attendance-ui.js?v=1';
 
     const adminSignedOut     = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
@@ -252,6 +314,20 @@
     let activeSeminar = SEMINAR_IDS[0];
     let allEvaluations = {};
     let allRegistrationsFlat = []; // [{ emailKey, seminarId, reg }]
+
+    function switchAdminSection(name) {
+      document.querySelectorAll('[data-admin-section]').forEach(tab => {
+        const on = tab.dataset.adminSection === name;
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      document.querySelectorAll('[data-admin-panel]').forEach(panel => {
+        panel.hidden = panel.dataset.adminPanel !== name;
+      });
+    }
+    document.querySelectorAll('[data-admin-section]').forEach(tab => {
+      tab.addEventListener('click', () => switchAdminSection(tab.dataset.adminSection));
+    });
 
     // ── Build tabs + panel shells once ──
     function buildTabsAndPanels() {
@@ -377,14 +453,19 @@
         tbody.appendChild(tr);
       }
 
-      // ── Attendance matrix (enrolled participants only) ──
+      // ── Attendance: meeting-centric, while writes stay event-specific ──
       const wrap = document.getElementById(`attendanceWrap-${seminarId}`);
       const enrolledRows = rows.filter(r => isApproved(r.reg.enrolled));
-      const sessions = ATTENDANCE_EVENTS[seminarId] || [];
+      const events = ATTENDANCE_EVENTS[seminarId] || [];
 
-      if (enrolledRows.length === 0) {
-        wrap.innerHTML = '<p class="attendance-empty">No enrolled participants yet.</p>';
-        renderEvaluations(seminarId, enrolledRows);
+      renderAttendanceEditor(wrap, {
+        seminarId,
+        events,
+        participants: enrolledRows,
+        onSetAttendance: setAttendance
+      });
+
+      renderEvaluations(seminarId, enrolledRows);
         return;
       }
 
@@ -452,8 +533,8 @@
     function renderEvaluations(seminarId, rows) {
       const wrap = document.getElementById(`evaluationWrap-${seminarId}`);
       wrap.replaceChildren();
-      if (seminarId !== 'sex-monsters-superheroes') {
-        wrap.textContent = 'Evaluation is not configured for this seminar.';
+      if (!EVALUATION_OFFERED[seminarId]) {
+        wrap.textContent = 'Evaluation is not enabled for this seminar.';
         return;
       }
       for (const { emailKey, reg } of rows) {

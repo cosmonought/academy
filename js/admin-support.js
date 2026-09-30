@@ -13,7 +13,7 @@ async function instructors() {
     el('instructorList').replaceChildren();
     for(const [id,users] of Object.entries(staff)) for(const [uid,record] of Object.entries(users)) {
       const row=document.createElement('div');row.className='staff-row';
-      row.innerHTML=`<p>${escape(SEMINAR_TITLES[id] || id)} · ${escape(record.email || uid)}</p>`;
+      row.innerHTML=`<p>${escape(SEMINAR_TITLES[id] || id)} · <strong>${record.role === 'ta' ? 'Teaching Assistant' : 'Instructor'}</strong> · ${escape(record.email || uid)}</p>`;
       const button=document.createElement('button');button.textContent='Revoke teaching access';
       button.onclick=async()=>{ if(!confirm(`Revoke ${record.email || uid}’s teaching access to ${SEMINAR_TITLES[id] || id}?`))return;button.disabled=true;try{await staffCall('adminRevokeInstructor',{seminarId:id,uid});await instructors();}catch(error){el('assignmentStatus').textContent=staffError(error);button.disabled=false;} };
       row.append(button);el('instructorList').append(row);
@@ -51,7 +51,7 @@ el('accountLookup').onsubmit=async event=>{
 };
 el('instructorAssignment').onsubmit=async event=>{
   event.preventDefault();if(!account)return;const button=el('assignInstructor');button.disabled=true;
-  try{await staffCall('adminAssignInstructor',{seminarId:el('assignSeminar').value,uid:account.uid});el('assignmentStatus').textContent='Teaching access granted.';await instructors();}
+  try{await staffCall('adminAssignInstructor',{seminarId:el('assignSeminar').value,uid:account.uid,role:el('assignRole').value});el('assignmentStatus').textContent='Teaching access granted.';await instructors();}
   catch(error){el('assignmentStatus').textContent=staffError(error);}finally{button.disabled=false;}
 };
 onAuthStateChanged(auth,user=>{

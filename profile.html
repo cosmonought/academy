@@ -153,7 +153,7 @@
         </section>
       </div>
 
-      <section class="profile-panel staff-utility" id="profileTeachingPanel" data-profile-panel="teaching" hidden aria-labelledby="teachingHeading"><label id="teachingSelector" hidden>Seminar<select id="teachingSeminar"></select></label><h2 id="teachingHeading">Teaching</h2><p id="teachingSummary" class="staff-note"></p><button id="teachingRefresh">Refresh assignments and roster</button><p id="teachingStatus" role="status" class="staff-note"></p><div id="teachingBody"></div></section>
+      <section class="profile-panel staff-utility" id="profileTeachingPanel" data-profile-panel="teaching" hidden aria-labelledby="teachingHeading"><label id="teachingSelector" hidden>Seminar<select id="teachingSeminar"></select></label><h2 id="teachingHeading">Teaching <span id="teachingRoleBadge" class="staff-badge" hidden></span></h2><p id="teachingSummary" class="staff-note"></p><button id="teachingRefresh">Refresh assignments and roster</button><p id="teachingStatus" role="status" class="staff-note"></p><div id="teachingBody"></div></section>
       <p id="profileError" class="profile-note" role="alert"></p>
     </div>
   </main>
@@ -168,6 +168,7 @@
       EVALUATION_CONFIG, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES
     } from '/js/academy-auth.js?v=26';
     import { seminarPages } from '/js/account-flow.js?v=3';
+    import { staffCall } from '/js/staff-api.js';
     initNavAccountWidget();
     const $ = id => document.getElementById(id);
     const escape = value => { const el = document.createElement('span'); el.textContent = String(value ?? ''); return el.innerHTML; };
@@ -209,7 +210,8 @@
         } catch { check.textContent = 'Could not check verification. Sign out, sign in again, and reopen this page.'; }
       }
       $('profileError').textContent = '';
-      let regs, name, interests;
+      let regs, name, interests, teachingRoles = {};
+      try { teachingRoles = await staffCall('getTeachingAssignmentRoles'); } catch { teachingRoles = {}; }
       try { regs = await getRegistrations(user.email); }
       catch (error) { $('profileError').textContent = 'We couldn’t load your Academy record. Please try again. If a prior registration is missing, contact academy@netadao.org. Account reference: ' + user.uid; return; }
       [name, interests] = await Promise.all([getDisplayName(user.email).catch(() => ''), getOwnSeminarInterests(user.email).catch(() => ({}))]);
@@ -257,7 +259,8 @@
 
         activeCount += 1;
         const content = `<div class="record-grid">${attendance}<div>${approved ? evaluationHtml(seminarId,evaluation,record) : '<div class="record-label">Evaluation · Pending enrollment</div><p>Available after enrollment where enabled.</p>'}</div></div>${!approved ? '<p class="profile-note">Your registration has been submitted. DM @NetaDAO_Academy from your registered X handle to finish enrollment.</p>' : ''}${action}`;
-        list.append(makeRow(title, approved ? 'Enrolled' : 'Enrollment requested', content));
+        const roleBadge = teachingRoles[seminarId] ? `<span class="staff-badge">${teachingRoles[seminarId] === 'ta' ? 'TA' : 'Instructor'}</span>` : '';
+        list.append(makeRow(title, `${roleBadge}${approved ? 'Enrolled' : 'Enrollment requested'}`, content));
         if (!approved) attention.append(makeRow(title,'Action required','<p>Enrollment verification required.</p><a href="https://x.com/NetaDAO_Academy">View instructions ↗</a>'));
       }
       $('profileNoRegistration').classList.toggle('hidden', activeCount > 0);

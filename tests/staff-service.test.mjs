@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises';
 const seminar='sex-and-or-love', graphic='sex-monsters-superheroes', participant='p@example,org';
 function fixture(options = {}) {
   const data={ seminarStaff:{[seminar]:{teacher:{role:'instructor'}}}, academyRegistrations:{[participant]:{[seminar]:{email:'p@example.org',name:'Participant',accountUid:'p',enrolled:true,attendance:{}},[graphic]:{email:'p@example.org',name:'Participant',enrolled:true,policyAccepted:true,policyVersion:ACADEMY_SEMINAR_POLICY_VERSION,policyAcceptedAt:1}}}, evaluations:{[participant]:{[graphic]:{request:{form:'essay',accountUid:'p'}}}}, accountMeta:{[participant]:{displayName:'P'}}, accountSeminarInterests:{[participant]:{keep:true}} };
-  const users={ teacher:{uid:'teacher',email:'teacher@example.org'},p:{uid:'p',email:'p@example.org',emailVerified:true,providerData:[{providerId:'google.com'}],metadata:{creationTime:'date',lastSignInTime:'date'},passwordHash:'SECRET',tokens:'SECRET'},admin:{uid:'admin',email:'academy@netadao.org',emailVerified:true} };
+  const users={ ta:{uid:'ta',email:'ta@example.org'}, teacher:{uid:'teacher',email:'teacher@example.org'},p:{uid:'p',email:'p@example.org',emailVerified:true,providerData:[{providerId:'google.com'}],metadata:{creationTime:'date',lastSignInTime:'date'},passwordHash:'SECRET',tokens:'SECRET'},admin:{uid:'admin',email:'academy@netadao.org',emailVerified:true} };
   const get=path=>path.split('/').filter(Boolean).reduce((v,k)=>v?.[k],data) ?? null;
   const put=(path,value)=>{const parts=path.split('/');const last=parts.pop();let object=data;for(const part of parts)object=object[part]??={};if(value===null)delete object[last];else object[last]=structuredClone(value);};
   const db={ref:(path='')=>({get:async()=>({val:()=>structuredClone(path?get(path):data)}),set:async value=>put(path,value),transaction:async fn=>{const next=fn(structuredClone(data));for(const k of Object.keys(data))delete data[k];Object.assign(data,next);return {committed:true};},update:async values=>{for(const [k,v]of Object.entries(values))put(path?path+'/'+k:k,v);}})};
@@ -62,6 +62,8 @@ test('admin deletion is confirmed, narrow, and unavailable to instructors',async
 test('admin assignment resolves a real Auth UID and revokes just that seminar',async()=>{
   const {service,data,call}=fixture();
   await service.adminAssignInstructor(call('admin',{seminarId:graphic,uid:'teacher'}));assert.equal(data.seminarStaff[graphic].teacher.assignedBy,'admin');
+  await service.adminAssignInstructor(call('admin',{seminarId:graphic,uid:'ta',role:'ta'}));assert.equal(data.seminarStaff[graphic].ta.role,'ta');
+  await assert.rejects(service.adminAssignInstructor(call('admin',{seminarId:graphic,uid:'teacher',role:'admin'})),{code:'invalid-argument'});
   await service.adminRevokeInstructor(call('admin',{seminarId:graphic,uid:'teacher'}));assert.ok(data.seminarStaff[seminar].teacher);
   await assert.rejects(service.adminAssignInstructor(call('admin',{uid:'imaginary'})),{code:'auth/user-not-found'});
 });
@@ -134,6 +136,28 @@ test('old policy assent cannot authorize enrollment under revised policy',async(
  const {service,data,call}=fixture();data.academyRegistrations[participant][graphic].policyVersion='2026-09-29';
  await assert.rejects(service.staffSetEnrollment(call('admin',{seminarId:graphic,enrolled:true})),{code:'failed-precondition'});
  assert.equal(data.academyRegistrations[participant][graphic].policyVersion,'2026-09-29');
+});
+
+test('teaching assistants get only enrolled names and attendance, with no cross-seminar, enrollment, or evaluation authority',async()=>{
+ const {service,data,call}=fixture({evaluationConfig:{[seminar]:{enabled:true,minimumAttendanceEvents:0,requestCutoff:null}}});
+ data.seminarStaff[seminar].ta={role:'ta'};
+ data.academyRegistrations['pending@example,org']={[seminar]:{name:'Pending Person',email:'pending@example.org',reason:'Private reason',enrolled:false}};
+ data.academyRegistrations['private@example,org']={[graphic]:{name:'Other seminar person',email:'private@example.org',enrolled:true}};
+ assert.deepEqual(await service.getTeachingAssignmentRoles(call('ta')),{[seminar]:'ta'});
+ assert.deepEqual(await service.getTeachingAssignments(call('ta')),[seminar]);
+ const roster=await service.getTeachingRoster(call('ta'));
+ assert.equal(roster.length,1);assert.equal(roster[0].registration.name,'Participant');
+ assert.equal(roster[0].registration.email,undefined);assert.equal(roster[0].registration.reason,undefined);assert.deepEqual(roster[0].evaluation,{});
+ await service.staffSetAttendance(call('ta',{eventKey:'lecture-s0',attended:true}));
+ assert.equal(data.academyRegistrations[participant][seminar].attendance['lecture-s0'],true);
+ for(const action of [
+   service.getTeachingRoster(call('ta',{seminarId:graphic})),
+   service.staffSetEnrollment(call('ta',{enrolled:false})),
+   service.staffSetEvaluation(call('ta',{record:{state:'agreed',form:'essay',feedback:''}})),
+   service.staffSetEvaluationRequest(call('ta',{optIn:true,form:'essay'}))
+ ]) await denied(action);
+ delete data.seminarStaff[seminar].ta;
+ await denied(service.staffSetAttendance(call('ta',{eventKey:'lecture-s0',attended:true})));
 });
 
 test('staff can correct evaluation participation after cutoff only inside assigned scope',async()=>{

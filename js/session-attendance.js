@@ -50,7 +50,7 @@ export function renderSessionAttendance(root, seminarId, rows, { admin = false, 
         bulk.onclick=()=>save('staffMarkAllAttended',{seminarId,eventKey:event.key,emailKeys:participants.map(row=>row.emailKey)},()=>participants.forEach(row=>(row.registration.attendance ||= {})[event.key]=true));
         for (const { emailKey,registration:reg } of participants) {
           const line=document.createElement('div'); line.className='attendance-person';
-          const name=document.createElement('strong');name.textContent=reg.name || reg.email || emailKey;line.append(name);
+          const name=document.createElement('strong');name.textContent=reg.name || reg.email || '(unnamed participant)';line.append(name);
           const controls=document.createElement('div'); controls.className='attendance-marks';controls.setAttribute('role','group');controls.setAttribute('aria-label',`${name.textContent}: ${event.type} ${event.label}`);
           for (const [value,symbol,meaning] of [[true,'✓','Attended'],[false,'—','Absent'],[null,'?','Unrecorded']]) {
             const button=document.createElement('button');button.type='button';button.textContent=symbol;button.title=meaning;button.setAttribute('aria-label',meaning);button.dataset.mark=JSON.stringify(value);button.dataset.participant=emailKey;

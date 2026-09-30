@@ -28,6 +28,7 @@ process.on('exit',()=>server.kill());
     export const staffError=e=>e.message||'Unavailable';
     export async function staffCall(name,data){
       if(name==='getTeachingAssignments')return window.assignments;
+      if(name==='getTeachingAssignmentRoles')return window.assignmentRoles || {};
       if(name==='getTeachingRoster'){if(window.revoked)throw {code:'functions/permission-denied'};return window.mockRoster;}
       if(name==='adminListInstructors')return {};
       if(name==='adminGetAuthSummary')return {email:'p@example.org',account:{uid:'p',providers:['google.com'],emailVerified:true,passwordStatus:'Not required for Google sign-in'},registrations:[]};
@@ -38,7 +39,7 @@ process.on('exit',()=>server.kill());
  });
  const page=await context.newPage(); const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{
-   window.mockUser={uid:'teacher',email:'teacher@example.org',emailVerified:true,providerData:[{providerId:'google.com'}]};window.assignments=['sex-and-or-love','sex-monsters-superheroes'];window.operations=[];
+   window.mockUser={uid:'teacher',email:'teacher@example.org',emailVerified:true,providerData:[{providerId:'google.com'}]};window.assignments=['sex-and-or-love','sex-monsters-superheroes'];window.assignmentRoles={'sex-and-or-love':'instructor','sex-monsters-superheroes':'instructor'};window.operations=[];
    window.mockRoster=[{emailKey:'p@example,org',registration:{name:'Participant Example',email:'p@example.org',xHandle:'@participant',reason:'To study together.',enrolled:true,attendance:{}},evaluation:{request:{form:'essay'}}}];
  });
  const results=[];fs.mkdirSync(screenshots,{recursive:true});
@@ -53,6 +54,9 @@ process.on('exit',()=>server.kill());
   await page.selectOption('#teachingEvaluation select[name=state]','completed');await page.selectOption('#teachingEvaluation select[name=outcome]','merit');await page.fill('#teachingEvaluation textarea','Thoughtful work.');await page.locator('#teachingEvaluation button').first().click();await page.waitForFunction(()=>window.operations.includes('evaluation'));
   results.push({width,overflow:false,teaching:true,evaluationSaved:true});
  }
+ await page.evaluate(()=>{window.assignmentRoles={'sex-and-or-love':'ta','sex-monsters-superheroes':'ta'};});await page.click('#teachingRefresh');await page.locator('#teachingRoleBadge').getByText('TA',{exact:true}).waitFor();
+ assert.equal(await page.locator('#teachingBody h3').allTextContents().then(items=>items.join('|')),'Attendance|Participants');
+ await page.locator('#teachingParticipants summary').first().waitFor();assert.equal(await page.locator('#teachingParticipants .staff-participant p').count(),0);assert.equal(await page.locator('#teachingBody').getByText('To study together.').count(),0);
  await page.evaluate(()=>{window.assignments=[];window.revoked=true;});await page.click('#teachingRefresh');await page.locator('#profileTeachingTab').waitFor({state:'hidden'});assert.equal(await page.locator('#profileSeminarsPanel').isVisible(),true);
  // Ordinary participant, from the initial render.
  await page.addInitScript(()=>{window.assignments=[];});await page.reload();await page.waitForFunction(()=>document.getElementById('profileDisplayName').textContent==='Test Instructor');assert.equal(await page.locator('#profileTeachingTab').isVisible(),false);

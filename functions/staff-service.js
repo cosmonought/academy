@@ -41,26 +41,37 @@ export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CON
     return { uid: user.uid, admin, email: user.email || '', emailVerified: user.emailVerified === true };
   }
   const adminOnly = async request => { const who = await caller(request); if (!who.admin) fail('permission-denied', 'Administrator access required.'); return who; };
-  async function scope(request) {
+  async function scope(request, requiredRole = null) {
     const who = await caller(request), id = seminarValue(request.data?.seminarId);
-    if (!who.admin && (await read(`seminarStaff/${id}/${who.uid}`))?.role !== 'instructor') fail('permission-denied', 'Teaching access is no longer available for this seminar.');
-    return { ...who, id };
+    const assignedRole = (await read(`seminarStaff/${id}/${who.uid}`))?.role;
+    const role = who.admin ? 'admin' : assignedRole;
+    if (!who.admin && !['instructor', 'ta'].includes(role)) fail('permission-denied', 'Teaching access is no longer available for this seminar.');
+    if (requiredRole && !who.admin && role !== requiredRole) fail('permission-denied', 'This teaching action is not available to your role.');
+    return { ...who, id, role };
   }
-  async function target(request, enrolled = false) {
-    const who = await scope(request), participantKey = key(request.data?.emailKey);
+  async function target(request, enrolled = false, requiredRole = null) {
+    const who = await scope(request, requiredRole), participantKey = key(request.data?.emailKey);
     const path = `academyRegistrations/${participantKey}/${who.id}`, reg = await read(path);
     if (!reg) fail('not-found', 'Registration no longer exists.');
     if (enrolled && !who.admin && reg.enrolled !== true) fail('failed-precondition', 'Participant must be enrolled.');
     return { ...who, participantKey, path, reg };
   }
   return {
+    async getTeachingAssignmentRoles(request) {
+      const who = await caller(request), result = {};
+      for (const id of Object.keys(ATTENDANCE_EVENTS)) {
+        const role = (await read(`seminarStaff/${id}/${who.uid}`))?.role;
+        if (['instructor', 'ta'].includes(role)) result[id] = role;
+      }
+      return result;
+    },
     async getTeachingAssignments(request) {
       const who = await caller(request), result = [];
-      for (const id of Object.keys(ATTENDANCE_EVENTS)) if ((await read(`seminarStaff/${id}/${who.uid}`))?.role === 'instructor') result.push(id);
+      for (const id of Object.keys(ATTENDANCE_EVENTS)) if (['instructor', 'ta'].includes((await read(`seminarStaff/${id}/${who.uid}`))?.role)) result.push(id);
       return result;
     },
     async getTeachingRoster(request) {
-      const { id } = await scope(request);
+      const { id, role } = await scope(request);
       // RTDB rules are not filters. This server read never reaches the browser unchanged.
       const all = await read('academyRegistrations') || {}, rows = [];
       for (const [participantKey, seminars] of Object.entries(all)) {
@@ -68,10 +79,14 @@ export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CON
         if (!reg) continue;
         rows.push({ emailKey: participantKey, registration: pick(reg, ['name','email','xHandle','reason','enrolled','requestedAt','policyAccepted','policyVersion','policyAcceptedAt','attendance']), evaluation: await read(`evaluations/${participantKey}/${id}`) || {} });
       }
-      return rows;
+      return role === 'ta' ? rows.filter(row => row.registration.enrolled === true).map(row => ({
+        emailKey: row.emailKey,
+        registration: pick(row.registration, ['name', 'enrolled', 'attendance']),
+        evaluation: {}
+      })) : rows;
     },
     async staffSetEnrollment(request) {
-      const { id, path, reg } = await target(request);
+      const { id, path, reg } = await target(request, false, 'instructor');
       if (typeof request.data.enrolled !== 'boolean') fail('invalid-argument', 'Enrollment must be true or false.');
       if (request.data.enrolled && id === GRAPHIC_SEMINAR_ID && (reg.policyAccepted !== true || reg.policyVersion !== ACADEMY_SEMINAR_POLICY_VERSION || typeof reg.policyAcceptedAt !== 'number')) fail('failed-precondition', 'Current seminar policy acceptance must be recorded before enrollment.');
       await db.ref(path).update({ enrolled: request.data.enrolled });
@@ -91,7 +106,7 @@ export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CON
       // One transaction: validate every target and current scope before changing any mark.
       await rootTransaction(root => {
         if (!root) fail('not-found', 'Roster no longer exists.');
-        if (!who.admin && root.seminarStaff?.[who.id]?.[who.uid]?.role !== 'instructor') fail('permission-denied', 'Teaching assignment changed.');
+        if (!who.admin && !['instructor', 'ta'].includes(root.seminarStaff?.[who.id]?.[who.uid]?.role)) fail('permission-denied', 'Teaching assignment changed.');
         for (const participantKey of emailKeys) {
           const reg = root.academyRegistrations?.[participantKey]?.[who.id];
           if (!reg || (!who.admin && reg.enrolled !== true)) fail('failed-precondition', 'Roster changed. Refresh before marking attendance.');
@@ -126,7 +141,7 @@ export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CON
       return { saved: true };
     },
     async staffSetEvaluationRequest(request) {
-      const who = await target(request, true), {optIn, form} = request.data;
+      const who = await target(request, true, 'instructor'), {optIn, form} = request.data;
       if (!evaluationConfig[who.id]?.enabled || typeof optIn !== 'boolean' || (optIn && !Object.hasOwn(EVALUATION_FORMS,form))) fail('invalid-argument', 'Evaluation is not enabled or the form is invalid.');
       await rootTransaction(root => {
         if (!who.admin && root?.seminarStaff?.[who.id]?.[who.uid]?.role !== 'instructor') fail('permission-denied', 'Teaching assignment changed.');
@@ -144,7 +159,7 @@ export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CON
       return {saved:true};
     },
     async staffSetEvaluation(request) {
-      const { id, participantKey, admin } = await target(request, true), record = request.data.record;
+      const { id, participantKey, admin } = await target(request, true, 'instructor'), record = request.data.record;
       if (!EVALUATION_OFFERED[id] || !record || typeof record !== 'object' || Array.isArray(record)) fail('invalid-argument', 'Evaluation is not available.');
       if (Object.keys(record).some(field => !['state','form','outcome','feedback'].includes(field)) || !['agreed','in-progress','completed'].includes(record.state) || !Object.hasOwn(EVALUATION_FORMS, record.form) || typeof record.feedback !== 'string' || record.feedback.length > 10000 || (record.state === 'completed' ? !Object.hasOwn(EVALUATION_OUTCOMES, record.outcome) : record.outcome !== undefined)) fail('invalid-argument', 'Check evaluation state, form, outcome, and feedback.');
       if (!admin && !await read(`evaluations/${participantKey}/${id}/request`)) fail('failed-precondition', 'No participant evaluation request.');
@@ -170,8 +185,10 @@ export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CON
       const who = await adminOnly(request), id = seminarValue(request.data?.seminarId), uid = key(request.data?.uid);
       const user = await auth.getUser(uid);
       if (user.disabled) fail('failed-precondition', 'This account is disabled.');
-      await db.ref(`seminarStaff/${id}/${uid}`).set({ role: 'instructor', email: user.email || '', assignedAt: Date.now(), assignedBy: who.uid });
-      return { assigned: true };
+      const role = request.data?.role ?? 'instructor';
+      if (!['instructor', 'ta'].includes(role)) fail('invalid-argument', 'Choose Instructor or Teaching Assistant.');
+      await db.ref(`seminarStaff/${id}/${uid}`).set({ role, email: user.email || '', assignedAt: Date.now(), assignedBy: who.uid });
+      return { assigned: true, role };
     },
     async adminRevokeInstructor(request) {
       await adminOnly(request);

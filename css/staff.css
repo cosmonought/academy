@@ -24,6 +24,8 @@
 /* Keep existing Admin tables contained while adding operational controls. */
 .admin-wrap .reg-table { display:block; max-width:100%; overflow-x:auto; }
 
+.staff-badge{display:inline-block;padding:3px 7px;border:1px solid currentColor;font:600 10px var(--font-mono);text-transform:uppercase;margin-left:8px}.staff-participant{border-top:1px solid var(--rule-thin);padding:10px 0}.staff-participant summary{cursor:pointer;font-weight:600}.staff-participant p{margin:8px 0}
+
 .session-attendance h4 { font:600 12px var(--font-mono); text-transform:uppercase; margin:24px 0 12px; }
 .attendance-session { border-top:1px solid var(--rule-thin); padding:16px 0; }
 .attendance-session h5, .attendance-session summary { font:700 20px var(--font-display); text-transform:uppercase; margin:0 0 12px; cursor:pointer; }

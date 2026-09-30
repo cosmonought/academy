@@ -42,6 +42,25 @@
     .account-row > span:first-child { font:11px var(--font-mono); text-transform:uppercase; color:var(--ink-dim); }
     .hidden { display:none !important; }
     @media(max-width:700px) { .profile-wrap { width:min(100% - 36px, 1120px); margin:80px auto 55px; } .record-row, .record-grid, .account-row { grid-template-columns:1fr; gap:10px; } .record-row { gap:16px; } .account-row { gap:4px; } .record-form input, .record-form select { min-width:0; max-width:100%; } .event-list li { display:block; } }
+
+    .profile-tabs { display:flex; gap:0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); margin:0 0 28px; overflow-x:auto; }
+    .profile-tab { flex:0 0 auto; padding:12px 18px; border:0; border-right:1px solid var(--rule-thin); background:transparent; color:var(--ink-dim); cursor:pointer; font:11px var(--font-mono); letter-spacing:.07em; text-transform:uppercase; }
+    .profile-tab.active { background:var(--ink); color:var(--paper); }
+    .profile-tab[hidden] { display:none; }
+    .profile-panel[hidden] { display:none !important; }
+    .profile-identity-name { display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; }
+    .identity-name-form { display:flex; gap:8px; align-items:center; }
+    .identity-name-form input { min-height:36px; width:min(260px,70vw); padding:6px 9px; border:1px solid var(--rule-thin); background:var(--bg); color:var(--ink); }
+    .identity-name-form button { min-height:36px; border:1px solid var(--ink); background:transparent; cursor:pointer; font:11px var(--font-mono); padding:6px 10px; }
+    .transcript-row { display:grid; grid-template-columns:minmax(180px,1.5fr) minmax(110px,.7fr) minmax(160px,1fr) auto; gap:18px; align-items:center; padding:14px 0; border-bottom:1px solid var(--rule-thin); font-size:13px; }
+    .transcript-row strong { font:800 15px var(--font-display); text-transform:uppercase; }
+    .transcript-label { display:block; margin-bottom:4px; font:9px var(--font-mono); color:var(--ink-dim); letter-spacing:.06em; text-transform:uppercase; }
+    @media(max-width:700px) {
+      .profile-tabs { margin-inline:-2px; }
+      .profile-tab { padding-inline:13px; }
+      .transcript-row { grid-template-columns:1fr; gap:9px; padding:18px 0; }
+    }
+
   </style>
   <script src="/js/site.js?v=9" defer></script>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
@@ -96,17 +115,45 @@
     </div>
     <div id="profileSignedIn" class="hidden">
       <h1 class="profile-title">Your Profile</h1>
-      <div class="profile-identity"><strong id="profileDisplayName">Display name not set</strong><span id="profileEmailLine"></span></div>
+      <div class="profile-identity">
+        <div class="profile-identity-name">
+          <strong id="profileDisplayName">Display name not set</strong>
+          <form id="identityDisplayNameForm" class="identity-name-form hidden">
+            <label class="sr-only" for="identityDisplayNameInput">Set display name</label>
+            <input id="identityDisplayNameInput" autocomplete="nickname" maxlength="40" placeholder="Set display name" required>
+            <button type="submit">Save</button>
+          </form>
+        </div>
+        <span id="profileEmailLine"></span>
+      </div>
+      <nav class="profile-tabs" aria-label="Profile sections">
+        <button type="button" class="profile-tab active" data-profile-tab="seminars" aria-pressed="true">Seminars</button>
+        <button type="button" class="profile-tab" data-profile-tab="transcript" aria-pressed="false">Transcript</button>
+        <button type="button" class="profile-tab" data-profile-tab="account" aria-pressed="false">Account</button>
+        <button type="button" class="profile-tab" data-profile-tab="teaching" aria-pressed="false" id="profileTeachingTab" hidden>Teaching</button>
+      </nav>
       <p id="rolloutCheck" class="profile-note" role="status" hidden></p>
-      <section id="profileAttention" class="record-section hidden" aria-labelledby="attentionHeading"><h2 id="attentionHeading">Needs your attention</h2><div id="attentionRows"></div></section>
-      <section class="record-section" aria-labelledby="seminarHeading"><h2 id="seminarHeading">Your seminars</h2><div id="profileRegistrationsList"></div><p id="profileNoRegistration" class="profile-note hidden">You aren't enrolled in any seminars yet. <a href="/seminars.html">Browse seminars →</a></p></section>
-      <section id="profileInterests" class="record-section hidden" aria-labelledby="interestsHeading"><h2 id="interestsHeading">Forthcoming / interests</h2><div id="interestRows"></div></section>
-      <section class="record-section" aria-labelledby="accountHeading"><h2 id="accountHeading">Account</h2>
-        <div class="account-row"><span>Display name</span><div><span id="accountDisplayName">Not set</span><form id="displayNameForm" class="record-form"><label for="displayNameInput">Change display name<input id="displayNameInput" autocomplete="nickname" maxlength="40" required></label><button type="submit">Save name</button></form><p id="displayNameStatus" class="profile-note" role="status" aria-live="polite"></p></div></div>
-        <div class="account-row"><span>Email</span><span id="accountEmail"></span></div>
-        <div class="account-row"><span>Password</span><a href="/set-password.html">Set or change password →</a></div>
-        <div class="account-row"><span></span><button class="quiet-btn" id="profileSignOutBtn" type="button">Sign out</button></div>
-      </section>
+
+      <div class="profile-panel" id="profileSeminarsPanel" data-profile-panel="seminars">
+        <section id="profileAttention" class="record-section hidden" aria-labelledby="attentionHeading"><h2 id="attentionHeading">Needs your attention</h2><div id="attentionRows"></div></section>
+        <section class="record-section" aria-labelledby="seminarHeading"><h2 id="seminarHeading">Your seminars</h2><div id="profileRegistrationsList"></div><p id="profileNoRegistration" class="profile-note hidden">You aren't enrolled in any active seminars yet. <a href="/seminars.html">Browse seminars →</a></p></section>
+        <section id="profileInterests" class="record-section hidden" aria-labelledby="interestsHeading"><h2 id="interestsHeading">Forthcoming / interests</h2><div id="interestRows"></div></section>
+      </div>
+
+      <div class="profile-panel" id="profileTranscriptPanel" data-profile-panel="transcript" hidden>
+        <section class="record-section" aria-labelledby="transcriptHeading"><h2 id="transcriptHeading">Transcript</h2><div id="profileTranscriptList"></div><p id="profileNoTranscript" class="profile-note hidden">No completed Academy seminars yet.</p></section>
+      </div>
+
+      <div class="profile-panel" id="profileAccountPanel" data-profile-panel="account" hidden>
+        <section class="record-section" aria-labelledby="accountHeading"><h2 id="accountHeading">Account</h2>
+          <div class="account-row"><span>Display name</span><div><span id="accountDisplayName">Not set</span><form id="displayNameForm" class="record-form"><label for="displayNameInput">Change display name<input id="displayNameInput" autocomplete="nickname" maxlength="40" required></label><button type="submit">Save name</button></form><p id="displayNameStatus" class="profile-note" role="status" aria-live="polite"></p></div></div>
+          <div class="account-row"><span>Email</span><span id="accountEmail"></span></div>
+          <div class="account-row"><span>Password</span><a href="/set-password.html">Set or change password →</a></div>
+          <div class="account-row"><span></span><button class="quiet-btn" id="profileSignOutBtn" type="button">Sign out</button></div>
+        </section>
+      </div>
+
+      <div class="profile-panel" id="profileTeachingPanel" data-profile-panel="teaching" hidden></div>
       <p id="profileError" class="profile-note" role="alert"></p>
     </div>
   </main>
@@ -115,9 +162,9 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, initNavAccountWidget,
-      getRegistrations, getDisplayName, setDisplayName, getEvaluation, requestEvaluation,
-      getOwnSeminarInterests, SEMINAR_TITLES, SEMINAR_COMPLETED, attendanceRecord,
-      EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES
+      getRegistrations, getDisplayName, setDisplayName, getEvaluation, requestEvaluation, cancelEvaluationRequest,
+      getOwnSeminarInterests, SEMINAR_TITLES, SEMINAR_COMPLETED, participantAttendanceRecord,
+      EVALUATION_CONFIG, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES
     } from '/js/academy-auth.js?v=25';
     import { seminarPages } from '/js/account-flow.js?v=3';
     initNavAccountWidget();
@@ -125,14 +172,18 @@
     const escape = value => { const el = document.createElement('span'); el.textContent = String(value ?? ''); return el.innerHTML; };
     let activeUser = null;
 
-    function evaluationHtml(seminarId, evaluation) {
+    function evaluationHtml(seminarId, evaluation, record) {
+      const config = EVALUATION_CONFIG[seminarId] || { enabled: false, minimumAttendanceEvents: 1, requestCutoff: null };
+      if (!config.enabled) return '<div class="record-label">Evaluation · Not enabled</div><p>Evaluation is not enabled for this seminar.</p>';
       if (evaluation.unavailable) return '<div class="record-label">Evaluation · Unavailable</div><p>Could not load this record. Try again later.</p>';
-      if (!EVALUATION_OFFERED[seminarId]) return '<div class="record-label">Evaluation · Not offered</div><p>Evaluated work was not offered for this seminar.</p>';
       const request = evaluation.request;
       const instructor = evaluation.instructor;
       if (instructor?.state === 'completed') return `<div class="record-label">Evaluation · ${escape(EVALUATION_OUTCOMES[instructor.outcome] || 'Completed')}</div><p>Form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p><p class="record-label">Instructor feedback</p><p class="feedback">${escape(instructor.feedback || 'Feedback pending.')}</p>`;
-      if (instructor?.state === 'agreed') return `<div class="record-label">Evaluation · In progress</div><p>Agreed form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p>`;
-      if (request) return `<div class="record-label">Evaluation · Requested</div><p>Preferred form: ${escape(EVALUATION_FORMS[request.form] || request.form)}. Awaiting arrangement.</p>`;
+      if (instructor?.state === 'agreed' || instructor?.state === 'in-progress') return `<div class="record-label">Evaluation · In progress</div><p>Agreed form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p>`;
+      if (request) return `<div class="record-label">Evaluation · Requested</div><p>Preferred form: ${escape(EVALUATION_FORMS[request.form] || request.form)}. Awaiting arrangement.</p><button type="button" class="quiet-btn evaluation-optout" data-seminar="${escape(seminarId)}">Opt out of evaluation</button>`;
+      if ((record?.attended || 0) < (config.minimumAttendanceEvents || 0)) {
+        return '<div class="record-label">Evaluation · Available later</div><p>You can opt in after attending at least one session.</p>';
+      }
       return `<div class="record-label">Evaluation · Not requested</div><p>Optional evaluated work is available by arrangement.</p><form class="record-form evaluation-request" data-seminar="${escape(seminarId)}"><label>Preferred form<select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escape(label)}</option>`).join('')}</select></label><button type="submit">Request evaluation →</button></form><p class="profile-note">Papers may be sent to academy@netadao.org; other forms are arranged with the instructor.</p>`;
     }
     function makeRow(title, status, content) {
@@ -160,28 +211,51 @@
       [name, interests] = await Promise.all([getDisplayName(user.email).catch(() => ''), getOwnSeminarInterests(user.email).catch(() => ({}))]);
       if (auth.currentUser?.uid !== user.uid) return;
       $('profileDisplayName').textContent = name || 'Display name not set';
+      $('identityDisplayNameForm').classList.toggle('hidden', !!name);
+      $('identityDisplayNameInput').value = name || '';
       $('accountDisplayName').textContent = name || 'Not set';
       $('displayNameInput').value = name || '';
       const list = $('profileRegistrationsList'); list.replaceChildren();
+      const transcript = $('profileTranscriptList'); transcript.replaceChildren();
       const attention = $('attentionRows'); attention.replaceChildren();
       const interestRows = $('interestRows'); interestRows.replaceChildren();
       const entries = Object.entries(regs || {}).sort((a,b) => (b[1].requestedAt || 0) - (a[1].requestedAt || 0));
+      let activeCount = 0, transcriptCount = 0;
       for (const [seminarId, reg] of entries) {
         const approved = reg.enrolled === true;
         const completed = SEMINAR_COMPLETED[seminarId] === true;
         const title = SEMINAR_TITLES[seminarId] || seminarId;
-        const record = attendanceRecord(seminarId, reg);
+        const record = participantAttendanceRecord(seminarId, reg);
         let evaluation = {};
-        if (approved) { try { evaluation = await getEvaluation(user.email, seminarId); } catch { evaluation = { unavailable: true }; } }
+        if (approved && EVALUATION_OFFERED[seminarId]) {
+          try { evaluation = await getEvaluation(user.email, seminarId); }
+          catch { evaluation = { unavailable: true }; }
+        }
         const detail = record.detail.map(event => `<li><span>${escape(event.type.toUpperCase())} — ${escape(event.label)}</span><span>${escape(event.status)}</span></li>`).join('');
-        const legacy = record.legacy.length ? `<p class="legacy-note">${record.legacy.length} historical syllabus-unit marks retained. They cannot distinguish lecture from screening and are excluded from the event count.</p><ul class="event-list">${record.legacy.map(item => `<li><span>${escape(item.label)} · legacy</span><span>${item.value ? 'marked' : 'unmarked'}</span></li>`).join('')}</ul>` : '';
-        const attendance = approved ? `<div><div class="record-label">Attendance</div><p>${record.total ? `${record.attended} / ${record.total} events` : 'Event schedule forthcoming'}</p>${record.detail.length || legacy ? `<details class="record-detail"><summary>View attendance detail</summary><ul class="event-list">${detail}</ul>${legacy}</details>` : ''}</div>` : '<div><div class="record-label">Attendance</div><p>Available after enrollment.</p></div>';
+        const attendance = approved ? `<div><div class="record-label">Attendance</div><p>${record.total ? `${record.attended} / ${record.total} events` : 'Event schedule forthcoming'}</p>${record.detail.length ? `<details class="record-detail"><summary>View attendance detail</summary><ul class="event-list">${detail}</ul></details>` : ''}</div>` : '<div><div class="record-label">Attendance</div><p>Available after enrollment.</p></div>';
         const action = approved && seminarPages[seminarId] ? `<a class="record-action" href="${seminarPages[seminarId]}">${completed ? 'Open archive' : 'Open seminar'} →</a>` : '';
-        const content = `<div class="record-grid">${attendance}<div>${approved ? evaluationHtml(seminarId,evaluation) : '<div class="record-label">Evaluation · Pending enrollment</div><p>Available after enrollment where offered.</p>'}</div></div>${!approved ? '<p class="profile-note">Your registration has been submitted. DM @NetaDAO_Academy from your registered X handle to finish enrollment.</p>' : ''}${action}`;
-        list.append(makeRow(title, approved ? completed ? 'Archive access' : 'Enrolled' : 'Enrollment requested', content));
-        if (!approved) attention.append(makeRow(title,'Action required','<p>Enrollment verification required.</p><a href="https://x.com/NetaDAO_Academy">View instructions →</a>'));
+
+        if (completed && approved) {
+          transcriptCount += 1;
+          const evaluationText = !EVALUATION_OFFERED[seminarId]
+            ? 'Not enabled'
+            : evaluation?.instructor?.state === 'completed'
+              ? (EVALUATION_OUTCOMES[evaluation.instructor.outcome] || 'Completed')
+              : evaluation?.request ? 'Requested' : 'Not requested';
+          const row = document.createElement('article');
+          row.className = 'transcript-row';
+          row.innerHTML = `<div><span class="transcript-label">Seminar</span><strong>${escape(title)}</strong></div><div><span class="transcript-label">Attendance</span>${record.total ? `${record.attended} / ${record.total}` : '—'}</div><div><span class="transcript-label">Evaluation</span>${escape(evaluationText)}</div><div>${action}</div>`;
+          transcript.append(row);
+          continue;
+        }
+
+        activeCount += 1;
+        const content = `<div class="record-grid">${attendance}<div>${approved ? evaluationHtml(seminarId,evaluation,record) : '<div class="record-label">Evaluation · Pending enrollment</div><p>Available after enrollment where enabled.</p>'}</div></div>${!approved ? '<p class="profile-note">Your registration has been submitted. DM @NetaDAO_Academy from your registered X handle to finish enrollment.</p>' : ''}${action}`;
+        list.append(makeRow(title, approved ? 'Enrolled' : 'Enrollment requested', content));
+        if (!approved) attention.append(makeRow(title,'Action required','<p>Enrollment verification required.</p><a href="https://x.com/NetaDAO_Academy">View instructions ↗</a>'));
       }
-      $('profileNoRegistration').classList.toggle('hidden', entries.length > 0);
+      $('profileNoRegistration').classList.toggle('hidden', activeCount > 0);
+      $('profileNoTranscript').classList.toggle('hidden', transcriptCount > 0);
       for (const [id, interest] of Object.entries(interests || {})) {
         if (regs?.[id] || interest.accountUid !== user.uid) continue;
         interestRows.append(makeRow(SEMINAR_TITLES[id] || id, 'Interest recorded', '<p>We’ll notify you when enrollment opens.</p>'));
@@ -189,10 +263,64 @@
       $('profileInterests').classList.toggle('hidden', !interestRows.children.length);
       $('profileAttention').classList.toggle('hidden', !attention.children.length);
     }
+
+    function showProfileTab(tab) {
+      document.querySelectorAll('[data-profile-tab]').forEach(button => {
+        const active = button.dataset.profileTab === tab;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      document.querySelectorAll('[data-profile-panel]').forEach(panel => {
+        panel.hidden = panel.dataset.profilePanel !== tab;
+      });
+      history.replaceState(null, '', '#' + tab);
+    }
+    document.querySelector('.profile-tabs')?.addEventListener('click', event => {
+      const button = event.target.closest('[data-profile-tab]');
+      if (button && !button.hidden) showProfileTab(button.dataset.profileTab);
+    });
+    const initialProfileTab = location.hash.slice(1);
+    if (['seminars','transcript','account','teaching'].includes(initialProfileTab)) {
+      queueMicrotask(() => showProfileTab(initialProfileTab));
+    }
+
+    async function saveIdentityName(value, statusNode) {
+      if (statusNode) statusNode.textContent = 'Saving…';
+      try {
+        const name = await setDisplayName(value);
+        $('profileDisplayName').textContent = name;
+        $('accountDisplayName').textContent = name;
+        $('displayNameInput').value = name;
+        $('identityDisplayNameInput').value = name;
+        $('identityDisplayNameForm').classList.add('hidden');
+        if (statusNode) statusNode.textContent = 'Display name saved.';
+        return name;
+      } catch (error) {
+        if (statusNode) statusNode.textContent = error.message || 'Could not save your display name.';
+        throw error;
+      }
+    }
+    $('identityDisplayNameForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      await saveIdentityName($('identityDisplayNameInput').value, $('displayNameStatus')).catch(() => {});
+    });
+
     $('displayNameForm').addEventListener('submit', async event => {
-      event.preventDefault(); const status = $('displayNameStatus'); status.textContent = 'Saving…';
-      try { const name = await setDisplayName($('displayNameInput').value); status.textContent = 'Display name saved.'; $('profileDisplayName').textContent = name; $('accountDisplayName').textContent = name; }
-      catch (error) { status.textContent = error.message || 'Could not save your display name.'; }
+      event.preventDefault();
+      await saveIdentityName($('displayNameInput').value, $('displayNameStatus')).catch(() => {});
+    });
+
+    $('profileRegistrationsList').addEventListener('click', async event => {
+      const button = event.target.closest('.evaluation-optout');
+      if (!button) return;
+      button.disabled = true;
+      try {
+        await cancelEvaluationRequest(button.dataset.seminar);
+        await refreshProfile(activeUser);
+      } catch (error) {
+        button.disabled = false;
+        button.insertAdjacentHTML('afterend', '<span role="alert">' + escape(error.message || 'Could not change evaluation participation.') + '</span>');
+      }
     });
     $('profileRegistrationsList').addEventListener('submit', async event => {
       const form = event.target.closest('.evaluation-request'); if (!form) return; event.preventDefault();

@@ -297,3 +297,122 @@
 import('/js/screening-banner.js?v=3').catch(error => console.warn('Screening announcement unavailable:', error));
 
 import('/js/local-navigation.js?v=1').catch(error => console.warn('Local navigation unavailable:', error));
+
+
+// ── Shared information architecture normalization ────────────────────────────
+// Keep the static HTML backwards-safe, then normalize the live site from one
+// shared place so navigation semantics do not drift page by page.
+(() => {
+  const menu = document.querySelector('.nav-links');
+  if (!menu) return;
+
+  // Fork remains prominently introduced from the homepage, but it is not a
+  // global-site exit anymore.
+  [...menu.querySelectorAll(':scope > li > a[href]')].forEach((link) => {
+    if (link.hostname === 'fork.netadao.org') link.closest('li')?.remove();
+  });
+
+  const dropdown = menu.querySelector('.nav-dropdown-menu');
+  if (dropdown) {
+    [...dropdown.querySelectorAll('li')].forEach((item) => {
+      const link = item.querySelector('a[href]');
+      if (!link) return;
+      if (/\/seminar\.html#unit1-section$/.test(new URL(link.href, location.href).pathname + new URL(link.href, location.href).hash) ||
+          /^Archive$/i.test(link.textContent.trim())) item.remove();
+      const destination = new URL(link.href, location.href);
+      if (destination.pathname === '/seminar.html') link.href = '/CoiningReason/';
+      if (destination.pathname === '/forthcoming.html') link.href = '/SexMonstersSuperheroes/';
+      if (/forthcoming/i.test(link.textContent)) link.textContent = 'Forthcoming: Sex, Monsters, and Superheroes';
+    });
+  }
+
+  // Cinema is useful navigation for people who can actually use it, not an
+  // advertisement for a gated utility. Authorization remains enforced by the
+  // Cinema page/backend; this is only conditional navigation visibility.
+  import('/js/academy-auth.js?v=25').then((academy) => {
+    const { auth, onAuthStateChanged, getRegistrations, ADMIN_EMAIL } = academy;
+    onAuthStateChanged(auth, async (user) => {
+      menu.querySelector('[data-conditional-cinema]')?.remove();
+      if (!user?.email) return;
+      try {
+        const regs = await getRegistrations(user.email);
+        let entitled = regs?.['sex-and-or-love']?.enrolled === true || user.email === ADMIN_EMAIL;
+        if (!entitled) {
+          // The staff-authority rollout may provide seminar-scoped teaching
+          // assignments from a dedicated service. Treat that as an optional
+          // capability so public navigation remains backwards-safe.
+          const staff = await import('/js/staff-service.js').catch(() => null);
+          if (staff?.getTeachingAssignments) {
+            const assignments = await staff.getTeachingAssignments().catch(() => []);
+            entitled = Array.isArray(assignments)
+              ? assignments.some(item => (item.seminarId || item.id || item) === 'sex-and-or-love')
+              : !!assignments?.['sex-and-or-love'];
+          }
+        }
+        if (!entitled) return;
+        const accountLi = document.getElementById('navAccountItem')?.closest('li') || document.getElementById('navAccountItem');
+        const li = document.createElement('li');
+        li.dataset.conditionalCinema = 'true';
+        li.innerHTML = '<a href="/cinema.html">Cinema</a>';
+        menu.insertBefore(li, accountLi || null);
+      } catch (_) {
+        // Navigation should fail closed; enrollment surfaces provide recovery.
+      }
+    });
+  }).catch(() => {});
+
+  // Standard external-link notation. Preserve explicitly authored symbols.
+  document.querySelectorAll('a[href^="http"]').forEach((link) => {
+    try {
+      const url = new URL(link.href, location.href);
+      if (url.origin === location.origin) return;
+      if (!/[↗]$/.test(link.textContent.trim()) && !link.querySelector('svg')) {
+        link.append(document.createTextNode(' ↗'));
+      }
+      link.dataset.externalLink = 'true';
+    } catch (_) {}
+  });
+
+  // Seminar policies should be reviewable without ejecting visitors from their
+  // current workflow. The Seminars page remains the canonical/deep-link source.
+  const policySelector = 'a[href*="seminars.html#seminar-policies"], a[href*="seminars.html#policies"]';
+  let policyDialog = null;
+  async function openPolicyDialog(invoker) {
+    if (!policyDialog) {
+      policyDialog = document.createElement('dialog');
+      policyDialog.className = 'academy-policy-dialog';
+      policyDialog.setAttribute('aria-labelledby', 'academy-policy-dialog-title');
+      policyDialog.innerHTML = '<div class="academy-policy-dialog-shell"><div class="academy-policy-dialog-head"><h2 id="academy-policy-dialog-title">Academy Seminar Policies</h2><button type="button" class="academy-policy-dialog-close" aria-label="Close seminar policies">Close</button></div><div class="academy-policy-dialog-body"><p>Loading policies…</p></div></div>';
+      document.body.appendChild(policyDialog);
+      policyDialog.querySelector('.academy-policy-dialog-close').addEventListener('click', () => policyDialog.close());
+      policyDialog.addEventListener('click', (event) => {
+        if (event.target === policyDialog) policyDialog.close();
+      });
+    }
+    const body = policyDialog.querySelector('.academy-policy-dialog-body');
+    if (!body.dataset.loaded) {
+      try {
+        const response = await fetch('/seminars.html', { credentials: 'same-origin' });
+        const html = await response.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const source = doc.querySelector('#seminar-policies .policy-disclosure-body');
+        if (!source) throw new Error('Policy source missing');
+        body.replaceChildren(...[...source.children].map((node) => node.cloneNode(true)));
+        body.dataset.loaded = 'true';
+      } catch (_) {
+        body.innerHTML = '<p>Policies could not be loaded here. <a href="/seminars.html#seminar-policies">Open the policy page →</a></p>';
+      }
+    }
+    policyDialog._returnFocus = invoker;
+    policyDialog.showModal();
+  }
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest(policySelector);
+    if (!link) return;
+    event.preventDefault();
+    openPolicyDialog(link);
+  });
+  document.addEventListener('close', (event) => {
+    if (event.target === policyDialog) policyDialog?._returnFocus?.focus?.();
+  }, true);
+})();

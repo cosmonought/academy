@@ -1,5 +1,5 @@
-import { auth, onAuthStateChanged, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=24';
-import { accountError } from './account-flow.js?v=3';
+import { auth, onAuthStateChanged, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=26';
+import { accountError } from './account-flow.js?v=4';
 import { createAccount } from './account-create.js?v=1';
 
 export function initInlineSeminarEnrollment(rootOrOptions = document) {

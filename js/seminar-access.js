@@ -1,5 +1,5 @@
-import { auth, onAuthStateChanged, getRegistrationForSeminar } from './academy-auth.js?v=24';
-import { accountError } from './account-flow.js?v=3';
+import { auth, onAuthStateChanged, getRegistrationForSeminar } from './academy-auth.js?v=26';
+import { accountError } from './account-flow.js?v=4';
 
 // This seminar communicates access beside Sessions, without an account-management panel.
 export function watchSeminarAccess(onChange, root = document) {

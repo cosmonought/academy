@@ -1,5 +1,5 @@
-import { createPasswordAccount } from './academy-auth.js?v=24';
-import { passwordIssue } from './account-flow.js?v=3';
+import { createPasswordAccount } from './academy-auth.js?v=26';
+import { passwordIssue } from './account-flow.js?v=4';
 
 // Account creation is shared by the account page and seminar enrollment.
 // Keeping validation and the Firebase call here prevents the two entry points

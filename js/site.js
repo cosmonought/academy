@@ -319,6 +319,9 @@ import('/js/local-navigation.js?v=1').catch(error => console.warn('Local navigat
       if (!link) return;
       if (/\/seminar\.html#unit1-section$/.test(new URL(link.href, location.href).pathname + new URL(link.href, location.href).hash) ||
           /^Archive$/i.test(link.textContent.trim())) item.remove();
+      const destination = new URL(link.href, location.href);
+      if (destination.pathname === '/seminar.html') link.href = '/CoiningReason/';
+      if (destination.pathname === '/forthcoming.html') link.href = '/SexMonstersSuperheroes/';
       if (/forthcoming/i.test(link.textContent)) link.textContent = 'Forthcoming: Sex, Monsters, and Superheroes';
     });
   }

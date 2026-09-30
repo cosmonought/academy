@@ -329,14 +329,27 @@ import('/js/local-navigation.js?v=1').catch(error => console.warn('Local navigat
   // Cinema is useful navigation for people who can actually use it, not an
   // advertisement for a gated utility. Authorization remains enforced by the
   // Cinema page/backend; this is only conditional navigation visibility.
-  import('/js/academy-auth.js?v=25').then(({ auth, onAuthStateChanged, getRegistrations }) => {
+  import('/js/academy-auth.js?v=25').then((academy) => {
+    const { auth, onAuthStateChanged, getRegistrations, ADMIN_EMAIL } = academy;
     onAuthStateChanged(auth, async (user) => {
       menu.querySelector('[data-conditional-cinema]')?.remove();
       if (!user?.email) return;
       try {
         const regs = await getRegistrations(user.email);
-        const sex = regs?.['sex-and-or-love'];
-        if (sex?.enrolled !== true) return;
+        let entitled = regs?.['sex-and-or-love']?.enrolled === true || user.email === ADMIN_EMAIL;
+        if (!entitled) {
+          // The staff-authority rollout may provide seminar-scoped teaching
+          // assignments from a dedicated service. Treat that as an optional
+          // capability so public navigation remains backwards-safe.
+          const staff = await import('/js/staff-service.js').catch(() => null);
+          if (staff?.getTeachingAssignments) {
+            const assignments = await staff.getTeachingAssignments().catch(() => []);
+            entitled = Array.isArray(assignments)
+              ? assignments.some(item => (item.seminarId || item.id || item) === 'sex-and-or-love')
+              : !!assignments?.['sex-and-or-love'];
+          }
+        }
+        if (!entitled) return;
         const accountLi = document.getElementById('navAccountItem')?.closest('li') || document.getElementById('navAccountItem');
         const li = document.createElement('li');
         li.dataset.conditionalCinema = 'true';

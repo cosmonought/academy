@@ -367,7 +367,7 @@ export async function revokeRegistration(emailKey, seminarId) {
 
 // ── Participant record ──
 import { ATTENDANCE_EVENTS, attendanceRecord } from './academy-record.js';
-export { ATTENDANCE_EVENTS, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES, attendanceRecord } from './academy-record.js';
+export { ATTENDANCE_EVENTS, EVALUATION_CONFIG, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES, attendanceRecord, participantAttendanceRecord } from './academy-record.js';
 export const SEMINAR_TITLES = {
   'sex-and-or-love': 'Sex, and/or Love',
   'coining-reason-unit-1': 'Coining Reason — Unit I',

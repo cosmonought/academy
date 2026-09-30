@@ -366,8 +366,8 @@ export async function revokeRegistration(emailKey, seminarId) {
 }
 
 // ── Participant record ──
-import { ATTENDANCE_EVENTS, attendanceRecord } from './academy-record.js';
-export { ATTENDANCE_EVENTS, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES, attendanceRecord } from './academy-record.js';
+import { ATTENDANCE_EVENTS, EVALUATION_CONFIG, attendanceRecord } from './academy-record.js';
+export { ATTENDANCE_EVENTS, EVALUATION_CONFIG, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES, attendanceRecord } from './academy-record.js';
 export const SEMINAR_TITLES = {
   'sex-and-or-love': 'Sex, and/or Love',
   'coining-reason-unit-1': 'Coining Reason — Unit I',
@@ -382,6 +382,7 @@ export const SEMINAR_COMPLETED = {
 };
 export async function setAttendance(emailKey, seminarId, eventKey, attended) {
   if (!ATTENDANCE_EVENTS[seminarId]?.some(event => event.key === eventKey)) throw new Error('Unknown attendance event.');
+  if (attended !== true && attended !== false && attended !== null) throw new Error('Attendance must be attended, absent, or unrecorded.');
   await set(ref(db, `academyRegistrations/${emailKey}/${seminarId}/attendance/${eventKey}`), attended);
 }
 export const computeAttendance = attendanceRecord;
@@ -412,9 +413,34 @@ export async function getEvaluation(email, seminarId) {
 export async function requestEvaluation(seminarId, form) {
   const user = auth.currentUser;
   if (!user?.email || !['essay','presentation','discussion','other'].includes(form)) throw new Error('Choose an evaluation form.');
+  const config = EVALUATION_CONFIG[seminarId];
+  if (!config?.enabled) throw Object.assign(new Error('Evaluation is not enabled for this seminar.'), { code: 'academy/evaluation-not-enabled' });
+
+  const registration = await getRegistrationForSeminar(user.email, seminarId);
+  if (!registration?.enrolled) throw Object.assign(new Error('Enrollment is required before requesting evaluation.'), { code: 'academy/evaluation-not-enrolled' });
+  const attendance = attendanceRecord(seminarId, registration);
+  const minimum = Number(config.minimumAttendanceEvents || 0);
+  if (attendance.attended < minimum) {
+    throw Object.assign(new Error(`Attend at least ${minimum} session event${minimum === 1 ? '' : 's'} before opting into evaluation.`), { code: 'academy/evaluation-attendance-required' });
+  }
+  if (config.requestClosesAt && Date.now() > Date.parse(config.requestClosesAt)) {
+    throw Object.assign(new Error('The evaluation opt-in period for this seminar has closed.'), { code: 'academy/evaluation-closed' });
+  }
+
   await set(ref(db, `evaluations/${emailToKey(user.email)}/${seminarId}/request`), {
     form, requestedAt: Date.now(), accountUid: user.uid
   });
+}
+
+export async function cancelEvaluationRequest(seminarId) {
+  const user = auth.currentUser;
+  if (!user?.email) throw new Error('Sign in to change evaluation participation.');
+  const config = EVALUATION_CONFIG[seminarId];
+  if (!config?.enabled) throw Object.assign(new Error('Evaluation is not enabled for this seminar.'), { code: 'academy/evaluation-not-enabled' });
+  if (config.requestClosesAt && Date.now() > Date.parse(config.requestClosesAt)) {
+    throw Object.assign(new Error('The evaluation opt-in period for this seminar has closed.'), { code: 'academy/evaluation-closed' });
+  }
+  await set(ref(db, `evaluations/${emailToKey(user.email)}/${seminarId}/request`), null);
 }
 export async function getAllEvaluations() {
   const snap = await get(ref(db, 'evaluations'));

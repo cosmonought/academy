@@ -1,7 +1,7 @@
 // Forthcoming-seminar interest capture.
 // Reuses the Academy Firebase app/database initialized by academy-auth.js,
 // but stores interest separately from both newsletter signups and enrollment.
-import { db, auth, emailToKey } from './academy-auth.js?v=25';
+import { db, auth, emailToKey } from './academy-auth.js?v=26';
 import { ref, push, set } from 'https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js';
 
 export const GRAPHIC_SEMINAR_ID = 'sex-monsters-superheroes';

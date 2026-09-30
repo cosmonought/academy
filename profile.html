@@ -13,38 +13,122 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
   <style>
-    .profile-wrap { width:min(100% - 64px, 1120px); margin:94px auto 90px; }
+    .profile-wrap { width:min(100% - 64px,1120px); margin:94px auto 90px; }
     .profile-title { font:900 clamp(30px,3.4vw,46px)/1 var(--font-display); text-transform:uppercase; margin:0 0 24px; }
-    .profile-identity { border-top:2px solid var(--ink); padding:18px 0 28px; display:flex; flex-wrap:wrap; gap:8px 32px; align-items:baseline; }
-    .profile-identity strong { font:700 20px var(--font-display); }
+    .profile-identity {
+      border-top:2px solid var(--ink); padding:18px 0 22px;
+      display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px 28px; align-items:start;
+    }
+    .profile-identity-main { min-width:0; }
+    .profile-identity strong { display:block; font:700 20px var(--font-display); }
     .profile-identity span, .profile-note { color:var(--ink-dim); font-size:13px; line-height:1.6; }
+    .profile-inline-name { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:9px; }
+    .profile-inline-name input {
+      width:min(280px,100%); min-height:38px; padding:7px 9px;
+      border:1px solid var(--rule-thin); background:var(--bg); color:var(--ink);
+      font:13px var(--font-mono);
+    }
+    .profile-inline-name button,
+    .profile-tabs button,
+    .record-form button,
+    .quiet-btn,
+    .transcript-action {
+      min-height:38px; padding:7px 12px; border:1px solid var(--ink);
+      background:transparent; color:var(--ink); cursor:pointer; font:11px var(--font-mono);
+    }
+    .profile-inline-name button:hover,
+    .record-form button:hover,
+    .quiet-btn:hover { background:var(--ink); color:var(--bg); }
+
+    .profile-tabs {
+      display:flex; flex-wrap:wrap; gap:0;
+      margin:2px 0 30px; border-bottom:1px solid var(--ink);
+    }
+    .profile-tabs button {
+      min-height:42px; margin-bottom:-1px; padding:10px 18px;
+      border:0; border-bottom:2px solid transparent; color:var(--ink-dim);
+      text-transform:uppercase; letter-spacing:.06em;
+    }
+    .profile-tabs button[aria-selected="true"] { border-bottom-color:var(--pink); color:var(--ink); font-weight:700; }
+    .profile-tabs button[hidden] { display:none; }
+    .profile-panel[hidden] { display:none !important; }
+
     .record-section { margin:25px 0 44px; }
-    .record-section h2 { font:700 13px var(--font-mono); letter-spacing:.08em; text-transform:uppercase; padding-bottom:11px; border-bottom:1px solid var(--ink); }
-    .record-row { display:grid; grid-template-columns:minmax(180px,1fr) minmax(0,2fr); gap:20px 40px; padding:23px 0; border-bottom:1px solid var(--rule-thin); }
+    .record-section h2 {
+      font:700 13px var(--font-mono); letter-spacing:.08em; text-transform:uppercase;
+      padding-bottom:11px; border-bottom:1px solid var(--ink);
+    }
+    .record-row {
+      display:grid; grid-template-columns:minmax(180px,1fr) minmax(0,2fr);
+      gap:20px 40px; padding:23px 0; border-bottom:1px solid var(--rule-thin);
+    }
     .record-row h3 { font:900 clamp(20px,2.3vw,28px)/1.1 var(--font-display); text-transform:uppercase; margin:0 0 8px; }
-    .record-status, .record-label { font:11px var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-dim); }
+    .record-status,.record-label { font:11px var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-dim); }
     .record-content { min-width:0; }
-    .record-grid { display:grid; grid-template-columns:minmax(135px, .7fr) minmax(0,1.3fr); gap:20px; }
+    .record-grid { display:grid; grid-template-columns:minmax(135px,.7fr) minmax(0,1.3fr); gap:20px; }
     .record-grid p { margin:7px 0; font-size:14px; line-height:1.55; }
-    .record-content a, .profile-note a { color:var(--blue); text-decoration:underline; text-underline-offset:4px; }
+    .record-content a,.profile-note a,.transcript-row a { color:var(--blue); text-decoration:underline; text-underline-offset:4px; }
     .record-action { display:inline-block; margin-top:14px; font-size:13px; }
     .record-detail { margin-top:11px; font-size:13px; }
     .record-detail summary { cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
     .event-list { list-style:none; padding:0; margin:12px 0; }
-    .event-list li { padding:5px 0; display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid var(--rule-thin); }
-    .legacy-note { color:var(--ink-dim); line-height:1.6; }
+    .event-list li { padding:7px 0; display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid var(--rule-thin); }
+    .event-list .event-kind { color:var(--ink-dim); font:10px var(--font-mono); text-transform:uppercase; letter-spacing:.05em; }
+    .event-list .event-status { font:10px var(--font-mono); text-transform:uppercase; color:var(--ink-dim); white-space:nowrap; }
     .feedback { white-space:pre-wrap; overflow-wrap:anywhere; }
     .record-form { display:flex; flex-wrap:wrap; align-items:end; gap:10px; margin-top:10px; }
     .record-form label { display:grid; gap:6px; font:12px var(--font-mono); }
-    .record-form input, .record-form select { min-height:42px; padding:8px 10px; border:1px solid var(--rule-thin); background:var(--bg); color:var(--ink); min-width:180px; }
-    .record-form button, .quiet-btn { min-height:42px; padding:8px 15px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; font:12px var(--font-mono); }
-    .account-row { display:grid; grid-template-columns:160px 1fr; gap:20px; align-items:baseline; padding:15px 0; border-bottom:1px solid var(--rule-thin); font-size:14px; }
+    .record-form input,.record-form select {
+      min-height:42px; padding:8px 10px; border:1px solid var(--rule-thin);
+      background:var(--bg); color:var(--ink); min-width:180px;
+    }
+    .evaluation-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; }
+    .evaluation-cancel { border-color:var(--rule-thin) !important; color:var(--ink-dim) !important; }
+
+    .transcript-head,.transcript-row {
+      display:grid; grid-template-columns:minmax(200px,1.3fr) minmax(120px,.7fr) minmax(180px,1fr) auto;
+      gap:18px; align-items:center;
+    }
+    .transcript-head {
+      padding:0 0 9px; border-bottom:1px solid var(--ink);
+      font:10px var(--font-mono); letter-spacing:.07em; text-transform:uppercase; color:var(--ink-dim);
+    }
+    .transcript-row { padding:16px 0; border-bottom:1px solid var(--rule-thin); font-size:13px; }
+    .transcript-title { font:800 17px/1.1 var(--font-display); text-transform:uppercase; }
+    .transcript-meta { color:var(--ink-mid); line-height:1.45; }
+    .transcript-row .record-label { display:none; }
+    .transcript-empty { padding:22px 0; color:var(--ink-dim); font-size:13px; }
+
+    .account-row {
+      display:grid; grid-template-columns:160px 1fr; gap:20px; align-items:baseline;
+      padding:15px 0; border-bottom:1px solid var(--rule-thin); font-size:14px;
+    }
     .account-row > span:first-child { font:11px var(--font-mono); text-transform:uppercase; color:var(--ink-dim); }
+    .teaching-placeholder { padding:22px 0; color:var(--ink-dim); line-height:1.65; }
     .hidden { display:none !important; }
-    @media(max-width:700px) { .profile-wrap { width:min(100% - 36px, 1120px); margin:80px auto 55px; } .record-row, .record-grid, .account-row { grid-template-columns:1fr; gap:10px; } .record-row { gap:16px; } .account-row { gap:4px; } .record-form input, .record-form select { min-width:0; max-width:100%; } .event-list li { display:block; } }
+
+    :is(.profile-tabs button,.profile-inline-name input,.profile-inline-name button,.record-form input,.record-form select,.record-form button,.quiet-btn):focus-visible {
+      outline:3px solid var(--blue); outline-offset:3px;
+    }
+
+    @media(max-width:760px) {
+      .profile-wrap { width:min(100% - 36px,1120px); margin:80px auto 55px; }
+      .profile-identity { grid-template-columns:1fr; }
+      .record-row,.record-grid,.account-row { grid-template-columns:1fr; gap:10px; }
+      .record-row { gap:16px; }
+      .account-row { gap:4px; }
+      .record-form input,.record-form select { min-width:0; max-width:100%; }
+      .event-list li { display:block; }
+      .event-list .event-status { display:block; margin-top:3px; }
+      .transcript-head { display:none; }
+      .transcript-row { grid-template-columns:1fr; gap:7px; padding:18px 0; }
+      .transcript-row .record-label { display:inline; margin-right:6px; }
+      .profile-tabs { overflow-x:auto; flex-wrap:nowrap; }
+      .profile-tabs button { flex:0 0 auto; }
+    }
   </style>
-  <script src="/js/site.js?v=9" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=6" />
+  <script src="/js/site.js?v=10" defer></script>
+  <link rel="stylesheet" href="/css/editorial.css?v=43" />
   <link rel="stylesheet" href="/css/screening-banner.css?v=3">
 </head>
 <body>
@@ -96,111 +180,425 @@
     </div>
     <div id="profileSignedIn" class="hidden">
       <h1 class="profile-title">Your Profile</h1>
-      <div class="profile-identity"><strong id="profileDisplayName">Display name not set</strong><span id="profileEmailLine"></span></div>
+
+      <div class="profile-identity">
+        <div class="profile-identity-main">
+          <strong id="profileDisplayName">Display name not set</strong>
+          <span id="profileEmailLine"></span>
+          <form id="mastheadDisplayNameForm" class="profile-inline-name hidden">
+            <label class="visually-hidden" for="mastheadDisplayNameInput">Set display name</label>
+            <input id="mastheadDisplayNameInput" autocomplete="nickname" maxlength="40" placeholder="Choose a display name" required>
+            <button type="submit">Set display name</button>
+            <span id="mastheadDisplayNameStatus" class="profile-note" role="status" aria-live="polite"></span>
+          </form>
+        </div>
+      </div>
+
       <p id="rolloutCheck" class="profile-note" role="status" hidden></p>
-      <section id="profileAttention" class="record-section hidden" aria-labelledby="attentionHeading"><h2 id="attentionHeading">Needs your attention</h2><div id="attentionRows"></div></section>
-      <section class="record-section" aria-labelledby="seminarHeading"><h2 id="seminarHeading">Your seminars</h2><div id="profileRegistrationsList"></div><p id="profileNoRegistration" class="profile-note hidden">You aren't enrolled in any seminars yet. <a href="/seminars.html">Browse seminars →</a></p></section>
-      <section id="profileInterests" class="record-section hidden" aria-labelledby="interestsHeading"><h2 id="interestsHeading">Forthcoming / interests</h2><div id="interestRows"></div></section>
-      <section class="record-section" aria-labelledby="accountHeading"><h2 id="accountHeading">Account</h2>
-        <div class="account-row"><span>Display name</span><div><span id="accountDisplayName">Not set</span><form id="displayNameForm" class="record-form"><label for="displayNameInput">Change display name<input id="displayNameInput" autocomplete="nickname" maxlength="40" required></label><button type="submit">Save name</button></form><p id="displayNameStatus" class="profile-note" role="status" aria-live="polite"></p></div></div>
-        <div class="account-row"><span>Email</span><span id="accountEmail"></span></div>
-        <div class="account-row"><span>Password</span><a href="/set-password.html">Set or change password →</a></div>
-        <div class="account-row"><span></span><button class="quiet-btn" id="profileSignOutBtn" type="button">Sign out</button></div>
-      </section>
+
+      <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
+        <button type="button" id="profileTabSeminars" role="tab" aria-selected="true" aria-controls="profilePanelSeminars" data-profile-tab="seminars">Seminars</button>
+        <button type="button" id="profileTabTranscript" role="tab" aria-selected="false" aria-controls="profilePanelTranscript" data-profile-tab="transcript">Transcript</button>
+        <button type="button" id="profileTabAccount" role="tab" aria-selected="false" aria-controls="profilePanelAccount" data-profile-tab="account">Account</button>
+        <button type="button" id="profileTabTeaching" role="tab" aria-selected="false" aria-controls="profilePanelTeaching" data-profile-tab="teaching" hidden>Teaching</button>
+      </nav>
+
+      <div id="profilePanelSeminars" class="profile-panel" role="tabpanel" aria-labelledby="profileTabSeminars" data-profile-panel="seminars">
+        <section id="profileAttention" class="record-section hidden" aria-labelledby="attentionHeading">
+          <h2 id="attentionHeading">Needs your attention</h2>
+          <div id="attentionRows"></div>
+        </section>
+        <section class="record-section" aria-labelledby="seminarHeading">
+          <h2 id="seminarHeading">Current seminars</h2>
+          <div id="profileRegistrationsList"></div>
+          <p id="profileNoRegistration" class="profile-note hidden">You don't have an active seminar enrollment. <a href="/seminars.html">Browse seminars →</a></p>
+        </section>
+        <section id="profileInterests" class="record-section hidden" aria-labelledby="interestsHeading">
+          <h2 id="interestsHeading">Forthcoming / interests</h2>
+          <div id="interestRows"></div>
+        </section>
+      </div>
+
+      <div id="profilePanelTranscript" class="profile-panel" role="tabpanel" aria-labelledby="profileTabTranscript" data-profile-panel="transcript" hidden>
+        <section class="record-section" aria-labelledby="transcriptHeading">
+          <h2 id="transcriptHeading">Transcript</h2>
+          <div class="transcript-head" aria-hidden="true">
+            <span>Seminar</span><span>Attendance</span><span>Evaluation</span><span>Archive</span>
+          </div>
+          <div id="profileTranscriptList"></div>
+          <p id="profileNoTranscript" class="transcript-empty hidden">Completed seminars will appear here.</p>
+        </section>
+      </div>
+
+      <div id="profilePanelAccount" class="profile-panel" role="tabpanel" aria-labelledby="profileTabAccount" data-profile-panel="account" hidden>
+        <section class="record-section" aria-labelledby="accountHeading">
+          <h2 id="accountHeading">Account</h2>
+          <div class="account-row"><span>Display name</span><div><span id="accountDisplayName">Not set</span><form id="displayNameForm" class="record-form"><label for="displayNameInput">Change display name<input id="displayNameInput" autocomplete="nickname" maxlength="40" required></label><button type="submit">Save name</button></form><p id="displayNameStatus" class="profile-note" role="status" aria-live="polite"></p></div></div>
+          <div class="account-row"><span>Email</span><span id="accountEmail"></span></div>
+          <div class="account-row"><span>Password</span><a href="/set-password.html">Set or change password →</a></div>
+          <div class="account-row"><span></span><button class="quiet-btn" id="profileSignOutBtn" type="button">Sign out</button></div>
+        </section>
+      </div>
+
+      <div id="profilePanelTeaching" class="profile-panel" role="tabpanel" aria-labelledby="profileTabTeaching" data-profile-panel="teaching" hidden>
+        <section class="record-section" aria-labelledby="teachingHeading">
+          <h2 id="teachingHeading">Teaching</h2>
+          <div id="profileTeachingMount" class="teaching-placeholder"></div>
+        </section>
+      </div>
       <p id="profileError" class="profile-note" role="alert"></p>
     </div>
   </main>
   <footer class="site-footer" data-site-footer></footer>
 
   <script type="module">
-    import {
+    import * as academy from '/js/academy-auth.js?v=26';
+    import { seminarPages } from '/js/account-flow.js?v=4';
+    import { screenings } from '/js/seminar-data.js';
+    import { canRevealTitle } from '/js/seminar-screenings.js?v=4';
+
+    const {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, initNavAccountWidget,
       getRegistrations, getDisplayName, setDisplayName, getEvaluation, requestEvaluation,
-      getOwnSeminarInterests, SEMINAR_TITLES, SEMINAR_COMPLETED, attendanceRecord,
-      EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES
-    } from '/js/academy-auth.js?v=25';
-    import { seminarPages } from '/js/account-flow.js?v=3';
+      cancelEvaluationRequest, getOwnSeminarInterests, SEMINAR_TITLES, SEMINAR_COMPLETED,
+      attendanceRecord, EVALUATION_CONFIG, EVALUATION_FORMS, EVALUATION_OUTCOMES
+    } = academy;
+
     initNavAccountWidget();
     const $ = id => document.getElementById(id);
-    const escape = value => { const el = document.createElement('span'); el.textContent = String(value ?? ''); return el.innerHTML; };
+    const escape = value => {
+      const el = document.createElement('span');
+      el.textContent = String(value ?? '');
+      return el.innerHTML;
+    };
+    const screeningById = new Map(screenings.map(item => [item.id, item]));
     let activeUser = null;
 
-    function evaluationHtml(seminarId, evaluation) {
-      if (evaluation.unavailable) return '<div class="record-label">Evaluation · Unavailable</div><p>Could not load this record. Try again later.</p>';
-      if (!EVALUATION_OFFERED[seminarId]) return '<div class="record-label">Evaluation · Not offered</div><p>Evaluated work was not offered for this seminar.</p>';
+    function activateTab(name, updateHash = false) {
+      const available = [...document.querySelectorAll('[data-profile-tab]:not([hidden])')];
+      if (!available.some(tab => tab.dataset.profileTab === name)) name = 'seminars';
+      document.querySelectorAll('[data-profile-tab]').forEach(tab => {
+        const on = !tab.hidden && tab.dataset.profileTab === name;
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      document.querySelectorAll('[data-profile-panel]').forEach(panel => {
+        panel.hidden = panel.dataset.profilePanel !== name;
+      });
+      if (updateHash) history.replaceState(null, '', '#' + name);
+    }
+
+    document.querySelectorAll('[data-profile-tab]').forEach(tab => {
+      tab.addEventListener('click', () => activateTab(tab.dataset.profileTab, true));
+      tab.addEventListener('keydown', event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        const tabs = [...document.querySelectorAll('[data-profile-tab]:not([hidden])')];
+        const index = tabs.indexOf(tab);
+        if (index < 0) return;
+        event.preventDefault();
+        let next = index;
+        if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = tabs.length - 1;
+        tabs[next].focus();
+        activateTab(tabs[next].dataset.profileTab, true);
+      });
+    });
+
+    function tabFromHash() {
+      const hash = location.hash.replace(/^#/,'');
+      if (hash === 'accountHeading') return 'account';
+      return ['seminars','transcript','account','teaching'].includes(hash) ? hash : 'seminars';
+    }
+    addEventListener('hashchange', () => activateTab(tabFromHash()));
+
+    function participantEventLabel(event, enrolled) {
+      if (event.type !== 'screening') return event.label;
+      const screening = screeningById.get(event.screeningId);
+      if (screening && canRevealTitle(screening, enrolled)) return screening.title;
+      if (event.date) {
+        const date = new Intl.DateTimeFormat('en-US', { month:'short', day:'numeric', timeZone:'UTC' })
+          .format(new Date(event.date + 'T12:00:00Z'));
+        return `Screening · ${date}`;
+      }
+      return 'Screening · title revealed at screening';
+    }
+
+    function evaluationStateText(seminarId, evaluation) {
+      const config = EVALUATION_CONFIG[seminarId];
+      if (!config?.enabled) return 'Not enabled';
+      if (evaluation?.unavailable) return 'Record unavailable';
+      if (evaluation?.instructor?.state === 'completed') return EVALUATION_OUTCOMES[evaluation.instructor.outcome] || 'Completed';
+      if (evaluation?.instructor?.state === 'agreed' || evaluation?.instructor?.state === 'in-progress') return 'In progress';
+      if (evaluation?.request) return 'Requested';
+      return 'Not requested';
+    }
+
+    function evaluationHtml(seminarId, evaluation, record) {
+      const config = EVALUATION_CONFIG[seminarId];
+      if (!config?.enabled) {
+        return '<div class="record-label">Evaluation · Not enabled</div><p>Evaluation is not enabled for this seminar.</p>';
+      }
+      if (evaluation.unavailable) {
+        return '<div class="record-label">Evaluation · Record unavailable</div><p>Could not load this evaluation record. Try again later.</p>';
+      }
+
       const request = evaluation.request;
       const instructor = evaluation.instructor;
-      if (instructor?.state === 'completed') return `<div class="record-label">Evaluation · ${escape(EVALUATION_OUTCOMES[instructor.outcome] || 'Completed')}</div><p>Form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p><p class="record-label">Instructor feedback</p><p class="feedback">${escape(instructor.feedback || 'Feedback pending.')}</p>`;
-      if (instructor?.state === 'agreed') return `<div class="record-label">Evaluation · In progress</div><p>Agreed form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p>`;
-      if (request) return `<div class="record-label">Evaluation · Requested</div><p>Preferred form: ${escape(EVALUATION_FORMS[request.form] || request.form)}. Awaiting arrangement.</p>`;
-      return `<div class="record-label">Evaluation · Not requested</div><p>Optional evaluated work is available by arrangement.</p><form class="record-form evaluation-request" data-seminar="${escape(seminarId)}"><label>Preferred form<select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escape(label)}</option>`).join('')}</select></label><button type="submit">Request evaluation →</button></form><p class="profile-note">Papers may be sent to academy@netadao.org; other forms are arranged with the instructor.</p>`;
+      if (instructor?.state === 'completed') {
+        return `<div class="record-label">Evaluation · ${escape(EVALUATION_OUTCOMES[instructor.outcome] || 'Completed')}</div><p>Form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p><p class="record-label">Instructor feedback</p><p class="feedback">${escape(instructor.feedback || 'Feedback pending.')}</p>`;
+      }
+      if (instructor?.state === 'agreed' || instructor?.state === 'in-progress') {
+        return `<div class="record-label">Evaluation · In progress</div><p>Agreed form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p>`;
+      }
+      if (request) {
+        return `<div class="record-label">Evaluation · Requested</div><p>Preferred form: ${escape(EVALUATION_FORMS[request.form] || request.form)}. Awaiting arrangement.</p><div class="evaluation-actions"><button type="button" class="quiet-btn evaluation-cancel" data-cancel-evaluation="${escape(seminarId)}">Opt out of evaluation</button></div>`;
+      }
+
+      const minimum = Number(config.minimumAttendanceEvents || 0);
+      if (record.attended < minimum) {
+        return `<div class="record-label">Evaluation · Available later</div><p>Attend at least ${minimum} session event${minimum === 1 ? '' : 's'} before opting into evaluation.</p>`;
+      }
+      if (config.requestClosesAt && Date.now() > Date.parse(config.requestClosesAt)) {
+        return '<div class="record-label">Evaluation · Opt-in closed</div><p>The evaluation opt-in period for this seminar has closed.</p>';
+      }
+
+      return `<div class="record-label">Evaluation · Not requested</div><p>Optional evaluated work is available by arrangement.</p><form class="record-form evaluation-request" data-seminar="${escape(seminarId)}"><label>Preferred form<select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escape(label)}</option>`).join('')}</select></label><button type="submit">Opt into evaluation →</button></form><p class="profile-note">Papers may be sent to academy@netadao.org; other forms are arranged with the instructor.</p>`;
     }
+
     function makeRow(title, status, content) {
-      const row = document.createElement('article'); row.className = 'record-row';
+      const row = document.createElement('article');
+      row.className = 'record-row';
       row.innerHTML = `<div><h3>${escape(title)}</h3><span class="record-status">${escape(status)}</span></div><div class="record-content">${content}</div>`;
       return row;
     }
+
+    function transcriptRow(title, seminarId, record, evaluation) {
+      const row = document.createElement('article');
+      row.className = 'transcript-row';
+      const action = seminarPages[seminarId]
+        ? `<a href="${seminarPages[seminarId]}">Open archive →</a>`
+        : '<span>—</span>';
+      row.innerHTML = `
+        <div class="transcript-title">${escape(title)}</div>
+        <div class="transcript-meta"><span class="record-label">Attendance</span>${record.total ? `${record.attended} / ${record.total} events` : 'No event record'}</div>
+        <div class="transcript-meta"><span class="record-label">Evaluation</span>${escape(evaluationStateText(seminarId,evaluation))}</div>
+        <div>${action}</div>
+      `;
+      return row;
+    }
+
+    function attendanceHtml(seminarId, reg, approved) {
+      const record = attendanceRecord(seminarId, reg);
+      if (!approved) return {
+        record,
+        html:'<div><div class="record-label">Attendance</div><p>Available after enrollment.</p></div>'
+      };
+
+      const detail = record.detail.map(event => {
+        const label = participantEventLabel(event, approved);
+        return `<li><span><span class="event-kind">${escape(event.type)}</span> · ${escape(label)}</span><span class="event-status">${escape(event.status)}</span></li>`;
+      }).join('');
+
+      return {
+        record,
+        html:`<div><div class="record-label">Attendance</div><p>${record.total ? `${record.attended} / ${record.total} events` : 'Event schedule forthcoming'}</p>${record.detail.length ? `<details class="record-detail"><summary>View attendance detail</summary><ul class="event-list">${detail}</ul></details>` : ''}</div>`
+      };
+    }
+
+    async function loadTeaching(user) {
+      const tab = $('profileTabTeaching');
+      const mount = $('profileTeachingMount');
+      tab.hidden = true;
+      mount.replaceChildren();
+
+      // The staff-authority branch supplies this callable-backed helper. This
+      // profile remains compatible with the pre-deployment tree without showing
+      // a useless Teaching tab to ordinary participants.
+      if (typeof academy.getTeachingAssignments !== 'function') return;
+      try {
+        const assignments = await academy.getTeachingAssignments();
+        if (auth.currentUser?.uid !== user.uid || !Array.isArray(assignments) || !assignments.length) return;
+        tab.hidden = false;
+        const event = new CustomEvent('academy:teaching-ready', { detail:{ assignments, mount } });
+        document.dispatchEvent(event);
+        if (!mount.children.length && !mount.textContent.trim()) {
+          mount.textContent = assignments.length === 1
+            ? 'Teaching tools are available for your assigned seminar.'
+            : `Teaching tools are available for ${assignments.length} assigned seminars.`;
+        }
+        if (tabFromHash() === 'teaching') activateTab('teaching');
+      } catch (error) {
+        console.error('Could not load teaching assignments', error);
+      }
+    }
+
     async function refreshProfile(user) {
       activeUser = user;
       $('profileSignedOut').classList.toggle('hidden', !!user?.email);
       $('profileSignedIn').classList.toggle('hidden', !user?.email);
       if (!user?.email) return;
+
       $('profileEmailLine').textContent = user.email;
       $('accountEmail').textContent = user.email;
+
       if (new URLSearchParams(location.search).get('rollout') === '1') {
-        const check = $('rolloutCheck'); check.hidden = false; check.textContent = 'Checking administrator email verification…';
-        try { const token = await user.getIdTokenResult(true); if (auth.currentUser?.uid !== user.uid) return;
-          check.textContent = token.claims.email !== 'academy@netadao.org' ? 'Please sign in as academy@netadao.org to check administrator readiness.' : token.claims.email_verified === true ? 'Administrator email verified — ready for the updated rules.' : 'Administrator email is not verified — do not publish the updated rules yet.';
-        } catch { check.textContent = 'Could not check verification. Sign out, sign in again, and reopen this page.'; }
+        const check = $('rolloutCheck');
+        check.hidden = false;
+        check.textContent = 'Checking administrator email verification…';
+        try {
+          const token = await user.getIdTokenResult(true);
+          if (auth.currentUser?.uid !== user.uid) return;
+          check.textContent = token.claims.email !== 'academy@netadao.org'
+            ? 'Please sign in as academy@netadao.org to check administrator readiness.'
+            : token.claims.email_verified === true
+              ? 'Administrator email verified — ready for the updated rules.'
+              : 'Administrator email is not verified — do not publish the updated rules yet.';
+        } catch {
+          check.textContent = 'Could not check verification. Sign out, sign in again, and reopen this page.';
+        }
       }
+
       $('profileError').textContent = '';
       let regs, name, interests;
-      try { regs = await getRegistrations(user.email); }
-      catch (error) { $('profileError').textContent = 'We couldn’t load your Academy record. Please try again. If a prior registration is missing, contact academy@netadao.org. Account reference: ' + user.uid; return; }
-      [name, interests] = await Promise.all([getDisplayName(user.email).catch(() => ''), getOwnSeminarInterests(user.email).catch(() => ({}))]);
+      try {
+        regs = await getRegistrations(user.email);
+      } catch (error) {
+        $('profileError').textContent = 'We couldn’t load your Academy record. Please try again. If a prior registration is missing, contact academy@netadao.org. Account reference: ' + user.uid;
+        return;
+      }
+
+      [name, interests] = await Promise.all([
+        getDisplayName(user.email).catch(() => ''),
+        getOwnSeminarInterests(user.email).catch(() => ({}))
+      ]);
       if (auth.currentUser?.uid !== user.uid) return;
+
       $('profileDisplayName').textContent = name || 'Display name not set';
       $('accountDisplayName').textContent = name || 'Not set';
       $('displayNameInput').value = name || '';
-      const list = $('profileRegistrationsList'); list.replaceChildren();
-      const attention = $('attentionRows'); attention.replaceChildren();
-      const interestRows = $('interestRows'); interestRows.replaceChildren();
+      $('mastheadDisplayNameInput').value = name || '';
+      $('mastheadDisplayNameForm').classList.toggle('hidden', !!name);
+
+      const currentList = $('profileRegistrationsList');
+      const transcriptList = $('profileTranscriptList');
+      const attention = $('attentionRows');
+      const interestRows = $('interestRows');
+      currentList.replaceChildren();
+      transcriptList.replaceChildren();
+      attention.replaceChildren();
+      interestRows.replaceChildren();
+
       const entries = Object.entries(regs || {}).sort((a,b) => (b[1].requestedAt || 0) - (a[1].requestedAt || 0));
       for (const [seminarId, reg] of entries) {
         const approved = reg.enrolled === true;
         const completed = SEMINAR_COMPLETED[seminarId] === true;
         const title = SEMINAR_TITLES[seminarId] || seminarId;
-        const record = attendanceRecord(seminarId, reg);
+        const attendance = attendanceHtml(seminarId, reg, approved);
+        const config = EVALUATION_CONFIG[seminarId];
         let evaluation = {};
-        if (approved) { try { evaluation = await getEvaluation(user.email, seminarId); } catch { evaluation = { unavailable: true }; } }
-        const detail = record.detail.map(event => `<li><span>${escape(event.type.toUpperCase())} — ${escape(event.label)}</span><span>${escape(event.status)}</span></li>`).join('');
-        const legacy = record.legacy.length ? `<p class="legacy-note">${record.legacy.length} historical syllabus-unit marks retained. They cannot distinguish lecture from screening and are excluded from the event count.</p><ul class="event-list">${record.legacy.map(item => `<li><span>${escape(item.label)} · legacy</span><span>${item.value ? 'marked' : 'unmarked'}</span></li>`).join('')}</ul>` : '';
-        const attendance = approved ? `<div><div class="record-label">Attendance</div><p>${record.total ? `${record.attended} / ${record.total} events` : 'Event schedule forthcoming'}</p>${record.detail.length || legacy ? `<details class="record-detail"><summary>View attendance detail</summary><ul class="event-list">${detail}</ul>${legacy}</details>` : ''}</div>` : '<div><div class="record-label">Attendance</div><p>Available after enrollment.</p></div>';
-        const action = approved && seminarPages[seminarId] ? `<a class="record-action" href="${seminarPages[seminarId]}">${completed ? 'Open archive' : 'Open seminar'} →</a>` : '';
-        const content = `<div class="record-grid">${attendance}<div>${approved ? evaluationHtml(seminarId,evaluation) : '<div class="record-label">Evaluation · Pending enrollment</div><p>Available after enrollment where offered.</p>'}</div></div>${!approved ? '<p class="profile-note">Your registration has been submitted. DM @NetaDAO_Academy from your registered X handle to finish enrollment.</p>' : ''}${action}`;
-        list.append(makeRow(title, approved ? completed ? 'Archive access' : 'Enrolled' : 'Enrollment requested', content));
-        if (!approved) attention.append(makeRow(title,'Action required','<p>Enrollment verification required.</p><a href="https://x.com/NetaDAO_Academy">View instructions →</a>'));
+
+        // A seminar with evaluation disabled should never produce a fake system
+        // error because there is no evaluation record to load.
+        if (approved && config?.enabled) {
+          try { evaluation = await getEvaluation(user.email, seminarId); }
+          catch { evaluation = { unavailable:true }; }
+        }
+
+        if (approved && completed) {
+          transcriptList.append(transcriptRow(title, seminarId, attendance.record, evaluation));
+          continue;
+        }
+
+        const action = approved && seminarPages[seminarId]
+          ? `<a class="record-action" href="${seminarPages[seminarId]}">Open seminar →</a>`
+          : '';
+        const evaluation = approved
+          ? evaluationHtml(seminarId, evaluation, attendance.record)
+          : '<div class="record-label">Evaluation · Pending enrollment</div><p>Available after enrollment where enabled.</p>';
+        const content = `<div class="record-grid">${attendance.html}<div>${evaluation}</div></div>${!approved ? '<p class="profile-note">Your registration has been submitted. Complete any verification requested by the Academy to finish enrollment.</p>' : ''}${action}`;
+        currentList.append(makeRow(title, approved ? 'Enrolled' : 'Enrollment requested', content));
+
+        if (!approved) {
+          attention.append(makeRow(title,'Action required','<p>Enrollment verification is still required.</p>'));
+        }
       }
-      $('profileNoRegistration').classList.toggle('hidden', entries.length > 0);
+
+      $('profileNoRegistration').classList.toggle('hidden', currentList.children.length > 0);
+      $('profileNoTranscript').classList.toggle('hidden', transcriptList.children.length > 0);
+
       for (const [id, interest] of Object.entries(interests || {})) {
         if (regs?.[id] || interest.accountUid !== user.uid) continue;
         interestRows.append(makeRow(SEMINAR_TITLES[id] || id, 'Interest recorded', '<p>We’ll notify you when enrollment opens.</p>'));
       }
       $('profileInterests').classList.toggle('hidden', !interestRows.children.length);
       $('profileAttention').classList.toggle('hidden', !attention.children.length);
+
+      await loadTeaching(user);
+      activateTab(tabFromHash());
     }
-    $('displayNameForm').addEventListener('submit', async event => {
-      event.preventDefault(); const status = $('displayNameStatus'); status.textContent = 'Saving…';
-      try { const name = await setDisplayName($('displayNameInput').value); status.textContent = 'Display name saved.'; $('profileDisplayName').textContent = name; $('accountDisplayName').textContent = name; }
-      catch (error) { status.textContent = error.message || 'Could not save your display name.'; }
+
+    async function saveDisplayName(input, status) {
+      status.textContent = 'Saving…';
+      try {
+        const name = await setDisplayName(input.value);
+        status.textContent = 'Display name saved.';
+        $('profileDisplayName').textContent = name;
+        $('accountDisplayName').textContent = name;
+        $('displayNameInput').value = name;
+        $('mastheadDisplayNameInput').value = name;
+        $('mastheadDisplayNameForm').classList.add('hidden');
+      } catch (error) {
+        status.textContent = error.message || 'Could not save your display name.';
+      }
+    }
+
+    $('displayNameForm').addEventListener('submit', event => {
+      event.preventDefault();
+      saveDisplayName($('displayNameInput'), $('displayNameStatus'));
     });
+    $('mastheadDisplayNameForm').addEventListener('submit', event => {
+      event.preventDefault();
+      saveDisplayName($('mastheadDisplayNameInput'), $('mastheadDisplayNameStatus'));
+    });
+
     $('profileRegistrationsList').addEventListener('submit', async event => {
-      const form = event.target.closest('.evaluation-request'); if (!form) return; event.preventDefault();
-      const button = form.querySelector('button'); button.disabled = true;
-      try { await requestEvaluation(form.dataset.seminar, form.elements.namedItem('form').value); await refreshProfile(activeUser); }
-      catch { button.disabled = false; form.insertAdjacentHTML('beforeend','<span role="alert">Could not request evaluation. Please try again.</span>'); }
+      const form = event.target.closest('.evaluation-request');
+      if (!form) return;
+      event.preventDefault();
+      const button = form.querySelector('button');
+      button.disabled = true;
+      try {
+        await requestEvaluation(form.dataset.seminar, form.elements.namedItem('form').value);
+        await refreshProfile(activeUser);
+      } catch (error) {
+        button.disabled = false;
+        const alert = document.createElement('span');
+        alert.setAttribute('role','alert');
+        alert.textContent = error.message || 'Could not request evaluation. Please try again.';
+        form.append(alert);
+      }
     });
-    (async () => { await completeSignInIfNeeded(); onAuthStateChanged(auth, refreshProfile); })();
+
+    $('profileRegistrationsList').addEventListener('click', async event => {
+      const button = event.target.closest('[data-cancel-evaluation]');
+      if (!button) return;
+      button.disabled = true;
+      try {
+        await cancelEvaluationRequest(button.dataset.cancelEvaluation);
+        await refreshProfile(activeUser);
+      } catch (error) {
+        button.disabled = false;
+        button.insertAdjacentText('afterend', ' ' + (error.message || 'Could not change evaluation participation.'));
+      }
+    });
+
+    (async () => {
+      await completeSignInIfNeeded();
+      onAuthStateChanged(auth, refreshProfile);
+    })();
+
     $('profileSignOutBtn').addEventListener('click', () => signOut(auth));
   </script>
 </body>

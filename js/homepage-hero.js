@@ -1,4 +1,4 @@
-const discipline = document.querySelector('[data-academy-discipline]');
+(() => {\nconst discipline = document.querySelector('[data-academy-discipline]');
 
 if (discipline) {
   const words = [
@@ -106,3 +106,4 @@ if (discipline) {
 
   run();
 }
+\n})();\n

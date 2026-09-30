@@ -107,9 +107,8 @@ if (!reducedMotion.matches && !hasSeenIntro()) {
         fill: 'both'
       });
       paintResidue(i);
-      try { await pulse.finished; } catch (_) {}
-      pulse.cancel();
       await wait(i === words.length - 1 ? 720 : duration);
+      try { pulse.cancel(); } catch (_) {}
     }
     if (!stopped) finish();
   }

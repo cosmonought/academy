@@ -23,3 +23,15 @@
 
 /* Keep existing Admin tables contained while adding operational controls. */
 .admin-wrap .reg-table { display:block; max-width:100%; overflow-x:auto; }
+
+.session-attendance h4 { font:600 12px var(--font-mono); text-transform:uppercase; margin:24px 0 12px; }
+.attendance-session { border-top:1px solid var(--rule-thin); padding:16px 0; }
+.attendance-session h5, .attendance-session summary { font:700 20px var(--font-display); text-transform:uppercase; margin:0 0 12px; cursor:pointer; }
+.attendance-event { margin:16px 0 24px; padding:16px; border-left:2px solid var(--ink); background:rgba(128,128,128,.04); }
+.attendance-event h6 { font:600 13px var(--font-mono); margin:0; }
+.attendance-person { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:10px 0; border-top:1px solid var(--rule-thin); }
+.attendance-person strong { font-size:14px; overflow-wrap:anywhere; }
+.attendance-marks { display:flex; gap:4px; flex-shrink:0; }
+.attendance-marks button { width:44px; min-height:44px; padding:6px; }
+.attendance-marks button[aria-pressed=true] { background:var(--ink); color:var(--bg); }
+@media(max-width:500px) { .attendance-person { flex-wrap:wrap; gap:8px; } .attendance-marks { margin-left:auto; } }

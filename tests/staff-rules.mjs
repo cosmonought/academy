@@ -17,3 +17,12 @@ test('participant cannot mark attendance or write instructor evaluation fields',
  await assertFails(set(ref(db,'academyRegistrations/p@example,org/sex-and-or-love/attendance/lecture-s0'),true));
  await assertFails(set(ref(db,'evaluations/p@example,org/sex-and-or-love/instructor'),{state:'agreed',form:'essay',feedback:'fake'}));
 });
+
+test('participant and staff browsers cannot create or delete evaluation requests directly',async()=>{
+ await env.withSecurityRulesDisabled(async context=>set(ref(context.database(),'evaluations/p@example,org/sex-and-or-love/request'),{form:'essay',requestedAt:1,accountUid:'p'}));
+ for(const [uid,email] of [['p','p@example.org'],['teacher','teacher@example.org'],['admin','academy@netadao.org']]) {
+  const db=env.authenticatedContext(uid,{email,email_verified:true}).database();
+  await assertFails(set(ref(db,'evaluations/p@example,org/sex-and-or-love/request'),{form:'essay',requestedAt:2,accountUid:uid}));
+  await assertFails(set(ref(db,'evaluations/p@example,org/sex-and-or-love/request'),null));
+ }
+});

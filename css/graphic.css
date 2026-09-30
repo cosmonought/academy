@@ -128,50 +128,25 @@
   position: relative;
   min-height: 100%;
   border-left: 3px solid var(--graphic-ink);
-  background-color: #efeeeb;
-  background-image: url('/assets/sex-monsters-superheroes.webp');
-  background-repeat: no-repeat;
-  background-size: 164% auto;
-  background-position: center 16%;
+  background: #171817;
+  overflow: hidden;
   isolation: isolate;
 }
 
-/* This opaque lower field deliberately masks the historical poster's body,
-   dates, registration, URL and schedule. Only the cover/title field survives. */
-.graphic-cover-art::after {
-  position: absolute;
-  inset: 67% 0 0;
-  z-index: 1;
-  border-top: 3px solid var(--graphic-ink);
-  background:
-    linear-gradient(145deg, transparent 0 43%, var(--graphic-paper) 43% 100%),
-    var(--graphic-paper);
-  content: '';
-}
+
 
 .graphic-cover-art::before {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  background: linear-gradient(90deg, rgba(251,250,246,.05), transparent 18% 82%, rgba(251,250,246,.05));
+  z-index: 0;
+  background:
+    radial-gradient(circle at 68% 24%, rgba(255,255,255,.055), transparent 29%),
+    linear-gradient(180deg, #1a1b1a 0%, #111211 100%);
   content: '';
   pointer-events: none;
 }
 
-.graphic-cover-art-label {
-  position: absolute;
-  right: 20px;
-  bottom: 23px;
-  z-index: 2;
-  padding: 3px 6px;
-  border: 1px solid #77716a;
-  background: var(--graphic-paper);
-  color: #6a655f;
-  font-family: var(--font-mono);
-  font-size: 8px;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-}
+
 
 .graphic-mark {
   fill: none;
@@ -180,14 +155,7 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.graphic-mark-cover {
-  position: absolute;
-  right: clamp(24px, 3vw, 48px);
-  bottom: 36px;
-  width: clamp(118px, 14vw, 190px);
-  color: var(--graphic-red);
-  transform: rotate(-7deg);
-}
+
 
 .graphic-description {
   padding: clamp(58px, 6vw, 86px) 0;
@@ -224,6 +192,7 @@
   background: var(--graphic-paper);
   border: 2px solid var(--graphic-ink);
   padding: clamp(25px, 3.1vw, 42px);
+  box-shadow: 7px 7px 0 rgba(16,16,16,.92);
 }
 .graphic-panel p {
   margin: 0;
@@ -233,7 +202,6 @@
 }
 .graphic-panel-lead {
   grid-column: 1 / span 7;
-  border-top-width: 7px;
 }
 .graphic-panel-lead p {
   font-size: clamp(19px, 1.8vw, 25px);
@@ -242,12 +210,10 @@
 .graphic-panel-secondary {
   grid-column: 8 / -1;
   margin-top: 52px;
-  border-right-width: 7px;
 }
 .graphic-panel-questions {
   grid-column: 3 / span 8;
   margin-top: -8px;
-  border-bottom-width: 7px;
 }
 
 .graphic-structure {
@@ -336,12 +302,12 @@
 }
 .graphic-session-0 { grid-column: 1 / -1; display: grid; grid-template-columns: 120px minmax(0, .8fr) minmax(260px, 1.2fr); gap: 20px; align-items: center; border-left-width: 8px; }
 .graphic-session-1 { grid-column: span 6; }
-.graphic-session-2 { grid-column: span 6; border-top-width: 6px; }
+ .graphic-session-2 { grid-column: span 6; }
 .graphic-session-3 { grid-column: span 7; }
 .graphic-session-4 { grid-column: span 5; }
-.graphic-session-5 { grid-column: span 5; border-left-width: 6px; }
+ .graphic-session-5 { grid-column: span 5; }
 .graphic-session-6 { grid-column: span 7; }
-.graphic-session-7 { grid-column: span 7; border-bottom-width: 6px; }
+ .graphic-session-7 { grid-column: span 7; }
 .graphic-session-8 { grid-column: span 5; }
 .graphic-session-number {
   margin: 0 0 15px;
@@ -404,17 +370,7 @@
   background: #171717;
   color: #f7f4ed;
 }
-.graphic-interest::before {
-  position: absolute;
-  top: -18px;
-  right: clamp(30px, 7vw, 110px);
-  width: 112px;
-  height: 34px;
-  border: 2px solid var(--graphic-ink);
-  background: var(--graphic-red);
-  content: '';
-  transform: rotate(-2deg);
-}
+.graphic-interest::before { content:none; }
 .graphic-interest h2 {
   margin-top: 20px;
   font-size: clamp(58px, 7vw, 104px);
@@ -544,8 +500,8 @@
   .graphic-title-and { margin-left: 44px; }
   .graphic-title-superheroes { margin-left: 2px; font-size: clamp(60px, 20vw, 88px); overflow-wrap: anywhere; }
   .graphic-subtitle { margin-left: 0; font-size: 17px; }
-  .graphic-cover-art { min-height: 270px; border-left: 0; border-top: 3px solid var(--graphic-ink); background-size: 146% auto; background-position: center 13%; }
-  .graphic-cover-art::after { inset: 70% 0 0; }
+  .graphic-cover-art { min-height:270px; border-left:0; border-top:3px solid var(--graphic-ink); }
+
   .graphic-description { padding: 52px 0; }
   .graphic-spread-heading h2 { font-size: 44px; }
   .graphic-description-grid { grid-template-columns: 1fr; gap: 14px; }
@@ -576,7 +532,7 @@
   .graphic-title-monsters { margin-left: 5px; padding-inline: 9px; }
   .graphic-title-and { margin-left: 34px; }
   .graphic-title-superheroes { font-size: clamp(54px, 19vw, 75px); }
-  .graphic-cover-art { min-height: 240px; }
+  .graphic-cover-art { min-height:240px; }
   .graphic-spread-heading h2 { font-size: 39px; }
   .graphic-structure-heading h2 { font-size: 40px; }
   .graphic-syllabus-heading h2 { font-size: 62px; }
@@ -605,12 +561,7 @@
   .graphic-interest h2 { font-size: clamp(48px, 14.6vw, 58px); }
 }
 
-/* At the narrower desktop crop, keep both the old Academy header and the
-   historical body copy outside the visible poster fragment. */
-@media (min-width: 701px) and (max-width: 1100px) {
-  .graphic-cover-art { background-position: center 28%; }
-  .graphic-cover-art::after { inset: 55% 0 0; }
-}
+
 
 /* Long cover words must remain inside the panel even with fallback fonts
    or aggressive browser text scaling. */
@@ -630,4 +581,27 @@
 @media (max-width: 420px) {
   .graphic-title-monsters { font-size: clamp(40px, 11.8vw, 46px); }
   .graphic-title-superheroes { font-size: clamp(40px, 11.3vw, 44px); }
+}
+
+
+/* Keep the syllabus one composition instead of a wall of identical white cards. */
+.graphic-session:nth-child(3n + 2) { background:#f2efe8; }
+.graphic-session:nth-child(4n + 3) { background:#e7f0f1; }
+.graphic-session-6,
+.graphic-session-8 { background:#171717; color:#f7f4ed; }
+.graphic-session-6 .graphic-reading,
+.graphic-session-8 .graphic-reading { background:#f7f4ed; color:var(--graphic-ink); }
+.graphic-session h3 { margin-bottom:14px; }
+.graphic-session.graphic-session-6, .graphic-session.graphic-session-8 { background:#171717; color:#f7f4ed; }
+
+/* Lil D is cropped from the supplied historical poster; the live title remains HTML. */
+.graphic-lild { position:absolute; width:72%; height:auto; max-width:430px; right:5%; bottom:-2px; z-index:2; animation:lild-enter 1.6s cubic-bezier(.2,.65,.3,1) both; }
+.graphic-lild-label { position:absolute; top:18%; left:20%; color:#faf5e8; font-family:var(--font-display); font-size:clamp(32px,4vw,58px); transform:rotate(-8deg); }
+.graphic-lild-arrow { position:absolute; top:29%; left:26%; width:30%; height:30%; color:#faf5e8; }
+@keyframes lild-enter { from { transform:translateY(110%); } to { transform:translateY(0); } }
+@media (prefers-reduced-motion:reduce) { .graphic-lild { animation:none; transform:none; } }
+@media (max-width:700px) {
+  .graphic-lild { width:62%; }
+  .graphic-lild-label { top:5%; left:12%; }
+  .graphic-lild-arrow { top:13%; left:23%; width:28%; height:28%; }
 }

@@ -377,7 +377,7 @@ export async function revokeRegistration(emailKey, seminarId) {
 
 // ── Participant record ──
 import { ATTENDANCE_EVENTS, attendanceRecord } from './academy-record.js';
-export { ATTENDANCE_EVENTS, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES, attendanceRecord } from './academy-record.js';
+export { ATTENDANCE_EVENTS, EVALUATION_CONFIG, EVALUATION_OFFERED, participantAttendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES, attendanceRecord } from './academy-record.js';
 export const SEMINAR_TITLES = {
   'sex-and-or-love': 'Sex, and/or Love',
   'coining-reason-unit-1': 'Coining Reason — Unit I',
@@ -423,10 +423,14 @@ export async function getEvaluation(email, seminarId) {
 export async function requestEvaluation(seminarId, form) {
   const user = auth.currentUser;
   if (!user?.email || !['essay','presentation','discussion','other'].includes(form)) throw new Error('Choose an evaluation form.');
-  await set(ref(db, `evaluations/${emailToKey(user.email)}/${seminarId}/request`), {
-    form, requestedAt: Date.now(), accountUid: user.uid
-  });
+  const { staffCall } = await import('./staff-api.js');
+  await staffCall('participantSetEvaluationRequest', { seminarId, optIn: true, form });
 }
+export async function cancelEvaluationRequest(seminarId) {
+  const { staffCall } = await import('./staff-api.js');
+  await staffCall('participantSetEvaluationRequest', { seminarId, optIn: false });
+}
+
 export async function getAllEvaluations() {
   const snap = await get(ref(db, 'evaluations'));
   return snap.val() || {};

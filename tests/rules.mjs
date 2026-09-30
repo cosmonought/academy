@@ -111,9 +111,9 @@ test('The Graphic enrollment requires current policy assent while existing semin
   const base = { ...registration, accountUid: 'graphic-account' };
   const db = user('graphic-account');
   await assertFails(update(ref(db, graphicPath), base));
-  await assertFails(update(ref(db, graphicPath), { ...base, policyAccepted: false, policyVersion: '2026-09-29', policyAcceptedAt: 1 }));
+  await assertFails(update(ref(db, graphicPath), { ...base, policyAccepted: false, policyVersion: '2026-09-29-r2', policyAcceptedAt: 1 }));
   await assertFails(update(ref(db, graphicPath), { ...base, policyAccepted: true, policyVersion: 'old-version', policyAcceptedAt: 1 }));
-  await assertSucceeds(update(ref(db, graphicPath), { ...base, policyAccepted: true, policyVersion: '2026-09-29', policyAcceptedAt: 1 }));
+  await assertSucceeds(update(ref(db, graphicPath), { ...base, policyAccepted: true, policyVersion: '2026-09-29-r2', policyAcceptedAt: 1 }));
 
   const legacyCompatiblePath = 'academyRegistrations/second@example,org/sex-and-or-love';
   const legacyDb = user('second-account', false, 'second@example.org');
@@ -131,12 +131,12 @@ test('display name is account-owned and bounded', async () => {
   await assertFails(set(ref(owner, 'accountMeta/participant@example,org/unknown'), 'value'));
 });
 
-test('participant can request Graphic evaluation but cannot write instructor outcome or attendance', async () => {
+test('evaluation requests require the callable; direct writes cannot bypass eligibility or cutoff', async () => {
   const graphicPath = 'academyRegistrations/participant@example,org/sex-monsters-superheroes';
   const evalPath = 'evaluations/participant@example,org/sex-monsters-superheroes';
-  await env.withSecurityRulesDisabled(async context => set(ref(context.database(), graphicPath), { ...registration, enrolled: true, accountUid: 'owner', policyAccepted: true, policyVersion: '2026-09-29', policyAcceptedAt: 1 }));
+  await env.withSecurityRulesDisabled(async context => set(ref(context.database(), graphicPath), { ...registration, enrolled: true, accountUid: 'owner', policyAccepted: true, policyVersion: '2026-09-29-r2', policyAcceptedAt: 1 }));
   const owner = user('owner');
-  await assertSucceeds(set(ref(owner, `${evalPath}/request`), { form: 'essay', requestedAt: 1, accountUid: 'owner' }));
+  await assertFails(set(ref(owner, `${evalPath}/request`), { form: 'essay', requestedAt: 1, accountUid: 'owner' }));
   await assertSucceeds(get(ref(owner, evalPath)));
   await assertFails(set(ref(owner, `${evalPath}/instructor`), { state: 'completed', form: 'essay', outcome: 'distinction', feedback: 'Excellent.' }));
   await assertFails(set(ref(owner, `${graphicPath}/attendance/lecture-s0`), true));

@@ -1,4 +1,4 @@
-import { ATTENDANCE_EVENTS, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES } from './shared/academy-record.js';
+import { ATTENDANCE_EVENTS, EVALUATION_OFFERED, EVALUATION_CONFIG, attendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES } from './shared/academy-record.js';
 import { ACADEMY_SEMINAR_POLICY_VERSION, GRAPHIC_SEMINAR_ID } from './shared/seminar-policies.js';
 const ADMIN_EMAIL = 'academy@netadao.org';
 export class StaffError extends Error {
@@ -18,14 +18,27 @@ const emailValue = value => {
 const emailKey = email => key(email.replace(/\./g, ','));
 const seminarValue = id => { if (!Object.hasOwn(ATTENDANCE_EVENTS, id)) fail('invalid-argument', 'Unknown seminar.'); return id; };
 const pick = (record, fields) => Object.fromEntries(fields.filter(field => record[field] !== undefined).map(field => [field, record[field]]));
-export function createStaffService({ db, auth }) {
+export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CONFIG, now = Date.now }) {
   const read = async path => (await db.ref(path).get()).val();
+  async function rootTransaction(update) {
+    const rootRef = db.ref();
+    // Keep the snapshot cached through the transaction's first speculative update.
+    const listener = () => {};
+    if (rootRef.on) rootRef.on('value', listener);
+    try {
+      if (rootRef.once) await rootRef.once('value');
+      else await rootRef.get();
+      return await rootRef.transaction(update);
+    } finally {
+      if (rootRef.off) rootRef.off('value', listener);
+    }
+  }
   async function caller(request) {
     if (!request.auth?.uid) fail('unauthenticated', 'Sign in first.');
     const user = await auth.getUser(request.auth.uid);
     if (user.disabled || (user.tokensValidAfterTime && request.auth.token.auth_time * 1000 < Date.parse(user.tokensValidAfterTime))) fail('unauthenticated', 'Please sign in again.');
     const admin = user.email === ADMIN_EMAIL && user.emailVerified === true && request.auth.token.email === ADMIN_EMAIL && request.auth.token.email_verified === true;
-    return { uid: user.uid, admin };
+    return { uid: user.uid, admin, email: user.email || '', emailVerified: user.emailVerified === true };
   }
   const adminOnly = async request => { const who = await caller(request); if (!who.admin) fail('permission-denied', 'Administrator access required.'); return who; };
   async function scope(request) {
@@ -67,9 +80,68 @@ export function createStaffService({ db, auth }) {
     async staffSetAttendance(request) {
       const { id, path } = await target(request, true);
       const { eventKey, attended } = request.data;
-      if (!ATTENDANCE_EVENTS[id].some(event => event.key === eventKey) || typeof attended !== 'boolean') fail('invalid-argument', 'Choose a valid attendance event and mark.');
+      if (!ATTENDANCE_EVENTS[id].some(event => event.key === eventKey) || !(typeof attended === 'boolean' || attended === null)) fail('invalid-argument', 'Choose a valid attendance event and mark.');
       await db.ref(`${path}/attendance/${eventKey}`).set(attended);
       return { saved: true };
+    },
+    async staffMarkAllAttended(request) {
+      const who = await scope(request), { eventKey, emailKeys } = request.data;
+      if (!ATTENDANCE_EVENTS[who.id].some(event => event.key === eventKey) || !Array.isArray(emailKeys) || !emailKeys.length || emailKeys.length > 500 || new Set(emailKeys).size !== emailKeys.length) fail('invalid-argument', 'Choose an event and a nonempty roster.');
+      emailKeys.forEach(key);
+      // One transaction: validate every target and current scope before changing any mark.
+      await rootTransaction(root => {
+        if (!root) fail('not-found', 'Roster no longer exists.');
+        if (!who.admin && root.seminarStaff?.[who.id]?.[who.uid]?.role !== 'instructor') fail('permission-denied', 'Teaching assignment changed.');
+        for (const participantKey of emailKeys) {
+          const reg = root.academyRegistrations?.[participantKey]?.[who.id];
+          if (!reg || (!who.admin && reg.enrolled !== true)) fail('failed-precondition', 'Roster changed. Refresh before marking attendance.');
+        }
+        for (const participantKey of emailKeys) {
+          const reg = root.academyRegistrations[participantKey][who.id];
+          (reg.attendance ||= {})[eventKey] = true;
+        }
+        return root;
+      });
+      return { saved: true, count: emailKeys.length };
+    },
+    async participantSetEvaluationRequest(request) {
+      const who = await caller(request), id = seminarValue(request.data?.seminarId);
+      const config = evaluationConfig[id];
+      if (!config?.enabled) fail('failed-precondition', 'Evaluation is not enabled for this seminar.');
+      if (typeof request.data.optIn !== 'boolean' || (request.data.optIn && !Object.hasOwn(EVALUATION_FORMS, request.data.form))) fail('invalid-argument', 'Choose an evaluation form.');
+      const participantKey = emailKey(emailValue(who.email));
+      await rootTransaction(root => {
+        const reg = root?.academyRegistrations?.[participantKey]?.[id];
+        if (!reg || reg.enrolled !== true || !(reg.accountUid === who.uid || (!reg.accountUid && who.emailVerified))) fail('permission-denied', 'Enrollment ownership is required.');
+        if (root.evaluations?.[participantKey]?.[id]?.instructor?.state === 'completed') fail('failed-precondition', 'Completed evaluations cannot be changed through participant controls.');
+        const time = now();
+        if (config.requestCutoff && (!Number.isFinite(Date.parse(config.requestCutoff)) || time >= Date.parse(config.requestCutoff))) fail('failed-precondition', 'Evaluation participation is locked after the seminar cutoff.');
+        if (request.data.optIn && attendanceRecord(id, reg).attended < config.minimumAttendanceEvents) fail('failed-precondition', 'Attend at least one canonical event before requesting evaluation.');
+        root.evaluations ||= {}; root.evaluations[participantKey] ||= {};
+        const evaluation = root.evaluations[participantKey][id] ||= {};
+        if (request.data.optIn) evaluation.request = { form: request.data.form, requestedAt: time, accountUid: who.uid };
+        else delete evaluation.request;
+        return root;
+      });
+      return { saved: true };
+    },
+    async staffSetEvaluationRequest(request) {
+      const who = await target(request, true), {optIn, form} = request.data;
+      if (!evaluationConfig[who.id]?.enabled || typeof optIn !== 'boolean' || (optIn && !Object.hasOwn(EVALUATION_FORMS,form))) fail('invalid-argument', 'Evaluation is not enabled or the form is invalid.');
+      await rootTransaction(root => {
+        if (!who.admin && root?.seminarStaff?.[who.id]?.[who.uid]?.role !== 'instructor') fail('permission-denied', 'Teaching assignment changed.');
+        const reg=root?.academyRegistrations?.[who.participantKey]?.[who.id];
+        if (!reg || (!who.admin && reg.enrolled !== true)) fail('failed-precondition', 'Registration changed.');
+        root.evaluations ||= {}; root.evaluations[who.participantKey] ||= {};
+        const evaluation=root.evaluations[who.participantKey][who.id] ||= {};
+        if (optIn) {
+          const uid=reg.accountUid || evaluation.request?.accountUid;
+          if (!uid) fail('failed-precondition','Account ownership must be established before creating an evaluation request.');
+          evaluation.request={form,requestedAt:now(),accountUid:uid};
+        } else delete evaluation.request;
+        return root;
+      });
+      return {saved:true};
     },
     async staffSetEvaluation(request) {
       const { id, participantKey, admin } = await target(request, true), record = request.data.record;

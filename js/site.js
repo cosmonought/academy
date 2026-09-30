@@ -297,3 +297,52 @@
 import('/js/screening-banner.js?v=3').catch(error => console.warn('Screening announcement unavailable:', error));
 
 import('/js/local-navigation.js?v=1').catch(error => console.warn('Local navigation unavailable:', error));
+
+(() => {
+  // Seminar policies should be reviewable without ejecting visitors from their
+  // current workflow. The Seminars page remains the canonical/deep-link source.
+  const policySelector = 'a[href*="seminars.html#seminar-policies"], a[href*="seminars.html#policies"]';
+  let policyDialog = null;
+  async function openPolicyDialog(invoker) {
+    if (!policyDialog) {
+      policyDialog = document.createElement('dialog');
+      policyDialog.className = 'academy-policy-dialog';
+      policyDialog.setAttribute('aria-labelledby', 'academy-policy-dialog-title');
+      policyDialog.innerHTML = '<div class="academy-policy-dialog-shell"><div class="academy-policy-dialog-head"><h2 id="academy-policy-dialog-title">Academy Seminar Policies</h2><button type="button" class="academy-policy-dialog-close" aria-label="Close seminar policies">Close</button></div><div class="academy-policy-dialog-body"><p>Loading policies…</p></div></div>';
+      document.body.appendChild(policyDialog);
+      policyDialog.querySelector('.academy-policy-dialog-close').addEventListener('click', () => policyDialog.close());
+      policyDialog.addEventListener('click', (event) => {
+        if (event.target === policyDialog) policyDialog.close();
+      });
+    }
+    const body = policyDialog.querySelector('.academy-policy-dialog-body');
+    if (!body.dataset.loaded) {
+      try {
+        const response = await fetch('/seminars.html', { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Policy source unavailable');
+        const html = await response.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const source = doc.querySelector('#seminar-policies .policy-disclosure-body');
+        if (!source) throw new Error('Policy source missing');
+        body.replaceChildren(...[...source.children].map((node) => node.cloneNode(true)));
+        body.dataset.loaded = 'true';
+      } catch (_) {
+        body.innerHTML = '<p>Policies could not be loaded here. <a data-policy-fallback href="/seminars.html#seminar-policies">Open the policy page →</a></p>';
+      }
+    }
+    policyDialog._returnFocus = invoker;
+    if (!policyDialog.open) policyDialog.showModal();
+    policyDialog.querySelector('.academy-policy-dialog-close').focus();
+  }
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest(policySelector);
+    if (!link || link.hasAttribute('data-policy-fallback')) return;
+    event.preventDefault();
+    openPolicyDialog(link);
+  });
+  document.addEventListener('close', (event) => {
+    if (event.target === policyDialog) policyDialog?._returnFocus?.focus?.();
+  }, true);
+})();
+
+import('/js/cinema-navigation.js').catch(error => console.warn('Cinema navigation unavailable:', error));

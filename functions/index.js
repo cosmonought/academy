@@ -24,3 +24,7 @@ export const adminListInstructors = callable('adminListInstructors');
 export const adminAssignInstructor = callable('adminAssignInstructor');
 export const adminRevokeInstructor = callable('adminRevokeInstructor');
 export const adminDeleteRegistration = callable('adminDeleteRegistration');
+
+export const staffMarkAllAttended = callable('staffMarkAllAttended');
+export const participantSetEvaluationRequest = callable('participantSetEvaluationRequest');
+export const staffSetEvaluationRequest = callable('staffSetEvaluationRequest');

@@ -43,7 +43,7 @@
       "$emailKey": {
         "$seminarId": {
           ".read": "(auth != null && auth.token.email_verified === true && auth.token.email === 'academy@netadao.org') || (auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && (!data.exists() || (auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && (data.child('accountUid').val() === auth.uid || (!data.child('accountUid').exists() && auth.token.email_verified === true)))))",
-          ".validate": "newData.hasChildren(['email','name','xHandle','reason','requestedAt']) && ($seminarId !== 'sex-monsters-superheroes' || (newData.child('policyAccepted').val() === true && newData.child('policyVersion').val() === '2026-09-29' && newData.child('policyAcceptedAt').isNumber()))",
+          ".validate": "newData.hasChildren(['email','name','xHandle','reason','requestedAt']) && (data.exists() || $seminarId !== 'sex-monsters-superheroes' || (newData.child('policyAccepted').val() === true && newData.child('policyVersion').val() === '2026-09-29-r2' && newData.child('policyAcceptedAt').isNumber()))",
           "email": {
             ".write": "auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && !data.parent().exists() && newData.parent().child('accountUid').val() === auth.uid",
             ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120 && newData.val() === auth.token.email.toLowerCase()"
@@ -185,7 +185,7 @@
         "$seminarId": {
           ".read": "auth != null && auth.token.email_verified === true && auth.token.email === 'academy@netadao.org' || (auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && root.child('academyRegistrations').child($emailKey).child($seminarId).child('enrolled').val() === true && (root.child('academyRegistrations').child($emailKey).child($seminarId).child('accountUid').val() === auth.uid || (!root.child('academyRegistrations').child($emailKey).child($seminarId).child('accountUid').exists() && auth.token.email_verified === true)))",
           "request": {
-            ".write": "auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && $seminarId === 'sex-monsters-superheroes' && root.child('academyRegistrations').child($emailKey).child($seminarId).child('enrolled').val() === true && (root.child('academyRegistrations').child($emailKey).child($seminarId).child('accountUid').val() === auth.uid || (!root.child('academyRegistrations').child($emailKey).child($seminarId).child('accountUid').exists() && auth.token.email_verified === true)) && !data.parent().child('instructor').exists() && newData.exists()",
+            ".write": false,
             ".validate": "newData.hasChildren(['form','requestedAt','accountUid']) && newData.child('accountUid').val() === auth.uid",
             "form": {
               ".validate": "newData.isString() && (newData.val() === 'essay' || newData.val() === 'presentation' || newData.val() === 'discussion' || newData.val() === 'other')"

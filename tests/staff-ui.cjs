@@ -19,7 +19,7 @@ process.on('exit',()=>server.kill());
      export const auth={currentUser:window.mockUser};
      export const onAuthStateChanged=(auth,fn)=>{queueMicrotask(()=>fn(auth.currentUser));};
      export const signOut=async()=>{},completeSignInIfNeeded=async()=>false,initNavAccountWidget=()=>{};
-     export const getRegistrations=async()=>({'sex-and-or-love':window.mockRoster[0].registration}),getDisplayName=async()=> 'Test Instructor',setDisplayName=async name=>name,getEvaluation=async()=>({}),requestEvaluation=async()=>{},getOwnSeminarInterests=async()=>({});
+     export const getRegistrations=async()=>({'sex-and-or-love':window.mockRoster[0].registration}),getDisplayName=async()=> 'Test Instructor',setDisplayName=async name=>name,getEvaluation=async()=>({}),requestEvaluation=async()=>{},cancelEvaluationRequest=async()=>{},getOwnSeminarInterests=async()=>({});
      export const approveRegistration=async()=>window.operations.push('enroll'),revokeRegistration=async()=>window.operations.push('unenroll'),setAttendance=async()=>window.operations.push('attendance'),setInstructorEvaluation=async()=>window.operations.push('evaluation');
      export const getAllRegistrations=async()=>({'p@example,org':{'sex-and-or-love':window.mockRoster[0].registration}}),getAllEvaluations=async()=>({}),getAllInterestSignups=async()=>({});
      export const sendPasswordReset=async()=>window.operations.push('reset'),signInWithGoogle=async()=>{if(window.googleConflict)throw {code:'auth/account-exists-with-different-credential'};auth.currentUser={uid:'google-same-uid',email:'p@example.org',providerData:[{providerId:'google.com'}]};return {user:auth.currentUser};},signInWithPassword=async()=>{},checkPasswordReset=async()=>'',finishPasswordReset=async()=>{},createPasswordAccount=async()=>{},getRegistrationForSeminar=async()=>null,submitRegistration=async()=>{};
@@ -43,19 +43,19 @@ process.on('exit',()=>server.kill());
  });
  const results=[];fs.mkdirSync(screenshots,{recursive:true});
  for(const width of [1440,1280,1024,390]){
-  await page.setViewportSize({width,height:1000});await page.goto('http://127.0.0.1:8765/profile.html');await page.locator('#teachingModes').waitFor({state:'visible'});
-  assert.equal(await page.locator('#attendingView').isVisible(),true);assert.equal(await page.locator('#profilePasswordRow').isVisible(),false);
-  await page.click('#teachingMode');await page.locator('#teachingAttendance table').waitFor();
+  await page.setViewportSize({width,height:1000});await page.goto('http://127.0.0.1:8765/profile.html');await page.locator('#profileTeachingTab').waitFor({state:'visible'});
+  assert.equal(await page.locator('#profileSeminarsPanel').isVisible(),true);assert.equal(await page.locator('#profilePasswordRow').isVisible(),false);
+  await page.click('#profileTeachingTab');await page.locator('#teachingAttendance .attendance-person').first().waitFor();
   assert.equal(await page.locator('#teachingSeminar option').count(),2);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);assert.equal(overflow,false,'Profile overflow at '+width);
   await page.screenshot({path:screenshots+'/teaching-'+width+'.png',fullPage:true});
   await page.selectOption('#teachingSeminar','sex-monsters-superheroes');await page.locator('#teachingEvaluation textarea').waitFor();
-  await page.selectOption('#teachingEvaluation select[name=state]','completed');await page.selectOption('#teachingEvaluation select[name=outcome]','merit');await page.fill('#teachingEvaluation textarea','Thoughtful work.');await page.locator('#teachingEvaluation button').click();await page.waitForFunction(()=>window.operations.includes('evaluation'));
+  await page.selectOption('#teachingEvaluation select[name=state]','completed');await page.selectOption('#teachingEvaluation select[name=outcome]','merit');await page.fill('#teachingEvaluation textarea','Thoughtful work.');await page.locator('#teachingEvaluation button').first().click();await page.waitForFunction(()=>window.operations.includes('evaluation'));
   results.push({width,overflow:false,teaching:true,evaluationSaved:true});
  }
- await page.evaluate(()=>{window.assignments=[];window.revoked=true;});await page.click('#teachingRefresh');await page.locator('#teachingModes').waitFor({state:'hidden'});assert.equal(await page.locator('#attendingView').isVisible(),true);
+ await page.evaluate(()=>{window.assignments=[];window.revoked=true;});await page.click('#teachingRefresh');await page.locator('#profileTeachingTab').waitFor({state:'hidden'});assert.equal(await page.locator('#profileSeminarsPanel').isVisible(),true);
  // Ordinary participant, from the initial render.
- await page.addInitScript(()=>{window.assignments=[];});await page.reload();await page.waitForFunction(()=>document.getElementById('profileDisplayName').textContent==='Test Instructor');assert.equal(await page.locator('#teachingModes').isVisible(),false);
+ await page.addInitScript(()=>{window.assignments=[];});await page.reload();await page.waitForFunction(()=>document.getElementById('profileDisplayName').textContent==='Test Instructor');assert.equal(await page.locator('#profileTeachingTab').isVisible(),false);
  // Admin Account Assistance / provider-aware recovery.
  await page.addInitScript(()=>{window.mockUser={uid:'admin',email:'academy@netadao.org',emailVerified:true};});await page.goto('http://127.0.0.1:8765/admin.html');await page.fill('#supportEmail','p@example.org');await page.locator('#accountLookup button').click();await page.locator('#accountSupportResult').getByText('Auth account exists',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'Send password setup/reset link'}).count(),0);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Admin overflow');await page.screenshot({path:screenshots+'/admin-390.png',fullPage:true});

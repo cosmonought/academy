@@ -197,9 +197,11 @@
         <p id="assignmentStatus" class="staff-note" role="status"></p><div id="instructorList"></div>
       </section>
 
+      <nav class="staff-modes" aria-label="Admin sections"><button data-admin-view="seminars" aria-pressed="true">Seminars</button><button data-admin-view="inquiries" aria-pressed="false">Inquiries</button></nav><div id="adminSeminars">
       <div class="seminar-tabs" id="seminarTabs"></div>
       <div id="seminarPanels"></div>
 
+      </div><div id="adminInquiries" hidden>
       <h2 class="admin-title" style="font-size:22px;margin-top:56px;margin-bottom:8px;">Guest Lecture Proposals</h2>
       <p class="admin-note" id="proposalsStatusLine" style="margin-bottom:16px;"></p>
       <table class="reg-table" id="proposalsTable">
@@ -227,7 +229,7 @@
           </tr>
         </thead>
         <tbody id="signupsTableBody"></tbody>
-      </table>
+      </table></div>
     </div>
   </div>
 
@@ -239,8 +241,11 @@
       getAllInterestSignups, getAllEvaluations, setInstructorEvaluation, ADMIN_EMAIL, SEMINAR_TITLES, ATTENDANCE_EVENTS, attendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES
     } from '/js/academy-auth.js?v=26';
 
+    import { evaluationParticipationControl } from '/js/evaluation-correction.js';
+    import { renderSessionAttendance } from '/js/session-attendance.js';
     import { staffCall, staffError } from '/js/staff-api.js';
 
+    document.querySelectorAll('[data-admin-view]').forEach(button=>button.onclick=()=>{ const view=button.dataset.adminView; document.getElementById('adminSeminars').hidden=view!=='seminars'; document.getElementById('adminInquiries').hidden=view!=='inquiries'; document.querySelectorAll('[data-admin-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button))); });
     const adminSignedOut     = document.getElementById('adminSignedOut');
     const adminNotAuthorized = document.getElementById('adminNotAuthorized');
     const adminApproved      = document.getElementById('adminApproved');
@@ -398,75 +403,8 @@
         tbody.appendChild(tr);
       }
 
-      // ── Attendance matrix (global administrative corrections) ──
-      const wrap = document.getElementById(`attendanceWrap-${seminarId}`);
-      const enrolledRows = rows; // Admin can correct history even after unenrollment.
-      const sessions = ATTENDANCE_EVENTS[seminarId] || [];
-
-      if (enrolledRows.length === 0) {
-        wrap.innerHTML = '<p class="attendance-empty">No registrations yet.</p>';
-        renderEvaluations(seminarId, enrolledRows);
-        return;
-      }
-
-      const table = document.createElement('table');
-      table.className = 'attendance-table';
-
-      const thead = document.createElement('thead');
-      const headRow = document.createElement('tr');
-      headRow.innerHTML = '<th class="name-th">Participant</th>' +
-        sessions.map(s => `<th title="${escapeHtml(s.type + ": " + s.label)}">${escapeHtml(s.type === "screening" ? "Film · " + s.label : s.type === "lecture" ? "Lecture · " + s.label : s.label)}</th>`).join('') +
-        '<th>X / Y</th>';
-      thead.appendChild(headRow);
-      table.appendChild(thead);
-
-      const tbodyAtt = document.createElement('tbody');
-      for (const { emailKey, reg } of enrolledRows) {
-        const attendance = reg.attendance || {};
-        const tr = document.createElement('tr');
-
-        const nameTd = document.createElement('td');
-        nameTd.className = 'name-cell';
-        nameTd.textContent = reg.name || reg.email || '(unknown)';
-        const oldMarks = attendanceRecord(seminarId, reg).legacy;
-        if (oldMarks.length) { const note = document.createElement('small'); note.style.display = 'block'; note.textContent = `${oldMarks.length} legacy syllabus-unit marks (not counted)`; nameTd.append(note); }
-        tr.appendChild(nameTd);
-
-        sessions.forEach(s => {
-          const td = document.createElement('td');
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.checked = attendance[s.key] === true;
-          cb.setAttribute("aria-label", `${reg.name || reg.email}: ${s.type} ${s.label}`);
-          cb.addEventListener('change', async () => {
-            cb.disabled = true;
-            try { await setAttendance(emailKey, seminarId, s.key, cb.checked); totalTd.textContent = countAttendance(); }
-            catch { cb.checked = !cb.checked; alert("Attendance could not be saved."); }
-            finally { cb.disabled = false; }
-          });
-          td.appendChild(cb);
-          tr.appendChild(td);
-
-          function countAttendance() {
-            const boxes = tr.querySelectorAll('input[type="checkbox"]');
-            let n = 0;
-            boxes.forEach(b => { if (b.checked) n++; });
-            return `${n} / ${sessions.length}`;
-          }
-        });
-
-        const totalTd = document.createElement('td');
-        totalTd.className = 'total-cell';
-        const attendedCount = sessions.filter(s => attendance[s.key] === true).length;
-        totalTd.textContent = `${attendedCount} / ${sessions.length}`;
-        tr.appendChild(totalTd);
-
-        tbodyAtt.appendChild(tr);
-      }
-      table.appendChild(tbodyAtt);
-
-      wrap.innerHTML = '';
-      wrap.appendChild(table);
+      const enrolledRows = rows;
+      renderSessionAttendance(document.getElementById(`attendanceWrap-${seminarId}`), seminarId, rows.map(({emailKey,reg})=>({emailKey,registration:reg})), {admin:true});
       renderEvaluations(seminarId, enrolledRows);
     }
 
@@ -479,6 +417,7 @@
       }
       for (const { emailKey, reg } of rows) {
         const evaluation = allEvaluations[emailKey]?.[seminarId] || {};
+        const correction=document.createElement('section'); correction.className='staff-row'; const name=document.createElement('strong');name.textContent=reg.name || reg.email;correction.append(name);evaluationParticipationControl(correction,seminarId,emailKey,evaluation,loadRegistrations);wrap.append(correction);
         if (!evaluation.request && !evaluation.instructor) continue;
         const form = document.createElement('form');
         form.style.cssText = 'border-top:1px solid var(--rule-thin); padding:14px 0; display:flex; flex-wrap:wrap; gap:10px; align-items:end;';

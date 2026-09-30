@@ -19,7 +19,7 @@ class Check(HTMLParser):
         else: self.stack.pop()
 
 failures=[]; scripts=[]
-for p in Path('.').glob('*.html'):
+for p in list(Path('.').glob('*.html')) + [Path('CoiningReason/index.html'), Path('SexMonstersSuperheroes/index.html')]:
     s=p.read_text(encoding='utf-8'); parser=Check(); parser.feed(s)
     if parser.errors or parser.stack: failures.append((str(p),parser.errors,parser.stack))
     scripts += [(str(p),m.group(1)) for m in re.finditer(r'<script[^>]*>([\s\S]*?)</script>',s) if m.group(1).strip()]

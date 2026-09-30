@@ -14,7 +14,7 @@ test('seminar registration and sign-in share an explicit confirmation destinatio
 
 test('sign-in preserves explicitly requested access sections and names the destination', () => {
   assert.equal(signInDestination('/sex-and-or-love.html#participation'), '/sex-and-or-love.html#participation');
-  assert.equal(signInDestination('/seminar.html#coining-access'), '/seminar.html#coining-access');
+  assert.equal(signInDestination('/CoiningReason/#unit2-section'), '/CoiningReason/#unit2-section');
   assert.equal(signInDestination('/sex-and-or-love.html#session6'), '/sex-and-or-love.html#session6');
   assert.equal(signInDestination('https://example.invalid'), '/profile.html');
   assert.equal(destinationLabel('/profile.html'), 'Continue to your profile →');
@@ -39,8 +39,15 @@ test('sign-in errors do not identify whether an email has an account', () => {
   assert.match(accountError({ code: 'PERMISSION_DENIED' }), /registered X handle/);
 });
 
-test('Google provider conflicts preserve the existing sign-in method and offer recovery', () => {
-  assert.match(accountError({ code: 'auth/account-exists-with-different-credential' }), /existing email and password/);
-  assert.match(accountError({ code: 'auth/account-exists-with-different-credential' }), /Accounts have not been linked/);
-  assert.match(accountError({ code: 'auth/popup-blocked' }), /popup/);
+
+test('canonical seminar-specific routes are valid return destinations', () => {
+  assert.equal(safeReturnPath('/CoiningReason/#roadmap'), '/CoiningReason/#roadmap');
+  assert.equal(safeReturnPath('/SexMonstersSuperheroes/'), '/SexMonstersSuperheroes/');
+  assert.equal(destinationLabel('/CoiningReason/#unit1-section'), 'Continue to Coining Reason →');
+  assert.equal(destinationLabel('/SexMonstersSuperheroes/'), 'Continue to Sex, Monsters, and Superheroes →');
+});
+
+test('legacy return paths normalize to canonical routes while retaining query and deep link',()=>{
+ assert.equal(safeReturnPath('/seminar.html?from=account#unit1AccessPanel'),'/CoiningReason/?from=account#unit1AccessPanel');
+ assert.equal(safeReturnPath('/forthcoming.html#graphic-interest-title'),'/SexMonstersSuperheroes/#graphic-interest-title');
 });

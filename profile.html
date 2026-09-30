@@ -162,7 +162,7 @@
   <script type="module">
     import {
       auth, onAuthStateChanged, signOut, completeSignInIfNeeded, initNavAccountWidget,
-      getRegistrations, getDisplayName, setDisplayName, getEvaluation, requestEvaluation,
+      getRegistrations, getDisplayName, setDisplayName, getEvaluation, requestEvaluation, cancelEvaluationRequest,
       getOwnSeminarInterests, SEMINAR_TITLES, SEMINAR_COMPLETED, participantAttendanceRecord,
       EVALUATION_CONFIG, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES
     } from '/js/academy-auth.js?v=25';
@@ -180,7 +180,7 @@
       const instructor = evaluation.instructor;
       if (instructor?.state === 'completed') return `<div class="record-label">Evaluation · ${escape(EVALUATION_OUTCOMES[instructor.outcome] || 'Completed')}</div><p>Form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p><p class="record-label">Instructor feedback</p><p class="feedback">${escape(instructor.feedback || 'Feedback pending.')}</p>`;
       if (instructor?.state === 'agreed' || instructor?.state === 'in-progress') return `<div class="record-label">Evaluation · In progress</div><p>Agreed form: ${escape(EVALUATION_FORMS[instructor.form] || instructor.form)}</p>`;
-      if (request) return `<div class="record-label">Evaluation · Requested</div><p>Preferred form: ${escape(EVALUATION_FORMS[request.form] || request.form)}. Awaiting arrangement.</p>`;
+      if (request) return `<div class="record-label">Evaluation · Requested</div><p>Preferred form: ${escape(EVALUATION_FORMS[request.form] || request.form)}. Awaiting arrangement.</p><button type="button" class="quiet-btn evaluation-optout" data-seminar="${escape(seminarId)}">Opt out of evaluation</button>`;
       if ((record?.attended || 0) < (config.minimumAttendanceEvents || 0)) {
         return '<div class="record-label">Evaluation · Available later</div><p>You can opt in after attending at least one session.</p>';
       }
@@ -308,6 +308,19 @@
     $('displayNameForm').addEventListener('submit', async event => {
       event.preventDefault();
       await saveIdentityName($('displayNameInput').value, $('displayNameStatus')).catch(() => {});
+    });
+
+    $('profileRegistrationsList').addEventListener('click', async event => {
+      const button = event.target.closest('.evaluation-optout');
+      if (!button) return;
+      button.disabled = true;
+      try {
+        await cancelEvaluationRequest(button.dataset.seminar);
+        await refreshProfile(activeUser);
+      } catch (error) {
+        button.disabled = false;
+        button.insertAdjacentHTML('afterend', '<span role="alert">' + escape(error.message || 'Could not change evaluation participation.') + '</span>');
+      }
     });
     $('profileRegistrationsList').addEventListener('submit', async event => {
       const form = event.target.closest('.evaluation-request'); if (!form) return; event.preventDefault();

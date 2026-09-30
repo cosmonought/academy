@@ -497,27 +497,27 @@
         const title = SEMINAR_TITLES[seminarId] || seminarId;
         const attendance = attendanceHtml(seminarId, reg, approved);
         const config = EVALUATION_CONFIG[seminarId];
-        let evaluation = {};
+        let evaluationRecord = {};
 
         // A seminar with evaluation disabled should never produce a fake system
         // error because there is no evaluation record to load.
         if (approved && config?.enabled) {
-          try { evaluation = await getEvaluation(user.email, seminarId); }
-          catch { evaluation = { unavailable:true }; }
+          try { evaluationRecord = await getEvaluation(user.email, seminarId); }
+          catch { evaluationRecord = { unavailable:true }; }
         }
 
         if (approved && completed) {
-          transcriptList.append(transcriptRow(title, seminarId, attendance.record, evaluation));
+          transcriptList.append(transcriptRow(title, seminarId, attendance.record, evaluationRecord));
           continue;
         }
 
         const action = approved && seminarPages[seminarId]
           ? `<a class="record-action" href="${seminarPages[seminarId]}">Open seminar →</a>`
           : '';
-        const evaluation = approved
-          ? evaluationHtml(seminarId, evaluation, attendance.record)
+        const evaluationSection = approved
+          ? evaluationHtml(seminarId, evaluationRecord, attendance.record)
           : '<div class="record-label">Evaluation · Pending enrollment</div><p>Available after enrollment where enabled.</p>';
-        const content = `<div class="record-grid">${attendance.html}<div>${evaluation}</div></div>${!approved ? '<p class="profile-note">Your registration has been submitted. Complete any verification requested by the Academy to finish enrollment.</p>' : ''}${action}`;
+        const content = `<div class="record-grid">${attendance.html}<div>${evaluationSection}</div></div>${!approved ? '<p class="profile-note">Your registration has been submitted. Complete any verification requested by the Academy to finish enrollment.</p>' : ''}${action}`;
         currentList.append(makeRow(title, approved ? 'Enrolled' : 'Enrollment requested', content));
 
         if (!approved) {

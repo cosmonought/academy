@@ -14,7 +14,7 @@ test('seminar registration and sign-in share an explicit confirmation destinatio
 
 test('sign-in preserves explicitly requested access sections and names the destination', () => {
   assert.equal(signInDestination('/sex-and-or-love.html#participation'), '/sex-and-or-love.html#participation');
-  assert.equal(signInDestination('/seminar.html#coining-access'), '/seminar.html#coining-access');
+  assert.equal(signInDestination('/CoiningReason/#unit2-section'), '/CoiningReason/#unit2-section');
   assert.equal(signInDestination('/sex-and-or-love.html#session6'), '/sex-and-or-love.html#session6');
   assert.equal(signInDestination('https://example.invalid'), '/profile.html');
   assert.equal(destinationLabel('/profile.html'), 'Continue to your profile →');
@@ -37,4 +37,12 @@ test('sign-in errors do not identify whether an email has an account', () => {
   assert.equal(accountError({ code: 'auth/user-not-found' }), accountError({ code: 'auth/wrong-password' }));
   assert.match(accountError({ code: 'auth/email-already-in-use' }), /Set or reset a password/);
   assert.match(accountError({ code: 'PERMISSION_DENIED' }), /registered X handle/);
+});
+
+
+test('canonical seminar-specific routes are valid return destinations', () => {
+  assert.equal(safeReturnPath('/CoiningReason/#roadmap'), '/CoiningReason/#roadmap');
+  assert.equal(safeReturnPath('/SexMonstersSuperheroes/'), '/SexMonstersSuperheroes/');
+  assert.equal(destinationLabel('/CoiningReason/#unit1-section'), 'Continue to Coining Reason →');
+  assert.equal(destinationLabel('/SexMonstersSuperheroes/'), 'Continue to Sex, Monsters, and Superheroes →');
 });

@@ -707,6 +707,85 @@
       .coining-page .coining-unit-access-note { font-size: 13px; }
     }
 
+  
+    /* Integrated Coining Reason frontispiece. */
+    .coining-masthead { position:relative; }
+    .coining-masthead-inner {
+      position:relative;
+      min-height:590px;
+      grid-template-columns:minmax(0, .68fr) minmax(360px, .32fr);
+      align-items:stretch;
+      overflow:hidden;
+    }
+    .coining-masthead-copy { position:relative; z-index:3; align-self:center; padding-right:clamp(10px,2vw,34px); }
+    .coining-art {
+      position:absolute;
+      z-index:1;
+      top:0; right:0; bottom:0;
+      width:min(58vw, 860px);
+      margin:0;
+      padding:0;
+      border:0;
+      background:transparent;
+      overflow:hidden;
+      pointer-events:none;
+      -webkit-mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.25) 15%, #000 47%, #000 100%);
+      mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,.25) 15%, #000 47%, #000 100%);
+    }
+    .coining-art::after {
+      position:absolute; inset:0;
+      background:linear-gradient(90deg,#151820 0%,rgba(21,24,32,.78) 22%,rgba(21,24,32,.08) 58%,rgba(21,24,32,.02) 100%);
+      content:'';
+    }
+    .coining-art img {
+      width:100%; height:100%; max-height:none;
+      object-fit:cover; object-position:58% center;
+      filter:saturate(.92) contrast(1.02) brightness(.86);
+    }
+    .coining-view-switcher {
+      position:relative; z-index:4;
+      display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+      border-top:1px solid #343946;
+      background:rgba(8,10,15,.44);
+    }
+    .coining-view-button {
+      display:grid; gap:4px; min-height:74px;
+      padding:15px clamp(18px,3.2vw,50px);
+      border:0; border-right:1px solid #343946;
+      background:transparent; color:#d9dbe2; text-align:left; cursor:pointer;
+      font:700 13px var(--font-display); text-transform:uppercase; letter-spacing:.02em;
+    }
+    .coining-view-button:last-child { border-right:0; }
+    .coining-view-button span { color:#8f96a6; font:9px var(--font-mono); letter-spacing:.06em; }
+    .coining-view-button.active { background:#242a39; color:#fff; box-shadow:inset 0 -3px 0 #5b8ef0; }
+    .coining-view-button:focus-visible { outline:3px solid #5b8ef0; outline-offset:-4px; }
+    .coining-page .unit-section[hidden] { display:none !important; }
+    .coining-page .unlocked-tag {
+      display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center;
+      margin-left:8px; padding:0; border:1px solid #49a867; border-radius:50%; color:#49a867;
+    }
+    .coining-page .unlocked-tag svg { width:15px; height:15px; }
+    .coining-page .unlocked-tag.hidden { display:none !important; }
+    @media (max-width:1080px) {
+      .coining-masthead-inner { min-height:650px; grid-template-columns:1fr; }
+      .coining-masthead-copy { max-width:66%; }
+      .coining-art { width:66%; }
+    }
+    @media (max-width:700px) {
+      .coining-masthead-inner { min-height:0; display:block; padding-bottom:250px; }
+      .coining-masthead-copy { max-width:none; padding-right:0; }
+      .coining-art {
+        top:auto; left:0; width:100%; height:280px;
+        -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 32%,#000 100%);
+        mask-image:linear-gradient(180deg,transparent 0%,#000 32%,#000 100%);
+      }
+      .coining-art::after { background:linear-gradient(180deg,#151820 0%,rgba(21,24,32,.36) 32%,transparent 75%); }
+      .coining-art img { object-position:58% 45%; }
+      .coining-view-switcher { grid-template-columns:1fr; }
+      .coining-view-button { min-height:58px; border-right:0; border-bottom:1px solid #343946; }
+      .coining-view-button:last-child { border-bottom:0; }
+    }
+
   </style>
   <script src="/js/site.js?v=9" defer></script>
   <link rel="stylesheet" href="/css/editorial.css?v=6" />
@@ -777,18 +856,22 @@
              onerror="this.style.display='none'" />
       </figure>
     </div>
+    <nav class="coining-view-switcher" aria-label="Coining Reason sections">
+      <button type="button" class="coining-view-button active" data-coining-view="unit2-section" aria-pressed="true">Current unit <span>Unit II · Economics</span></button>
+      <button type="button" class="coining-view-button" data-coining-view="unit1-section" aria-pressed="false">Archive <span>Unit I · The Internet</span></button>
+      <button type="button" class="coining-view-button" data-coining-view="roadmap" aria-pressed="false">Roadmap <span>Ten-unit program</span></button>
+    </nav>
   </header>
 
   <div class="section reveal coining-program-body" id="coining-reason">
     <div class="page-wrap">
-      <nav class="section-nav" aria-label="Seminar navigation"><a href="#coining-overview">Overview</a><a href="#unit2-section">Unit II</a><a href="#unit1-section">Archive</a><a href="#roadmap">Roadmap</a><a href="#participation">Access</a></nav>
       <p class="hiatus-note">Unit II is on hiatus while <a href="/sex-and-or-love.html">Sex, and/or Love</a> continues. Explore the completed sessions and the larger roadmap below.</p>
       <!-- ══════════════════════════════════════ -->
       <!-- ── Current Seminar (Unit II) ── -->
       <!-- ══════════════════════════════════════ -->
       <div id="unit2-section" class="unit-section">
         <div class="unit-shell">
-          <div class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="unit2" onclick="toggleUnit('unit2',this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleUnit('unit2',this); }"><div><h2 class="collapsible-title">Unit II — Economics <span id="unit2UnlockedTag" class="unlocked-tag hidden">✓ Syllabus Unlocked</span></h2><div class="collapsible-meta">11 Sessions held (+ 2 unnumbered) · July 2023 – July 2024 · On hiatus</div></div><span class="collapsible-arrow">↓</span></div>
+          <div class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="unit2" onclick="toggleUnit('unit2',this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleUnit('unit2',this); }"><div><h2 class="collapsible-title">Unit II — Economics <span id="unit2UnlockedTag" class="unlocked-tag hidden" aria-label="Unlocked"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10V7a4 4 0 0 1 7.4-2.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></svg><span class="sr-only">Unlocked</span></span></h2><div class="collapsible-meta">11 Sessions held (+ 2 unnumbered) · July 2023 – July 2024 · On hiatus</div></div><span class="collapsible-arrow">↓</span></div>
           <div class="collapsible-body" id="unit2">
 
             <p id="unit2AccessNote" class="syllabus-note coining-unit-access-note" role="status">Archive readings are available to enrolled participants. <a href="#participation">How to enroll →</a></p>
@@ -826,7 +909,7 @@
       <!-- ══════════════════════════════════════ -->
       <div id="unit1-section" class="unit-section">
         <div class="unit-shell">
-          <div class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="unit1" onclick="toggleUnit('unit1',this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleUnit('unit1',this); }"><div><h2 class="collapsible-title">Unit I — The Internet <span id="unit1UnlockedTag" class="unlocked-tag hidden">✓ Syllabus Unlocked</span></h2><div class="collapsible-meta">9 Sessions · April – June 2023 · Completed</div></div><span class="collapsible-arrow">↓</span></div>
+          <div class="collapsible-header" role="button" tabindex="0" aria-expanded="false" aria-controls="unit1" onclick="toggleUnit('unit1',this)" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleUnit('unit1',this); }"><div><h2 class="collapsible-title">Unit I — The Internet <span id="unit1UnlockedTag" class="unlocked-tag hidden" aria-label="Unlocked"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10V7a4 4 0 0 1 7.4-2.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></svg><span class="sr-only">Unlocked</span></span></h2><div class="collapsible-meta">9 Sessions · April – June 2023 · Completed</div></div><span class="collapsible-arrow">↓</span></div>
           <div class="collapsible-body" id="unit1">
 
             <p id="unit1AccessNote" class="syllabus-note coining-unit-access-note" role="status">Archive readings are available to enrolled participants. <a href="#participation">How to enroll →</a></p>
@@ -949,6 +1032,36 @@
         }
       }
     })();
+
+    // Hero-foot content selector: one program layer at a time.
+    const coiningViews = ['unit2-section', 'unit1-section', 'roadmap'];
+    function setCoiningView(viewId, updateHash = true) {
+      if (!coiningViews.includes(viewId)) viewId = 'unit2-section';
+      coiningViews.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) section.hidden = id !== viewId;
+      });
+      document.querySelectorAll('[data-coining-view]').forEach(button => {
+        const active = button.dataset.coiningView === viewId;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      if (viewId === 'unit1-section' || viewId === 'unit2-section') {
+        const bodyId = viewId === 'unit1-section' ? 'unit1' : 'unit2';
+        const body = document.getElementById(bodyId);
+        const header = document.querySelector('[aria-controls="' + bodyId + '"]');
+        body?.classList.add('open');
+        header?.classList.add('open');
+        header?.setAttribute('aria-expanded', 'true');
+      }
+      if (updateHash) history.replaceState(null, '', '#' + viewId);
+    }
+    document.querySelectorAll('[data-coining-view]').forEach(button => {
+      button.addEventListener('click', () => setCoiningView(button.dataset.coiningView));
+    });
+    const initialCoiningHash = location.hash.slice(1);
+    setCoiningView(coiningViews.includes(initialCoiningHash) ? initialCoiningHash : 'unit2-section', false);
+
     const ROADMAP_DATA = [
     {
       num: 'Unit I', title: 'The Internet',

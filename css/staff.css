@@ -1,0 +1,25 @@
+.staff-utility { margin:26px 0; border-top:1px solid var(--rule-thin); padding-top:20px; min-width:0; }
+.staff-utility h2 { font:700 20px var(--font-display); margin:12px 0; }
+.staff-utility h3 { font:700 16px var(--font-display); margin:22px 0 10px; }
+.staff-modes { display:flex; gap:8px; margin:0 0 24px; }
+.staff-modes button, .staff-utility button { padding:9px 12px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; }
+.staff-modes [aria-pressed="true"] { background:var(--ink); color:var(--paper,#fff); }
+.staff-utility button:disabled { opacity:.5; cursor:wait; }
+.staff-utility label { display:grid; gap:6px; font-size:13px; }
+.staff-utility input:not([type=checkbox]), .staff-utility select, .staff-utility textarea { font:inherit; padding:8px; max-width:100%; min-width:0; border:1px solid var(--rule-thin); background:transparent; color:inherit; }
+.staff-utility textarea { width:100%; }
+.staff-utility form, .staff-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
+.staff-row { border-top:1px solid var(--rule-thin); padding:16px 0; overflow-wrap:anywhere; }
+.staff-row p { margin:8px 0; font-size:14px; line-height:1.5; }
+.staff-table-scroll { max-width:100%; overflow-x:auto; }
+.staff-table-scroll table { border-collapse:collapse; width:100%; }
+.staff-table-scroll th, .staff-table-scroll td { padding:10px; border-bottom:1px solid var(--rule-thin); text-align:left; font-size:12px; min-width:130px; }
+.staff-table-scroll select { min-width:120px; }
+.staff-note { font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
+.staff-utility .staff-danger { color:#a04848; border-color:currentColor; }
+.staff-utility [hidden], .staff-modes[hidden], #teachingView[hidden], #attendingView[hidden] { display:none!important; }
+.staff-utility :focus-visible, .staff-modes :focus-visible { outline:2px solid var(--blue,#3155b5); outline-offset:3px; }
+@media(max-width:600px) { .staff-utility form { align-items:stretch; } .staff-utility form > label { flex:1 1 100%; } .staff-utility input { width:100%; box-sizing:border-box; } }
+
+/* Keep existing Admin tables contained while adding operational controls. */
+.admin-wrap .reg-table { display:block; max-width:100%; overflow-x:auto; }

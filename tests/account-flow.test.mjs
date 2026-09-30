@@ -38,3 +38,9 @@ test('sign-in errors do not identify whether an email has an account', () => {
   assert.match(accountError({ code: 'auth/email-already-in-use' }), /Set or reset a password/);
   assert.match(accountError({ code: 'PERMISSION_DENIED' }), /registered X handle/);
 });
+
+test('Google provider conflicts preserve the existing sign-in method and offer recovery', () => {
+  assert.match(accountError({ code: 'auth/account-exists-with-different-credential' }), /existing email and password/);
+  assert.match(accountError({ code: 'auth/account-exists-with-different-credential' }), /Accounts have not been linked/);
+  assert.match(accountError({ code: 'auth/popup-blocked' }), /popup/);
+});

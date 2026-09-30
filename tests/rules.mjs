@@ -110,14 +110,14 @@ test('The Graphic enrollment requires current policy assent while existing semin
   const graphicPath = 'academyRegistrations/participant@example,org/sex-monsters-superheroes';
   const base = { ...registration, accountUid: 'graphic-account' };
   const db = user('graphic-account');
-  await assertFails(set(ref(db, graphicPath), base));
-  await assertFails(set(ref(db, graphicPath), { ...base, policyAccepted: false, policyVersion: '2026-09-29', policyAcceptedAt: 1 }));
-  await assertFails(set(ref(db, graphicPath), { ...base, policyAccepted: true, policyVersion: 'old-version', policyAcceptedAt: 1 }));
-  await assertSucceeds(set(ref(db, graphicPath), { ...base, policyAccepted: true, policyVersion: '2026-09-29', policyAcceptedAt: 1 }));
+  await assertFails(update(ref(db, graphicPath), base));
+  await assertFails(update(ref(db, graphicPath), { ...base, policyAccepted: false, policyVersion: '2026-09-29', policyAcceptedAt: 1 }));
+  await assertFails(update(ref(db, graphicPath), { ...base, policyAccepted: true, policyVersion: 'old-version', policyAcceptedAt: 1 }));
+  await assertSucceeds(update(ref(db, graphicPath), { ...base, policyAccepted: true, policyVersion: '2026-09-29', policyAcceptedAt: 1 }));
 
   const legacyCompatiblePath = 'academyRegistrations/second@example,org/sex-and-or-love';
   const legacyDb = user('second-account', false, 'second@example.org');
-  await assertSucceeds(set(ref(legacyDb, legacyCompatiblePath), {
+  await assertSucceeds(update(ref(legacyDb, legacyCompatiblePath), {
     email: 'second@example.org', name: 'Second', xHandle: '@second', reason: 'Study', requestedAt: 1, accountUid: 'second-account'
   }));
 });

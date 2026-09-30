@@ -1,7 +1,7 @@
 import { auth, onAuthStateChanged, signOut, initNavAccountWidget,
-  signInWithPassword, sendPasswordReset, checkPasswordReset, finishPasswordReset,
-  getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=24';
-import { signInDestination, destinationLabel, passwordIssue, accountError, seminarPages } from './account-flow.js?v=3';
+  signInWithGoogle, completeSignInIfNeeded, signInWithPassword, sendPasswordReset, checkPasswordReset, finishPasswordReset,
+  getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=26';
+import { signInDestination, destinationLabel, passwordIssue, accountError, seminarPages } from './account-flow.js?v=4';
 import { createAccount } from './account-create.js?v=1';
 
 const el = id => document.getElementById(id);
@@ -166,4 +166,12 @@ if (resetActive) {
     el('resetPasswordForm').hidden = false;
   } catch (error) { el('resetEmail').textContent = accountError(error); }
 }
+el('googleSignIn').addEventListener('click', async () => {
+  if (busy) return;
+  busy = true; el('googleSignIn').disabled = true; el('googleStatus').textContent = '';
+  try { await signInWithGoogle(); view = 'signin'; busy = false; await refresh(auth.currentUser); }
+  catch (error) { el('googleStatus').textContent = accountError(error); }
+  finally { busy = false; el('googleSignIn').disabled = false; }
+});
+await completeSignInIfNeeded();
 onAuthStateChanged(auth, user => { refresh(user); });

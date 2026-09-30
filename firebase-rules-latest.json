@@ -10,23 +10,31 @@
       "cinema": {
         "messages": {
           ".read": true,
-          ".write": "auth != null && !root.child('banned').child(auth.uid).exists()",
+          ".write": "auth != null && auth.token.email != null && auth.token.firebase.sign_in_provider !== 'anonymous' && ((auth.token.email_verified === true && auth.token.email === 'academy@netadao.org') || root.child('seminarStaff/sex-and-or-love').child(auth.uid).child('role').val() === 'instructor') && !root.child('banned').child(auth.uid).exists() && !newData.exists()",
           "$messageId": {
             ".validate": "newData.hasChildren(['name','text','timestamp','uid']) && newData.child('uid').val() === auth.uid",
             "name": {
-              ".validate": "newData.isString() && newData.val().length <= 40"
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
             },
             "text": {
-              ".validate": "newData.isString() && newData.val().length <= 500"
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
             },
             "timestamp": {
               ".validate": "newData.isNumber()"
+            },
+            ".write": "auth != null && auth.token.email != null && auth.token.firebase.sign_in_provider !== 'anonymous' && !root.child('banned').child(auth.uid).exists() && ((((auth.token.email_verified === true && auth.token.email === 'academy@netadao.org') || root.child('seminarStaff/sex-and-or-love').child(auth.uid).child('role').val() === 'instructor') || (root.child('academyRegistrations').child(auth.token.email.toLowerCase().replace('.', ',')).child('sex-and-or-love').child('enrolled').val() === true && (root.child('academyRegistrations').child(auth.token.email.toLowerCase().replace('.', ',')).child('sex-and-or-love').child('accountUid').val() === auth.uid || (!root.child('academyRegistrations').child(auth.token.email.toLowerCase().replace('.', ',')).child('sex-and-or-love').child('accountUid').exists() && auth.token.email_verified === true)))) && !data.exists() && newData.exists() && root.child('chat/cinema/disabled').val() !== true || ((auth.token.email_verified === true && auth.token.email === 'academy@netadao.org') || root.child('seminarStaff/sex-and-or-love').child(auth.uid).child('role').val() === 'instructor') && !newData.exists())",
+            "uid": {
+              ".validate": "newData.isString() && newData.val() === auth.uid"
+            },
+            "$other": {
+              ".validate": false
             }
           }
         },
         "disabled": {
           ".read": true,
-          ".write": "auth != null"
+          ".write": "auth != null && auth.token.email != null && auth.token.firebase.sign_in_provider !== 'anonymous' && ((auth.token.email_verified === true && auth.token.email === 'academy@netadao.org') || root.child('seminarStaff/sex-and-or-love').child(auth.uid).child('role').val() === 'instructor')",
+          ".validate": "newData.isBoolean()"
         }
       }
     },
@@ -194,9 +202,9 @@
           },
           "instructor": {
             ".write": "auth != null && auth.token.email_verified === true && auth.token.email === 'academy@netadao.org'",
-            ".validate": "newData.hasChildren(['state','form','feedback']) && ((newData.child('state').val() === 'completed' && newData.child('outcome').exists()) || (newData.child('state').val() === 'agreed' && !newData.child('outcome').exists()))",
+            ".validate": "newData.hasChildren(['state','form','feedback']) && ((newData.child('state').val() === 'completed' && newData.child('outcome').exists()) || ((newData.child('state').val() === 'agreed' || newData.child('state').val() === 'in-progress') && !newData.child('outcome').exists()))",
             "state": {
-              ".validate": "newData.isString() && (newData.val() === 'agreed' || newData.val() === 'completed')"
+              ".validate": "newData.isString() && (newData.val() === 'agreed' || newData.val() === 'in-progress' || newData.val() === 'completed')"
             },
             "form": {
               ".validate": "newData.isString() && (newData.val() === 'essay' || newData.val() === 'presentation' || newData.val() === 'discussion' || newData.val() === 'other')"
@@ -238,6 +246,10 @@
           ".read": "auth != null && auth.token.email != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',') && (!data.exists() || data.child('accountUid').val() === auth.uid)"
         }
       }
+    },
+    "seminarStaff": {
+      ".read": false,
+      ".write": false
     }
   }
 }

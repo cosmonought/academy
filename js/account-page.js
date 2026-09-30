@@ -1,7 +1,7 @@
 import { auth, onAuthStateChanged, signOut, initNavAccountWidget,
   signInWithPassword, sendPasswordReset, checkPasswordReset, finishPasswordReset,
-  getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=24';
-import { signInDestination, destinationLabel, passwordIssue, accountError, seminarPages } from './account-flow.js?v=3';
+  getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=26';
+import { signInDestination, destinationLabel, passwordIssue, accountError, seminarPages } from './account-flow.js?v=4';
 import { createAccount } from './account-create.js?v=1';
 
 const el = id => document.getElementById(id);

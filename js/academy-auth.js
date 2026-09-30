@@ -382,6 +382,7 @@ export const SEMINAR_COMPLETED = {
 };
 export async function setAttendance(emailKey, seminarId, eventKey, attended) {
   if (!ATTENDANCE_EVENTS[seminarId]?.some(event => event.key === eventKey)) throw new Error('Unknown attendance event.');
+  if (![true, false, null].includes(attended)) throw new Error('Attendance must be attended, absent, or unrecorded.');
   await set(ref(db, `academyRegistrations/${emailKey}/${seminarId}/attendance/${eventKey}`), attended);
 }
 export const computeAttendance = attendanceRecord;

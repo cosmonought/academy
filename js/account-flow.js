@@ -1,14 +1,15 @@
 // Pure helpers shared by the account screen and its tests.
 export const seminarPages = {
   'sex-and-or-love': '/sex-and-or-love.html',
-  'coining-reason-unit-1': '/seminar.html#unit1',
-  'coining-reason-unit-2': '/seminar.html#unit2'
+  'coining-reason-unit-1': '/CoiningReason/#unit1-section',
+  'coining-reason-unit-2': '/CoiningReason/#unit2-section',
+  'sex-monsters-superheroes': '/SexMonstersSuperheroes/'
 };
 
 export function safeReturnPath(value) {
   if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//') || /[\\\s]/.test(value)) return '/profile.html';
   const url = new URL(value, 'https://academy.netadao.org');
-  const allowed = ['/', '/profile.html', '/sex-and-or-love.html', '/seminar.html', '/cinema.html', '/admin.html', '/seminars.html'];
+  const allowed = ['/', '/profile.html', '/sex-and-or-love.html', '/CoiningReason/', '/SexMonstersSuperheroes/', '/seminar.html', '/forthcoming.html', '/cinema.html', '/admin.html', '/seminars.html'];
   return url.origin === 'https://academy.netadao.org' && allowed.includes(url.pathname)
     ? url.pathname + url.search + url.hash : '/profile.html';
 }
@@ -27,7 +28,10 @@ export function destinationLabel(path) {
   return ({
     '/profile.html': 'Continue to your profile →',
     '/sex-and-or-love.html': 'Continue to Sex, and/or Love →',
+    '/CoiningReason/': 'Continue to Coining Reason →',
     '/seminar.html': 'Continue to Coining Reason →',
+    '/SexMonstersSuperheroes/': 'Continue to Sex, Monsters, and Superheroes →',
+    '/forthcoming.html': 'Continue to Sex, Monsters, and Superheroes →',
     '/cinema.html': 'Continue to Cinema →',
     '/admin.html': 'Continue to administration →',
     '/seminars.html': 'Continue to seminars →',

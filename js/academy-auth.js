@@ -366,7 +366,7 @@ export async function revokeRegistration(emailKey, seminarId) {
 }
 
 // ── Participant record ──
-import { ATTENDANCE_EVENTS, attendanceRecord } from './academy-record.js';
+import { ATTENDANCE_EVENTS, EVALUATION_CONFIG, attendanceRecord } from './academy-record.js';
 export { ATTENDANCE_EVENTS, EVALUATION_CONFIG, EVALUATION_OFFERED, EVALUATION_FORMS, EVALUATION_OUTCOMES, attendanceRecord, participantAttendanceRecord } from './academy-record.js';
 export const SEMINAR_TITLES = {
   'sex-and-or-love': 'Sex, and/or Love',
@@ -410,12 +410,34 @@ export async function getEvaluation(email, seminarId) {
   const snap = await get(ref(db, `evaluations/${emailToKey(email)}/${seminarId}`));
   return snap.val() || {};
 }
+function evaluationRequestOpen(config, now = Date.now()) {
+  if (!config?.enabled) return false;
+  return !(typeof config.requestCutoff === 'number' && now > config.requestCutoff);
+}
+
 export async function requestEvaluation(seminarId, form) {
   const user = auth.currentUser;
   if (!user?.email || !['essay','presentation','discussion','other'].includes(form)) throw new Error('Choose an evaluation form.');
+  const config = EVALUATION_CONFIG[seminarId];
+  if (!evaluationRequestOpen(config)) throw new Error('Evaluation requests are not open for this seminar.');
+  const registration = (await get(ref(db, `academyRegistrations/${emailToKey(user.email)}/${seminarId}`))).val();
+  if (!registration || registration.enrolled !== true) throw new Error('Enrollment is required to request evaluation.');
+  const attended = attendanceRecord(seminarId, registration).attended;
+  if (attended < (config.minimumAttendanceEvents || 0)) throw new Error('Attend at least one session before opting in to evaluation.');
   await set(ref(db, `evaluations/${emailToKey(user.email)}/${seminarId}/request`), {
     form, requestedAt: Date.now(), accountUid: user.uid
   });
+}
+
+export async function cancelEvaluationRequest(seminarId) {
+  const user = auth.currentUser;
+  if (!user?.email) throw new Error('Sign in to change evaluation participation.');
+  const config = EVALUATION_CONFIG[seminarId];
+  if (!evaluationRequestOpen(config)) throw new Error('The evaluation opt-in window has closed.');
+  const evaluationRef = ref(db, `evaluations/${emailToKey(user.email)}/${seminarId}`);
+  const current = (await get(evaluationRef)).val() || {};
+  if (current.instructor?.state === 'completed') throw new Error('Completed evaluation records cannot be withdrawn.');
+  await set(ref(db, `evaluations/${emailToKey(user.email)}/${seminarId}/request`), null);
 }
 export async function getAllEvaluations() {
   const snap = await get(ref(db, 'evaluations'));

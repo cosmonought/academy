@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 const seminar='sex-and-or-love', graphic='sex-monsters-superheroes', participant='p@example,org';
 function fixture() {
   const data={ seminarStaff:{[seminar]:{teacher:{role:'instructor'}}}, academyRegistrations:{[participant]:{[seminar]:{email:'p@example.org',name:'Participant',enrolled:true,attendance:{}},[graphic]:{email:'p@example.org',name:'Participant',enrolled:true,policyAccepted:true,policyVersion:'2026-09-29',policyAcceptedAt:1}}}, evaluations:{[participant]:{[graphic]:{request:{form:'essay',accountUid:'p'}}}}, accountMeta:{[participant]:{displayName:'P'}}, accountSeminarInterests:{[participant]:{keep:true}} };
-  const users={ teacher:{uid:'teacher',email:'teacher@example.org'},p:{uid:'p',email:'p@example.org',emailVerified:true,providerData:[{providerId:'google.com'}],metadata:{creationTime:'date',lastSignInTime:'date'},passwordHash:'SECRET',tokens:'SECRET'},admin:{uid:'admin',email:'academy@netadao.org',emailVerified:true} };
+  const users={ ta:{uid:'ta',email:'ta@example.org'}, teacher:{uid:'teacher',email:'teacher@example.org'},p:{uid:'p',email:'p@example.org',emailVerified:true,providerData:[{providerId:'google.com'}],metadata:{creationTime:'date',lastSignInTime:'date'},passwordHash:'SECRET',tokens:'SECRET'},admin:{uid:'admin',email:'academy@netadao.org',emailVerified:true} };
   const get=path=>path.split('/').filter(Boolean).reduce((v,k)=>v?.[k],data) ?? null;
   const put=(path,value)=>{const parts=path.split('/');const last=parts.pop();let object=data;for(const part of parts)object=object[part]??={};if(value===null)delete object[last];else object[last]=structuredClone(value);};
   const db={ref:(path='')=>({get:async()=>({val:()=>structuredClone(path?get(path):data)}),set:async value=>put(path,value),update:async values=>{for(const [k,v]of Object.entries(values))put(path?path+'/'+k:k,v);}})};
@@ -91,4 +91,13 @@ test('staff enrollment preserves the current Graphic policy requirement',async()
   delete data.academyRegistrations[participant][graphic].policyAccepted;
   await assert.rejects(service.staffSetEnrollment(call('teacher',{seminarId:graphic,enrolled:true})),{code:'failed-precondition'});
   await service.staffSetEnrollment(call('admin',{seminarId:graphic,enrolled:false}));
+});
+
+test('teaching assistants can view limited roster and mark attendance but cannot manage enrollment or evaluation',async()=>{
+ const {service,data,call}=fixture(); data.seminarStaff[seminar].ta={role:'ta'};
+ assert.deepEqual(await service.getTeachingAssignmentRoles(call('ta')),{[seminar]:'ta'});
+ const roster=await service.getTeachingRoster(call('ta')); assert.equal(roster[0].registration.reason,undefined);
+ await service.staffSetAttendance(call('ta',{eventKey:'lecture-s0',attended:true}));
+ await assert.rejects(service.staffSetEnrollment(call('ta',{enrolled:false})),{code:'permission-denied'});
+ await assert.rejects(service.staffSetEvaluation(call('ta',{record:{state:'agreed',form:'essay',feedback:''}})),{code:'permission-denied'});
 });

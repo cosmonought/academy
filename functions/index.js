@@ -15,6 +15,7 @@ const callable = name => onCall({ region: 'us-central1', maxInstances: 5 }, asyn
   }
 });
 export const getTeachingAssignments = callable('getTeachingAssignments');
+export const getTeachingAssignmentRoles = callable('getTeachingAssignmentRoles');
 export const getTeachingRoster = callable('getTeachingRoster');
 export const staffSetEnrollment = callable('staffSetEnrollment');
 export const staffSetAttendance = callable('staffSetAttendance');
@@ -22,5 +23,6 @@ export const staffSetEvaluation = callable('staffSetEvaluation');
 export const adminGetAuthSummary = callable('adminGetAuthSummary');
 export const adminListInstructors = callable('adminListInstructors');
 export const adminAssignInstructor = callable('adminAssignInstructor');
+export const adminAssignTeachingAssistant = callable('adminAssignTeachingAssistant');
 export const adminRevokeInstructor = callable('adminRevokeInstructor');
 export const adminDeleteRegistration = callable('adminDeleteRegistration');

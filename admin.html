@@ -192,8 +192,8 @@
         <h2 id="supportHeading">Account Assistance</h2>
         <form id="accountLookup"><label>Email address<input id="supportEmail" type="email" autocomplete="off" required maxlength="120"></label><button>Look up account</button></form>
         <p id="supportStatus" class="staff-note" role="status"></p><div id="accountSupportResult"></div>
-        <h2>Instructor assignments</h2><p id="assignmentAccount" class="staff-note">Look up an existing Auth account before granting teaching access.</p>
-        <form id="instructorAssignment"><label>Seminar<select id="assignSeminar"></select></label><button id="assignInstructor" disabled>Grant teaching access</button></form>
+        <h2>Teaching assignments</h2><p id="assignmentAccount" class="staff-note">Look up an existing Auth account before granting teaching access.</p>
+        <form id="instructorAssignment"><label>Seminar<select id="assignSeminar"></select></label><label>Role<select id="assignRole"><option value="instructor">Instructor</option><option value="ta">Teaching Assistant</option></select></label><button id="assignInstructor" disabled>Grant teaching access</button></form>
         <p id="assignmentStatus" class="staff-note" role="status"></p><div id="instructorList"></div>
       </section>
 

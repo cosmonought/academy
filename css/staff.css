@@ -23,3 +23,5 @@
 
 /* Keep existing Admin tables contained while adding operational controls. */
 .admin-wrap .reg-table { display:block; max-width:100%; overflow-x:auto; }
+
+.staff-badge{display:inline-block;padding:3px 7px;border:1px solid currentColor;font:600 10px var(--font-mono);text-transform:uppercase;margin-left:8px}.staff-participant{border-top:1px solid var(--rule-thin);padding:10px 0}.staff-participant summary{cursor:pointer;font-weight:600}.staff-participant p{margin:8px 0}

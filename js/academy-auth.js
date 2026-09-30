@@ -43,43 +43,89 @@ export function initNavAccountWidget() {
   const navAccountLink = document.getElementById('navAccountLink');
   if (!navAccountItem || !navAccountLink) return;
 
-  function ensureAdminNavLinks() {
-    if (document.getElementById('navAdminLink')) return;
-    const adminLi = document.createElement('li');
-    adminLi.id = 'navAdminLink';
-    adminLi.innerHTML = '<a href="/admin.html">Admin</a>';
-    navAccountItem.parentNode.insertBefore(adminLi, navAccountItem);
+  let navGeneration = 0;
 
-    const cinemaLi = document.createElement('li');
-    cinemaLi.id = 'navCinemaAdminLink';
-    cinemaLi.innerHTML = '<a href="/cinema.html">Cinema</a>';
-    navAccountItem.parentNode.insertBefore(cinemaLi, navAccountItem);
+  function ensureNavLink(id, href, label) {
+    let item = document.getElementById(id);
+    if (!item) {
+      item = document.createElement('li');
+      item.id = id;
+      item.innerHTML = `<a href="${href}">${label}</a>`;
+      navAccountItem.parentNode.insertBefore(item, navAccountItem);
+    }
+    return item;
   }
 
-  function removeAdminNavLinks() {
-    const a = document.getElementById('navAdminLink');
-    if (a) a.remove();
-    const c = document.getElementById('navCinemaAdminLink');
-    if (c) c.remove();
+  function removeNavLink(id) {
+    document.getElementById(id)?.remove();
   }
 
-  function updateNavAccount(user) {
+  function renderAdminLink(show) {
+    if (show) ensureNavLink('navAdminLink', '/admin.html', 'Admin');
+    else removeNavLink('navAdminLink');
+  }
+
+  function renderCinemaLink(show) {
+    if (show) ensureNavLink('navCinemaLink', '/cinema.html', 'Cinema');
+    else removeNavLink('navCinemaLink');
+  }
+
+  async function hasCinemaEntitlement(user) {
+    if (!user?.email) return false;
+    if (user.email === ADMIN_EMAIL && user.emailVerified) return true;
+
+    try {
+      const registration = await getRegistrationForSeminar(user.email, 'sex-and-or-love');
+      if (registration?.enrolled === true) return true;
+    } catch (error) {
+      // A missing/denied registration means no participant Cinema navigation.
+      if (error?.code !== 'PERMISSION_DENIED' && error?.code !== 'database/permission-denied') {
+        console.warn('Could not check Cinema enrollment', error);
+      }
+    }
+
+    // The staff-authority pass supplies this callable-backed helper. Keeping
+    // this optional lets the shared nav work both before and after that backend
+    // lands without exposing Cinema to every signed-in account.
+    try {
+      if (typeof getTeachingAssignments === 'function') {
+        const assignments = await getTeachingAssignments();
+        if (Array.isArray(assignments) && assignments.some(assignment => {
+          const seminarId = typeof assignment === 'string' ? assignment : assignment?.seminarId;
+          return seminarId === 'sex-and-or-love';
+        })) return true;
+      }
+    } catch (error) {
+      console.warn('Could not check Cinema teaching assignment', error);
+    }
+
+    return false;
+  }
+
+  async function updateNavAccount(user) {
+    const generation = ++navGeneration;
+
     if (user && user.email) {
       navAccountItem.classList.add('signed-in');
       navAccountLink.textContent = 'Your profile';
       navAccountLink.setAttribute('aria-label', `Your profile, signed in as ${user.email}`);
       navAccountLink.setAttribute('href', '/profile.html');
-      if (user.email === ADMIN_EMAIL && user.emailVerified) {
-        ensureAdminNavLinks();
-      } else {
-        removeAdminNavLinks();
-      }
+
+      const isAdmin = user.email === ADMIN_EMAIL && user.emailVerified;
+      renderAdminLink(isAdmin);
+
+      // Hide first, then reveal only after the real entitlement check resolves.
+      renderCinemaLink(false);
+      const cinema = await hasCinemaEntitlement(user);
+      if (generation !== navGeneration || auth.currentUser?.uid !== user.uid) return;
+      renderCinemaLink(cinema);
     } else {
       navAccountItem.classList.remove('signed-in');
       navAccountLink.textContent = 'Sign In';
       navAccountLink.removeAttribute('aria-label');
       navAccountLink.setAttribute('href', signInHref);
-      removeAdminNavLinks();
+      renderAdminLink(false);
+      renderCinemaLink(false);
     }
   }
 

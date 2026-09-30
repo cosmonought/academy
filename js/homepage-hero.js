@@ -24,12 +24,11 @@ if (discipline) {
 
   const splash = document.createElement('section');
   splash.className = 'academy-intro-splash';
-  splash.setAttribute('aria-hidden', 'true');
-  splash.innerHTML = `
+    splash.innerHTML = `
     <div class="academy-intro-stage">
-      <p class="academy-intro-kicker">Neta DAO Academy</p>
-      <p class="academy-intro-prefix">The home of Web3 and</p>
-      <p class="academy-intro-word"><span data-intro-word data-word="Philosophy">Philosophy</span></p>
+      <p class="academy-intro-kicker" aria-hidden="true">Neta DAO Academy</p>
+      <p class="academy-intro-prefix" aria-hidden="true">The home of Web3 and</p>
+      <p class="academy-intro-word" aria-hidden="true"><span data-intro-word data-word="Philosophy">Philosophy</span></p>
       <div class="academy-intro-residue" aria-hidden="true"></div>
       <button type="button" class="academy-intro-skip">Skip intro</button>
     </div>`;

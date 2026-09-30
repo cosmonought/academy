@@ -1,5 +1,5 @@
-import { auth, onAuthStateChanged, getRegistrationForSeminar } from './academy-auth.js?v=24';
-import { accountError, seminarAccountLink } from './account-flow.js?v=3';
+import { auth, onAuthStateChanged, getRegistrationForSeminar } from './academy-auth.js?v=26';
+import { accountError, seminarAccountLink } from './account-flow.js?v=4';
 
 // Shared enrollment-state watcher for seminar surfaces that need to gate
 // materials without rendering account-management UI in the reading flow.

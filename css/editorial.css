@@ -511,10 +511,16 @@ html.academy-intro-running { overflow:hidden; }
 .academy-intro-skip:focus-visible { outline:3px solid #5b8ef0; outline-offset:3px; }
 
 /* Cinema now begins inside the chamber instead of crossing from paper to charcoal. */
+.cinema-wrap {
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:#151214;
+}
 .cinema-hero {
-  margin-top:0 !important;
-  padding-top:calc(54px + 46px) !important;
-  padding-bottom:34px !important;
+  max-width:1300px;
+  margin:0 auto !important;
+  padding:calc(54px + 46px) 24px 34px !important;
   background:#151214 !important;
   color:#f2f0eb !important;
   border-bottom:1px solid rgba(255,255,255,.08) !important;

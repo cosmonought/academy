@@ -69,12 +69,11 @@
       <div><dt>Evaluation</dt><dd>Optional, on request</dd></div>
     </dl>
   </section>
-  <section class="nda-row pg-g-about" aria-labelledby="g-about" data-ink-links>
+  <section class="nda-row pg-g-about" aria-labelledby="g-about" data-captions>
     <h2 class="pg-g-h2" id="g-about">The graphic as form, rupture, and world</h2>
-    <p class="pg-caption pg-caption--a">In 1917, Marcel Duchamp quipped that America’s only works of art were “her bridges and her plumbing.” A century later, Neil Kendricks, Film Curator for the Museum of Contemporary Art San Diego, argued that “jazz and comics” should be included in this list of uniquely American aesthetic idioms.</p>
-    <p class="pg-caption pg-caption--b">In this Academy module, we will follow Kendricks’ lead and read the comic book or “graphic novel,” like jazz music, as revealing both a secret history of our world and the history of a secret world: from the cartoon mirror of the “world of being” in stories about superheroes, monsters, and other fantastical creatures, to the “world of becoming” glimpsed only in the creative process, imaginative acts, and desire’s perseverance.</p>
-    <p class="pg-caption pg-caption--c">We will address such questions as: How do comics, as sequential art, work? What is the relation between color and line, the continuous and the discrete, image and text, graphic and explicit, comics and the comical? When and how do comics reflect dominant values and ideals, and when and how do they challenge or subvert them? Where do comics position their readers/viewers, and where do they position their creators? Why do images have the power to appeal to or appall us? And what are the links between comics and other art forms?</p>
-    <svg class="pg-g-links" aria-hidden="true"><g class="pg-g-link" style="--at:0s"><path class="pg-ink" pathLength="1" style="--d:0s;--t:0.46s"/><path class="pg-ink" pathLength="1" style="--d:0.50s;--t:.14s"/></g><g class="pg-g-link" style="--at:0.78s"><path class="pg-ink" pathLength="1" style="--d:0s;--t:0.42s"/><path class="pg-ink" pathLength="1" style="--d:0.46s;--t:.14s"/></g></svg>
+    <p class="pg-caption pg-caption--a"><span class="pg-caption__num" aria-hidden="true">1</span>In 1917, Marcel Duchamp quipped that America’s only works of art were “her bridges and her plumbing.” A century later, Neil Kendricks, Film Curator for the Museum of Contemporary Art San Diego, argued that “jazz and comics” should be included in this list of uniquely American aesthetic idioms.</p>
+    <p class="pg-caption pg-caption--b"><span class="pg-caption__num" aria-hidden="true">2</span>In this Academy module, we will follow Kendricks’ lead and read the comic book or “graphic novel,” like jazz music, as revealing both a secret history of our world and the history of a secret world: from the cartoon mirror of the “world of being” in stories about superheroes, monsters, and other fantastical creatures, to the “world of becoming” glimpsed only in the creative process, imaginative acts, and desire’s perseverance.</p>
+    <p class="pg-caption pg-caption--c"><span class="pg-caption__num" aria-hidden="true">3</span>We will address such questions as: How do comics, as sequential art, work? What is the relation between color and line, the continuous and the discrete, image and text, graphic and explicit, comics and the comical? When and how do comics reflect dominant values and ideals, and when and how do they challenge or subvert them? Where do comics position their readers/viewers, and where do they position their creators? Why do images have the power to appeal to or appall us? And what are the links between comics and other art forms?</p>
   </section>
   <section class="nda-row pg-g-formatrow" aria-labelledby="g-format">
     <div class="pg-lild-stage" data-lild>
@@ -231,82 +230,43 @@
 </footer>
 </div>
 <script>
-/* Lil D peeks over the format panel, after arrows draw from caption to caption in reading order; then his arrow
-   draws and his name is written. The arrows are drawn from where the captions sit, and redrawn when they move.
-   It plays once the captions and his corner are all in full view (on a screen too short for that, each part plays
-   as it comes into full view) and holds when done. Click him to replay. Reduced motion: all shown at rest. */
+/* Lil D peeks over the format panel once the captions and his corner are all in full view (on a screen too short
+   for that, once his corner is); then his arrow draws and his name is written, and it all holds. Click him to
+   replay. Reduced motion: shown at rest. Beside the captions, the script also keeps him clear of the second one. */
 (function () {
-  var root = document.querySelector('.pg-graphic'), stage = document.querySelector('[data-lild]'), about = document.querySelector('[data-ink-links]');
-  if (!root || !stage || !about) return;
-  var lild = stage.querySelector('.pg-lild'), svg = about.querySelector('.pg-g-links');
-  var caps = about.querySelectorAll('.pg-caption'), links = svg.querySelectorAll('.pg-g-link');
-  function f(n) { return Math.round(n * 10) / 10; }
-  function box(el, o) { var r = el.getBoundingClientRect(); return { l: r.left - o.x, t: r.top - o.y, r: r.right - o.x, b: r.bottom - o.y, w: r.width }; }
-  function arrow(A, B) {   /* a hand-drawn arrow from caption A to caption B: [shaft, head] */
-    var S, C1, C2, E;
-    if (B.l >= A.r - 2) {          /* B beside A and a little lower: out of A's side, over and down onto B's top */
-      S = [A.r + 7, A.t + 17]; E = [B.l + Math.min(110, B.w * .3), B.t - 9];
-      C1 = [S[0] + (E[0] - S[0]) * .55, S[1] - 18]; C2 = [E[0] - 4, E[1] - 26];
-    } else if (A.l >= B.r - 2) {   /* B to the left: from under A's foot round to B's side */
-      S = [A.l + 66, A.b + 15]; E = [B.r + 15, Math.max(B.t + 24, Math.min(A.b + 42, B.b - 24))];
-      C1 = [S[0] - 4, S[1] + 26]; C2 = [E[0] + 36, E[1] + 4];
-    } else {                       /* B under A: down through the gap */
-      S = [A.l + A.w * .64, A.b + 14]; E = [S[0] + 10, B.t - 8];
-      C1 = [S[0] - 13, S[1] + 9]; C2 = [E[0] - 1, E[1] - 13];
-    }
-    var dx = E[0] - C2[0], dy = E[1] - C2[1], k = Math.hypot(dx, dy) || 1, c = Math.cos(.5), n = Math.sin(.5);
-    dx /= k; dy /= k;
-    function arm(s) { return f(E[0] - 13 * (dx * c - dy * n * s)) + ' ' + f(E[1] - 13 * (dy * c + dx * n * s)); }
-    return ['M' + [S, C1, C2, E].map(function (v, i) { return (i === 1 ? 'C' : '') + f(v[0]) + ' ' + f(v[1]); }).join(' '),
-            'M' + arm(1) + ' L' + f(E[0]) + ' ' + f(E[1]) + ' L' + arm(-1)];
+  var stage = document.querySelector('[data-lild]'), about = document.querySelector('[data-captions]');
+  if (!stage || !about) return;
+  var lild = stage.querySelector('.pg-lild'), caps = about.querySelectorAll('.pg-caption');
+  function room() {   /* room above the panel only if the second caption comes down into his corner */
+    var a = caps[0].getBoundingClientRect(), b = caps[1].getBoundingClientRect();
+    if (b.left < a.right - 2) { stage.style.removeProperty('--lild-room'); return; }
+    var now = parseFloat(stage.style.getPropertyValue('--lild-room')) || 0;
+    stage.style.setProperty('--lild-room', Math.max(0, Math.ceil(b.bottom + 24 - (lild.getBoundingClientRect().top - now))) + 'px');
   }
-  function draw() {
-    var r = about.getBoundingClientRect(), o = { x: r.left + about.clientLeft, y: r.top + about.clientTop };
-    svg.setAttribute('viewBox', '0 0 ' + about.clientWidth + ' ' + about.clientHeight);
-    var bx = [].map.call(caps, function (el) { return box(el, o); });
-    for (var i = 0; i < links.length; i++) {
-      var d = arrow(bx[i], bx[i + 1]), ps = links[i].querySelectorAll('path');
-      ps[0].setAttribute('d', d[0]); ps[1].setAttribute('d', d[1]);
-    }
-    /* beside the captions, his name keeps clear of the second arrow: room above the panel only if it is needed */
-    var room = parseFloat(stage.style.getPropertyValue('--lild-room')) || 0;
-    if (bx[1].l >= bx[0].r - 2) {
-      var top = lild.getBoundingClientRect().top - o.y - room;
-      stage.style.setProperty('--lild-room', Math.max(0, Math.ceil(bx[1].b + 60 - top)) + 'px');
-    } else stage.style.removeProperty('--lild-room');
-  }
-  draw();
-  if ('ResizeObserver' in window) { var ro = new ResizeObserver(draw); ro.observe(about); [].forEach.call(caps, function (el) { ro.observe(el); }); }
-  else addEventListener('resize', draw);
-  addEventListener('load', draw);
+  room();
+  if ('ResizeObserver' in window) { var ro = new ResizeObserver(room); [].forEach.call(caps, function (el) { ro.observe(el); }); }
+  else addEventListener('resize', room);
+  addEventListener('load', room);
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  root.classList.add('is-armed');
-  var parts = [links[0], links[1], stage], at = ['0s', '.78s', '1.5s'], played = [false, false, false];
-  function play(el, t) { el.style.setProperty('--at', t); el.classList.remove('is-on'); void el.getBoundingClientRect(); el.classList.add('is-on'); }
+  stage.classList.add('is-armed');
+  function play() { stage.classList.remove('is-on'); void stage.offsetWidth; stage.classList.add('is-on'); }
   function topEdge() { var h = document.querySelector('.nda-header'); return h ? Math.max(0, h.getBoundingClientRect().bottom) : 0; }
-  function seen(t, b) { return t >= topEdge() - 2 && b <= innerHeight + 2; }
-  var queued = false;
+  var queued = false, done = false;
   function check() {
     queued = false;
-    var t = caps[0].getBoundingClientRect().top - 10, b = stage.getBoundingClientRect().top + 24;
-    if (b - t <= innerHeight - topEdge()) {           /* it all fits: wait for all of it, then play in order */
-      if (!seen(t, b)) return;
-      parts.forEach(function (el, i) { if (!played[i]) play(el, at[i]); played[i] = true; });
-    } else {                                           /* too tall for the screen: each part as it comes into view */
-      parts.forEach(function (el, i) {
-        if (played[i]) return;
-        var r = (i < 2 ? el : lild).getBoundingClientRect();
-        if (seen(r.top - 6, i < 2 ? r.bottom + 6 : b)) { play(el, '0s'); played[i] = true; }
-      });
+    var t = caps[0].getBoundingClientRect().top - 18, b = stage.getBoundingClientRect().top + 24, edge = topEdge();
+    if (b - t > innerHeight - edge) t = lild.getBoundingClientRect().top - 6;   /* too tall: his corner alone */
+    if (t >= edge - 2 && b <= innerHeight + 2) {
+      done = true; play();
+      removeEventListener('scroll', queue); removeEventListener('resize', queue);
     }
-    if (played.every(Boolean)) { removeEventListener('scroll', queue); removeEventListener('resize', queue); }
   }
-  function queue() { if (!queued) { queued = true; requestAnimationFrame(check); } }
+  function queue() { if (!queued && !done) { queued = true; requestAnimationFrame(check); } }
   addEventListener('scroll', queue, { passive: true });
   addEventListener('resize', queue);
   queue();
-  lild.addEventListener('click', function () { if (played[2]) play(stage, '0s'); });
+  lild.addEventListener('click', function () { if (done) play(); });
 })();
 </script>
 <script type="module">

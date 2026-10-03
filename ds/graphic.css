@@ -40,7 +40,7 @@
 .pg-g-format .pg-body + .pg-body { margin-top: 1em; }
 /* Lil D peeks over the top edge of the format panel: his box sits on the panel and clips him at its edge */
 .pg-lild-stage { --lild-w: 300px; position: relative; margin-top: calc(var(--lild-w) * .78); }
-.pg-lild { position: absolute; right: 7%; bottom: 100%; width: var(--lild-w); aspect-ratio: 720 / 531; cursor: pointer; }
+.pg-lild { position: absolute; right: 7%; bottom: 100%; width: var(--lild-w); aspect-ratio: 720 / 537; cursor: pointer; }
 .pg-lild__clip { position: absolute; inset: 0; overflow: hidden; }
 .pg-lild__frog { display: block; width: 100%; height: auto; }
 .pg-lild__note { position: absolute; right: 92%; bottom: 47%; width: 100%; overflow: visible; }

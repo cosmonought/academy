@@ -44,6 +44,13 @@ export function renderSessionSchedule(root, now = Date.now()) {
       row.classList.toggle('session-' + value, value === state);
       badge.classList.toggle('status-' + value, value === state);
     }
+    // Design-system rows (SessionRow): pink marks the present; a collapsible past row stays a <details>.
+    if (row.classList.contains('nda-session')) {
+      row.classList.toggle('nda-session--current', state === 'current');
+      if (row.tagName === 'DETAILS') row.classList.toggle('nda-session--past', state === 'past');
+      const variant = state === 'upcoming' ? { Next: 'next', Scheduled: 'scheduled' }[label] : state;
+      for (const value of ['past', 'current', 'next', 'scheduled']) badge.classList.toggle('nda-status--' + value, value === variant);
+    }
     if (badge.textContent !== label) badge.textContent = label;
   }
 }

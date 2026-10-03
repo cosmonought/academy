@@ -1,150 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seminars — Neta DAO Academy</title>
-  <meta name="description" content="All Neta DAO Academy seminars: flagship, current, forthcoming, and past — plus how registration and enrollment work." />
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <meta name="description" content="All Neta DAO Academy seminars: current, flagship and forthcoming, and how registration and enrollment work.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
-
-  <script src="/js/site.js?v=9" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=6" />
-  <link rel="stylesheet" href="/css/screening-banner.css?v=3">
-  <link rel="stylesheet" href="/css/seminar-directory.css?v=5">
+  <link rel="preload" href="/ds/fonts/NDADisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/ds/tokens.css?v=2">
+  <link rel="stylesheet" href="/ds/bundle.css?v=2">
+  <link rel="stylesheet" href="/ds/site.css?v=2">
+  <script src="/ds/bundle.js?v=2"></script>
+  <link rel="stylesheet" href="/ds/seminar.css?v=1">
+  <script src="/js/site.js?v=11" defer></script>
   <script src="https://netadao.org/radio/radio.js" defer></script>
 </head>
-<body class="seminar-directory-page">
-  <a class="skip-link" href="#main-content">Skip to content</a>
-
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo" aria-label="Neta DAO Academy home">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
-          <rect width="40" height="40" fill="#080808"/>
-          <defs>
-            <linearGradient id="a-grad-NAV" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#C9338A"/>
-              <stop offset="35%" stop-color="#C9338A"/>
-              <stop offset="100%" stop-color="#5B8EF0"/>
-            </linearGradient>
-            <clipPath id="a-clip-NAV">
-              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
-            </clipPath>
-          </defs>
-          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
-          <g clip-path="url(#a-clip-NAV)">
-            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/>
-          </g>
-        </svg>
-      </a>
-      <ul class="nav-links" id="site-menu">
-        <li><a href="/">Home</a></li>
-        <li class="nav-dropdown-item">
-          <a href="/seminars.html" class="active">Seminars</a>
-          <ul class="nav-dropdown-menu">
-            <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
-            <li><a href="/CoiningReason/">Flagship: Coining Reason</a></li>
-            <li><a href="/SexMonstersSuperheroes/">Forthcoming: Sex, Monsters, and Superheroes</a></li>
-          </ul>
-        </li>
-        <li id="navAccountItem"><a href="/account.html" id="navAccountLink">Sign In</a></li>
-      </ul>
-      <button class="nav-hamburger" type="button" aria-label="Open menu" aria-controls="site-menu" aria-expanded="false"><span></span><span></span><span></span></button>
+<body>
+<div class="nda-page">
+<a class="nda-skip" href="#main-content">Skip to content</a>
+<header class="nda-header" data-nda-menu>
+  <div class="nda-header__inner">
+    <a class="nda-wordmark" href="/">Neta DAO Academy</a>
+    <div class="nda-header__primary">
+      <nav class="nda-header__nav" id="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="/seminars.html" aria-current="page">Seminars</a></li>
+          <li><a href="/cinema.html">Cinema</a></li>
+          <li><a href="https://fork.netadao.org">Journal</a></li>
+        </ul>
+      </nav>
     </div>
-  </nav>
-<main id="main-content">
-
-  <div class="directory-shell">
-    <div class="directory-intro">
-      <h1 class="section-title">Seminars</h1>
-      <p class="section-body">Free public seminars in philosophy, psychoanalysis, and the intellectual life of Web3. Explore our current program, return to the flagship series, or discover what’s next.</p>
+    <div class="nda-header__tools" id="site-tools">
+      <span id="navAccountItem"><a class="nda-button nda-button--outline nda-button--sm" id="navAccountLink" href="/account.html?returnTo=%2Fprofile.html">Sign in</a></span>
     </div>
-
-    <a class="seminar-entry seminar-entry-current" href="/sex-and-or-love.html">
-      <div class="seminar-entry-image" aria-hidden="true" style="--card-image:url('/assets/sex-and-or-love.webp');--card-size:325% auto;--card-position:left 66%;"></div>
-      <div class="seminar-entry-copy">
-        <div class="seminar-entry-heading">
-          <h2 class="section-title-sm">Sex, and/or Love</h2>
-          <p class="seminar-entry-subtitle">Psychoanalysis and the Science of Desire</p>
-          <span class="seminar-status current">Current · 2026–ongoing</span>
-        </div>
-        <p class="section-body">An inquiry into sexual desire, the unconscious, and the limits of knowledge through psychoanalysis, philosophy, literature, and film. Enrollment is open.</p>
-        <span class="seminar-entry-action" aria-hidden="true">Explore the seminar →</span>
-      </div>
-    </a>
-
-    <a class="seminar-entry seminar-entry-flagship" href="/CoiningReason/">
-      <div class="seminar-entry-image" aria-hidden="true" style="--card-image:url('https://raw.githubusercontent.com/NetaDAOAcademy/CoiningReason/main/assets/img/CNTitle.png');--card-size:cover;--card-position:center center;"></div>
-      <div class="seminar-entry-copy">
-        <div class="seminar-entry-heading">
-          <h2 class="section-title-sm">Coining Reason</h2>
-          <p class="seminar-entry-subtitle">A Discussion Series</p>
-          <span class="seminar-status flagship">Flagship · Since 2023 · Unit II on hiatus</span>
-        </div>
-        <p class="section-body">Neta DAO Academy's original, ongoing discussion series — exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Organized into Units, with Unit II currently paused while Sex, and/or Love runs.</p>
-        <span class="seminar-entry-action" aria-hidden="true">Archive &amp; roadmap →</span>
-      </div>
-    </a>
-
-    <a class="seminar-entry seminar-entry-forthcoming" href="/SexMonstersSuperheroes/">
-      <div class="seminar-entry-image" aria-hidden="true" style="--card-image:url('/assets/sex-monsters-superheroes.webp');--card-size:auto 140%;--card-position:center 62%;"></div>
-      <div class="seminar-entry-copy">
-        <div class="seminar-entry-heading">
-          <h2 class="section-title-sm">Sex, Monsters, and Superheroes</h2>
-          <p class="seminar-entry-subtitle">On the Graphic</p>
-          <span class="seminar-status forthcoming">Forthcoming · Dates TBD</span>
-        </div>
-        <p class="section-body">Comics and graphic novels read as sequential art, revealing both a secret history of our world and the history of a secret world. Enrollment is not yet open; expressions of interest are welcome.</p>
-        <span class="seminar-entry-action" aria-hidden="true">Explore the seminar →</span>
-      </div>
-    </a>
-
-    <section class="directory-secondary directory-policies" aria-labelledby="seminar-policy-summary">
-      <span id="policies" class="policy-anchor-alias" aria-hidden="true"></span>
-      <div class="page-wrap">
-        <details id="seminar-policies" class="seminar-policy-disclosure" data-policy-version="2026-09-29-r2">
-          <summary id="seminar-policy-summary">
-            <span>Academy Seminar Policies</span>
-            <span class="policy-disclosure-meta">Applies across Academy seminars · review before enrollment</span>
-          </summary>
-          <div class="policy-disclosure-body">
-            <p class="policy-version">Policy version 2026-09-29-r2</p>
-            <p class="section-body">These apply across all Academy seminars unless a specific seminar states otherwise. Expressing interest in a forthcoming seminar is not enrollment and does not create an Academy account.</p>
-            <div class="policy-item"><span class="policy-label">Registration</span><p class="policy-text">When enrollment is open, create an account with your email and a password, then request enrollment with your name, X handle, and a brief note on why you'd like to join. Creating an account lets you sign in; seminar access follows enrollment confirmation.</p></div>
-            <div class="policy-item"><span class="policy-label">Enrollment</span><p class="policy-text">Enrollment requires explicit agreement to the current Academy Seminar Policies. To complete enrollment, DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener" style="color:var(--blue);">@NetaDAO_Academy</a> on X from your registered X handle. Once enrolled, you'll have access to readings, the Cinema screening, and speaking access during the seminar's live X Spaces discussions.</p></div>
-            <div class="policy-item"><span class="policy-label">Participation</span><p class="policy-text">Participants are expected to engage thoughtfully with each session's materials. Specific participation requirements (for example, proof-of-participation tokens) may vary by seminar and will be noted on that seminar's own page.</p></div>
-            <div class="policy-item"><span class="policy-label">Attendance</span><p class="policy-text">Enrollment assumes an intention to participate. A participant who does not attend any sessions, or who ceases participating without notice, may be disenrolled at the instructor's discretion.</p></div>
-            <div class="policy-item"><span class="policy-label">Conduct</span><p class="policy-text">Participants are expected to engage with one another, instructors, and seminar materials in good faith and with respect. Harassment, deliberate disruption, or persistently bad-faith participation may result in disenrollment.</p></div>
-            <div class="policy-item"><span class="policy-label">Non-Attribution</span><p class="policy-text">Some seminars address sensitive or disturbing material. To encourage candid study, we observe a policy of non-attribution: you may publicly discuss themes and arguments raised in a session, but should not attribute them to another participant. Learning must include margins for uncertainty, indelicacy, mistake, and dissent.</p></div>
-            <div class="policy-item"><span class="policy-label">X Spaces</span><p class="policy-text">Speaking access during the live X Spaces discussion is reserved for enrolled participants. At the host's discretion, the discussion may open to general audience Q&amp;A near the end.</p></div>
-          </div>
-        </details>
-      </div>
-    </section>
+    <button class="nda-header__menu" type="button" aria-expanded="false" aria-controls="site-nav site-tools"><span class="nda-header__menu-label">Menu</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
   </div>
-
-  </main>
-  <footer class="site-footer" data-site-footer></footer>
-
-  <script type="module">
-    import { initNavAccountWidget } from '/js/academy-auth.js?v=27';
-    import { ACADEMY_SEMINAR_POLICY_VERSION } from '/js/seminar-policies.js?v=1';
-    initNavAccountWidget();
-
-    const policies = document.getElementById('seminar-policies');
-    if (policies.dataset.policyVersion !== ACADEMY_SEMINAR_POLICY_VERSION) {
-      console.warn('Academy Seminar Policy version mismatch.');
-    }
-    const syncPolicyAnchor = () => {
-      if (location.hash === '#seminar-policies' || location.hash === '#policies') policies.open = true;
-    };
-    syncPolicyAnchor();
-    window.addEventListener('hashchange', syncPolicyAnchor);
-  </script>
+</header>
+<main id="main-content">
+  <section class="nda-row sem-intro" aria-labelledby="idx-title">
+    <div class="nda-columns sem-intro__cols">
+      <div class="sem-fitbox"><h1 id="idx-title"><span class="sem-fit" data-nda-fit>Seminars</span></h1></div>
+      <p class="sem-lede">Free public seminars in philosophy, psychoanalysis, and the intellectual life of Web3. Join the current program, return to the flagship series, or see what’s next.</p>
+    </div>
+  </section>
+  <article class="nda-row sem-sem">
+    <div class="nda-columns sem-sem__cols">
+      <div class="sem-sem__meta">
+        <p class="nda-index"><span class="nda-index__num">01</span><span class="nda-index__label"><span class="nda-status nda-status--current">Active</span></span></p>
+        <p class="sem-meta">February 2026 – ongoing</p>
+      </div>
+      <div class="sem-sem__text">
+        <h2 class="nda-program__title sem-sem__title"><a class="nda-program__link" href="/sex-and-or-love.html">Sex, and/or Love</a></h2>
+        <p class="sem-kicker">Psychoanalysis and the Science of Desire</p>
+        <p class="sem-body">An inquiry into sexual desire, the unconscious, and the limits of knowledge through psychoanalysis, philosophy, literature, and film. Enrollment is open.</p>
+        <a class="nda-text-link" href="/sex-and-or-love.html">Explore the seminar →</a>
+      </div>
+      <img class="sem-sem__art" src="/ds/media/art-sex-and-or-love.webp" alt="" width="840" height="630">
+    </div>
+  </article>
+  <article class="nda-row sem-sem">
+    <div class="nda-columns sem-sem__cols">
+      <div class="sem-sem__meta">
+        <p class="nda-index"><span class="nda-index__num">02</span><span class="nda-index__label"><span class="nda-status nda-status--default">On hiatus</span></span></p>
+        <p class="sem-meta">Flagship · since 2023 · Unit II paused</p>
+      </div>
+      <div class="sem-sem__text">
+        <h2 class="nda-program__title sem-sem__title"><a class="nda-program__link" href="/CoiningReason/">Coining Reason</a></h2>
+        <p class="sem-kicker">A discussion series</p>
+        <p class="sem-body">The Academy’s original series, exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion. Unit II is paused while Sex, and/or Love runs.</p>
+        <a class="nda-text-link" href="/CoiningReason/">Archive and roadmap →</a>
+      </div>
+      <img class="sem-sem__art" src="/ds/media/art-coining-reason.webp" alt="" width="960" height="720">
+    </div>
+  </article>
+  <article class="nda-row sem-sem">
+    <div class="nda-columns sem-sem__cols">
+      <div class="sem-sem__meta">
+        <p class="nda-index"><span class="nda-index__num">03</span><span class="nda-index__label"><span class="nda-status nda-status--next">Forthcoming</span></span></p>
+        <p class="sem-meta">Dates to be announced</p>
+      </div>
+      <div class="sem-sem__text">
+        <h2 class="nda-program__title sem-sem__title" style="--nda-fit: 5"><a class="nda-program__link" href="/SexMonstersSuperheroes/">Sex, Monsters, and Superheroes</a></h2>
+        <p class="sem-kicker">On the graphic</p>
+        <p class="sem-body">Comics and graphic novels read as sequential art, revealing both a secret history of our world and the history of a secret world. Expressions of interest are welcome.</p>
+        <a class="nda-text-link" href="/SexMonstersSuperheroes/">Explore the seminar →</a>
+      </div>
+      <img class="sem-sem__art" src="/ds/media/art-sex-monsters-superheroes.webp" alt="" width="808" height="606">
+    </div>
+  </article>
+  <section class="nda-row sem-policies" id="policies" aria-labelledby="pol-title">
+    <div id="seminar-policies" data-policy-version="2026-09-29-r2">
+      <div class="sem-head-row"><h2 class="nda-section-heading" id="pol-title">Academy seminar policies</h2><span class="sem-meta">Applies to every seminar · review before enrolling</span></div>
+      <div class="policy-disclosure-body">
+        <p class="policy-version">Policy version 2026-09-29-r2</p>
+        <p class="sem-pol-intro">These apply across all Academy seminars unless a specific seminar states otherwise. Expressing interest in a forthcoming seminar is not enrollment and does not create an Academy account.</p>
+        <div class="sem-pol">
+        <div class="policy-item"><span class="policy-label">Registration</span><p class="policy-text">When enrollment is open, create an account with your email and a password, then request enrollment with your name, X handle, and a brief note on why you'd like to join. Creating an account lets you sign in; seminar access follows enrollment confirmation.</p></div>
+        <div class="policy-item"><span class="policy-label">Enrollment</span><p class="policy-text">Enrollment requires explicit agreement to the current Academy Seminar Policies. To complete enrollment, DM <a href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">@NetaDAO_Academy</a> on X from your registered X handle. Once enrolled, you'll have access to readings, the Cinema screening, and speaking access during the seminar's live X Spaces discussions.</p></div>
+        <div class="policy-item"><span class="policy-label">Participation</span><p class="policy-text">Participants are expected to engage thoughtfully with each session's materials. Specific participation requirements (for example, proof-of-participation tokens) may vary by seminar and will be noted on that seminar's own page.</p></div>
+        <div class="policy-item"><span class="policy-label">Attendance</span><p class="policy-text">Enrollment assumes an intention to participate. A participant who does not attend any sessions, or who ceases participating without notice, may be disenrolled at the instructor's discretion.</p></div>
+        <div class="policy-item"><span class="policy-label">Conduct</span><p class="policy-text">Participants are expected to engage with one another, instructors, and seminar materials in good faith and with respect. Harassment, deliberate disruption, or persistently bad-faith participation may result in disenrollment.</p></div>
+        <div class="policy-item"><span class="policy-label">Non-Attribution</span><p class="policy-text">Some seminars address sensitive or disturbing material. To encourage candid study, we observe a policy of non-attribution: you may publicly discuss themes and arguments raised in a session, but should not attribute them to another participant. Learning must include margins for uncertainty, indelicacy, mistake, and dissent.</p></div>
+        <div class="policy-item"><span class="policy-label">X Spaces</span><p class="policy-text">Speaking access during the live X Spaces discussion is reserved for enrolled participants. At the host's discretion, the discussion may open to general audience Q&amp;A near the end.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="nda-footer">
+  <div class="nda-footer__inner">
+    <a class="nda-wordmark nda-wordmark--footer" href="/">Neta DAO Academy</a>
+    <nav class="nda-footer__nav" aria-label="Footer">
+      <ul>
+        <li><a href="https://x.com/NetaDAO_Academy">X</a></li>
+        <li><a href="https://discord.com/invite/gvjC86WXC2">Discord</a></li>
+        <li><a class="nda-footer__parent" href="https://netadao.org" aria-label="Neta DAO">
+          <img class="nda-footer__mark nda-footer__mark--paper" src="/ds/media/neta-mark-paper.png" alt="" width="251" height="192">
+          <img class="nda-footer__mark nda-footer__mark--night" src="/ds/media/neta-mark-night.png" alt="" width="251" height="192">
+        </a></li>
+      </ul>
+    </nav>
+    <p class="nda-footer__copy">© Neta DAO Academy · All rights reserved</p>
+  </div>
+</footer>
+</div>
+<script type="module">
+  import { ACADEMY_SEMINAR_POLICY_VERSION } from '/js/seminar-policies.js?v=1';
+  if (document.getElementById('seminar-policies').dataset.policyVersion !== ACADEMY_SEMINAR_POLICY_VERSION) {
+    console.warn('Academy Seminar Policy version mismatch.');
+  }
+</script>
+<script type="module">
+  import { initNavAccountWidget } from '/js/academy-auth.js?v=27';
+  initNavAccountWidget();
+</script>
+<script>window.NDA && NDA.enhance();</script>
 </body>
 </html>

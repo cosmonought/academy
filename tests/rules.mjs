@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { test, before, after, beforeEach } from 'node:test';
 import { initializeTestEnvironment, assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
-import { ref, get, set, update } from 'firebase/database';
+import { ref, get, set, update, serverTimestamp } from 'firebase/database';
 
 let env;
 const seminar = 'sex-and-or-love';
@@ -104,6 +104,33 @@ test('forthcoming seminar interest is public create-only and separate from newsl
   await assertFails(update(ref(guest, interestPath), { name: 'Changed' }));
   await assertFails(set(ref(guest, 'seminarInterests/request-2'), { ...interest, seminarId: 'sex-and-or-love' }));
   await assertSucceeds(get(ref(user('admin', true, 'academy@netadao.org'), 'seminarInterests')));
+});
+
+test('Fork interest registrations are public create-only, strictly shaped, and admin-read', async () => {
+  const guest = env.unauthenticatedContext().database();
+  const entry = { name: 'Reader', email: 'reader@example.org', interest: 'editorial', area: 'Political theory', source: 'fork.netadao.org', submittedAt: serverTimestamp() };
+  await assertSucceeds(set(ref(guest, 'forkInterests/f1'), entry));
+  const { area, ...noArea } = entry;
+  await assertSucceeds(set(ref(guest, 'forkInterests/f2'), noArea));
+  await assertFails(get(ref(guest, 'forkInterests/f1')));
+  await assertFails(set(ref(guest, 'forkInterests/f1'), { ...entry, name: 'Changed' }));
+  await assertFails(set(ref(guest, 'forkInterests/f1'), null));
+  await assertFails(set(ref(guest, 'forkInterests/f3'), { ...entry, interest: 'Submitting work' }));
+  await assertFails(set(ref(guest, 'forkInterests/f3'), { ...entry, source: 'elsewhere' }));
+  await assertFails(set(ref(guest, 'forkInterests/f3'), { ...entry, name: '' }));
+  await assertFails(set(ref(guest, 'forkInterests/f3'), { ...entry, email: 'not-an-address' }));
+  await assertFails(set(ref(guest, 'forkInterests/f3'), { ...entry, area: 'x'.repeat(201) }));
+  await assertFails(set(ref(guest, 'forkInterests/f3'), { ...entry, submittedAt: Date.now() + 86400000 }));
+  await assertFails(set(ref(guest, 'forkInterests/f3'), { ...entry, extra: true }));
+  await assertFails(get(ref(user('reader', true, 'reader@example.org'), 'forkInterests')));
+  await assertFails(get(ref(user('admin', false, 'academy@netadao.org'), 'forkInterests')));
+  await assertSucceeds(get(ref(user('admin', true, 'academy@netadao.org'), 'forkInterests')));
+});
+
+test('a Fork registration also fits the general signup list (the form falls back to it until forkInterests is deployed)', async () => {
+  const guest = env.unauthenticatedContext().database();
+  await assertSucceeds(set(ref(guest, 'interestSignups/f1'), { name: 'Reader', email: 'reader@example.org', proposingLecture: false, proposal: '', interest: 'reviewing', area: '', source: 'fork.netadao.org', submittedAt: serverTimestamp() }));
+  await assertFails(get(ref(guest, 'interestSignups')));
 });
 
 test('The Graphic enrollment requires current policy assent while existing seminar registration stays compatible', async () => {

@@ -48,7 +48,7 @@
   <section class="nda-row pg-ac-head" aria-labelledby="admin-title">
     <p class="pg-ac-kicker">Neta DAO Academy · staff</p>
     <h1 class="pg-ac-title" id="admin-title">Admin</h1>
-    <p class="pg-ac-lede">Registrations, attendance and evaluations for every seminar; inquiries; account assistance.</p>
+    <p class="pg-ac-lede">Registrations, attendance and evaluations for every seminar; inquiries; Fork registrations; account assistance.</p>
   </section>
   <section class="nda-row admin-row">
     <div id="adminSignedOut" class="pg-form"><p class="pg-form__sub">Sign in with the Academy administrator account.</p><p class="pg-actions"><a class="nda-button nda-button--primary" href="/account.html?returnTo=%2Fadmin.html">Sign in <span aria-hidden="true">→</span></a></p></div>
@@ -62,6 +62,7 @@
           <nav class="staff-modes" aria-label="Admin sections"><ul class="pg-tabs">
             <li><button type="button" data-admin-view="seminars" aria-pressed="true">Seminars</button></li>
             <li><button type="button" data-admin-view="inquiries" aria-pressed="false">Inquiries</button></li>
+            <li><button type="button" data-admin-view="fork" aria-pressed="false">Fork</button></li>
           </ul></nav>
           <div id="adminSeminars" class="staff-utility">
             <div class="seminar-tabs" id="seminarTabs"></div>
@@ -80,6 +81,18 @@
             <table class="reg-table" id="signupsTable">
               <thead><tr><th>Name</th><th>Email</th><th>Submitted</th></tr></thead>
               <tbody id="signupsTableBody"></tbody>
+            </table>
+          </div>
+          <div id="adminFork" class="staff-utility" hidden>
+            <h3>Fork · registrations of interest</h3>
+            <p class="staff-note">From Register interest on fork.netadao.org.</p>
+            <p class="admin-note" id="forkStatusLine"></p>
+            <p class="staff-note" id="forkRuleNote" hidden>The forkInterests database rule isn’t deployed yet, so these arrive through the general signup list. They’re shown here, not under Inquiries.</p>
+            <p class="admin-actions"><button id="forkRefreshBtn" type="button">Refresh</button> <button id="forkCopyBtn" type="button" disabled>Copy email addresses</button></p>
+            <p class="staff-note" id="forkCopyStatus" role="status"></p>
+            <table class="reg-table" id="forkTable">
+              <thead><tr><th>Name</th><th>Email</th><th>Interest</th><th>Research area</th><th>Submitted</th></tr></thead>
+              <tbody id="forkTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -116,6 +129,7 @@
 </footer>
 </div>
 <script type="module" src="/js/admin-support.js"></script>
+<script type="module" src="/js/admin-fork.js"></script>
 <script type="module">
   import {
     auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
@@ -127,7 +141,7 @@
   import { renderSessionAttendance } from '/js/session-attendance.js';
   import { staffCall, staffError } from '/js/staff-api.js';
 
-  document.querySelectorAll('[data-admin-view]').forEach(button=>button.onclick=()=>{ const view=button.dataset.adminView; document.getElementById('adminSeminars').hidden=view!=='seminars'; document.getElementById('adminInquiries').hidden=view!=='inquiries'; document.querySelectorAll('[data-admin-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button))); });
+  document.querySelectorAll('[data-admin-view]').forEach(button=>button.onclick=()=>{ const view=button.dataset.adminView; document.getElementById('adminSeminars').hidden=view!=='seminars'; document.getElementById('adminInquiries').hidden=view!=='inquiries'; document.getElementById('adminFork').hidden=view!=='fork'; document.querySelectorAll('[data-admin-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button))); });
   const adminSignedOut     = document.getElementById('adminSignedOut');
   const adminNotAuthorized = document.getElementById('adminNotAuthorized');
   const adminApproved      = document.getElementById('adminApproved');
@@ -342,7 +356,7 @@
 
     const entries = Object.entries(all).sort((a, b) => (b[1].submittedAt || 0) - (a[1].submittedAt || 0));
     const proposals = entries.filter(([, s]) => s.proposingLecture);
-    const signups = entries.filter(([, s]) => !s.proposingLecture);
+    const signups = entries.filter(([, s]) => !s.proposingLecture && s.source !== 'fork.netadao.org');
 
     document.getElementById('proposalsStatusLine').textContent = `${proposals.length} guest lecture proposal(s).`;
     document.getElementById('signupsStatusLine').textContent = `${signups.length} general signup(s).`;

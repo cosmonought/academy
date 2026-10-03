@@ -79,6 +79,10 @@ The emulator command uses `demo-academy`, local fake accounts, and local databas
 data. It does not send real email or change production users. Browser previews
 still use the real Firebase project; do not submit fake accounts there.
 
+## Fork registrations
+
+The Register interest form on fork.netadao.org posts to `forkInterests` in this project's database, and Admin lists the entries under Fork. Its rule must be added to the live rules: see [the Fork registrations guide](docs/fork-interest.md). No link or form on the Academy, netadao.org or Fork opens an email app.
+
 ## Participant next-event panel and screening announcement
 
 An enrolled participant sees the next event and its lecture readings above the

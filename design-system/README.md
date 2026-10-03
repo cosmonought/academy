@@ -18,6 +18,7 @@ Neta DAO Academy runs free public seminars that read Web3 through philosophy, ps
 - **Dates and times**: "14 October 2026", "10 p.m. Eastern", "10 p.m.–2 a.m. Eastern". Unknown is "Date TBD". Never invent a time.
 - **Status words** are fixed: In progress, Next, Scheduled, Date TBD, Past, Screened; Active, On hiatus. A banner says "Screening night", never "Live now".
 - **Actions**: verb first, short. Navigation gets an arrow: "View seminar →", "Open Cinema →", "Stream here →"; another site gets ↗ ("Visit the journal ↗"). CircleLink labels split verb and object over two lines: "View / current seminars".
+- **Addresses**: an email address is written as plain text, never a `mailto:` link (people close the mail app and the message is lost). Anything a visitor sends us goes through a form that saves to the database and appears in Admin.
 - **Taglines** are short noun lists with no punctuation between items: "Ideas  Community  Discipline  For a more open tomorrow"; "Research  Peer reviewed  Open access  Interchain".
 - No emoji, no exclamation marks, no hype ("revolutionary", "unlock", "the future of").
 - Footer: "© Neta DAO Academy · All rights reserved", on one line with the wordmark and the off-site links. No disclaimer.

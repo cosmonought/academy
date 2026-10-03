@@ -11,6 +11,10 @@ process.on('exit',()=>server.kill());
  const context=await browser.newContext();
  await context.route('**/*',async route=>{
    const url=new URL(route.request().url());
+   if(url.hostname==='www.gstatic.com'&&url.pathname.endsWith('/firebase-database.js'))return route.fulfill({contentType:'application/javascript',body:`
+     export const ref=(db,path)=>path;
+     export const get=async path=>{if(window.denyFork&&path==='forkInterests')throw {code:'PERMISSION_DENIED',message:'Permission denied'};return {val:()=>window.mockDb?.[path]??null};};
+   `});
    if(url.hostname!=='127.0.0.1'){ if(url.pathname.includes('email.min.js'))return route.fulfill({contentType:'application/javascript',body:'window.emailjs={init(){},send(){return Promise.resolve();}}'}); return route.abort(); }
    if(url.pathname==='/js/academy-auth.js')return route.fulfill({contentType:'application/javascript',body:`
      export * from '/js/academy-record.js';
@@ -21,7 +25,8 @@ process.on('exit',()=>server.kill());
      export const signOut=async()=>{},completeSignInIfNeeded=async()=>false,initNavAccountWidget=()=>{};
      export const getRegistrations=async()=>({'sex-and-or-love':window.mockRoster[0].registration}),getDisplayName=async()=> 'Test Instructor',setDisplayName=async name=>name,getEvaluation=async()=>({}),requestEvaluation=async()=>{},cancelEvaluationRequest=async()=>{},getOwnSeminarInterests=async()=>({});
      export const approveRegistration=async()=>window.operations.push('enroll'),revokeRegistration=async()=>window.operations.push('unenroll'),setAttendance=async()=>window.operations.push('attendance'),setInstructorEvaluation=async()=>window.operations.push('evaluation');
-     export const getAllRegistrations=async()=>({'p@example,org':{'sex-and-or-love':window.mockRoster[0].registration}}),getAllEvaluations=async()=>({}),getAllInterestSignups=async()=>({});
+     export const getAllRegistrations=async()=>({'p@example,org':{'sex-and-or-love':window.mockRoster[0].registration}}),getAllEvaluations=async()=>({}),getAllInterestSignups=async()=>window.mockDb?.interestSignups||{};
+     export const db={};
      export const sendPasswordReset=async()=>window.operations.push('reset'),signInWithGoogle=async()=>{if(window.googleConflict)throw {code:'auth/account-exists-with-different-credential'};auth.currentUser={uid:'google-same-uid',email:'p@example.org',providerData:[{providerId:'google.com'}]};return {user:auth.currentUser};},signInWithPassword=async()=>{},checkPasswordReset=async()=>'',finishPasswordReset=async()=>{},createPasswordAccount=async()=>{},getRegistrationForSeminar=async()=>null,submitRegistration=async()=>{};
    `});
    if(url.pathname==='/js/staff-api.js')return route.fulfill({contentType:'application/javascript',body:`
@@ -40,6 +45,8 @@ process.on('exit',()=>server.kill());
  const page=await context.newPage(); const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{
    window.mockUser={uid:'teacher',email:'teacher@example.org',emailVerified:true,providerData:[{providerId:'google.com'}]};window.assignments=['sex-and-or-love','sex-monsters-superheroes'];window.assignmentRoles={'sex-and-or-love':'instructor','sex-monsters-superheroes':'instructor'};window.operations=[];
+   window.mockDb={forkInterests:{a:{name:'Ada Reader',email:'ada@example.org',interest:'editorial',area:'Political theory',source:'fork.netadao.org',submittedAt:1790000000000}},
+     interestSignups:{b:{name:'Early Fork',email:'early@example.org',interest:'submitting',source:'fork.netadao.org',submittedAt:1789990000000},c:{name:'General Reader',email:'g@example.org',proposingLecture:false,proposal:'',submittedAt:1}}};
    window.mockRoster=[{emailKey:'p@example,org',registration:{name:'Participant Example',email:'p@example.org',xHandle:'@participant',reason:'To study together.',enrolled:true,attendance:{}},evaluation:{request:{form:'essay'}}}];
  });
  const results=[];fs.mkdirSync(screenshots,{recursive:true});
@@ -62,6 +69,15 @@ process.on('exit',()=>server.kill());
  await page.addInitScript(()=>{window.assignments=[];});await page.reload();await page.waitForFunction(()=>document.getElementById('profileDisplayName').textContent==='Test Instructor');assert.equal(await page.locator('#profileTeachingTab').isVisible(),false);
  // Admin Account Assistance / provider-aware recovery.
  await page.addInitScript(()=>{window.mockUser={uid:'admin',email:'academy@netadao.org',emailVerified:true};});await page.goto('http://127.0.0.1:8765/admin.html');await page.fill('#supportEmail','p@example.org');await page.locator('#accountLookup button').click();await page.locator('#accountSupportResult').getByText('Auth account exists',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'Send password setup/reset link'}).count(),0);
+ // Admin → Fork: registrations from forkInterests and, before that rule is live, the general list (kept out of Inquiries).
+ await page.click('[data-admin-view="fork"]');await page.locator('#forkTableBody tr').nth(1).waitFor();
+ assert.equal(await page.locator('#adminFork').isVisible(),true);assert.equal(await page.locator('#adminInquiries').isVisible(),false);assert.equal(await page.locator('#adminSeminars').isVisible(),false);
+ assert.deepEqual(await page.locator('#forkTableBody tr').first().locator('td').allTextContents(),['Ada Reader','ada@example.org','Editorial board','Political theory','21 Sep 2026 · 14:13 UTC']);
+ assert.equal(await page.locator('#forkTableBody tr').nth(1).locator('td').nth(2).textContent(),'Submitting work');
+ assert.match(await page.locator('#forkStatusLine').textContent(),/^2 registrations · 1 submitting work · 1 editorial board\.$/);assert.equal(await page.locator('#forkRuleNote').isVisible(),false);assert.equal(await page.locator('#forkCopyBtn').isDisabled(),false);
+ await page.evaluate(()=>{window.denyFork=true;});await page.click('#forkRefreshBtn');await page.waitForFunction(()=>document.querySelectorAll('#forkTableBody tr').length===1);assert.equal(await page.locator('#forkRuleNote').isVisible(),true);
+ await page.click('[data-admin-view="inquiries"]');assert.deepEqual(await page.locator('#signupsTableBody td:first-child').allTextContents(),['General Reader']);
+ await page.click('[data-admin-view="fork"]');await page.screenshot({path:screenshots+'/admin-fork-'+(await page.evaluate(()=>innerWidth))+'.png',fullPage:true});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Admin overflow');await page.screenshot({path:screenshots+'/admin-390.png',fullPage:true});
  // Guest Google path and provider-conflict copy.
  await page.addInitScript(()=>{window.mockUser=null;});await page.goto('http://127.0.0.1:8765/account.html');await page.locator('#googleSignIn').waitFor({state:'visible'});await page.evaluate(()=>window.googleConflict=true);await page.click('#googleSignIn');await page.waitForFunction(()=>document.getElementById('googleStatus').textContent.includes('existing email and password'));

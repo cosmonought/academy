@@ -173,6 +173,35 @@
         }
       }
     },
+    "forkInterests": {
+      ".read": "auth != null && auth.token.email_verified === true && auth.token.email === 'academy@netadao.org'",
+      ".write": false,
+      "$interestId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['name','email','interest','source','submittedAt'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 80"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 120 && newData.val().contains('@')"
+        },
+        "interest": {
+          ".validate": "newData.isString() && (newData.val() === 'submitting' || newData.val() === 'editorial' || newData.val() === 'reviewing' || newData.val() === 'updates')"
+        },
+        "area": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "source": {
+          ".validate": "newData.isString() && newData.val() === 'fork.netadao.org'"
+        },
+        "submittedAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
     "academyConfig": {
       "passwordAccountsEnabled": {
         ".read": true,

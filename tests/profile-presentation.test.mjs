@@ -4,11 +4,11 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 import {EVALUATION_FORMS,EVALUATION_OUTCOMES} from '../js/academy-record.js';
 const source=await readFile('profile.html','utf8');
-const fn=source.slice(source.indexOf('function evaluationHtml('),source.indexOf('    function makeRow'));
+const fn=source.slice(source.indexOf('function evaluationHtml('),source.search(/\n[ \t]*function makeRow/));   // whatever the page's indentation
 const config={disabled:{enabled:false},enabled:{enabled:true,minimumAttendanceEvents:1,requestCutoff:null},locked:{enabled:true,minimumAttendanceEvents:1,requestCutoff:'2000-01-01T00:00:00Z'}};
 const render=vm.runInNewContext('('+fn+')',{EVALUATION_CONFIG:config,EVALUATION_FORMS,EVALUATION_OUTCOMES,escape:String,Date});
 test('disabled evaluations do not present fake failures; enabled failures are explicit',()=>{
- assert.match(render('disabled',{unavailable:true},{attended:1}),/Not enabled/);
+ assert.match(render('disabled',{unavailable:true},{attended:1}),/Not offered for this seminar/);
  assert.match(render('enabled',{unavailable:true},{attended:1}),/Unavailable/);
 });
 test('minimum events gate the request UI and cutoff removes participant controls',()=>{
@@ -30,7 +30,7 @@ test('completed evaluations preserve feedback without participant participation 
  for(const request of [undefined,{form:'essay'}]) {
   const html=render('enabled',{request,instructor},{attended:1});
   assert.match(html,/Historical feedback/);
-  assert.match(html,/historical record/);
+  assert.match(html,/part of your record/);
   assert.doesNotMatch(html,/evaluation-optout|evaluation-request/);
  }
 });

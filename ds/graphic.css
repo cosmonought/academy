@@ -116,6 +116,7 @@
   .pg-g-format, .pg-g-interest { grid-template-columns: 1fr; gap: 24px; padding: 32px 24px; }
   .pg-panel--7, .pg-panel--6, .pg-panel--5 { grid-column: span 12; }
   .pg-panel--strip { grid-template-columns: auto minmax(0, 1fr); } .pg-strip__note { grid-column: 1 / -1; justify-self: start; }
+}
 @media (max-width: 599px) {
   .pg-lild-stage { --lild-w: 190px; margin-top: calc(var(--lild-w) * .95); }
   .pg-lild { right: 6%; }
@@ -127,3 +128,5 @@
   .pg-page { padding: 12px; gap: 16px; }
   .pg-g-form__row { grid-template-columns: 1fr; }
   .pg-g-sylhead { flex-direction: column; align-items: flex-start; } .pg-g-sylhead .pg-meta { text-align: left; }
+}
+

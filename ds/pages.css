@@ -162,8 +162,10 @@
 .pg-mono { font-family: var(--font-mono); font-size: 13px; letter-spacing: .02em; }
 .pg-hint { margin: 0; font: 400 14px/1.6 var(--font-body); color: var(--ink-mid); }
 .pg-hint a { color: var(--ink); }
+@media (max-width: 759px) {
   .pg-ac-main { padding-right: 0; }
   .pg-ac-side { padding-left: 0; margin-top: 28px; }
+}
 
 /* ---------- Participate ---------- */
 .pg-ways { --nda-columns: repeat(3, minmax(0, 1fr)); }

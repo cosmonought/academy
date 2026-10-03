@@ -8,6 +8,17 @@ Run `python -m http.server 8765 --bind 127.0.0.1`, then open
 `http://127.0.0.1:8765`. Authentication and registration still connect to the
 existing Firebase project; do not submit production registrations as test data.
 
+## Design system
+
+The site is built on the Neta DAO Academy design system.
+
+- `design-system/README.md`: the brand book (voice, colour, type, layout, imagery). Start here; `design-system/Layout.md` and `design-system/Motion.md` cover the homepage grid and the intro and pigment films.
+- `design-system/components/<Name>.md`: each component's guideline and markup, and the page drafts (Homepage, SeminarPage, CoiningReasonPage, TheGraphicPage, AccountPage, ProfilePage, CinemaPage…).
+- `design-system/tokens.json`: the tokens, compiled into `ds/tokens.css`.
+- `ds/`: what the pages load: `tokens.css`, `bundle.css` and `bundle.js` (`window.NDA`; pages call `NDA.enhance()`), `fonts/`, and `media/` (the films, posters and artwork the guidelines name). These come from the design system as a set: change them together with its guidelines. The site's own additions are `ds/site.css`, `ds/pages.css`, `ds/graphic.css`, `ds/cinema.css` and `ds/staff.css`.
+
+academy.netadao.org shares Neta DAO Radio with netadao.org and links to Fork; netadao.org and fork.netadao.org keep their own design systems in their own repositories.
+
 ## Shared presentation
 
 - `css/style.css`: base palette and legacy components.

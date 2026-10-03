@@ -1,102 +1,173 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="referrer" content="no-referrer"><title>Your account — Neta DAO Academy</title>
-<link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/css/style.css?v=5">
-<link rel="stylesheet" href="/css/editorial.css?v=6"><link rel="stylesheet" href="/css/account.css?v=2">
-<script src="/js/site.js?v=11" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>if (window.emailjs) emailjs.init({ publicKey: 'qWT4IiYYkiSwREKOd' });</script>
-  <link rel="stylesheet" href="/css/screening-banner.css?v=3">
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your account — Neta DAO Academy</title>
+  <meta name="description" content="Sign in to Neta DAO Academy, create an account, or set a password.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+  <link rel="preload" href="/ds/fonts/NDADisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/ds/tokens.css?v=2">
+  <link rel="stylesheet" href="/ds/bundle.css?v=2">
+  <link rel="stylesheet" href="/ds/site.css?v=2">
+  <script src="/ds/bundle.js?v=2"></script>
+  <link rel="stylesheet" href="/ds/pages.css?v=1">
+  <meta name="referrer" content="no-referrer">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>(function () { if (window.emailjs) emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();</script>
+  <script src="/js/site.js?v=11" defer></script>
   <script src="https://netadao.org/radio/radio.js" defer></script>
-</head><body><a class="skip-link" href="#main-content">Skip to content</a>
-<nav class="site-nav" aria-label="Main navigation">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo" aria-label="Neta DAO Academy home">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
-          <rect width="40" height="40" fill="#080808"/>
-          <defs>
-            <linearGradient id="a-grad-NAV" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#C9338A"/>
-              <stop offset="35%" stop-color="#C9338A"/>
-              <stop offset="100%" stop-color="#5B8EF0"/>
-            </linearGradient>
-            <clipPath id="a-clip-NAV">
-              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
-            </clipPath>
-          </defs>
-          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
-          <g clip-path="url(#a-clip-NAV)">
-            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/>
-          </g>
-        </svg>
-      </a>
-      <ul class="nav-links" id="site-menu">
-        <li><a href="/">Home</a></li>
-        <li class="nav-dropdown-item">
-          <a href="/seminars.html">Seminars</a>
-          <ul class="nav-dropdown-menu">
-            <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
-            <li><a href="/CoiningReason/">Flagship: Coining Reason</a></li>
-            <li><a href="/SexMonstersSuperheroes/">Forthcoming: Sex, Monsters, and Superheroes</a></li>
-          </ul>
-        </li>
-        <li id="navAccountItem"><a href="/account.html" id="navAccountLink">Sign In</a></li>
-      </ul>
-      <button class="nav-hamburger" type="button" aria-label="Open menu" aria-controls="site-menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</head>
+<body>
+<div class="nda-page">
+<a class="nda-skip" href="#main-content">Skip to content</a>
+<header class="nda-header" data-nda-menu>
+  <div class="nda-header__inner">
+    <a class="nda-wordmark" href="/">Neta DAO Academy</a>
+    <div class="nda-header__primary">
+      <nav class="nda-header__nav" id="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="/seminars.html">Seminars</a></li>
+          <li><a href="/cinema.html">Cinema</a></li>
+          <li><a href="https://fork.netadao.org">Journal</a></li>
+        </ul>
+      </nav>
     </div>
-  </nav>
-<main id="main-content" class="account-wrap">
-  <header class="account-heading"><p class="section-label">Neta DAO Academy</p><h1>Your account</h1><p>One account for your seminars, readings, and screenings.</p></header>
-  <p id="accountContext" class="account-context" hidden></p>
-  <div id="accountLoading" role="status">Checking your account…</div>
-  <div id="accountGuest" hidden>
-    <button id="googleSignIn" class="btn" type="button">Continue with Google</button>
-    <p id="googleStatus" role="status" aria-live="polite"></p>
-    <nav class="account-modes" aria-label="Account options"><a href="?view=signin" data-view="signin">Sign in</a><a href="?view=create" data-view="create">Create an account</a></nav>
-    <section data-panel="signin" hidden><h2>Welcome back</h2><p>Use your email address and password.</p>
-      <form id="signInForm"><label for="signInEmail">Email address</label><input id="signInEmail" name="email" type="email" autocomplete="username" required maxlength="120">
-      <label for="signInPassword">Password</label><div class="password-field"><input id="signInPassword" name="password" type="password" autocomplete="current-password" required><button type="button" data-reveal="signInPassword" aria-label="Show password" aria-pressed="false">Show</button></div>
-      <button class="btn btn-primary" type="submit">Sign in</button><p class="form-status" role="status"></p></form>
-      <p><a href="?view=recover" data-view="recover">Set or reset a password →</a></p>
-      <aside class="account-help"><h3>Previously used an email link?</h3><p>If you never chose a password, use “Set or reset a password” once. Then sign in here with your email and password each time.</p></aside>
-    </section>
-    <section data-panel="create" hidden><h2>Create your account</h2><p>Choose your password now. You’ll be signed in immediately, then you can request seminar enrollment.</p>
-      <form id="createAccountForm"><label for="createEmail">Email address</label><input id="createEmail" name="email" type="email" autocomplete="username" required maxlength="120">
-      <label for="createPassword">Choose a password</label><div class="password-field"><input id="createPassword" name="password" type="password" autocomplete="new-password" minlength="8" required aria-describedby="passwordHint"><button type="button" data-reveal="createPassword" aria-label="Show chosen password" aria-pressed="false">Show</button></div><p class="field-hint" id="passwordHint">At least 8 characters. A longer, unique password is best.</p>
-      <label for="createConfirm">Confirm password</label><input id="createConfirm" name="confirmation" type="password" autocomplete="new-password" minlength="8" required>
-      <button class="btn btn-primary" type="submit">Create account</button><p class="form-status" role="status"></p></form>
-      <p class="field-hint">An account lets you sign in. Seminar enrollment is confirmed separately.</p>
-    </section>
-    <section data-panel="recover" hidden><h2>Set or reset a password</h2><p>For an existing account, including one previously accessed through email links. We’ll send a one-time password reset link.</p>
-      <form id="recoverForm"><label for="recoverEmail">Email address</label><input id="recoverEmail" name="email" type="email" autocomplete="username" required maxlength="120"><button class="btn btn-primary" type="submit">Send password reset link</button><p class="form-status" role="status"></p></form>
-      <p><a href="?view=signin" data-view="signin">Back to sign in</a></p>
-      <aside class="account-help"><h3>Registered, but never signed in?</h3><p>You may not yet have an account. Contact <a href="https://x.com/NetaDAO_Academy">@NetaDAO_Academy</a> from your registered X handle for help connecting your enrollment.</p><p>If the reset email does not arrive, check Spam or contact <a href="mailto:academy@netadao.org">academy@netadao.org</a>. Never send us your password.</p></aside>
-    </section>
+    <div class="nda-header__tools" id="site-tools">
+      <span id="navAccountItem"><a class="nda-button nda-button--outline nda-button--sm" id="navAccountLink" href="/account.html?returnTo=%2Fprofile.html" aria-current="page">Sign in</a></span>
+    </div>
+    <button class="nda-header__menu" type="button" aria-expanded="false" aria-controls="site-nav site-tools"><span class="nda-header__menu-label">Menu</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
   </div>
-  <section id="accountReset" hidden><h2>Choose your new password</h2><p id="resetEmail"></p>
-    <form id="resetPasswordForm"><label for="resetPassword">New password</label><div class="password-field"><input id="resetPassword" name="password" type="password" autocomplete="new-password" minlength="8" required><button type="button" data-reveal="resetPassword" aria-label="Show new password" aria-pressed="false">Show</button></div>
-    <label for="resetConfirm">Confirm password</label><input id="resetConfirm" name="confirmation" type="password" autocomplete="new-password" minlength="8" required><button class="btn btn-primary" type="submit">Save password</button><p class="form-status" role="status"></p></form>
-    <p><a href="?view=recover" data-view="recover">Request a new password link</a></p>
+</header>
+<main id="main-content">
+  <section class="nda-row pg-ac-head" aria-labelledby="ac-title">
+    <p class="pg-ac-kicker">Neta DAO Academy</p>
+    <h1 class="pg-ac-title" id="ac-title">Your account</h1>
+    <p class="pg-ac-lede">One account for your seminars, readings and screenings.</p>
   </section>
-  <section id="accountResetDone" hidden aria-labelledby="resetDoneHeading">
-    <h2 id="resetDoneHeading" tabindex="-1">Your password is saved</h2>
-    <p>Sign in with your new password to return to your seminars, readings, and screenings.</p>
-    <button id="resetSignIn" class="btn btn-primary" type="button">Sign in with your new password →</button>
-    <p><a href="/">Back to Academy home</a></p>
-  </section>
-  <section id="accountMember" hidden><h2 id="memberHeading">You’re signed in</h2><p id="memberEmail"></p>
-    <p id="memberStatus" class="form-status" role="status"></p>
-    <div id="enrollmentFormWrap" hidden><h3 id="enrollmentTitle">Request enrollment</h3><p>Your account is ready. Tell us a little about yourself to join this seminar.</p>
-      <form id="enrollmentForm"><label for="enrollName">Your name</label><input id="enrollName" name="name" autocomplete="name" required maxlength="80">
-      <label for="enrollHandle">X handle</label><input id="enrollHandle" name="xHandle" placeholder="@yourname" required maxlength="40" autocapitalize="none">
-      <label for="enrollReason">Why would you like to join?</label><textarea id="enrollReason" name="reason" rows="4" required maxlength="1000"></textarea>
-      <p class="field-hint">Seminars can cover challenging material. <a href="/seminars.html#policies">Read the participation policies.</a></p>
-      <button class="btn btn-primary" type="submit">Request enrollment</button><p class="form-status" role="status"></p></form>
+  <section class="nda-row">
+    <div class="nda-columns pg-ac-cols">
+      <div class="pg-ac-main">
+      <p id="accountContext" class="pg-context" hidden></p>
+      <p id="accountLoading" class="pg-status pg-ac-panel" role="status">Checking your account…</p>
+      <div id="accountGuest" class="pg-ac-guest" hidden>
+        <nav class="pg-ac-tabs" aria-label="Account options"><ul class="pg-tabs">
+          <li><a href="?view=signin" data-view="signin">Sign in</a></li>
+          <li><a href="?view=create" data-view="create">Create an account</a></li>
+        </ul></nav>
+        <section class="pg-form pg-ac-panel" data-panel="signin" aria-labelledby="signInTitle" hidden>
+          <h2 class="pg-form__title" id="signInTitle">Welcome back</h2>
+          <p class="pg-form__sub">Use your email address and password, or your Google account.</p>
+          <div data-google-slot>
+            <div class="pg-google" id="googleBlock">
+              <button id="googleSignIn" class="nda-button nda-button--outline pg-wide" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" class="pg-g"><path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9z"/><path d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.5L6.4 10C7.2 7.8 9.4 6 12 6z"/></svg> Continue with Google</button>
+              <p id="googleStatus" class="pg-status" role="status" aria-live="polite"></p>
+              <p class="pg-or">or</p>
+            </div>
+          </div>
+          <form id="signInForm" class="pg-form">
+            <div class="nda-field"><label class="nda-field__label" for="signInEmail">Email address</label><input class="nda-field__input" id="signInEmail" name="email" type="email" autocomplete="username" required maxlength="120"></div>
+            <div class="nda-field"><label class="nda-field__label" for="signInPassword">Password</label><span class="pg-pass"><input class="nda-field__input" id="signInPassword" name="password" type="password" autocomplete="current-password" required><button class="pg-pass__show" type="button" data-reveal="signInPassword" aria-label="Show password" aria-pressed="false">Show</button></span></div>
+            <p class="pg-actions"><button class="nda-button nda-button--primary" type="submit">Sign in</button><a class="nda-text-link" href="?view=recover" data-view="recover">Set or reset a password <span aria-hidden="true">→</span></a></p>
+            <p class="pg-status" role="status"></p>
+          </form>
+        </section>
+        <section class="pg-form pg-ac-panel" data-panel="create" aria-labelledby="createTitle" hidden>
+          <h2 class="pg-form__title" id="createTitle">Create your account</h2>
+          <p class="pg-form__sub">Choose your password now. You’ll be signed in at once, then you can request seminar enrollment.</p>
+          <div data-google-slot></div>
+          <form id="createAccountForm" class="pg-form">
+            <div class="nda-field"><label class="nda-field__label" for="createEmail">Email address</label><input class="nda-field__input" id="createEmail" name="email" type="email" autocomplete="username" required maxlength="120"></div>
+            <div class="nda-field"><label class="nda-field__label" for="createPassword">Choose a password</label><span class="pg-pass"><input class="nda-field__input" id="createPassword" name="password" type="password" autocomplete="new-password" minlength="8" aria-describedby="passwordHint" required><button class="pg-pass__show" type="button" data-reveal="createPassword" aria-label="Show chosen password" aria-pressed="false">Show</button></span><p class="nda-field__help" id="passwordHint">At least 8 characters. A longer, unique password is best.</p></div>
+            <div class="nda-field"><label class="nda-field__label" for="createConfirm">Confirm password</label><span class="pg-pass"><input class="nda-field__input" id="createConfirm" name="confirmation" type="password" autocomplete="new-password" minlength="8" required><button class="pg-pass__show" type="button" data-reveal="createConfirm" aria-label="Show confirmed password" aria-pressed="false">Show</button></span></div>
+            <p class="pg-actions"><button class="nda-button nda-button--primary" type="submit">Create account</button></p>
+            <p class="pg-status" role="status"></p>
+            <p class="pg-hint">An account lets you sign in. Seminar enrollment is confirmed separately.</p>
+          </form>
+        </section>
+        <section class="pg-form pg-ac-panel" data-panel="recover" aria-labelledby="recoverTitle" hidden>
+          <h2 class="pg-form__title" id="recoverTitle">Set or reset a password</h2>
+          <p class="pg-form__sub">For an existing account, including one you used through email links. We’ll send a one-time password reset link.</p>
+          <form id="recoverForm" class="pg-form">
+            <div class="nda-field"><label class="nda-field__label" for="recoverEmail">Email address</label><input class="nda-field__input" id="recoverEmail" name="email" type="email" autocomplete="username" required maxlength="120"></div>
+            <p class="pg-actions"><button class="nda-button nda-button--primary" type="submit">Send password reset link</button><a class="nda-text-link" href="?view=signin" data-view="signin">Back to sign in</a></p>
+            <p class="pg-status" role="status"></p>
+          </form>
+        </section>
+      </div>
+      <section id="accountReset" class="pg-form pg-ac-panel" aria-labelledby="resetTitle" hidden>
+        <h2 class="pg-form__title" id="resetTitle">Choose your new password</h2>
+        <p class="pg-form__sub pg-mono" id="resetEmail"></p>
+        <form id="resetPasswordForm" class="pg-form">
+          <div class="nda-field"><label class="nda-field__label" for="resetPassword">New password</label><span class="pg-pass"><input class="nda-field__input" id="resetPassword" name="password" type="password" autocomplete="new-password" minlength="8" aria-describedby="resetHint" required><button class="pg-pass__show" type="button" data-reveal="resetPassword" aria-label="Show new password" aria-pressed="false">Show</button></span><p class="nda-field__help" id="resetHint">At least 8 characters.</p></div>
+          <div class="nda-field"><label class="nda-field__label" for="resetConfirm">Confirm password</label><span class="pg-pass"><input class="nda-field__input" id="resetConfirm" name="confirmation" type="password" autocomplete="new-password" minlength="8" required><button class="pg-pass__show" type="button" data-reveal="resetConfirm" aria-label="Show confirmed password" aria-pressed="false">Show</button></span></div>
+          <p class="pg-actions"><button class="nda-button nda-button--primary" type="submit">Save password</button><a class="nda-text-link" href="?view=recover" data-view="recover">Request a new link</a></p>
+          <p class="pg-status" role="status"></p>
+        </form>
+      </section>
+      <section id="accountResetDone" class="pg-form pg-ac-panel" aria-labelledby="resetDoneHeading" hidden>
+        <h2 class="pg-form__title" id="resetDoneHeading" tabindex="-1">Your password is saved</h2>
+        <p class="pg-form__sub">Sign in with your new password to return to your seminars, readings and screenings.</p>
+        <p class="pg-actions"><button id="resetSignIn" class="nda-button nda-button--primary" type="button">Sign in <span aria-hidden="true">→</span></button><a class="nda-text-link" href="/">Back to the Academy</a></p>
+      </section>
+      <section id="accountMember" class="pg-form pg-ac-panel" aria-labelledby="memberHeading" hidden>
+        <h2 class="pg-form__title" id="memberHeading">You’re signed in</h2>
+        <p class="pg-form__sub pg-mono" id="memberEmail"></p>
+        <p id="memberStatus" class="pg-status" role="status"></p>
+        <div id="enrollmentFormWrap" class="pg-form" hidden>
+          <h3 class="pg-form__title pg-form__title--sm" id="enrollmentTitle">Request enrollment</h3>
+          <p class="pg-form__sub">Your account is ready. Tell us a little about yourself to join this seminar.</p>
+          <form id="enrollmentForm" class="pg-form">
+            <div class="nda-field"><label class="nda-field__label" for="enrollName">Your name</label><input class="nda-field__input" id="enrollName" name="name" autocomplete="name" required maxlength="80"></div>
+            <div class="nda-field"><label class="nda-field__label" for="enrollHandle">X handle</label><input class="nda-field__input" id="enrollHandle" name="xHandle" placeholder="@yourname" required maxlength="40" autocapitalize="none" aria-describedby="enrollHandleHelp"><p class="nda-field__help" id="enrollHandleHelp">You’ll confirm your enrollment by sending a DM from this handle.</p></div>
+            <div class="nda-field"><label class="nda-field__label" for="enrollReason">Why would you like to join?</label><textarea class="nda-field__input" id="enrollReason" name="reason" rows="4" required maxlength="1000"></textarea></div>
+            <p class="pg-hint">Seminars can cover challenging material. <a href="/seminars.html#policies">Read the participation policies.</a></p>
+            <p class="pg-actions"><button class="nda-button nda-button--primary" type="submit">Request enrollment</button></p>
+            <p class="pg-status" role="status"></p>
+          </form>
+        </div>
+        <div id="enrollmentPending" class="pg-form" hidden>
+          <p class="pg-badge"><span class="nda-status nda-status--current">Action required</span></p>
+          <h3 class="pg-form__title pg-form__title--sm">Enrollment awaiting confirmation</h3>
+          <p class="pg-form__sub" id="pendingDetail"></p>
+          <p class="pg-hint">DM <a href="https://x.com/NetaDAO_Academy">@NetaDAO_Academy</a> from your registered X handle to complete enrollment. You can already sign in with your password; readings and screenings unlock when enrollment is confirmed.</p>
+          <p class="pg-actions"><a class="nda-button nda-button--outline" href="https://x.com/NetaDAO_Academy" target="_blank" rel="noopener">Open @NetaDAO_Academy on X <span aria-hidden="true">↗</span></a><button type="button" id="checkEnrollment" class="nda-button nda-button--ghost">Check enrollment status</button></p>
+        </div>
+        <p class="pg-actions" id="memberContinue"><a class="nda-button nda-button--primary" id="continueLink" href="/profile.html">Continue to your profile <span aria-hidden="true">→</span></a></p>
+        <p class="pg-actions pg-actions--quiet"><a class="nda-text-link" href="/set-password.html">Set or change your password</a><button id="accountSignOut" class="nda-button nda-button--ghost nda-button--sm" type="button">Sign out / use another account</button></p>
+      </section>
+      <noscript><p class="pg-hint">Account forms need JavaScript. Enable it or write to academy@netadao.org for help.</p></noscript>
+      </div>
+      <aside class="pg-ac-side" aria-label="Help">
+        <div class="pg-help"><h3>Previously used an email link?</h3><p>If you never chose a password, use “Set or reset a password” once. Then sign in here with your email and password each time.</p></div>
+        <div class="pg-help"><h3>Registered, but never signed in?</h3><p>You may not have an account yet. Choose Create an account with your registration email, or contact <a href="https://x.com/NetaDAO_Academy">@NetaDAO_Academy</a> from your registered X handle for help connecting your enrollment.</p><p>If a reset email doesn’t arrive, check your spam folder or write to <a href="mailto:academy@netadao.org">academy@netadao.org</a>. Never send us your password.</p></div>
+        <div class="pg-help"><h3>New here?</h3><p>An account lets you sign in. Enrollment in a seminar is confirmed separately, after you request it.</p><p><a class="nda-text-link" href="/seminars.html">See the seminars <span aria-hidden="true">→</span></a></p></div>
+      </aside>
     </div>
-    <div id="enrollmentPending" hidden><h3>Enrollment awaiting confirmation</h3><p id="pendingDetail"></p><p>DM <a href="https://x.com/NetaDAO_Academy">@NetaDAO_Academy</a> from your registered X handle to complete enrollment. You can already sign in with your password; readings and screenings unlock when enrollment is confirmed.</p><button type="button" id="checkEnrollment" class="btn btn-outline">Check enrollment status</button></div>
-    <p id="memberContinue"><a class="btn btn-primary" id="continueLink" href="/profile.html">Continue to your profile →</a></p>
-    <p><a href="/set-password.html">Set or change your password</a></p>
-    <button id="accountSignOut" class="toggle-link" type="button">Sign out / use a different account</button>
   </section>
-  <noscript><p>Account forms need JavaScript. Enable it or contact academy@netadao.org for help.</p></noscript>
-</main><script type="module" src="/js/account-page.js?v=5"></script></body></html>
+</main>
+<footer class="nda-footer">
+  <div class="nda-footer__inner">
+    <a class="nda-wordmark nda-wordmark--footer" href="/">Neta DAO Academy</a>
+    <nav class="nda-footer__nav" aria-label="Footer">
+      <ul>
+        <li><a href="https://x.com/NetaDAO_Academy">X</a></li>
+        <li><a href="https://discord.com/invite/gvjC86WXC2">Discord</a></li>
+        <li><a class="nda-footer__parent" href="https://netadao.org" aria-label="Neta DAO">
+          <img class="nda-footer__mark nda-footer__mark--paper" src="/ds/media/neta-mark-paper.png" alt="" width="251" height="192">
+          <img class="nda-footer__mark nda-footer__mark--night" src="/ds/media/neta-mark-night.png" alt="" width="251" height="192">
+        </a></li>
+      </ul>
+    </nav>
+    <p class="nda-footer__copy">© Neta DAO Academy · All rights reserved</p>
+  </div>
+</footer>
+</div>
+<script type="module" src="/js/account-page.js?v=6"></script>
+<script>window.NDA && NDA.enhance();</script>
+</body>
+</html>

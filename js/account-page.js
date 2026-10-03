@@ -16,8 +16,10 @@ let busy = false;
 let generation = 0;
 initNavAccountWidget();
 if (seminar) {
+  const title = document.createElement('b');
+  title.textContent = SEMINAR_TITLES[seminar];
   el('accountContext').hidden = false;
-  el('accountContext').textContent = `Joining: ${SEMINAR_TITLES[seminar]}`;
+  el('accountContext').replaceChildren('You’re signing in to request enrollment in ', title, '.');
 }
 
 function panel(id) {
@@ -26,6 +28,9 @@ function panel(id) {
 function showGuest() {
   panel('accountGuest');
   document.querySelectorAll('[data-panel]').forEach(node => { node.hidden = node.dataset.panel !== view; });
+  // Continue with Google sits in the sign-in and create panels (each has a slot for it), not in recovery
+  const google = el('googleBlock'), slot = document.querySelector(`[data-panel="${view}"] [data-google-slot]`);
+  if (google) { google.hidden = !slot; if (slot && google.parentElement !== slot) slot.append(google); }
   document.querySelectorAll('[data-view]').forEach(link => {
     link.toggleAttribute('aria-current', link.dataset.view === view);
     const query = new URLSearchParams({ view: link.dataset.view, returnTo });

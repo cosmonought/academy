@@ -546,6 +546,7 @@
     // optional: a filmed burst behind the rows, which starts data-lead ms before the burst and rises to data-level
     var bg = q('.nda-intro__bg');
     var bloomV = q('video.nda-intro__bloom');   // optional: the bloom film, behind the type
+    var filmV = q('video.nda-intro__film');     // optional: the whole intro, rendered (phones play it; see FILM)
     // optional: the soundtrack, and the button that turns it on and off
     var sound = q('audio.nda-intro__sound'), soundBtn = q('.nda-intro__sound-toggle');
     var fx = q('.nda-intro__fx filter'), turb = null, disp = null, fxId = '';
@@ -561,6 +562,29 @@
     // the hold: the opening frame (the statement, PHILOSOPHY with the paint moving in it) stands still this long
     // before anything moves, so the eye can take it in. The clock includes it; the score's times start after it.
     var HOLD = options.hold !== undefined ? Math.max(0, +options.hold || 0) : 1000;
+    // Lite: phones, tablets and small machines (and data-lite) get the same score with less to paint: no blur filters
+    // on the moving letters and shards, no shadows on the wall, no warp in the rows, fewer shards flying out, and the
+    // films nudged to load at once. On an iPhone the full version drops frames all through the burst.
+    function liteDevice() {
+      var ua = navigator.userAgent || '';
+      var iOS = /iP(hone|ad|od)/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+      var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+      var small = Math.min(screen.width || 9999, screen.height || 9999) < 820;
+      var weak = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+      return iOS || (coarse && small) || weak;
+    }
+    var liteAttr = el.getAttribute('data-lite');   // data-lite="off": the full version everywhere
+    var LITE = options.lite !== undefined ? !!options.lite : liteAttr === 'off' ? false : (liteAttr !== null || liteDevice());
+    if (LITE) el.setAttribute('data-lite', '');
+    // Film: a phone held upright plays the full version as one rendered film (.nda-intro__film: data-src, and its first
+    // frame as data-poster), sized like the stage; the grain, the sound, Skip and the exit sweep stay live over it.
+    // Where the film can't play (Low Power Mode, an error), the live lite version runs instead.
+    function portraitPhone() {
+      var w = window.innerWidth || 0, h = window.innerHeight || 0;
+      return h > w * 1.25 && Math.min(screen.width || 9999, screen.height || 9999) < 600;
+    }
+    var filmOn = !!filmV && !!filmV.getAttribute('data-src') && !replay && options.film !== false && LITE && portraitPhone();
+    var FILM_LEN = HOLD + T.end, filmSwept = false;
     // the film in the letters runs at 0.83x. It opens 3.8 s in, where the paint already flows across the frame in streams
     // (its first seconds are one small splash in the middle), and while it is hidden after the burst it jumps back to
     // run in step with the score from there on: THOUGHT's band is where it always was
@@ -680,6 +704,7 @@
     /* -- the clock: every animation is created paused and driven together. Times in the score are after the hold;
           the moves that open the score hold their first frame through it. -- */
     function A(node, frames, t, dur, easing, composite) {
+      if (LITE) frames = frames.map(function (f) { if (!('filter' in f)) return f; var g = {}; for (var k in f) if (k !== 'filter') g[k] = f[k]; return g; });
       var opts = { duration: Math.max(1, dur), delay: HOLD + Math.max(0, t), easing: easing || 'linear', fill: t > 0 ? 'forwards' : 'both' };
       if (composite) opts.composite = composite;
       var a = node.animate(frames, opts);
@@ -1005,7 +1030,7 @@
       }
       // the shadows on the wall: in a layer of their own, under everything thrown, seen only where the spot lights the wall
       var shadows = span('nda-intro__shadows'), spotMask = 'radial-gradient(36cqi 30cqi at ' + gx.toFixed(2) + 'cqi ' + gy.toFixed(2) + 'cqi, #000, rgb(0 0 0 / .8) 35%, rgb(0 0 0 / .35) 70%, #0000)';
-      init(shadows, { webkitMaskImage: spotMask, maskImage: spotMask });
+      init(shadows, LITE ? { display: 'none' } : { webkitMaskImage: spotMask, maskImage: spotMask });
       back.appendChild(shadows);
       A(shadows, [{ opacity: 0 }, { opacity: 1 }], t, 500, 'ease-out');
       A(shadows, [{ opacity: 1 }, { opacity: 0 }], T.reveal - 200, 1000, 'ease-in');
@@ -1086,7 +1111,7 @@
           t: t + rr(0, 50), fly: rr(600, 820), drift: rr(1.6, 3.6) });
       });
       // the rest of the blast: shards that fly straight on out of the frame
-      for (i = 0; i < 16; i++) {
+      for (i = 0; i < (LITE ? 6 : 16); i++) {
         var a2 = (i / 16) * 6.283 + rr(-0.25, 0.25), far = rr(70, 95), fill2 = ['pink', 'blue', 'marble'][i % 3], s2 = rr(4, 8), sl = rnd() < 0.6;
         shard({ out: true, x: HEART[0] + Math.cos(a2) * far * 1.3, y: HEART[1] + Math.sin(a2) * far * 0.75, w: s2, h: sl ? s2 * 0.3 : s2 * 0.8,
           shape: sl ? sliverShape() : chipShape(), fill: fill2, light: 0.6, alpha: 0.92, z: rr(-4, 14), spin: rr(160, 420) * (rnd() < 0.5 ? -1 : 1),
@@ -1183,7 +1208,7 @@
       return v;
     }
     function applyWarp(ms) {
-      if (!disp) return;
+      if (!disp || LITE) return;
       var v = warpAt(ms - HOLD);
       if (v < 0.03) { if (rowsEl.style.filter) rowsEl.style.filter = ''; return; }
       if (!rowsEl.style.filter) rowsEl.style.filter = 'url(#' + fxId + ')';
@@ -1719,7 +1744,12 @@
     function playBg(from) { media(bg, function (v) { var t = bgAt(from); if (Math.abs(v.currentTime - t) > 0.04) v.currentTime = t; var p = v.play(); if (p && p.catch) p.catch(noop); }); }
     function playBloom(from) { media(bloomV, function (v) { var t = bloomAt(from); if (Math.abs(v.currentTime - t) > 0.04) v.currentTime = t; var p = v.play(); if (p && p.catch) p.catch(noop); }); }
     var raf = 0;
-    function tick() { if (!playing) { raf = 0; return; } var t = now(); applyWarp(t); if (ribbonDraw) ribbonDraw(t); soundKeep(t); raf = requestAnimationFrame(tick); }
+    function tick() {
+      if (!playing) { raf = 0; return; }
+      var t = now(); applyWarp(t); if (ribbonDraw) ribbonDraw(t); soundKeep(t);
+      if (filmOn && (filmV.ended || t >= FILM_LEN)) filmEnd();
+      raf = requestAnimationFrame(tick);
+    }
     function ticking() { if (!raf && window.requestAnimationFrame) raf = requestAnimationFrame(tick); }
     function seek(ms) {
       setAll(function (a) { a.pause(); a.currentTime = ms; });
@@ -1729,12 +1759,16 @@
       media(bg, function (v) { v.pause(); v.currentTime = bgAt(ms); });
       media(bloomV, function (v) { v.pause(); v.currentTime = bloomAt(ms); });
       soundStop(0); media(sound, function (v) { v.currentTime = soundAt(ms); });
+      if (filmOn) media(filmV, function (v) { v.pause(); v.currentTime = Math.min(ms, FILM_LEN) / 1000; });
       playing = false;
     }
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
     // the clock: an empty animation that runs the whole length (a finished one holds its last time, so it can't be the first move)
     var clockAnim = null;
-    function now() { var a = clockAnim || anims[0]; return a ? (a.currentTime || 0) : 0; }
+    function now() {
+      if (filmOn) return filmV.currentTime * 1000;
+      var a = clockAnim || anims[0]; return a ? (a.currentTime || 0) : 0;
+    }
     function runCues(from) {
       cues.forEach(function (c) { if (c.t >= from) timers.push(setTimeout(c.fn, c.t - from)); });
       var sf = from - HOLD;   // where the score is
@@ -1762,10 +1796,15 @@
       if (!playing) return;
       setAll(function (a) { a.pause(); });
       media(fill, function (v) { v.pause(); }); media(bg, function (v) { v.pause(); }); media(bloomV, function (v) { v.pause(); });
+      if (filmOn) media(filmV, function (v) { v.pause(); });
       if (!keepSound) soundStop(0);
       clearTimers(); playing = false;
     }
     function resume() {
+      if (filmOn && !playing && !state.done && !filmSwept) {
+        media(filmV, function (v) { var p = v.play(); if (p && p.catch) p.catch(noop); });
+        playing = true; soundFrom(now()); ticking(); return;
+      }
       if (playing || state.done || !anims.length) return;
       var t = now();
       setAll(function (a) { a.play(); });
@@ -1791,11 +1830,12 @@
         famV ? document.fonts.load('700 100px ' + famV, 'LAW') : null]).catch(noop);
     }
     function finish(swept) {
-      if (state.done) return;
+      if (state.done || (filmSwept && !swept)) return;   // a film already sweeping off finishes its sweep
       state.done = true; clearTimers(); if (!replay) remember();
       document.removeEventListener('keydown', onKey);
       function close() {
         media(fill, function (v) { v.pause(); }); media(bg, function (v) { v.pause(); }); media(bloomV, function (v) { v.pause(); });
+        if (filmOn) media(filmV, function (v) { v.pause(); v.removeAttribute('src'); v.load(); });   // let the phone free it
         if (replay) { timers.push(setTimeout(function () { state.done = false; run(); }, 1800)); return; }
         el.hidden = true;
         setAll(function (a) { a.cancel(); });
@@ -1819,11 +1859,74 @@
       build();
       seek(0);
       try { document.dispatchEvent(new CustomEvent('nda:introstart')); } catch (e) { /* old browsers */ }
-      Promise.all([whenReady(fill, 4000, true), whenReady(bloomV, 2500, true), whenReady(bg, 1500), whenReady(sound, 1200), ribbonReady(2500)]).then(function () {
+      // a phone loads a film only once it is asked to play: ask, and stop it again, so the wait below is for real loading
+      if (LITE) [fill, bloomV, bg].forEach(function (v) { media(v, function (v) { if (v.readyState < 3) { var p = v.play(); if (p && p.then) p.then(function () { if (!playing) v.pause(); }, noop); } }); });
+      Promise.all([whenReady(fill, LITE ? 2500 : 4000, true), whenReady(bloomV, LITE ? 1500 : 2500, true), whenReady(bg, 1500), whenReady(sound, 1200), ribbonReady(2500)]).then(function () {
         if (state.done) return;
         seek(0);
         start();
       });
+    }
+
+    function live() {
+      Promise.all([fontsReady(), loadFaces()]).then(function () {
+        if (state.done) return;
+        each(el, '[data-nda-fit]', measureFit);
+        run();
+      });
+    }
+
+    /* -- the live version's films wait (preload="none") until it is sure to run, so a phone playing the film, or a
+          visitor who has seen the intro, never loads them -- */
+    function wake() { [fill, bloomV, bg].forEach(function (v) { media(v, function (v) { if (v.preload !== 'auto') { v.preload = 'auto'; v.load(); } }); }); }
+
+    /* -- the film (phones), in place of the live stage -- */
+    function runFilm() {
+      var v = filmV, began = false;
+      el.setAttribute('data-film', '');
+      document.addEventListener('keydown', onKey);
+      v.muted = true; v.defaultMuted = true; v.playsInline = true;
+      v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+      if (v.getAttribute('data-poster')) v.setAttribute('poster', v.getAttribute('data-poster'));
+      v.preload = 'auto';
+      v.src = v.getAttribute('data-src');
+      // it can't play: the live version, from the start
+      function fail() {
+        if (state.done || !filmOn) return;   // (the error and the refused play both come here)
+        if (began) { finish(false); return; }
+        filmOn = false; clearTimers();
+        el.removeAttribute('data-film');
+        media(v, function (v) { v.pause(); v.removeAttribute('src'); v.load(); });
+        wake();
+        live();
+      }
+      function go() {
+        if (began || state.done || !filmOn) return;
+        began = true;
+        playing = true;
+        try { document.dispatchEvent(new CustomEvent('nda:introstart')); } catch (e) { /* old browsers */ }
+        soundLabel();
+        soundFrom(now());
+        ticking();
+      }
+      v.addEventListener('error', fail);
+      v.addEventListener('ended', function () { if (filmOn) filmEnd(); });
+      // the browser starts it once it has enough to play on (its first second is the still, so starting at once is
+      // the same as holding); the clock is the film's own
+      v.addEventListener('playing', go);
+      var p = v.play();
+      if (p && p.then) p.then(go, fail);
+      // still not playing 8 s on: it won't
+      timers.push(setTimeout(function () { if (!began) fail(); }, 8000));
+    }
+    // the film's last frame holds while the sweep takes it off the page
+    function filmEnd() {
+      if (filmSwept || state.done) return;
+      filmSwept = true;
+      var f = exitFrames(), e = 'cubic-bezier(.65,0,.35,1)', out = [sheet.animate(f.sheet, { duration: T.exit, easing: e, fill: 'forwards' })];
+      if (wipe) { out.push(wipe.animate(f.band, { duration: T.exit, easing: e, fill: 'forwards' })); out.push(wipe.animate(f.bandOpacity, { duration: T.exit, fill: 'forwards' })); }
+      anims = anims.concat(out);
+      out[0].finished.catch(noop).then(function () { finish(true); });
     }
 
     state.seek = function (ms) { clearTimers(); seek(ms); };
@@ -1840,15 +1943,13 @@
       // Showcase under reduced motion: the settled statement, nothing moving.
       el.hidden = false;
       if (skip) skip.hidden = true;
+      wake();
       Promise.all([fontsReady(), loadFaces()]).then(function () { each(el, '[data-nda-fit]', measureFit); build(); seek(T.end - 100); });
       state.done = true; return state;
     }
     if (reducedMotion() || (!replay && seen())) { el.hidden = true; state.done = true; onDone(); return state; }
     el.hidden = false;
-    Promise.all([fontsReady(), loadFaces()]).then(function () {
-      each(el, '[data-nda-fit]', measureFit);
-      run();
-    });
+    if (filmOn) runFilm(); else { wake(); live(); }
     return state;
   };
 

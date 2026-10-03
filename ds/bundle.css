@@ -711,6 +711,15 @@ textarea.nda-field__input { min-height: 112px; resize: vertical; }
 .nda-intro__stage { position: relative; isolation: isolate; container-type: inline-size; width: min(87.5vw, 155vh); }
 /* the stage is its own stacking context, so it carries the ground its blends key against */
 .nda-intro__stage::before { content: ""; position: absolute; z-index: -2; inset: -60vh -60vw; background: var(--paper); pointer-events: none; }
+/* phones: the whole intro as one rendered film (402 × 940), in place of the live stage. Its stage is 87.5% of its
+   width, so it is set at the live stage's width over .875, centred; it is tall enough to cover any phone held upright */
+.nda-intro__film { display: none; }
+.nda-intro[data-film] .nda-intro__film {
+  display: block; position: absolute; left: 50%; top: 50%; max-width: none;
+  width: min(100vw, 177.143vh); height: calc(min(100vw, 177.143vh) * 2.33831);
+  transform: translate(-50%, -50%); object-fit: fill; background: var(--paper);
+}
+.nda-intro[data-film] .nda-intro__camera { display: none; }
 .nda-intro__statement { position: relative; display: flex; flex-direction: column; margin: 0; font-family: var(--font-display); font-weight: 700; text-transform: uppercase; color: var(--ink); }
 .nda-intro__line--word { position: relative; height: calc(.8em * var(--nda-s)); }
 .nda-intro__window {

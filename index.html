@@ -11,10 +11,10 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
   <link rel="preload" href="/ds/fonts/NDADisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/ds/tokens.css?v=3">
-  <link rel="stylesheet" href="/ds/bundle.css?v=3">
-  <link rel="stylesheet" href="/ds/site.css?v=3">
-  <script src="/ds/bundle.js?v=3"></script>
+  <link rel="stylesheet" href="/ds/tokens.css?v=4">
+  <link rel="stylesheet" href="/ds/bundle.css?v=4">
+  <link rel="stylesheet" href="/ds/site.css?v=4">
+  <script src="/ds/bundle.js?v=4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>(function () { if (window.emailjs) emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();</script>
   <script src="/js/site.js?v=11" defer></script>
@@ -23,10 +23,11 @@
 <body>
 <section class="nda-intro" data-theme="dark" data-nda-intro aria-label="Introduction" hidden>
   <div class="nda-intro__sheet">
+    <video class="nda-intro__film" data-src="/ds/media/intro-phone.mp4" data-poster="/ds/media/intro-phone-poster.webp" muted playsinline preload="none" aria-hidden="true"></video>
     <div class="nda-intro__camera">
       <div class="nda-intro__breath">
         <div class="nda-intro__stage">
-          <video class="nda-intro__bloom" muted playsinline preload="auto" aria-hidden="true">
+          <video class="nda-intro__bloom" muted playsinline preload="none" aria-hidden="true">
             <source src="/ds/media/intro-bloom.webm" type="video/webm"><source src="/ds/media/intro-bloom.mp4" type="video/mp4">
           </video>
           <div class="nda-intro__burst" aria-hidden="true"></div>
@@ -38,7 +39,7 @@
               <span class="nda-intro__window" aria-hidden="true">
                 <span class="nda-intro__rows"></span>
                 <span class="nda-intro__thought">Thought</span>
-                <video class="nda-intro__fill" poster="/ds/media/pigment-kinetic-poster-cream.webp" muted playsinline preload="auto">
+                <video class="nda-intro__fill" poster="/ds/media/pigment-kinetic-poster-cream.webp" muted playsinline preload="none">
                   <source src="/ds/media/intro-fill.webm" type="video/webm"><source src="/ds/media/intro-fill.mp4" type="video/mp4">
                 </video>
               </span>

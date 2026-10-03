@@ -89,7 +89,7 @@ body {
   color: var(--ink);
   text-decoration: none;
 }
-.nda-wordmark--footer { font-size: 32px; }
+.nda-wordmark--footer { font-size: 26px; }
 .nda-wordmark--lg { font-size: 56px; }
 
 /* ---------- Site header ---------- */
@@ -217,6 +217,7 @@ body {
    first screen allows (--nda-hero-room is kept for the tags and a glimpse of the row below). */
 .nda-hero--page {
   width: min(100%, calc((100svh - var(--header-height, 64px) - var(--nda-hero-room, 170px)) * var(--nda-hero-aspect, 1.9)));
+  margin-inline: auto;   /* when the first screen caps its size, the statement sits in the middle of the row, not against its left edge */
   padding: var(--space-5, 20px) 0 var(--space-6, 24px);
 }
 .nda-hero--page .nda-taglist { margin-top: var(--space-7, 32px); font-size: 13px; letter-spacing: .16em; }
@@ -243,9 +244,9 @@ body {
   clip-path: inset(0 0 calc(var(--nda-base-bottom, .066em) - .02em) 0);
 }
 .nda-liquid__media {
-  /* 1px inside the word's box top and bottom, so sub-pixel layout never shows the unkeyed film */
-  position: absolute; inset: 1px 0; z-index: 0;
-  width: 100%; height: calc(100% - 2px); object-fit: cover;
+  /* 1px inside the word's box on every side, so sub-pixel layout (a centred hero) never shows the unkeyed film */
+  position: absolute; inset: 1px; z-index: 0;
+  width: calc(100% - 2px); height: calc(100% - 2px); object-fit: cover;
   filter: var(--nda-liquid-filter);
   pointer-events: none;
 }
@@ -442,15 +443,14 @@ body {
 .nda-footer__inner {
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
   row-gap: var(--space-3, 12px);
-  padding: var(--space-5, 20px) var(--nda-gutter);
+  padding: var(--space-4, 16px) var(--nda-gutter);
 }
 /* only the off-site links: the sticky header carries the site's own pages */
 .nda-footer__nav { justify-self: end; margin: 0 var(--space-8, 40px) 0 0; padding: var(--space-2, 8px) var(--space-8, 40px) var(--space-2, 8px) 0; border-right: var(--stroke-hairline, 1px) solid var(--rule-strong); }
 .nda-footer__nav ul { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3, 12px) var(--space-8, 40px); margin: 0; padding: 0; list-style: none; }
 .nda-footer__nav a { font-family: var(--font-mono); font-size: 12px; line-height: 1.4; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
 .nda-footer__nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
-.nda-footer__copy { margin: 0; font-family: var(--font-mono); font-size: 11px; line-height: 1.45; letter-spacing: .08em; text-transform: uppercase; text-align: right; }
-.nda-footer__legal { grid-column: 1 / -1; margin: 0; font-family: var(--font-mono); font-size: 11px; line-height: 1.45; letter-spacing: .02em; color: var(--ink-dim); }
+.nda-footer__copy { margin: 0; font-family: var(--font-mono); font-size: 11px; line-height: 1.45; letter-spacing: .08em; text-transform: uppercase; text-align: right; white-space: nowrap; }
 /* Neta DAO: its own mark, alone, at the end of the links row, linking to netadao.org. 24px sits inside the row's height */
 .nda-footer__parent { display: block; margin-block: -4px; transition: opacity var(--dur-fast, 120ms) ease; }
 .nda-footer__parent:hover { opacity: .72; }
@@ -460,7 +460,7 @@ body {
 [data-theme="dark"] .nda-footer__mark--night { display: block; }
 @container (max-width: 899px) {
   .nda-footer__inner { grid-template-columns: minmax(0, 1fr); }
-  .nda-footer__nav { justify-self: stretch; margin: 0; padding: var(--space-4, 16px) 0; border-right: 0; border-block: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+  .nda-footer__nav { justify-self: stretch; margin: 0; padding: var(--space-3, 12px) 0; border-right: 0; border-block: var(--stroke-hairline, 1px) solid var(--rule-thin); }
   .nda-footer__nav ul { justify-content: flex-start; }
   .nda-footer__copy { text-align: left; }
 }
@@ -639,7 +639,7 @@ textarea.nda-field__input { min-height: 112px; resize: vertical; }
    just under the first line to the screen's edge runs the rows: it is one lighten
    group, a black ground with cream type and the kinetic film in darken, so the film
    shows only inside letters and the black drops out over everything behind it. */
-.nda-intro { position: fixed; inset: 0; z-index: var(--z-intro, 1000); overflow: hidden; color: var(--ink); }
+.nda-intro { position: fixed; inset: 0; z-index: var(--z-intro, 2147483600); overflow: hidden; color: var(--ink); }
 .nda-intro[hidden] { display: none; }
 .nda-intro--inline { position: absolute; inset: 0; z-index: auto; }
 /* until NDA.intro has laid it out, only the ground shows */

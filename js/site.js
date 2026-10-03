@@ -286,7 +286,6 @@
         </div>
         <div class="footer-meta">
           <p class="footer-copy">© Neta DAO Academy</p>
-          <p class="footer-legal">The materials presented on this site are for informational purposes only and should not be construed as financial advice.</p>
         </div>
       </div>`;
     if (!legacyFooter) document.body.appendChild(footer);

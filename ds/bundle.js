@@ -135,8 +135,13 @@
       if (poster && video.getAttribute('poster') !== poster) video.setAttribute('poster', poster);
       if (changed) { video.load(); sync(); }
     }
+    // under a playing first-visit intro the page's films wait, so they don't decode against it
+    function covered() {
+      var intro = document.querySelector('[data-nda-intro]');
+      return !!intro && !intro.hidden && !NDA.introEnded && !intro.hasAttribute('data-replay') && !intro.contains(el);
+    }
     function sync() {
-      if (!reducedMotion() && visible && !document.hidden) {
+      if (!reducedMotion() && visible && !document.hidden && !covered()) {
         var p = video.play(); if (p && p.catch) p.catch(noop);
       } else {
         video.pause();
@@ -148,6 +153,8 @@
       }, { threshold: 0.05 }).observe(el);
     }
     document.addEventListener('visibilitychange', sync);
+    document.addEventListener('nda:introstart', sync);
+    document.addEventListener('nda:introend', sync);
     onMotionChange(sync);
     if ('MutationObserver' in window) {
       new MutationObserver(pickSource).observe(document.documentElement, { attributes: true, subtree: true, attributeFilter: ['data-theme'] });
@@ -537,7 +544,9 @@
     // the film in the letters runs at 0.83x. It opens 3.8 s in, where the paint already flows across the frame in streams
     // (its first seconds are one small splash in the middle), and while it is hidden after the burst it jumps back to
     // run in step with the score from there on: THOUGHT's band is where it always was
-    var FILM_OPEN = 3.8, FILM_CUT = 3400, FILM_RATE = 0.83;
+    // intro-fill is cut for the intro: the kinetic film from 2.97s, slowed to 0.83, cutting back at 3.4s of the score;
+    // so it plays straight through on the clock and never seeks mid-sequence (a seek stalls the letters' paint)
+    var FILM_END = 12.95;
     function attr(n, d) { var v = bg ? parseFloat(bg.getAttribute(n)) : NaN; return isNaN(v) ? d : v; }
     var BG = bg ? { lead: attr('data-lead', 250), level: attr('data-level', 0.45), fragments: bg.hasAttribute('data-fragments') } : null;
     var BG0 = BG ? T.burst - BG.lead : 0, BG_END = T.reveal + 1450;
@@ -1321,6 +1330,21 @@
     };
     var wisps = null;                  // the inside-the-letters layer, in the window, in darken: what is drawn there shows only in the letters
     var ribbonDraw = null;             // shows the ribbon's frame for a time on the clock (set by ribbon, called every frame)
+    // the ribbon's atlas, decoded before the clock starts: the first drawImage of a 2048px WebP would otherwise decode it mid-sequence
+    function ribbonReady(ms) {
+      var img = q('.nda-intro__ribbon');
+      if (!img || img.__ndaBitmap) return Promise.resolve();
+      return new Promise(function (resolve) {
+        function decode() {
+          if (window.createImageBitmap) createImageBitmap(img).then(function (b) { img.__ndaBitmap = b; resolve(); }, function () { resolve(); });
+          else if (img.decode) img.decode().then(resolve, resolve);
+          else resolve();
+        }
+        if (img.complete && img.naturalWidth) decode();
+        else { img.addEventListener('load', decode, { once: true }); img.addEventListener('error', function () { resolve(); }, { once: true }); }
+        setTimeout(resolve, ms);
+      });
+    }
     function ribbon() {
       var img = q('.nda-intro__ribbon');
       if (!img || !debris || !wisps) return;
@@ -1344,7 +1368,8 @@
         shown = k;
         layers.forEach(function (g) { g.clearRect(0, 0, b[2], b[3]); });
         if (k < 0) return;
-        R.frames[k].forEach(function (p) { layers[p[0]].drawImage(img, p[1], p[2], p[3], p[4], p[5] - b[0], p[6] - b[1], p[3], p[4]); });
+        var atlas = img.__ndaBitmap || img;
+        R.frames[k].forEach(function (p) { layers[p[0]].drawImage(atlas, p[1], p[2], p[3], p[4], p[5] - b[0], p[6] - b[1], p[3], p[4]); });
       };
       if (!img.complete) img.addEventListener('load', function () { shown = -2; if (ribbonDraw) ribbonDraw(now()); }, { once: true });
     }
@@ -1445,8 +1470,7 @@
       }
       // the film in the letters: a stain at the start, a band through THOUGHT (fillScore)
       // (it runs through the hold too, so PHILOSOPHY's paint is moving while the rest stands still)
-      cues.push({ t: 0, fn: function () { media(fill, function (v) { if (Math.abs(v.currentTime - filmAt(0)) > 0.1) v.currentTime = filmAt(0); v.playbackRate = FILM_RATE; var p = v.play(); if (p && p.catch) p.catch(noop); }); } });
-      cue(FILM_CUT, function () { media(fill, function (v) { v.currentTime = filmAt(HOLD + FILM_CUT); }); });
+      cues.push({ t: 0, fn: function () { media(fill, function (v) { if (Math.abs(v.currentTime - filmAt(0)) > 0.1) v.currentTime = filmAt(0); var p = v.play(); if (p && p.catch) p.catch(noop); }); } });
       fillScore();
       cameraTrack();
       // each discipline's size (its capitals, cqi, before kBox), width and weight on Archivo's axes, by its place in the
@@ -1670,10 +1694,10 @@
     /* -- running it -- */
     function setAll(fn) { anims.forEach(function (a) { try { fn(a); } catch (e) {} }); }
     // clock time to film time (the score's time is the clock's less the hold; the film in the letters plays through the hold)
-    function filmAt(ms) { var s = ms - HOLD; return Math.min((s < FILM_CUT ? FILM_OPEN : 0) + FILM_RATE * s / 1000, 9.95); }
+    function filmAt(ms) { return Math.min(Math.max(0, ms) / 1000, FILM_END); }
     function bgAt(ms) { return Math.max(0, Math.min((ms - HOLD - BG0) / 1000, (bg && bg.duration ? bg.duration : 9) - 0.05)); }
-    function playBg(from) { media(bg, function (v) { v.currentTime = bgAt(from); var p = v.play(); if (p && p.catch) p.catch(noop); }); }
-    function playBloom(from) { media(bloomV, function (v) { v.currentTime = bloomAt(from); var p = v.play(); if (p && p.catch) p.catch(noop); }); }
+    function playBg(from) { media(bg, function (v) { var t = bgAt(from); if (Math.abs(v.currentTime - t) > 0.04) v.currentTime = t; var p = v.play(); if (p && p.catch) p.catch(noop); }); }
+    function playBloom(from) { media(bloomV, function (v) { var t = bloomAt(from); if (Math.abs(v.currentTime - t) > 0.04) v.currentTime = t; var p = v.play(); if (p && p.catch) p.catch(noop); }); }
     var raf = 0;
     function tick() { if (!playing) { raf = 0; return; } var t = now(); applyWarp(t); if (ribbonDraw) ribbonDraw(t); soundKeep(t); raf = requestAnimationFrame(tick); }
     function ticking() { if (!raf && window.requestAnimationFrame) raf = requestAnimationFrame(tick); }
@@ -1698,7 +1722,7 @@
         if (sf >= BG0) playBg(from); else timers.push(setTimeout(function () { playBg(HOLD + BG0); }, BG0 - sf));
         timers.push(setTimeout(function () { media(bg, function (v) { v.pause(); }); }, BG_END - sf));
       }
-      media(fill, function (v) { if (from > 0) { v.currentTime = filmAt(from); v.playbackRate = FILM_RATE; var p = v.play(); if (p && p.catch) p.catch(noop); } });
+      media(fill, function (v) { if (from > 0) { if (Math.abs(v.currentTime - filmAt(from)) > 0.1) v.currentTime = filmAt(from); var p = v.play(); if (p && p.catch) p.catch(noop); } });
       if (bloomV) {
         var bEnd = BLOOM0 + BLOOM_DUR;
         if (sf < BLOOM0) timers.push(setTimeout(function () { playBloom(HOLD + BLOOM0); }, BLOOM0 - sf));
@@ -1729,11 +1753,13 @@
       playing = true;
       ticking();
     }
-    function whenReady(v, ms) {
+    // full: wait until the browser expects to play it through without stopping (the films that run under the whole sequence)
+    function whenReady(v, ms, full) {
       return new Promise(function (resolve) {
-        if (!v || v.readyState >= 3) return resolve();
-        var done = function () { v.removeEventListener('canplay', done); resolve(); };
-        v.addEventListener('canplay', done);
+        var need = full ? 4 : 3, type = full ? 'canplaythrough' : 'canplay';
+        if (!v || v.readyState >= need) return resolve();
+        var done = function () { v.removeEventListener(type, done); resolve(); };
+        v.addEventListener(type, done);
         setTimeout(done, ms);
       });
     }
@@ -1772,7 +1798,8 @@
       document.addEventListener('keydown', onKey);
       build();
       seek(0);
-      Promise.all([whenReady(fill, 2500), whenReady(bg, 1500), whenReady(sound, 1200)]).then(function () {
+      try { document.dispatchEvent(new CustomEvent('nda:introstart')); } catch (e) { /* old browsers */ }
+      Promise.all([whenReady(fill, 4000, true), whenReady(bloomV, 2500, true), whenReady(bg, 1500), whenReady(sound, 1200), ribbonReady(2500)]).then(function () {
         if (state.done) return;
         seek(0);
         start();

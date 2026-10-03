@@ -1,6 +1,6 @@
 import { auth, onAuthStateChanged, signOut, initNavAccountWidget,
   signInWithGoogle, completeSignInIfNeeded, signInWithPassword, sendPasswordReset, checkPasswordReset, finishPasswordReset,
-  getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=26';
+  getRegistrationForSeminar, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=27';
 import { signInDestination, destinationLabel, passwordIssue, accountError, seminarPages } from './account-flow.js?v=4';
 import { createAccount } from './account-create.js?v=1';
 

@@ -1,11 +1,12 @@
-import { auth, onAuthStateChanged, getRegistrations, ADMIN_EMAIL } from './academy-auth.js?v=26';
+import { auth, onAuthStateChanged, getRegistrations, ADMIN_EMAIL } from './academy-auth.js?v=27';
 import { staffCall } from './staff-api.js';
 let generation = 0;
 onAuthStateChanged(auth, async user => {
   const request = ++generation;
   document.querySelector('[data-conditional-cinema]')?.remove();
   const menu = document.querySelector('.nav-links');
-  if (!menu || !user?.email) return;
+  // The design system's header always lists Cinema; this only adds it to the older pages' menu.
+  if (!menu || !user?.email || document.querySelector('.nda-header')) return;
   let entitled = user.email === ADMIN_EMAIL && user.emailVerified === true;
   if (!entitled) {
     const [registration, assignments] = await Promise.allSettled([getRegistrations(user.email),staffCall('getTeachingAssignments')]);

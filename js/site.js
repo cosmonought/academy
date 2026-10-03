@@ -294,7 +294,7 @@
 })();
 
 // Time-based gathering navigation; independent of broadcast availability.
-import('/js/screening-banner.js?v=3').catch(error => console.warn('Screening announcement unavailable:', error));
+import('/js/screening-banner.js?v=4').catch(error => console.warn('Screening announcement unavailable:', error));
 
 import('/js/local-navigation.js?v=1').catch(error => console.warn('Local navigation unavailable:', error));
 
@@ -345,4 +345,4 @@ import('/js/local-navigation.js?v=1').catch(error => console.warn('Local navigat
   }, true);
 })();
 
-import('/js/cinema-navigation.js').catch(error => console.warn('Cinema navigation unavailable:', error));
+import('/js/cinema-navigation.js?v=2').catch(error => console.warn('Cinema navigation unavailable:', error));

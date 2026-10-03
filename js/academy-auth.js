@@ -42,18 +42,26 @@ export function initNavAccountWidget() {
   const navAccountItem = document.getElementById('navAccountItem');
   const navAccountLink = document.getElementById('navAccountLink');
   if (!navAccountItem || !navAccountLink) return;
+  // The design system's header (.nda-header) has one action button and a nav list; the old one is a single list.
+  const designHeader = !!navAccountItem.closest('.nda-header');
+  const navList = designHeader ? document.querySelector('.nda-header #site-nav ul') : navAccountItem.parentNode;
 
   function ensureAdminNavLinks() {
-    if (document.getElementById('navAdminLink')) return;
+    if (document.getElementById('navAdminLink') || !navList) return;
     const adminLi = document.createElement('li');
     adminLi.id = 'navAdminLink';
     adminLi.innerHTML = '<a href="/admin.html">Admin</a>';
-    navAccountItem.parentNode.insertBefore(adminLi, navAccountItem);
+    if (designHeader) {   // Cinema is always in the design system's nav
+      if (location.pathname === '/admin.html') adminLi.firstChild.setAttribute('aria-current', 'page');
+      navList.appendChild(adminLi);
+      return;
+    }
+    navList.insertBefore(adminLi, navAccountItem);
 
     const cinemaLi = document.createElement('li');
     cinemaLi.id = 'navCinemaAdminLink';
     cinemaLi.innerHTML = '<a href="/cinema.html">Cinema</a>';
-    navAccountItem.parentNode.insertBefore(cinemaLi, navAccountItem);
+    navList.insertBefore(cinemaLi, navAccountItem);
   }
 
   function removeAdminNavLinks() {
@@ -66,8 +74,8 @@ export function initNavAccountWidget() {
   function updateNavAccount(user) {
     if (user && user.email) {
       navAccountItem.classList.add('signed-in');
-      navAccountLink.textContent = 'Your profile';
-      navAccountLink.setAttribute('aria-label', `Your profile, signed in as ${user.email}`);
+      navAccountLink.textContent = designHeader ? 'Account' : 'Your profile';
+      navAccountLink.setAttribute('aria-label', `${designHeader ? 'Your account' : 'Your profile'}, signed in as ${user.email}`);
       navAccountLink.setAttribute('href', '/profile.html');
       if (user.email === ADMIN_EMAIL && user.emailVerified) {
         ensureAdminNavLinks();
@@ -76,7 +84,7 @@ export function initNavAccountWidget() {
       }
     } else {
       navAccountItem.classList.remove('signed-in');
-      navAccountLink.textContent = 'Sign In';
+      navAccountLink.textContent = designHeader ? 'Sign in' : 'Sign In';
       navAccountLink.removeAttribute('aria-label');
       navAccountLink.setAttribute('href', signInHref);
       removeAdminNavLinks();

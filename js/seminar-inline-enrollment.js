@@ -1,4 +1,4 @@
-import { auth, onAuthStateChanged, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=24';
+import { auth, onAuthStateChanged, submitRegistration, SEMINAR_TITLES } from './academy-auth.js?v=27';
 import { accountError } from './account-flow.js?v=3';
 import { createAccount } from './account-create.js?v=1';
 

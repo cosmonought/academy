@@ -1,209 +1,255 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Neta DAO Academy — Free Public Seminars</title>
-  <meta name="description" content="Free public seminars in philosophy, psychoanalysis, economics, and the arts. Explore Sex, and/or Love, Coining Reason, and Fork Journal." />
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <meta name="description" content="Free public seminars in philosophy, psychoanalysis, economics, and the arts. Explore Sex, and/or Love, Coining Reason, Sex, Monsters, and Superheroes, and Fork, the journal.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script type="text/javascript">
-    (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
-  </script>
-  <script src="/js/homepage-hero.js?v=10" defer></script>
-  <script src="/js/site.js?v=9" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=42" />
-  <link rel="stylesheet" href="/css/screening-banner.css?v=3">
+  <link rel="preload" href="/ds/fonts/NDADisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/ds/tokens.css?v=1">
+  <link rel="stylesheet" href="/ds/bundle.css?v=1">
+  <link rel="stylesheet" href="/ds/site.css?v=1">
+  <script src="/ds/bundle.js?v=1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>(function () { if (window.emailjs) emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();</script>
+  <script src="/js/site.js?v=10" defer></script>
   <script src="https://netadao.org/radio/radio.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
-
-  <!-- ── Nav ── -->
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo" aria-label="Neta DAO Academy home">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
-          <rect width="40" height="40" fill="#080808"/>
-          <defs>
-            <linearGradient id="a-grad-NAV" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#C9338A"/>
-              <stop offset="35%" stop-color="#C9338A"/>
-              <stop offset="100%" stop-color="#5B8EF0"/>
-            </linearGradient>
-            <clipPath id="a-clip-NAV">
-              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
-            </clipPath>
-          </defs>
-          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
-          <g clip-path="url(#a-clip-NAV)">
-            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#a-grad-NAV)"/>
-          </g>
-        </svg>
-      </a>
-      <ul class="nav-links" id="site-menu">
-        <li><a href="/" class="active">Home</a></li>
-        <li class="nav-dropdown-item">
-          <a href="/seminars.html">Seminars</a>
-          <ul class="nav-dropdown-menu">
-            <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
-            <li><a href="/CoiningReason/">Flagship: Coining Reason</a></li>
-            <li><a href="/SexMonstersSuperheroes/">Forthcoming: Sex, Monsters, and Superheroes</a></li>
-          </ul>
-        </li>
-        <li id="navAccountItem"><a href="/account.html" id="navAccountLink">Sign In</a></li>
-      </ul>
-      <button class="nav-hamburger" type="button" aria-label="Open menu" aria-controls="site-menu" aria-expanded="false"><span></span><span></span><span></span></button>
-    </div>
-  </nav>
-<main id="main-content">
-    <header class="academy-hero" aria-label="Neta DAO Academy">
-      <h1 class="academy-hero-accessible-title">Neta DAO Academy is the home of Web3 and Thought</h1>
-      <div class="academy-title-sentence" aria-hidden="true">
-        <span class="academy-title-light-segment"><span class="academy-title-netadao">Neta DAO</span> <span class="academy-word academy-word-static">Academy</span> <span>is</span></span> <span class="academy-title-dark-context"><span class="academy-title-dark">The home of Web3 and</span><span class="academy-discipline-composition">
-          <span class="tw-word-wrap">
-            <span class="tw-word" data-academy-discipline>
-              <span class="tw-word-base">Thought</span>
-              <span class="tw-word-fill">Thought</span>
+<section class="nda-intro" data-theme="dark" data-nda-intro aria-label="Introduction" hidden>
+  <div class="nda-intro__sheet">
+    <div class="nda-intro__camera">
+      <div class="nda-intro__breath">
+        <div class="nda-intro__stage">
+          <video class="nda-intro__bloom" muted playsinline preload="auto" aria-hidden="true">
+            <source src="/ds/media/intro-bloom.webm" type="video/webm"><source src="/ds/media/intro-bloom.mp4" type="video/mp4">
+          </video>
+          <div class="nda-intro__burst" aria-hidden="true"></div>
+          <p class="nda-intro__statement">
+            <span class="nda-intro__line" data-nda-fit style="--nda-fit: 6.536">Neta DAO Academy</span>
+            <span class="nda-intro__line" data-nda-fit style="--nda-fit: 7.904">the home of Web3 and</span>
+            <span class="nda-intro__line nda-intro__line--word">
+              <span class="nda-visually-hidden">Thought</span>
+              <span class="nda-intro__window" aria-hidden="true">
+                <span class="nda-intro__rows"></span>
+                <span class="nda-intro__thought">Thought</span>
+                <video class="nda-intro__fill" poster="/ds/media/pigment-kinetic-poster-cream.webp" muted playsinline preload="auto">
+                  <source src="/ds/media/pigment-kinetic-cream.webm" type="video/webm"><source src="/ds/media/pigment-kinetic-cream.mp4" type="video/mp4">
+                </video>
+              </span>
             </span>
+          </p>
+          <div class="nda-intro__debris" aria-hidden="true"></div>
+          <img class="nda-intro__ribbon" src="/ds/media/intro-ribbon.webp" alt="" aria-hidden="true">
+          <ol class="nda-intro__list" hidden>
+            <li>Philosophy</li>
+            <li>History of Science</li>
+            <li>Psychoanalysis</li>
+            <li>Sociology</li>
+            <li>Literary Theory</li>
+            <li>Art History</li>
+            <li>Law</li>
+            <li>Performance Studies</li>
+            <li>Economics</li>
+            <li>Critical Theory</li>
+            <li>Religion</li>
+            <li>Visual Studies</li>
+            <li>Politics</li>
+            <li>History of Technology</li>
+            <li>Anthropology</li>
+            <li>Governance</li>
+            <li>Spirituality</li>
+            <li>Social Theory</li>
+            <li>Ecology</li>
+            <li>Ethics</li>
+            <li>Design</li>
+            <li>Civics</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <span class="nda-intro__grain" aria-hidden="true"></span>
+    <div class="nda-intro__controls">
+      <button class="nda-intro__sound-toggle" type="button" aria-pressed="false" hidden>Sound on</button>
+      <button class="nda-intro__skip" type="button">Skip intro</button>
+    </div>
+    <audio class="nda-intro__sound" preload="auto">
+      <source src="/ds/media/intro-sound.webm" type="audio/webm"><source src="/ds/media/intro-sound.mp4" type="audio/mp4">
+    </audio>
+  </div>
+  <span class="nda-intro__wipe" aria-hidden="true"></span>
+  <svg class="nda-intro__fx" aria-hidden="true" focusable="false">
+    <filter id="nda-intro-warp" x="-4%" y="-12%" width="108%" height="124%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.009 0.022" numOctaves="2" seed="3"/>
+      <feDisplacementMap in="SourceGraphic" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+</section>
+<div class="nda-page">
+<a class="nda-skip" href="#main-content">Skip to content</a>
+<header class="nda-header" data-nda-menu data-nda-dock>
+  <div class="nda-header__inner">
+    <a class="nda-wordmark" href="/">Neta DAO Academy</a>
+    <div class="nda-header__primary">
+      <nav class="nda-header__nav" id="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="/seminars.html">Seminars</a></li>
+          <li><a href="/cinema.html">Cinema</a></li>
+          <li><a href="https://fork.netadao.org">Journal</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="nda-header__tools" id="site-tools">
+      <span id="navAccountItem"><a class="nda-button nda-button--outline nda-button--sm" id="navAccountLink" href="/account.html?returnTo=%2Fprofile.html">Sign in</a></span>
+    </div>
+    <button class="nda-header__menu" type="button" aria-expanded="false" aria-controls="site-nav site-tools"><span class="nda-header__menu-label">Menu</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
+  </div>
+</header>
+<main id="main-content">
+  <div class="nda-row home-hero-row">
+    <section class="nda-hero nda-hero--page" aria-labelledby="hero-title">
+      <h1 class="nda-hero__title" id="hero-title">
+        <span class="nda-hero__line" data-nda-fit style="--nda-fit: 6.536">Neta DAO Academy</span>
+        <span class="nda-hero__line" data-nda-fit style="--nda-fit: 8.606">is the home of Web3 and</span>
+        <span class="nda-hero__line nda-hero__line--word" data-nda-fit style="--nda-fit: 3.697">
+          <span class="nda-liquid" data-nda-liquid>
+            <video class="nda-liquid__media" poster="/ds/media/pigment-poster-ink.webp" data-poster-dark="/ds/media/pigment-poster-cream.webp"
+                   muted loop playsinline preload="auto" aria-hidden="true">
+              <source src="/ds/media/pigment-loop-ink.webm" data-src-dark="/ds/media/pigment-loop-cream.webm" type="video/webm">
+              <source src="/ds/media/pigment-loop-ink.mp4" data-src-dark="/ds/media/pigment-loop-cream.mp4" type="video/mp4">
+            </video>
+            <span class="nda-liquid__word">Thought</span>
           </span>
-        </span></span>
-      </div>
-      <div class="academy-hero-copy" tabindex="-1">
-        <div class="academy-intro">
-          <p>Free public seminars exploring Web3 through economics, philosophy, politics, psychoanalysis, law, ecology, business, art, and religion.</p>
-        </div>
-      </div>
-    </header>
-
-    <section class="academy-program-row" aria-label="Academy programs">
-      <article class="program-flagship" aria-labelledby="flagship-title">
-        <p class="program-status program-status-hiatus">On hiatus</p>
-        <h2 id="flagship-title">Coining Reason</h2>
-        <p class="program-kind">Flagship seminar</p>
-        <div class="flagship-art" aria-hidden="true"></div>
-        <a href="/CoiningReason/" class="text-link">Explore the archive &amp; roadmap <span aria-hidden="true">→</span></a>
-      </article>
-      <article class="program-current" aria-labelledby="featured-title">
-        <div class="current-art" aria-hidden="true"></div>
-        <div class="current-copy">
-          <p class="program-status program-status-active">Active</p>
-          <h2 id="featured-title">Sex, and/or Love</h2>
-          <p class="seminar-subtitle">Psychoanalysis and the Science of Desire</p>
-          <p class="section-body">A seminar on sexual desire, the unconscious, and the limits of knowledge. Readings in psychoanalysis, philosophy, literature, and film place questioning, trust, and uncertainty at the center of existence.</p>
-          <div class="action-row">
-            <a href="/sex-and-or-love.html" class="text-link">View seminar <span aria-hidden="true">→</span></a>
-            <a href="/account.html?seminar=sex-and-or-love&amp;view=create" class="enrollment-link">Late enroll <span aria-hidden="true">→</span></a>
-          </div>
-        </div>
-      </article>
+        </span>
+      </h1>
+      <ul class="nda-taglist" data-nda-sequence aria-label="What the Academy gathers">
+        <li>Ideas</li><li>Community</li><li>Discipline</li><li>For a more open tomorrow</li>
+      </ul>
     </section>
-
-    <section class="academy-journal" aria-labelledby="journal-title">
-      <div class="journal-wordmark">
-        <svg viewBox="0 0 240 100" role="img" aria-labelledby="journal-title">
-          <defs>
-            <clipPath id="fork-top-half"><polygon points="0,0 240,0 240,42 0,57" /></clipPath>
-            <clipPath id="fork-bottom-half"><polygon points="6,60 246,45 246,110 6,110" /></clipPath>
-            <linearGradient id="fork-gap-gradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C9338A" /><stop offset="100%" stop-color="#5B8EF0" /></linearGradient>
-          </defs>
-          <polygon points="0,56 240,41 240,46 0,61" fill="url(#fork-gap-gradient)" opacity="0.9" />
-          <text clip-path="url(#fork-top-half)" x="0" y="84" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="84" fill="#f2e7ee" letter-spacing="-2">FORK</text>
-          <text clip-path="url(#fork-bottom-half)" x="6" y="89" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="84" fill="#f2e7ee" letter-spacing="-2">FORK</text>
-        </svg>
+  </div>
+  <div class="nda-row">
+    <div class="nda-columns home-programs">
+      <article class="nda-program nda-wash">
+        <p class="nda-index"><span class="nda-index__num">01</span><span class="nda-index__label"><span class="nda-status nda-status--current">Active</span></span></p>
+        <h2 class="nda-program__title"><a class="nda-program__link" href="/sex-and-or-love.html">Sex, and/or Love</a></h2>
+        <p class="nda-program__subtitle">Psychoanalysis and<br>the science of desire</p>
+        <p class="nda-program__actions"><a class="nda-button nda-button--outline nda-button--sm" href="/account.html?seminar=sex-and-or-love&amp;view=create">Late enroll <span aria-hidden="true">→</span></a></p>
+      </article>
+      <article class="nda-program nda-wash">
+        <p class="nda-index"><span class="nda-index__num">02</span><span class="nda-index__label"><span class="nda-status nda-status--default">On hiatus</span></span></p>
+        <h2 class="nda-program__title"><a class="nda-program__link" href="/CoiningReason/">Coining Reason</a></h2>
+        <p class="nda-program__subtitle">The flagship seminar:<br>a discussion series</p>
+      </article>
+      <article class="nda-program nda-wash">
+        <p class="nda-index"><span class="nda-index__num">03</span><span class="nda-index__label"><span class="nda-status nda-status--next">Forthcoming</span></span></p>
+        <h2 class="nda-program__title" style="--nda-fit: 5"><a class="nda-program__link" href="/SexMonstersSuperheroes/">Sex, Monsters, and Superheroes</a></h2>
+        <p class="nda-program__subtitle">On the graphic</p>
+        <p class="nda-program__actions"><a class="nda-button nda-button--outline nda-button--sm" href="/SexMonstersSuperheroes/#interest">Express interest <span aria-hidden="true">→</span></a></p>
+      </article>
+      <article class="nda-program">
+        <p class="nda-index"><span class="nda-index__num">04</span><span class="nda-index__label">Journal</span></p>
+        <h2 class="nda-program__title"><a class="nda-program__link" href="https://fork.netadao.org"><span class="nda-visually-hidden">Fork: </span><span class="nda-forkmark"><svg viewBox="0 25 240 65" aria-hidden="true" focusable="false"><defs><linearGradient id="nda-fork-slash" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#C9338A"/><stop offset="1" stop-color="#5B8EF0"/></linearGradient></defs><path class="nda-forkmark__slash" stroke="url(#nda-fork-slash)" pathLength="1" d="M0 58.5 240 43.5"/><path class="nda-forkmark__top" d="M111.7 50.02 75.13 52.3V26.46Q75.13 25.87 75.46 25.54Q75.8 25.2 76.39 25.2H95.29Q100.33 25.2 104.23 27.59Q108.14 29.99 110.32 34.23Q112.51 38.47 112.51 43.93Q112.51 47.22 111.7 50.02ZM73.26 52.42 57.47 53.41V41.83Q57.47 40.07 56.72 39.06Q55.96 38.05 54.62 38.05Q53.27 38.05 52.52 39.06Q51.76 40.07 51.76 41.83V53.76L35.97 54.75V42.5Q35.97 34.27 41.05 29.4Q46.13 24.53 54.62 24.53Q63.1 24.53 68.18 29.4Q73.26 34.27 73.26 42.5V52.42ZM34.52 38.72H18.48Q17.98 38.72 17.98 39.23V47.29Q17.98 47.8 18.48 47.8H26.8Q27.38 47.8 27.72 48.13Q28.06 48.47 28.06 49.06V55.25L2.18 56.86V26.46Q2.18 25.87 2.52 25.54Q2.86 25.2 3.44 25.2H34.52Q35.11 25.2 35.45 25.54Q35.78 25.87 35.78 26.46V37.46Q35.78 38.05 35.45 38.39Q35.11 38.72 34.52 38.72ZM143.93 48 114.29 49.86V26.46Q114.29 25.87 114.62 25.54Q114.96 25.2 115.55 25.2H128.82Q129.41 25.2 129.74 25.54Q130.08 25.87 130.08 26.46V43.09Q130.08 43.43 130.29 43.47Q130.5 43.51 130.67 43.18L137.72 26.21Q138.14 25.2 139.24 25.2H153.1Q153.77 25.2 154.1 25.62Q154.44 26.04 154.1 26.71L143.93 48ZM91.42 38.72Q90.92 38.72 90.92 39.23V48.89Q90.92 49.39 91.42 49.39H92.52Q94.36 49.39 95.54 48.01Q96.72 46.62 96.72 44.1Q96.72 41.5 95.58 40.11Q94.45 38.72 92.52 38.72Z"/><path class="nda-forkmark__bottom" d="M120.29 87.74V52.86L150.91 50.94L148.26 56.49Q148.18 56.83 148.26 57.16L160.44 87.57Q160.52 87.82 160.52 88.16Q160.52 89 159.43 89H145.49Q144.4 89 143.98 87.99L137.51 70.77Q137.42 70.35 137.21 70.35Q137 70.35 136.84 70.77L136.16 72.45Q136.08 72.62 136.08 73.12V87.74Q136.08 88.33 135.74 88.66Q135.41 89 134.82 89H121.55Q120.96 89 120.62 88.66Q120.29 88.33 120.29 87.74ZM102.72 87.91 97.59 66.82Q97.42 66.4 97.26 66.4Q96.92 66.4 96.92 66.91V87.74Q96.92 88.33 96.58 88.66Q96.25 89 95.66 89H82.39Q81.8 89 81.46 88.66Q81.13 88.33 81.13 87.74V55.3L97.09 54.31Q97.22 54.39 97.42 54.39H98.52Q99.33 54.39 100.01 54.12L118.17 52.99Q117.77 55.24 116.91 57.21Q115.32 60.86 112.29 63.13Q111.96 63.38 112.04 63.8L118.84 87.57Q118.93 87.74 118.93 87.99Q118.93 89 117.75 89H104.06Q102.97 89 102.72 87.91ZM41.97 71.7V57.75L57.76 56.76V72.37Q57.76 74.13 58.52 75.14Q59.27 76.15 60.62 76.15Q61.96 76.15 62.72 75.14Q63.47 74.13 63.47 72.37V56.41L79.26 55.42V71.7Q79.26 79.93 74.18 84.8Q69.1 89.67 60.62 89.67Q52.13 89.67 47.05 84.8Q41.97 79.93 41.97 71.7ZM34.06 58.25V65.06Q34.06 65.65 33.72 65.98Q33.38 66.32 32.8 66.32H24.48Q23.98 66.32 23.98 66.82V87.74Q23.98 88.33 23.64 88.66Q23.3 89 22.72 89H9.44Q8.86 89 8.52 88.66Q8.18 88.33 8.18 87.74V59.86L34.06 58.25Z"/></svg></span> <span class="nda-program__title-tail">The Journal</span></a></h2>
+        <p class="nda-program__subtitle">Interchain theory and politics.<br>Free to read and publish in.</p>
+        <p class="nda-program__actions"><a class="nda-circle-link" href="https://fork.netadao.org">
+          <span class="nda-circle-link__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+          <span class="nda-circle-link__label"><span class="nda-circle-link__line">Explore</span><span class="nda-circle-link__line">the journal</span></span>
+        </a></p>
+      </article>
+    </div>
+  </div>
+  <section class="nda-row home-updates" id="updates" aria-labelledby="updates-title">
+    <div class="nda-columns home-updates__cols">
+      <div class="home-updates__copy">
+        <h2 class="nda-section-heading" id="updates-title">Hear what’s next</h2>
+        <p>News of new seminars and Academy events, by email, now and then. Scholars, practitioners and artists can propose a guest lecture here too.</p>
       </div>
-      <div class="journal-copy">
-        <h2 id="journal-title">Fork: The Journal</h2>
-        <p class="section-body">A peer-reviewed journal of Interchain Theory and Politics, published by Neta DAO Academy. Free to read. Free to publish in.</p>
-        <a href="https://fork.netadao.org" class="text-link">Visit the journal <span aria-hidden="true">↗</span></a>
-      </div>
-    </section>
-  </main>
-
-  <section class="homepage-updates" id="updates" aria-labelledby="updates-title">
-    <div class="homepage-updates-inner">
-      <p class="homepage-updates-intro" id="updates-title">Sign up to be notified of new seminars and events:</p>
-      <form id="footerSignupForm" class="signup-form">
-          <div class="signup-fields">
-            <div class="signup-field">
-              <label class="field-label" for="fsName">Name (optional)</label>
-              <input type="text" id="fsName" autocomplete="name" />
-            </div>
-            <div class="signup-field">
-              <label class="field-label" for="fsEmail">Email address</label>
-              <input type="email" id="fsEmail" autocomplete="email" required />
-            </div>
+      <form id="footerSignupForm" class="nda-form home-updates__form" novalidate>
+        <div class="home-updates__fields">
+          <div class="nda-field">
+            <label class="nda-field__label" for="fsName">Name <span class="nda-field__optional">(optional)</span></label>
+            <input class="nda-field__input" type="text" id="fsName" autocomplete="name">
           </div>
-          <div class="signup-actions">
-            <label class="proposal-choice"><input type="checkbox" id="fsProposeCheckbox" /> Propose a guest lecture</label>
-            <button id="fsSubmit" class="btn" type="submit">Subscribe to updates</button>
+          <div class="nda-field">
+            <label class="nda-field__label" for="fsEmail">Email address</label>
+            <input class="nda-field__input" type="email" id="fsEmail" autocomplete="email" required aria-describedby="fsStatus">
           </div>
-          <label class="field-label hidden" id="fsProposalLabel" for="fsProposal">Proposed topic and background</label>
-          <textarea id="fsProposal" class="hidden" rows="3"></textarea>
-          <p id="fsStatus" role="status" aria-live="polite"></p>
-        </form>
+        </div>
+        <div class="nda-field" id="fsProposalField" hidden>
+          <label class="nda-field__label" id="fsProposalLabel" for="fsProposal">Proposed topic and background</label>
+          <textarea class="nda-field__input" id="fsProposal" rows="3" aria-describedby="fsProposalHelp"></textarea>
+          <p class="nda-field__help" id="fsProposalHelp">A paragraph is enough. We reply to every proposal.</p>
+        </div>
+        <div class="home-updates__actions">
+          <label class="nda-check"><input type="checkbox" id="fsProposeCheckbox"> Propose a guest lecture</label>
+          <button id="fsSubmit" class="nda-button nda-button--primary" type="submit">Subscribe to updates</button>
+        </div>
+        <p id="fsStatus" class="home-updates__status" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
-
-  <footer class="site-footer" data-site-footer></footer>
-
-  <script type="module">
-    import { submitInterestSignup } from '/js/academy-auth.js?v=24';
-
-    const footerSignupForm   = document.getElementById('footerSignupForm');
-    const fsProposeCheckbox  = document.getElementById('fsProposeCheckbox');
-    const fsProposal         = document.getElementById('fsProposal');
-    const fsStatus           = document.getElementById('fsStatus');
-    const fsSubmitBtn        = document.getElementById('fsSubmit');
-
-    fsProposeCheckbox.addEventListener('change', () => {
-      fsProposal.classList.toggle('hidden', !fsProposeCheckbox.checked);
-      fsProposal.required = fsProposeCheckbox.checked;
-      document.getElementById('fsProposalLabel').classList.toggle('hidden', !fsProposeCheckbox.checked);
-      fsSubmitBtn.textContent = fsProposeCheckbox.checked ? 'Send proposal & subscribe' : 'Subscribe to updates';
-    });
-
-    footerSignupForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const name = document.getElementById('fsName').value.trim();
-      const email = document.getElementById('fsEmail').value.trim();
-      const proposing = fsProposeCheckbox.checked;
-      const proposal = fsProposal.value.trim();
-      if (!email || !document.getElementById('fsEmail').checkValidity()) { fsStatus.textContent = 'Please enter an email address.'; return; }
-
-      fsSubmitBtn.disabled = true;
-      fsSubmitBtn.textContent = 'Submitting…';
-      try {
-        await submitInterestSignup(name, email, proposing, proposal);
-        fsStatus.textContent = 'Thanks — you\'re on the list!';
-        document.getElementById('fsName').value = '';
-        document.getElementById('fsEmail').value = '';
-        fsProposeCheckbox.checked = false;
-        fsProposal.value = '';
-        fsProposal.required = false;
-        fsProposal.classList.add('hidden');
-        document.getElementById('fsProposalLabel').classList.add('hidden');
-      } catch (err) {
-        console.error(err);
-        fsStatus.textContent = 'Something went wrong — please try again.';
-      } finally {
-        fsSubmitBtn.disabled = false;
-        fsSubmitBtn.textContent = fsProposeCheckbox.checked ? 'Send proposal & subscribe' : 'Subscribe to updates';
-      }
-    });
-  </script>
-
-
-
-  <!-- ── Nav sign-in status ── -->
-  <script type="module">
-    import { initNavAccountWidget } from '/js/academy-auth.js?v=24';
-    initNavAccountWidget();
-  </script>
+</main>
+<footer class="nda-footer">
+  <div class="nda-footer__inner">
+    <a class="nda-wordmark nda-wordmark--footer" href="/">Neta DAO Academy</a>
+    <nav class="nda-footer__nav" aria-label="Footer">
+      <ul>
+        <li><a href="https://x.com/NetaDAO_Academy">X</a></li>
+        <li><a href="https://discord.com/invite/gvjC86WXC2">Discord</a></li>
+        <li><a class="nda-footer__parent" href="https://netadao.org" aria-label="Neta DAO">
+          <img class="nda-footer__mark nda-footer__mark--paper" src="/ds/media/neta-mark-paper.png" alt="" width="251" height="192">
+          <img class="nda-footer__mark nda-footer__mark--night" src="/ds/media/neta-mark-night.png" alt="" width="251" height="192">
+        </a></li>
+      </ul>
+    </nav>
+    <p class="nda-footer__copy">© Neta DAO Academy<br>All rights reserved</p>
+    <p class="nda-footer__legal">The materials presented on this site are for informational purposes only and should not be construed as financial advice.</p>
+  </div>
+</footer>
+</div>
+<script type="module">
+  import { submitInterestSignup } from '/js/academy-auth.js?v=27';
+  const form = document.getElementById('footerSignupForm');
+  const propose = document.getElementById('fsProposeCheckbox');
+  const proposalField = document.getElementById('fsProposalField');
+  const proposal = document.getElementById('fsProposal');
+  const email = document.getElementById('fsEmail');
+  const status = document.getElementById('fsStatus');
+  const submit = document.getElementById('fsSubmit');
+  const label = () => propose.checked ? 'Send proposal & subscribe' : 'Subscribe to updates';
+  propose.addEventListener('change', () => {
+    proposalField.hidden = !propose.checked;
+    proposal.required = propose.checked;
+    submit.textContent = label();
+  });
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const name = document.getElementById('fsName').value.trim();
+    const address = email.value.trim();
+    if (!address || !email.checkValidity()) { email.setAttribute('aria-invalid', 'true'); status.textContent = 'Please enter an email address.'; email.focus(); return; }
+    if (propose.checked && !proposal.value.trim()) { proposal.setAttribute('aria-invalid', 'true'); status.textContent = 'Please describe the lecture you’d like to give.'; proposal.focus(); return; }
+    email.removeAttribute('aria-invalid'); proposal.removeAttribute('aria-invalid');
+    submit.disabled = true; submit.textContent = 'Submitting…';
+    try {
+      await submitInterestSignup(name, address, propose.checked, proposal.value.trim());
+      status.textContent = 'Thanks — you’re on the list.';
+      form.reset(); proposalField.hidden = true; proposal.required = false;
+    } catch (error) {
+      console.error(error);
+      status.textContent = 'Something went wrong. Please try again.';
+    } finally {
+      submit.disabled = false; submit.textContent = label();
+    }
+  });
+</script>
+<script type="module">
+  import { initNavAccountWidget } from '/js/academy-auth.js?v=27';
+  initNavAccountWidget();
+</script>
+<script>window.NDA && NDA.enhance();</script>
 </body>
 </html>

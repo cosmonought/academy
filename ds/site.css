@@ -1,0 +1,57 @@
+/* Neta DAO Academy: the site's own layer over the design system (tokens.css, bundle.css).
+   Page layouts the system's previews drew with their own classes, and the pieces of the live site the system
+   doesn't draw (the skip link, the signup row, the policy dialog). Values come from the system's tokens. */
+
+/* ---------- Every page ---------- */
+html { scroll-padding-top: calc(var(--header-height, 64px) + var(--space-5, 20px)); }
+.nda-skip {
+  position: absolute; left: var(--space-4, 16px); top: -100px; z-index: calc(var(--z-header, 100) + 1);
+  padding: var(--space-2, 8px) var(--space-4, 16px); background: var(--ink); color: var(--paper);
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; text-decoration: none;
+}
+.nda-skip:focus { top: var(--space-3, 12px); }
+[hidden] { display: none !important; }
+#navAccountItem { display: contents; }
+/* the screening-night announcement sits in the flow under the sticky header */
+.nda-banner[hidden] { display: none; }
+
+/* Seminar policies, opened in place from any page (site.js) */
+.academy-policy-dialog { width: min(760px, calc(100vw - 2 * var(--nda-gutter))); max-height: min(80vh, 900px); padding: 0;
+  border: var(--stroke-hairline, 1px) solid var(--rule-strong); background: var(--paper); color: var(--ink); }
+.academy-policy-dialog::backdrop { background: rgb(0 0 0 / .45); }
+.academy-policy-dialog-shell { display: grid; grid-template-rows: auto minmax(0, 1fr); max-height: inherit; }
+.academy-policy-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5, 20px);
+  padding: var(--space-5, 20px) var(--space-6, 24px); border-bottom: var(--stroke-hairline, 1px) solid var(--rule); }
+.academy-policy-dialog-head h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 32px; line-height: .9; text-transform: uppercase; letter-spacing: var(--nda-title-tracking); }
+.academy-policy-dialog-close { min-height: var(--control-sm, 32px); padding: 0 var(--space-3, 12px); border: var(--stroke-hairline, 1px) solid var(--rule-strong);
+  border-radius: var(--radius-sm, 4px); background: none; color: var(--ink); font: 400 12px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.academy-policy-dialog-body { overflow: auto; padding: var(--space-6, 24px); font-size: 16px; line-height: 1.65; }
+
+/* ---------- Homepage ---------- */
+.home-hero-row { padding-block: 0; }
+.home-programs { --nda-columns: repeat(4, minmax(0, 1fr)); }
+/* Four equal panels: the row bleeds into the gutters by a panel's padding, so the first and last panels keep theirs */
+@media (min-width: 760px) {
+  .home-programs { margin-inline: calc(-1 * var(--space-4, 16px)); }
+  .home-programs > .nda-program { padding-inline: var(--space-4, 16px); }
+  .home-programs > .nda-wash:first-child::before, .home-programs > .nda-wash:first-child .nda-wash__film { left: 0; }
+  .home-programs > .nda-wash:last-child::before, .home-programs > .nda-wash:last-child .nda-wash__film { right: 0; }
+}
+@media (min-width: 760px) and (max-width: 1099px) {
+  .home-programs { --nda-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-7, 32px); }
+  .home-programs > :nth-child(3) { border-left: 0; }
+}
+/* the updates signup (Participate links here: /#updates) */
+.home-updates__cols { --nda-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.home-updates__copy { padding-right: var(--space-8, 40px); }
+.home-updates__copy p { max-width: 34ch; margin: var(--space-4, 16px) 0 0; color: var(--ink-dim); font-size: 16px; line-height: 1.6; }
+.home-updates__form { display: grid; gap: var(--space-5, 20px); padding-left: var(--space-8, 40px); }
+.home-updates__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5, 20px); }
+.home-updates__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4, 16px) var(--space-6, 24px); }
+.home-updates__status { margin: 0; min-height: 1.5em; font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; color: var(--ink); }
+.home-updates__status:empty { min-height: 0; }
+@media (max-width: 759px) {
+  .home-updates__copy { padding-right: 0; padding-bottom: var(--space-6, 24px); }
+  .home-updates__form { padding-left: 0; padding-top: var(--space-6, 24px); }
+  .home-updates__fields { grid-template-columns: minmax(0, 1fr); }
+}

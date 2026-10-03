@@ -1,4 +1,4 @@
-import { createPasswordAccount } from './academy-auth.js?v=26';
+import { createPasswordAccount } from './academy-auth.js?v=27';
 import { passwordIssue } from './account-flow.js?v=3';
 
 // Account creation is shared by the account page and seminar enrollment.

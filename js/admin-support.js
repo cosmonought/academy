@@ -1,4 +1,4 @@
-import { auth, onAuthStateChanged, ADMIN_EMAIL, SEMINAR_TITLES, sendPasswordReset } from './academy-auth.js?v=26';
+import { auth, onAuthStateChanged, ADMIN_EMAIL, SEMINAR_TITLES, sendPasswordReset } from './academy-auth.js?v=27';
 import { staffCall, staffError } from './staff-api.js';
 const el=id=>document.getElementById(id);
 const escape=value=>{const span=document.createElement('span');span.textContent=value ?? '';return span.innerHTML;};

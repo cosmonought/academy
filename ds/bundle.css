@@ -1,0 +1,770 @@
+/* Neta DAO Academy: component styles. Load after tokens.css and the fonts.
+   Every value comes from a token; px literals are the mockup's measured sizes. */
+
+:root {
+  /* Override with your own copy of assets/Imagery/pigment-wash.webp */
+  --nda-wash-image: url("/ds/media/pigment-wash.webp");
+  /* The wash in motion (NDA.wash): your copies of assets/Motion/pigment-wash-paper.webm / .mp4, as strings.
+     Night swaps in the -night cut below. Leave them empty to keep the still. */
+  --nda-wash-film-webm: "/ds/media/pigment-wash-paper.webm";
+  --nda-wash-film-mp4: "/ds/media/pigment-wash-paper.mp4";
+  --nda-gutter: var(--space-8, 40px);
+  /* Space between a statement line's baseline and the next line's cap top (the intro film: 24-27px of 1120) */
+  --nda-line-gap: 2.3cqi;
+  /* THOUGHT is drawn this many times its natural height, so its capitals are 30% of the column, as in the intro film */
+  --nda-word-stretch: 1.6;
+  /* Display setting measured against the intro film: tight letters, open word spaces */
+  --nda-display-tracking: -.05em;
+  --nda-display-words: .1em;
+  /* THOUGHT is set a little looser, so its Heavy letters never touch */
+  --nda-word-tracking: -.03em;
+  --nda-title-tracking: -.03em;
+  /* Where the display face puts its capitals in a line box of leading .8 (NDA Display) */
+  --nda-cap-top: .047em;
+  --nda-base-bottom: .066em;
+}
+@media (max-width: 759px) {
+  :root { --nda-gutter: var(--space-6, 24px); }
+}
+
+/* ---------- Base ---------- */
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--stroke-heavy, 3px) solid var(--focus);
+  outline-offset: 4px;
+}
+.nda-visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.nda-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: .8;
+  letter-spacing: var(--nda-title-tracking);
+  text-transform: uppercase;
+}
+
+/* ---------- Layout: columns divided by hairlines ---------- */
+.nda-page { max-width: var(--page-max, 1600px); margin-inline: auto; }
+.nda-row {
+  padding: var(--space-7, 32px) var(--nda-gutter);
+  border-bottom: var(--stroke-hairline, 1px) solid var(--rule);
+}
+.nda-columns {
+  display: grid;
+  grid-template-columns: var(--nda-columns, repeat(auto-fit, minmax(0, 1fr)));
+  align-items: stretch;
+}
+.nda-columns > * { min-width: 0; }
+.nda-columns > :first-child { padding-left: 0; }
+.nda-columns > :last-child { padding-right: 0; }
+.nda-columns > * + * { border-left: var(--stroke-hairline, 1px) solid var(--rule-strong); }
+@media (max-width: 759px) {
+  .nda-columns { grid-template-columns: minmax(0, 1fr); }
+  .nda-columns > :nth-child(n) { padding-inline: 0; }   /* beats the panels' own padding: stacked, every panel sits on the gutter */
+  .nda-columns > * + * { border-left: 0; border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+}
+
+/* ---------- Wordmark ---------- */
+.nda-wordmark {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -.01em;
+  word-spacing: .06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nda-wordmark--footer { font-size: 32px; }
+.nda-wordmark--lg { font-size: 56px; }
+
+/* ---------- Site header ---------- */
+.nda-header {
+  position: sticky; top: 0;
+  z-index: var(--z-header, 100);
+  container-type: inline-size;
+  background: var(--paper);
+  color: var(--ink);
+  border-bottom: var(--stroke-hairline, 1px) solid var(--rule);
+}
+.nda-header__inner {
+  display: grid;
+  grid-template-columns: minmax(max-content, var(--nda-lead, 37%)) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-6, 24px);
+  min-height: var(--header-height, 64px);
+  padding: 0 var(--nda-gutter);
+}
+/* A header that steps aside (data-nda-autohide, for Cinema): tucked away while scrolling down, back on scroll up */
+.nda-header[data-nda-autohide] { transition: transform 240ms var(--ease-out, cubic-bezier(.2,.8,.2,1)); }
+.nda-header.is-tucked { transform: translateY(calc(-100% - 1px)); }
+/* The homepage's header (data-nda-dock): the statement's first line is the masthead, so the wordmark stays out
+   of the header (.is-undocked, set by NDA.dock) until that line has scrolled up under it. Without the script it
+   simply shows. */
+.nda-header__inner > .nda-wordmark {
+  transition: opacity 320ms var(--ease-out, cubic-bezier(.2,.8,.2,1)), transform 320ms var(--ease-out, cubic-bezier(.2,.8,.2,1));
+}
+.nda-header.is-undocked .nda-header__inner > .nda-wordmark {
+  opacity: 0; visibility: hidden; transform: translateY(.25em);
+  transition: opacity 200ms ease-out, transform 200ms ease-out, visibility 0s linear 200ms;
+}
+.nda-header__primary { display: flex; align-items: center; gap: clamp(24px, 3vw, 40px); min-width: 0; }
+.nda-header__nav ul { display: flex; align-items: center; gap: clamp(20px, 3vw, 44px); margin: 0; padding: 0; list-style: none; }
+.nda-header__nav a,
+.nda-header__search,
+.nda-header__menu {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nda-header__nav a { display: inline-block; padding-block: var(--space-2, 8px); }
+.nda-header__nav a:hover,
+.nda-header__nav a[aria-current] {
+  text-decoration: underline;
+  text-decoration-thickness: var(--stroke-hairline, 1px);
+  text-underline-offset: 6px;
+}
+.nda-header__tools { display: flex; align-items: center; gap: var(--space-7, 32px); justify-self: end; }
+.nda-header__search {
+  display: inline-flex; align-items: center; gap: var(--space-4, 16px);
+  min-height: var(--control-sm, 32px); padding: 0; border: 0; background: none; cursor: pointer;
+}
+.nda-header__search svg,
+.nda-header__menu svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.nda-header__menu {
+  display: none; align-items: center; gap: var(--space-3, 12px);
+  min-height: var(--control, 44px); padding: 0; border: 0; background: none; cursor: pointer;
+}
+@container (max-width: 1023px) {
+  .nda-header__inner { grid-template-columns: minmax(0, 1fr) auto auto; column-gap: var(--space-5, 20px); }
+  .nda-header__primary { display: contents; }
+  .nda-header__inner > .nda-wordmark { grid-area: 1 / 1; }
+  .nda-header .nda-radio { grid-area: 1 / 2; }
+  .nda-header__menu { grid-area: 1 / 3; display: inline-flex; }
+  .nda-header__nav, .nda-header__tools { display: none; }
+  .nda-header[data-open] .nda-header__nav { display: block; grid-area: 2 / 1 / 3 / -1; border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+  .nda-header[data-open] .nda-header__tools { display: flex; grid-area: 3 / 1 / 4 / -1; justify-self: stretch; justify-content: space-between; padding-block: var(--space-4, 16px); border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+  .nda-header[data-open] .nda-header__nav ul { flex-direction: column; align-items: stretch; gap: 0; }
+  .nda-header[data-open] .nda-header__nav li + li { border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+  .nda-header[data-open] .nda-header__nav a { display: block; padding-block: var(--space-4, 16px); }
+}
+@container (max-width: 479px) {
+  .nda-header .nda-wordmark { font-size: 28px; }
+  .nda-header__menu .nda-header__menu-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+}
+
+/* ---------- Radio control ---------- */
+.nda-radio { display: inline-flex; align-items: center; gap: var(--space-2, 8px); }
+.nda-radio button {
+  display: inline-grid; place-items: center;
+  width: var(--circle-sm, 32px); height: var(--circle-sm, 32px);
+  padding: 0; border: var(--stroke-outline, 1.5px) solid transparent; border-radius: var(--radius-full, 999px);
+  background: transparent; color: var(--ink); cursor: pointer;
+  transition: background-color var(--dur-fast, 150ms) ease, color var(--dur-fast, 150ms) ease, border-color var(--dur-fast, 150ms) ease;
+}
+.nda-radio svg { width: 12px; height: 12px; fill: currentColor; }
+.nda-radio__play svg { margin-left: 2px; }
+.nda-radio button[aria-disabled="false"] { border-color: var(--ink); }
+.nda-radio button[aria-disabled="false"]:hover { background: var(--ink); color: var(--on-ink); }
+.nda-radio button[aria-disabled="true"] { color: var(--ink-dim); cursor: default; }
+
+/* ---------- Hero statement ----------
+   Lines are fitted to the column and spaced by their glyphs, not their boxes:
+   every baseline sits --nda-line-gap above the next line's cap top. At leading .8
+   the display face puts the cap top --nda-cap-top below the box and the baseline
+   --nda-base-bottom above its foot; a stretched line scales both by --nda-s. */
+.nda-hero { container-type: inline-size; min-width: 0; padding: var(--space-4, 16px) var(--space-4, 16px) var(--space-4, 16px) 0; }
+.nda-hero__title { display: flex; flex-direction: column; margin: 0; font-family: var(--font-display); font-weight: 700; color: var(--ink); text-transform: uppercase; }
+.nda-hero__line,
+.nda-intro__line {
+  --nda-s: 1;
+  display: block;
+  font-size: calc(100cqi / var(--nda-fit, 6.536));
+  line-height: .8;
+  letter-spacing: var(--nda-display-tracking);
+  word-spacing: var(--nda-display-words);
+  white-space: nowrap;
+  margin-bottom: calc(-1 * var(--nda-base-bottom) * var(--nda-s));
+}
+.nda-hero__line + .nda-hero__line,
+.nda-intro__line + .nda-intro__line { margin-top: calc(var(--nda-line-gap, 2.3cqi) - var(--nda-cap-top) * var(--nda-s) + var(--nda-nudge, 0px)); }
+/* NDA.lineGaps: a zero-size mark on each line's baseline, and a ruler for the gap */
+.nda-baseline { display: inline-block; width: 0; height: 0; vertical-align: baseline; }
+.nda-gap-ruler { position: absolute; width: var(--nda-line-gap, 2.3cqi); height: 0; visibility: hidden; pointer-events: none; }
+.nda-hero__line--word,
+.nda-intro__line--word { --nda-s: var(--nda-word-stretch, 1.6); font-weight: 800; letter-spacing: 0; }
+.nda-hero .nda-taglist { justify-content: space-between; column-gap: 1.2em; margin-top: var(--space-6, 24px); }
+/* Across the page: the statement runs the row's full width at the intro's own scale, but never taller than the
+   first screen allows (--nda-hero-room is kept for the tags and a glimpse of the row below). */
+.nda-hero--page {
+  width: min(100%, calc((100svh - var(--header-height, 64px) - var(--nda-hero-room, 170px)) * var(--nda-hero-aspect, 1.9)));
+  padding: var(--space-5, 20px) 0 var(--space-6, 24px);
+}
+.nda-hero--page .nda-taglist { margin-top: var(--space-7, 32px); font-size: 13px; letter-spacing: .16em; }
+/* The tags fade in one after another, the last a beat later (NDA.sequence). */
+.nda-taglist__roll { display: inline-block; }
+.nda-taglist.is-waiting .nda-taglist__roll { opacity: 0; }
+
+/* ---------- LiquidWord: the pigment film inside one word ---------- */
+.nda-liquid {
+  --nda-liquid-key: #000000;
+  --nda-liquid-blend: lighten;
+  --nda-liquid-filter: brightness(.95);
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  vertical-align: top;
+  font-weight: 800;
+  /* drawn tall from its top edge; the bottom margin gives the line the extra height */
+  transform: scaleY(var(--nda-word-stretch, 1.6));
+  transform-origin: 0 0;
+  margin-bottom: calc(.8em * (var(--nda-word-stretch, 1.6) - 1));
+  /* the box ends just under the baseline (keeping the round letters' overshoot), so its ground never covers the
+     line that follows, however far the stretch carries the foot of the line box */
+  clip-path: inset(0 0 calc(var(--nda-base-bottom, .066em) - .02em) 0);
+}
+.nda-liquid__media {
+  /* 1px inside the word's box top and bottom, so sub-pixel layout never shows the unkeyed film */
+  position: absolute; inset: 1px 0; z-index: 0;
+  width: 100%; height: calc(100% - 2px); object-fit: cover;
+  filter: var(--nda-liquid-filter);
+  pointer-events: none;
+}
+.nda-liquid__word {
+  position: relative; z-index: 1; display: block; line-height: .8; white-space: nowrap;
+  /* the box covers the ink: the trailing negative tracking is given back as padding */
+  letter-spacing: var(--nda-word-tracking, -.03em); padding-right: calc(-1 * var(--nda-word-tracking, -.03em));
+  color: var(--nda-liquid-key);
+  background: var(--nda-liquid-ground, var(--paper));
+  mix-blend-mode: var(--nda-liquid-blend);
+}
+[data-theme="dark"] .nda-liquid,
+.nda-liquid--cream { --nda-liquid-key: #ffffff; --nda-liquid-blend: darken; --nda-liquid-filter: none; }
+
+/* ---------- Tag list ---------- */
+.nda-taglist {
+  display: flex; flex-wrap: wrap; gap: var(--space-2, 8px) 2.6em;
+  margin: 0; padding: 0; list-style: none;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 400; line-height: 1.6;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink);
+}
+.nda-taglist--stack { flex-direction: column; gap: 0; font-size: 13px; line-height: 1.75; letter-spacing: .24em; }
+
+/* ---------- Index rule: 01 ----- COURSE ---------- */
+.nda-index {
+  display: flex; align-items: center; gap: var(--space-5, 20px);
+  margin: 0; font-family: var(--font-mono); color: var(--ink);
+}
+.nda-index::after { content: ""; order: 1; flex: 1 1 auto; min-width: var(--space-6, 24px); height: var(--stroke-hairline, 1px); background: var(--rule-thin); }
+.nda-index__num { order: 0; font-size: 13px; font-weight: 700; line-height: 1; }
+.nda-index__label { order: 2; font-size: 12px; font-weight: 400; line-height: 1; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+
+/* ---------- Section heading ---------- */
+.nda-section-heading {
+  margin: 0; font-family: var(--font-body); font-size: 15px; font-weight: 700; line-height: 1.2;
+  letter-spacing: .01em; text-transform: uppercase; color: var(--ink);
+}
+
+/* ---------- Pigment wash: hover / focus state of a panel ---------- */
+.nda-wash { position: relative; isolation: isolate; }
+.nda-wash::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: var(--nda-wash-image);
+  background-repeat: no-repeat;
+  background-size: 300% 160%;
+  background-position: var(--nda-wash-x, 50%) var(--nda-wash-y, 40%);
+  opacity: 0;
+  transition: opacity var(--dur-wash, 450ms) var(--ease-out, cubic-bezier(.2,.8,.2,1));
+}
+.nda-wash:hover::before,
+.nda-wash:focus-within::before,
+.nda-wash.is-washed::before { opacity: 1; }
+/* A flush first or last column lets its wash run into the gutter, so text never sits on the wash's edge. */
+.nda-columns > .nda-wash:first-child::before { left: calc(-1 * var(--space-4, 16px)); }
+.nda-columns > .nda-wash:last-child::before { right: calc(-1 * var(--space-4, 16px)); }
+.nda-wash:nth-child(3n+1) { --nda-wash-x: 0%; }
+.nda-wash:nth-child(3n+2) { --nda-wash-x: 50%; }
+.nda-wash:nth-child(3n) { --nda-wash-x: 100%; }
+/* The wash in motion: NDA.wash() adds this layer on a panel's first hover or focus. It is the still's field as
+   film (same crop, zoom and strength, at half speed), playing only while the panel is hovered or focused; the
+   still shows underneath until the film has a frame, and is all there is under reduced motion. The cuts are
+   keyed by blending: over white, multiplied on Paper; over black, screened on Night. */
+[data-theme="dark"] {
+  --nda-wash-film-webm: "/ds/media/pigment-wash-night.webm";
+  --nda-wash-film-mp4: "/ds/media/pigment-wash-night.mp4";
+}
+.nda-wash__film {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+  background: var(--paper);
+  opacity: 0;
+  transition: opacity var(--dur-wash, 450ms) var(--ease-out, cubic-bezier(.2,.8,.2,1));
+}
+.nda-wash__film video {
+  position: absolute; left: calc(var(--nda-wash-x, 50%) * -2); top: calc(var(--nda-wash-y, 40%) * -.6);
+  width: 300%; height: 160%; max-width: none; object-fit: fill;
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] .nda-wash__film video { mix-blend-mode: screen; }
+.nda-wash.is-filming .nda-wash__film { opacity: 1; }
+.nda-columns > .nda-wash:first-child .nda-wash__film { left: calc(-1 * var(--space-4, 16px)); }
+.nda-columns > .nda-wash:last-child .nda-wash__film { right: calc(-1 * var(--space-4, 16px)); }
+
+/* ---------- Program panel ---------- */
+.nda-program {
+  position: relative; container-type: inline-size;
+  display: flex; flex-direction: column; min-width: 0;
+  padding: var(--space-4, 16px); color: var(--ink);
+}
+.nda-program__title {
+  margin: var(--space-4, 16px) 0 0;
+  font-family: var(--font-display); font-weight: 700; text-transform: uppercase;
+  font-size: clamp(40px, calc(100cqi / var(--nda-fit, 3.25)), 112px);
+  line-height: .84; letter-spacing: var(--nda-title-tracking); word-spacing: .08em;
+}
+.nda-program__title .nda-forkmark { margin-bottom: .14em; }
+/* Fork's title: the mark, then "The Journal" on one line, sized to the panel */
+.nda-program__title-tail { display: block; font-size: calc(100cqi / 4.8); letter-spacing: var(--nda-title-tracking); white-space: nowrap; }
+.nda-program__link { color: inherit; text-decoration: none; }
+.nda-program__link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.nda-program__subtitle {
+  margin: var(--space-3, 12px) 0 0;
+  font-family: var(--font-mono); font-size: 12px; line-height: 1.6; letter-spacing: .14em; text-transform: uppercase;
+}
+.nda-program__meta { margin-top: var(--space-3, 12px); }
+/* A program's one action now (Late enroll, Express interest): at the panel's foot, above the panel link */
+.nda-program__actions { position: relative; z-index: 2; margin: auto 0 0; padding-top: var(--space-6, 24px); }
+/* The program's own artwork, optional: greyscale at rest, its colour on hover and focus */
+.nda-program__image {
+  display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover;
+  margin-top: auto; padding-top: var(--space-4, 16px); box-sizing: content-box;
+  filter: var(--nda-art-rest, grayscale(1) contrast(1.04));
+  transition: filter var(--dur-wash, 450ms) var(--ease-out, cubic-bezier(.2,.8,.2,1));
+}
+.nda-program:is(:hover, :focus-within) .nda-program__image,
+.nda-program.is-washed .nda-program__image { filter: none; }
+.nda-program__link:focus-visible { outline: none; }
+.nda-program:has(.nda-program__link:focus-visible) { outline: var(--stroke-heavy, 3px) solid var(--focus); outline-offset: -3px; }
+.nda-program.nda-wash:has(.nda-program__link:focus-visible) { outline: none; }
+.nda-program.nda-wash:has(.nda-program__link:focus-visible)::before { opacity: 1; box-shadow: inset 0 0 0 var(--stroke-heavy, 3px) var(--focus); }
+.nda-program.nda-wash:has(.nda-program__link:focus-visible) .nda-wash__film::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0 var(--stroke-heavy, 3px) var(--focus); }
+@supports not selector(:has(*)) {
+  .nda-program__link:focus-visible { outline: var(--stroke-heavy, 3px) solid var(--focus); outline-offset: 4px; }
+}
+
+/* ---------- Circle link ---------- */
+.nda-circle-link {
+  position: relative; display: inline-flex; align-items: center; gap: var(--space-4, 16px);
+  color: var(--ink); text-decoration: none;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 400; line-height: 1.5; letter-spacing: .1em; text-transform: uppercase;
+}
+.nda-circle-link__icon {
+  flex: none; display: grid; place-items: center;
+  width: var(--circle, 48px); height: var(--circle, 48px);
+  border: var(--stroke-outline, 1.5px) solid currentColor; border-radius: var(--radius-full, 999px);
+  transition: background-color var(--dur-fast, 150ms) ease, color var(--dur-fast, 150ms) ease;
+}
+.nda-circle-link__icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: square; }
+.nda-circle-link__line { display: block; }
+.nda-circle-link:hover .nda-circle-link__icon { background: var(--ink); border-color: var(--ink); color: var(--on-ink); }
+
+/* ---------- Seminar access tile ---------- */
+.nda-access { position: relative; container-type: inline-size; display: flex; flex-direction: column; min-width: 0; padding: var(--space-4, 16px); }
+.nda-access__title {
+  margin: var(--space-5, 20px) 0 0;
+  font-family: var(--font-display); font-weight: 700; text-transform: uppercase; color: var(--ink);
+  font-size: clamp(48px, calc(100cqi / var(--nda-fit, 3.8)), 104px);
+  line-height: .86; letter-spacing: var(--nda-title-tracking);
+}
+.nda-access .nda-circle-link { position: static; margin-top: var(--space-7, 32px); }
+.nda-access .nda-circle-link::after { content: ""; position: absolute; inset: 0; }
+
+/* ---------- Fork mark: the journal's slashed wordmark (inline SVG) ----------
+   At rest FORK is one word: the lower half sits back up against the upper one and
+   the slash is undrawn. Hover or focus (on the mark, or the panel or link that
+   holds it) cuts it: the slash is drawn left to right, pink to blue, and the lower
+   half slips down and right behind it into the mark's own split. Leaving closes
+   the cut and fades the slash. */
+.nda-forkmark { display: block; width: 100%; color: var(--ink); }
+.nda-forkmark svg { display: block; width: 100%; height: auto; overflow: visible; }
+.nda-forkmark__top,
+.nda-forkmark__bottom { fill: currentColor; }
+.nda-forkmark__bottom { transform: translate(-6px, -5px); transition: transform 300ms cubic-bezier(.4, 0, .2, 1); }
+.nda-forkmark__slash {
+  fill: none; stroke-width: 5; stroke-opacity: .9;
+  stroke-dasharray: 1 1; stroke-dashoffset: 1; opacity: 0;
+  transition: opacity 200ms ease-out, stroke-dashoffset 0s linear 200ms;
+}
+:is(.nda-program, .nda-journal, a):is(:hover, :focus-within) .nda-forkmark__bottom,
+.nda-forkmark:hover .nda-forkmark__bottom,
+.nda-forkmark.is-split .nda-forkmark__bottom { transform: none; transition: transform 460ms cubic-bezier(.3, 1.4, .5, 1) 70ms; }
+:is(.nda-program, .nda-journal, a):is(:hover, :focus-within) .nda-forkmark__slash,
+.nda-forkmark:hover .nda-forkmark__slash,
+.nda-forkmark.is-split .nda-forkmark__slash { opacity: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 340ms cubic-bezier(.2, .6, .25, 1), opacity 0s; }
+
+/* ---------- Journal (Fork) ---------- */
+.nda-journal { position: relative; container-type: inline-size; display: flex; flex-direction: column; min-width: 0; padding: var(--space-4, 16px); color: var(--ink); }
+.nda-journal__kicker { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; letter-spacing: .1em; text-transform: uppercase; }
+.nda-journal__mark { margin: var(--space-9, 48px) 0 0; }
+.nda-journal--column .nda-taglist { margin-top: var(--space-7, 32px); }
+.nda-journal--column .nda-circle-link { margin-top: var(--space-8, 40px); }
+.nda-journal--feature .nda-journal__mark { margin-top: var(--space-6, 24px); max-width: 560px; }
+.nda-journal__foot {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-5, 20px) var(--space-7, 32px);
+  margin-top: auto; padding-top: var(--space-7, 32px);
+}
+.nda-journal__foot .nda-taglist { column-gap: 1.4em; }
+
+/* ---------- Site footer ---------- */
+.nda-footer {
+  container-type: inline-size;
+  background: var(--paper); color: var(--ink);
+  border-top: var(--stroke-hairline, 1px) solid var(--rule);
+}
+.nda-footer__inner {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
+  row-gap: var(--space-3, 12px);
+  padding: var(--space-5, 20px) var(--nda-gutter);
+}
+/* only the off-site links: the sticky header carries the site's own pages */
+.nda-footer__nav { justify-self: end; margin: 0 var(--space-8, 40px) 0 0; padding: var(--space-2, 8px) var(--space-8, 40px) var(--space-2, 8px) 0; border-right: var(--stroke-hairline, 1px) solid var(--rule-strong); }
+.nda-footer__nav ul { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3, 12px) var(--space-8, 40px); margin: 0; padding: 0; list-style: none; }
+.nda-footer__nav a { font-family: var(--font-mono); font-size: 12px; line-height: 1.4; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
+.nda-footer__nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.nda-footer__copy { margin: 0; font-family: var(--font-mono); font-size: 11px; line-height: 1.45; letter-spacing: .08em; text-transform: uppercase; text-align: right; }
+.nda-footer__legal { grid-column: 1 / -1; margin: 0; font-family: var(--font-mono); font-size: 11px; line-height: 1.45; letter-spacing: .02em; color: var(--ink-dim); }
+/* Neta DAO: its own mark, alone, at the end of the links row, linking to netadao.org. 24px sits inside the row's height */
+.nda-footer__parent { display: block; margin-block: -4px; transition: opacity var(--dur-fast, 120ms) ease; }
+.nda-footer__parent:hover { opacity: .72; }
+.nda-footer__mark { display: block; width: auto; height: 24px; }
+.nda-footer__mark--night { display: none; }
+[data-theme="dark"] .nda-footer__mark--paper { display: none; }
+[data-theme="dark"] .nda-footer__mark--night { display: block; }
+@container (max-width: 899px) {
+  .nda-footer__inner { grid-template-columns: minmax(0, 1fr); }
+  .nda-footer__nav { justify-self: stretch; margin: 0; padding: var(--space-4, 16px) 0; border-right: 0; border-block: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+  .nda-footer__nav ul { justify-content: flex-start; }
+  .nda-footer__copy { text-align: left; }
+}
+
+/* ---------- Buttons ---------- */
+.nda-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2, 8px);
+  min-height: var(--control, 44px); padding: 0 var(--space-6, 24px);
+  border: var(--stroke-outline, 1.5px) solid var(--ink); border-radius: var(--radius-sm, 4px);
+  background: transparent; color: var(--ink);
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500; line-height: 1; letter-spacing: .1em; text-transform: uppercase;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: background-color var(--dur-fast, 150ms) ease, color var(--dur-fast, 150ms) ease, border-color var(--dur-fast, 150ms) ease;
+}
+.nda-button--primary { background: var(--ink); color: var(--on-ink); }
+.nda-button--primary:hover { background: var(--ink-mid); border-color: var(--ink-mid); }
+.nda-button--outline:hover { background: var(--paper-hover); }
+.nda-button--ghost { border-color: transparent; padding-inline: var(--space-2, 8px); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+.nda-button--ghost:hover { background: var(--paper-hover); }
+.nda-button--sm { min-height: var(--control-sm, 32px); }
+.nda-button:disabled, .nda-button[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+
+/* ---------- Text link ---------- */
+.nda-text-link {
+  display: inline-block; padding-block: var(--space-2, 8px);
+  font-family: var(--font-body); font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--ink);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px;
+  transition: color var(--dur-fast, 150ms) ease;
+}
+.nda-text-link:hover { color: var(--pink); }
+
+/* ---------- Status badge ---------- */
+.nda-status {
+  display: inline-flex; align-items: center; gap: var(--space-2, 8px);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500; line-height: 1.2; letter-spacing: .08em;
+  text-transform: uppercase; white-space: nowrap; color: var(--ink-dim);
+}
+.nda-status::before { content: ""; flex: none; width: 7px; height: 7px; box-sizing: border-box; border: var(--stroke-hairline, 1px) solid currentColor; }
+.nda-status--current { color: var(--pink); }
+.nda-status--current::before { background: var(--pink-mark); border-color: var(--pink-mark); }
+.nda-status--next { color: var(--blue); }
+.nda-status--next::before { background: currentColor; }
+.nda-status--scheduled { color: var(--ink-mid); }
+.nda-status--past::before { display: none; }
+
+/* ---------- Session row (syllabus) ---------- */
+.nda-sessions { container-type: inline-size; margin: 0; padding: 0; border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+.nda-session {
+  display: grid; grid-template-columns: 100px minmax(0, 1fr); column-gap: var(--space-7, 32px); row-gap: var(--space-3, 12px);
+  padding: var(--space-7, 32px) 0 38px;
+  border-top: var(--stroke-hairline, 1px) solid var(--rule-thin);
+}
+.nda-session__head { display: contents; }
+.nda-session__num { grid-column: 1; grid-row: 1; padding-top: 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-dim); }
+.nda-session__title {
+  grid-column: 2; grid-row: 1; margin: 0;
+  font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1.1; letter-spacing: -.01em; word-spacing: .06em; text-transform: uppercase; color: var(--ink);
+}
+.nda-session .nda-status { grid-column: 1; grid-row: 2; align-self: start; justify-self: start; }
+.nda-session__body { grid-column: 2; grid-row: 2; min-width: 0; }
+.nda-session--current { margin-top: 14px; padding-top: 36px; border-top: var(--stroke-heavy, 3px) solid var(--pink-mark); }
+.nda-session--current .nda-session__title { font-size: 32px; color: var(--pink); }
+.nda-session__phase,
+.nda-session__screening-summary {
+  display: grid; grid-template-columns: 16px minmax(0, 1fr); column-gap: var(--space-2, 8px); align-items: center;
+  margin: 0; font-family: var(--font-body); font-size: 14px; font-weight: 500; line-height: 1.4; text-transform: none; letter-spacing: 0;
+}
+.nda-session__phase { color: var(--ink); }
+.nda-session__screening-summary { margin-top: 26px; font-size: 13px; line-height: 1.6; color: var(--screening-ink); }
+.nda-session__phase time, .nda-session__screening-summary time { font-weight: 400; }
+.nda-session__phase::before,
+.nda-session__screening-summary::before {
+  content: ""; display: block; width: 16px; height: 16px; background: currentColor;
+  -webkit-mask: var(--nda-icon) center / contain no-repeat; mask: var(--nda-icon) center / contain no-repeat;
+}
+.nda-session__phase { --nda-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M12 5C9 3 5 3 2 4v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15'/%3E%3C/svg%3E"); }
+.nda-session__screening-summary { --nda-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Crect x='3' y='3' width='18' height='18' rx='1'/%3E%3Cpath d='M7 3v18M17 3v18M3 8h4m-4 8h4M17 8h4m-4 8h4M7 12h10'/%3E%3C/svg%3E"); }
+.nda-session--past { display: block; padding: 0; }
+.nda-session--past > summary {
+  display: grid; grid-template-columns: 100px minmax(0, 1fr) auto 18px; column-gap: var(--space-7, 32px); align-items: start;
+  padding: 17px 0; cursor: pointer; list-style: none;
+}
+.nda-session--past > summary::-webkit-details-marker { display: none; }
+.nda-session--past > summary .nda-session__num { padding-top: 3px; }
+.nda-session--past > summary .nda-session__title { grid-column: 2; font-size: 23px; color: var(--ink-mid); }
+.nda-session--past > summary .nda-status { grid-column: 3; grid-row: 1; padding-top: 3px; }
+.nda-session--past > summary::after { content: "+"; grid-column: 4; grid-row: 1; font: 400 19px/1 var(--font-body); color: var(--ink-dim); }
+.nda-session--past[open] > summary::after { content: "\2212"; }
+.nda-session--past > .nda-session__body { margin: 0 0 26px 132px; padding-top: 18px; border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+
+.nda-readings { display: flex; flex-direction: column; gap: 7px; margin: var(--space-4, 16px) 0 0; padding: 0; list-style: none; }
+.nda-readings li { position: relative; padding-left: 18px; font-size: 17px; line-height: 1.65; color: var(--ink); }
+.nda-readings li::before { content: "\2014"; position: absolute; left: 0; color: var(--ink-dim); }
+.nda-readings a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
+.nda-readings a:hover { color: var(--pink); }
+.nda-readings__locked { font-size: 13px; color: var(--ink-dim); }
+
+.nda-screenings { margin: var(--space-2, 8px) 0 0 24px; padding: 0 12px; list-style: none; background: var(--screening-bg); }
+.nda-screenings > li {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 16px;
+  padding: 14px 12px; border-left: 2px solid transparent;
+}
+.nda-screenings > li + li { border-top: var(--stroke-hairline, 1px) solid var(--screening-rule); }
+.nda-screenings__title { flex: 1 1 260px; margin: 0; font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--ink); }
+.nda-screenings__title b { font-weight: 500; }
+.nda-screenings__date { font-size: 12px; line-height: 1.5; color: var(--ink-dim); }
+.nda-screenings__item--current { border-left-color: var(--pink-mark) !important; }
+.nda-screenings__item--past .nda-screenings__title { color: var(--ink-dim); }
+.nda-screenings__link { flex-basis: 100%; font-size: 13px; font-weight: 500; color: var(--pink); text-decoration: underline; text-underline-offset: 3px; }
+@container (max-width: 640px) {
+  .nda-session { grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-4, 16px); }
+  .nda-session__num { grid-column: 1; grid-row: 1; padding: 0; }
+  .nda-session .nda-status { grid-column: 2; grid-row: 1; justify-self: end; }
+  .nda-session__title { grid-column: 1 / -1; grid-row: 2; }
+  .nda-session__body { grid-column: 1 / -1; grid-row: 3; }
+  .nda-session--past > summary { grid-template-columns: minmax(0, 1fr) auto 18px; column-gap: var(--space-3, 12px); row-gap: var(--space-2, 8px); }
+  .nda-session--past > summary .nda-session__title { grid-column: 1 / -1; grid-row: 2; }
+  .nda-session--past > summary .nda-status { grid-column: 2; }
+  .nda-session--past > summary::after { grid-column: 3; }
+  .nda-session--past > .nda-session__body { margin-left: 0; }
+  .nda-screenings { margin-left: var(--space-3, 12px); padding-inline: 0; }
+}
+
+/* ---------- Screening-night banner ---------- */
+.nda-banner {
+  position: relative; z-index: var(--z-banner, 90);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-3, 12px) var(--space-7, 32px);
+  padding: var(--space-3, 12px) var(--nda-gutter);
+  background: var(--banner-bg); color: var(--ink);
+  border-bottom: var(--stroke-hairline, 1px) solid var(--rule);
+}
+.nda-banner p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px var(--space-4, 16px); margin: 0; font-size: 15px; line-height: 1.5; }
+.nda-banner strong {
+  display: inline-flex; align-items: center; gap: var(--space-2, 8px);
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+}
+.nda-banner strong::before { content: ""; width: 7px; height: 7px; background: var(--pink-mark); }
+.nda-banner__action {
+  display: inline-flex; align-items: center; min-height: var(--control-sm, 32px); padding: 0 var(--space-3, 12px);
+  border: var(--stroke-hairline, 1px) solid currentColor; color: var(--ink); text-decoration: none;
+  font-size: 15px; font-weight: 500; white-space: nowrap;
+  transition: background-color var(--dur-fast, 150ms) ease, color var(--dur-fast, 150ms) ease;
+}
+.nda-banner__action:hover { background: var(--ink); color: var(--on-ink); }
+@media (max-width: 759px) { .nda-banner { justify-content: space-between; } .nda-banner p { flex: 1 1 220px; } }
+
+/* ---------- Form fields ---------- */
+.nda-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.nda-field__label { font-family: var(--font-body); font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--ink); }
+.nda-field__optional { font-weight: 400; color: var(--ink-dim); }
+.nda-field__input {
+  box-sizing: border-box; width: 100%; min-height: var(--control, 44px); margin: 0; padding: 9px 12px;
+  border: var(--stroke-hairline, 1px) solid var(--rule-strong); border-radius: var(--radius-0, 0);
+  background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; font-weight: 400; line-height: 1.4;
+}
+.nda-field__input::placeholder { color: var(--ink-dim); }
+.nda-field__input:hover { border-color: var(--ink); }
+textarea.nda-field__input { min-height: 112px; resize: vertical; }
+.nda-field__help { margin: 0; font-size: 13px; line-height: 1.55; color: var(--ink-dim); }
+.nda-field__input[aria-invalid="true"] { border: 2px solid var(--ink); padding: 8px 11px; }
+.nda-field__error { display: flex; gap: var(--space-2, 8px); margin: 0; font-size: 13px; font-weight: 500; line-height: 1.55; color: var(--ink); }
+.nda-field__error::before { content: "!"; display: inline-grid; place-items: center; flex: none; width: 18px; height: 18px; margin-top: 1px; background: var(--ink); color: var(--on-ink); font: 700 12px/1 var(--font-mono); }
+.nda-check { display: inline-flex; align-items: center; gap: var(--space-3, 12px); font-size: 15px; line-height: 1.4; color: var(--ink); cursor: pointer; }
+.nda-check input {
+  -webkit-appearance: none; appearance: none; display: inline-grid; place-items: center; flex: none;
+  width: 20px; height: 20px; margin: 0; border: var(--stroke-hairline, 1px) solid var(--rule-strong); background: var(--paper); cursor: pointer;
+}
+.nda-check input:checked { background: var(--ink); border-color: var(--ink); }
+.nda-check input:checked::after { content: ""; width: 10px; height: 5px; border: solid var(--on-ink); border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg); }
+
+/* ---------- Intro sequence ----------
+   Laid out from the intro film: the statement spans 87.5% of a 16:9 screen, THOUGHT's
+   capitals are 30% of its width, three rows of disciplines fill THOUGHT's height (four,
+   once the second line is knocked away) and enter from the bottom edge. A window from
+   just under the first line to the screen's edge runs the rows: it is one lighten
+   group, a black ground with cream type and the kinetic film in darken, so the film
+   shows only inside letters and the black drops out over everything behind it. */
+.nda-intro { position: fixed; inset: 0; z-index: var(--z-intro, 1000); overflow: hidden; color: var(--ink); }
+.nda-intro[hidden] { display: none; }
+.nda-intro--inline { position: absolute; inset: 0; z-index: auto; }
+/* until NDA.intro has laid it out, only the ground shows */
+.nda-intro:not([data-ready]) .nda-intro__stage { visibility: hidden; }
+.nda-intro__fx { position: absolute; width: 0; height: 0; overflow: hidden; }
+.nda-intro__sheet { position: absolute; inset: 0; overflow: hidden; background: var(--paper); }
+.nda-intro__camera,
+.nda-intro__breath { position: absolute; inset: 0; display: grid; place-items: center; }
+.nda-intro__camera { transform-origin: 50% 50%; }
+.nda-intro__breath { transform-origin: 58% 62%; }
+.nda-intro__stage { position: relative; isolation: isolate; container-type: inline-size; width: min(87.5vw, 155vh); }
+/* the stage is its own stacking context, so it carries the ground its blends key against */
+.nda-intro__stage::before { content: ""; position: absolute; z-index: -2; inset: -60vh -60vw; background: var(--paper); pointer-events: none; }
+.nda-intro__statement { position: relative; display: flex; flex-direction: column; margin: 0; font-family: var(--font-display); font-weight: 700; text-transform: uppercase; color: var(--ink); }
+.nda-intro__line--word { position: relative; height: calc(.8em * var(--nda-s)); }
+.nda-intro__window {
+  /* it runs 6cqi past the column on the right, so a long discipline can push past the statement's edge, as in the film */
+  position: absolute; left: 0; right: -6cqi; top: 0; bottom: calc(-1 * var(--nda-ext, 0cqi));
+  overflow: hidden; background: #000; mix-blend-mode: lighten; isolation: isolate;
+  /* the black runs a little past the box, so sub-pixel edges never show the film */
+  box-shadow: 0 0 0 6px #000;
+  font-weight: 700; line-height: .8; letter-spacing: 0; word-spacing: .06em;
+}
+.nda-intro__window[data-fade] {
+  -webkit-mask-image: linear-gradient(#000 calc(100% - var(--nda-fade, 0cqi)), #0000);
+  mask-image: linear-gradient(#000 calc(100% - var(--nda-fade, 0cqi)), #0000);
+}
+.nda-intro__rows,
+.nda-intro__final { position: absolute; inset: 0; }
+.nda-intro__word { position: absolute; left: 0; top: 0; height: .8em; white-space: nowrap; color: var(--ink); opacity: 0; }
+.nda-intro__word--tight { letter-spacing: var(--nda-display-tracking); word-spacing: var(--nda-display-words); }
+.nda-intro__word--thought { letter-spacing: var(--nda-word-tracking); }
+.nda-intro__st,
+.nda-intro__face { position: absolute; inset: 0; transform-origin: 0 55%; }
+.nda-intro__char { position: absolute; top: 0; left: 0; white-space: pre; transform-origin: 50% 55%; backface-visibility: hidden; }
+.nda-intro__thought {
+  position: absolute; left: 0; top: 0; width: 100cqi; height: .8em; white-space: nowrap; color: var(--ink);
+  font-weight: 800; letter-spacing: var(--nda-word-tracking);
+  transform: scaleY(var(--nda-s)); transform-origin: 0 0;
+}
+/* THOUGHT again in black, under the window: whatever is behind the word can't lighten its letters */
+.nda-intro__shade {
+  position: absolute; left: 0; top: 0; width: 100cqi; height: .8em; white-space: nowrap; color: #000; pointer-events: none;
+  font-weight: 800; letter-spacing: var(--nda-word-tracking); line-height: .8;
+  transform: scaleY(var(--nda-s)); transform-origin: 0 0;
+}
+.nda-intro__fill {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  mix-blend-mode: darken; pointer-events: none; filter: saturate(1.35) contrast(1.04);
+}
+/* optional: a filmed burst behind everything, screened onto the ground, its edges falling off to it */
+.nda-intro__bg {
+  position: absolute; z-index: -1; left: calc(50% - 54vw); top: calc(50% - 54vh); width: 108vw; height: 108vh;
+  object-fit: cover; opacity: 0; pointer-events: none; mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(ellipse 70% 75% at 50% 50%, #000 55%, #0000);
+  mask-image: radial-gradient(ellipse 70% 75% at 50% 50%, #000 55%, #0000);
+}
+/* the second line's letters, so a few can shiver where something hits it */
+.nda-intro__l2 { position: relative; }
+/* the burst behind the type; the peel's flecks in front of it */
+.nda-intro__burst,
+.nda-intro__debris { position: absolute; inset: -10cqi -6cqi; pointer-events: none; perspective: 80cqi; perspective-origin: 62% 64%; }
+.nda-intro__burst { z-index: 0; }
+.nda-intro__debris { z-index: 2; }
+.nda-intro__glow {
+  /* the plum bloom behind the rows, sized and graded from the film: about half the screen across, plum at the heart */
+  position: absolute; width: 64cqi; height: 52cqi; margin: -26cqi 0 0 -32cqi; border-radius: 50%; opacity: 0;
+  background: radial-gradient(closest-side, rgb(120 42 84 / .82), rgb(120 42 84 / .71) 18%, rgb(120 42 84 / .52) 36%,
+    rgb(120 42 84 / .27) 55%, rgb(120 42 84 / .17) 73%, rgb(120 42 84 / .1) 84%, rgb(120 42 84 / .045) 93%, rgb(120 42 84 / .015) 98%, #0000);
+}
+.nda-intro__shard { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; }
+/* the burst's shadows on the wall, under everything thrown; NDA.intro masks the layer to the plum spot, where there is light to cast them */
+.nda-intro__shadows { position: absolute; inset: 0; pointer-events: none; opacity: 0; perspective: 80cqi; perspective-origin: 62% 64%; }
+/* smoke off the edge of THOUGHT's bloom, pink and a little grey */
+.nda-intro__smoke {
+  position: absolute; left: 0; top: 0; width: 32cqi; height: 19cqi; margin: -9.5cqi 0 0 -16cqi; border-radius: 50%;
+  opacity: 0; pointer-events: none; filter: blur(7px);
+  background: radial-gradient(closest-side, rgb(232 96 168 / .82), rgb(214 70 150 / .45) 50%, rgb(214 70 150 / .12) 78%, #0000);
+}
+.nda-intro__smoke--grey { background: radial-gradient(closest-side, rgb(214 212 220 / .42), rgb(214 212 220 / .14) 55%, #0000); }
+/* the bloom: the paint film exploding behind the type as THOUGHT comes through, screened onto the ground (NDA.intro places and fades it) */
+.nda-intro__bloom { position: absolute; z-index: 0; left: 0; top: 0; opacity: 0; pointer-events: none; object-fit: cover; mix-blend-mode: screen; }
+/* the ribbon (5.6-6.7 s): the film's own, frame by frame, from the packed image NDA.intro reads (it is never shown
+   itself), drawn on two canvases, over the type and inside the window (in darken, so it shows only in the letters) */
+.nda-intro__ribbon { display: none; }
+.nda-intro__ribbon-layer { position: absolute; left: 0; top: 0; pointer-events: none; }
+.nda-intro__wisps { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: darken; }
+.nda-intro__grain {
+  position: absolute; inset: -40%; z-index: 3; pointer-events: none; opacity: .09; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: nda-grain .7s steps(5) infinite;
+}
+@keyframes nda-grain {
+  0% { transform: translate(0, 0); } 20% { transform: translate(-6%, 3%); } 40% { transform: translate(4%, -5%); }
+  60% { transform: translate(-3%, -2%); } 80% { transform: translate(5%, 4%); } 100% { transform: translate(0, 0); }
+}
+/* the exit: an almost-hairline white bar sweeps left to right, and the page shows behind it */
+.nda-intro__wipe { position: absolute; z-index: 4; inset: 0; opacity: 0; pointer-events: none; }
+.nda-intro__wipe::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -1px; width: 2px;
+  /* its glow falls on the film ahead of it; a faint shade keeps it apart from a light page behind */
+  background: #fff; box-shadow: 3px 0 8px rgb(255 255 255 / .28), -2px 0 4px rgb(0 0 0 / .16);
+}
+.nda-intro__skip {
+  position: absolute; z-index: 5; top: max(12px, 1.8vh); right: max(12px, 1.8vw);
+  min-height: var(--control-sm, 32px); padding: 0 var(--space-3, 12px);
+  border: var(--stroke-hairline, 1px) solid var(--rule-strong); border-radius: var(--radius-sm, 4px);
+  background: rgb(24 24 24 / .6); color: var(--ink);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
+}
+.nda-intro__skip:hover { border-color: var(--ink); }
+/* the intro's buttons, top right: the sound (when there is a soundtrack) beside Skip intro */
+.nda-intro__controls { position: absolute; z-index: 5; top: max(12px, 1.8vh); right: max(12px, 1.8vw); display: flex; gap: var(--space-2, 8px); }
+.nda-intro__controls .nda-intro__skip { position: static; }
+.nda-intro__sound-toggle {
+  min-height: var(--control-sm, 32px); padding: 0 var(--space-3, 12px);
+  border: var(--stroke-hairline, 1px) solid var(--rule-strong); border-radius: var(--radius-sm, 4px);
+  background: rgb(24 24 24 / .6); color: var(--ink);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
+}
+.nda-intro__sound-toggle:hover { border-color: var(--ink); }
+.nda-intro__sound-toggle[hidden] { display: none; }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .nda-wash::before, .nda-program__image, .nda-forkmark__bottom, .nda-forkmark__slash, .nda-header__inner > .nda-wordmark,
+  .nda-circle-link__icon, .nda-button, .nda-text-link, .nda-radio button, .nda-banner__action { transition: none; }
+}

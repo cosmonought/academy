@@ -1,4 +1,4 @@
-import { auth, onAuthStateChanged, getRegistrationForSeminar } from './academy-auth.js?v=24';
+import { auth, onAuthStateChanged, getRegistrationForSeminar } from './academy-auth.js?v=27';
 import { accountError, seminarAccountLink } from './account-flow.js?v=3';
 
 // Shared enrollment-state watcher for seminar surfaces that need to gate

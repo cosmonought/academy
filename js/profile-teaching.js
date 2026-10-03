@@ -1,7 +1,7 @@
 import { evaluationParticipationControl } from './evaluation-correction.js';
 import { setTeachingAvailable } from './profile-tabs.js';
 import { renderSessionAttendance } from './session-attendance.js';
-import { auth, onAuthStateChanged, SEMINAR_TITLES, ATTENDANCE_EVENTS, EVALUATION_FORMS, EVALUATION_OUTCOMES, EVALUATION_OFFERED, approveRegistration, revokeRegistration, setAttendance, setInstructorEvaluation } from './academy-auth.js?v=26';
+import { auth, onAuthStateChanged, SEMINAR_TITLES, ATTENDANCE_EVENTS, EVALUATION_FORMS, EVALUATION_OUTCOMES, EVALUATION_OFFERED, approveRegistration, revokeRegistration, setAttendance, setInstructorEvaluation } from './academy-auth.js?v=27';
 import { staffCall, staffError } from './staff-api.js';
 const el = id => document.getElementById(id);
 const escape = value => { const span = document.createElement('span'); span.textContent = value ?? ''; return span.innerHTML; };

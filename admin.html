@@ -1,521 +1,406 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Neta DAO Academy</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <meta name="description" content="Neta DAO Academy staff administration.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script type="text/javascript">
-    (function () { emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();
-  </script>
-  <style>
-    body { background: var(--bg); }
-    .admin-wrap {
-      max-width: 1100px;
-      margin: 86px auto 80px;
-      padding: 0 24px;
-    }
-    .admin-title {
-      font-family: var(--font-display);
-      font-size: 32px;
-      font-weight: 900;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-    .admin-signin {
-      background: var(--bg-raised);
-      border: 1px solid var(--rule-thin);
-      padding: 24px 28px;
-      max-width: 480px;
-    }
-    .admin-signin input {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--rule-thin);
-      padding: 12px 14px;
-      font-family: var(--font-mono);
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-    .admin-signin button {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      text-transform: uppercase;
-      padding: 12px 20px;
-      background: var(--ink);
-      color: var(--bg);
-      border: none;
-      cursor: pointer;
-    }
-    .admin-note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); margin-top: 10px; }
-
-    /* ── Seminar tabs ── */
-    .seminar-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--ink); margin-bottom: 24px; flex-wrap: wrap; }
-    .seminar-tab {
-      font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
-      padding: 10px 18px; background: transparent; border: none; border-bottom: 2px solid transparent;
-      margin-bottom: -2px; cursor: pointer; color: var(--ink-dim);
-    }
-    .seminar-tab:hover { color: var(--ink); }
-    .seminar-tab.active { color: var(--ink); border-bottom-color: var(--pink); font-weight: 700; }
-    .seminar-panel { display: none; }
-    .seminar-panel.active { display: block; }
-    .seminar-panel h2 {
-      font-family: var(--font-display); font-size: 22px; font-weight: 900; text-transform: uppercase;
-      margin-top: 40px; margin-bottom: 8px;
-    }
-    .seminar-panel h2:first-child { margin-top: 0; }
-
-    table.reg-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      margin-top: 16px;
-    }
-    table.reg-table th, table.reg-table td {
-      border: 1px solid var(--rule-thin);
-      padding: 10px 12px;
-      text-align: left;
-      vertical-align: top;
-    }
-    table.reg-table th {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      background: var(--bg-raised);
-    }
-    .status-pill {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border: 1px solid;
-      display: inline-block;
-    }
-    .status-pill.approved { border-color: #2a8a4a; color: #2a8a4a; }
-    .status-pill.pending { border-color: var(--blue); color: var(--blue); }
-    .approve-btn {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      text-transform: uppercase;
-      padding: 8px 14px;
-      background: var(--ink);
-      color: var(--bg);
-      border: none;
-      cursor: pointer;
-    }
-    .approve-btn:hover { background: #333; }
-    .approve-btn:disabled { background: #ccc; cursor: default; }
-    .revoke-btn {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      text-transform: uppercase;
-      padding: 8px 14px;
-      background: transparent;
-      color: #a04848;
-      border: 1px solid #a04848;
-      cursor: pointer;
-    }
-    .revoke-btn:hover { background: rgba(160,72,72,0.1); }
-    .revoke-btn:disabled { color: #ccc; border-color: #ccc; cursor: default; }
-
-    /* ── Attendance matrix ── */
-    .attendance-wrap { overflow-x: auto; margin-top: 16px; }
-    table.attendance-table {
-      border-collapse: collapse;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-    table.attendance-table th, table.attendance-table td {
-      border: 1px solid var(--rule-thin);
-      padding: 6px 8px;
-      text-align: center;
-    }
-    table.attendance-table th {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      background: var(--bg-raised);
-    }
-    table.attendance-table td.name-cell, table.attendance-table th.name-th {
-      text-align: left;
-      position: sticky;
-      left: 0;
-      background: var(--bg);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      min-width: 160px;
-    }
-    table.attendance-table th.name-th { background: var(--bg-raised); }
-    table.attendance-table td.total-cell {
-      font-family: var(--font-mono);
-      font-weight: 700;
-      background: var(--bg-raised);
-    }
-    table.attendance-table input[type="checkbox"] { cursor: pointer; width: 15px; height: 15px; }
-    .attendance-empty { font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim); margin-top: 16px; }
-    .hidden { display: none; }
-  </style>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+  <link rel="preload" href="/ds/fonts/NDADisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/ds/tokens.css?v=2">
+  <link rel="stylesheet" href="/ds/bundle.css?v=2">
+  <link rel="stylesheet" href="/ds/site.css?v=2">
+  <script src="/ds/bundle.js?v=2"></script>
+  <link rel="stylesheet" href="/ds/pages.css?v=2">
+  <link rel="stylesheet" href="/ds/staff.css?v=1">
+  <meta name="robots" content="noindex">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>(function () { if (window.emailjs) emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();</script>
   <script src="/js/site.js?v=11" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=6" />
-  <link rel="stylesheet" href="/css/screening-banner.css?v=3">
-<link rel="stylesheet" href="/css/staff.css">
   <script src="https://netadao.org/radio/radio.js" defer></script>
 </head>
 <body>
-
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo" aria-label="Neta DAO Academy home">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;display:block;">
-          <rect width="40" height="40" fill="#080808"/>
-          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
-        </svg>
-      </a>
-      <ul class="nav-links" id="site-menu"><li><a href="/">Home</a></li></ul>
+<div class="nda-page">
+<a class="nda-skip" href="#main-content">Skip to content</a>
+<header class="nda-header" data-nda-menu>
+  <div class="nda-header__inner">
+    <a class="nda-wordmark" href="/">Neta DAO Academy</a>
+    <div class="nda-header__primary">
+      <nav class="nda-header__nav" id="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="/seminars.html">Seminars</a></li>
+          <li><a href="/cinema.html">Cinema</a></li>
+          <li><a href="https://fork.netadao.org">Journal</a></li>
+        </ul>
+      </nav>
     </div>
-  </nav>
-
-  <div class="admin-wrap">
-    <h1 class="admin-title">Registration Admin</h1>
-
-<div id="adminSignedOut"><p>Sign in with the Academy administrator account.</p><a class="btn btn-primary" href="/account.html?returnTo=%2Fadmin.html">Sign in →</a></div>
-    <div id="adminNotAuthorized" class="hidden">
-      <p style="font-family:var(--font-mono);font-size:13px;color:#a04848;margin-bottom:14px;">Signed in as <span id="unauthorizedEmail"></span>, but this account isn't authorized to view registrations.</p>
-      <a href="#" id="adminSignOutLink" style="font-family:var(--font-mono);font-size:12px;color:var(--blue);text-decoration:underline;">Sign out and try a different email</a>
+    <div class="nda-header__tools" id="site-tools">
+      <span id="navAccountItem"><a class="nda-button nda-button--outline nda-button--sm" id="navAccountLink" href="/account.html?returnTo=%2Fprofile.html">Sign in</a></span>
     </div>
-
+    <button class="nda-header__menu" type="button" aria-expanded="false" aria-controls="site-nav site-tools"><span class="nda-header__menu-label">Menu</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
+  </div>
+</header>
+<main id="main-content">
+  <section class="nda-row pg-ac-head" aria-labelledby="admin-title">
+    <p class="pg-ac-kicker">Neta DAO Academy · staff</p>
+    <h1 class="pg-ac-title" id="admin-title">Admin</h1>
+    <p class="pg-ac-lede">Registrations, attendance and evaluations for every seminar; inquiries; account assistance.</p>
+  </section>
+  <section class="nda-row admin-row">
+    <div id="adminSignedOut" class="pg-form"><p class="pg-form__sub">Sign in with the Academy administrator account.</p><p class="pg-actions"><a class="nda-button nda-button--primary" href="/account.html?returnTo=%2Fadmin.html">Sign in <span aria-hidden="true">→</span></a></p></div>
+    <div id="adminNotAuthorized" class="pg-form hidden">
+      <p class="pg-form__sub">Signed in as <span class="pg-mono" id="unauthorizedEmail"></span>, but this account isn’t authorized to view registrations.</p>
+      <p class="pg-actions"><a href="#" id="adminSignOutLink" class="nda-text-link">Sign out and try a different email</a></p>
+    </div>
     <div id="adminApproved" class="hidden">
-      <section id="accountAssistance" class="staff-utility" hidden aria-labelledby="supportHeading">
-        <h2 id="supportHeading">Account Assistance</h2>
-        <form id="accountLookup"><label>Email address<input id="supportEmail" type="email" autocomplete="off" required maxlength="120"></label><button>Look up account</button></form>
+      <div class="admin-cols">
+        <div class="admin-main">
+          <nav class="staff-modes" aria-label="Admin sections"><ul class="pg-tabs">
+            <li><button type="button" data-admin-view="seminars" aria-pressed="true">Seminars</button></li>
+            <li><button type="button" data-admin-view="inquiries" aria-pressed="false">Inquiries</button></li>
+          </ul></nav>
+          <div id="adminSeminars" class="staff-utility">
+            <div class="seminar-tabs" id="seminarTabs"></div>
+            <div id="seminarPanels"></div>
+          </div>
+          <div id="adminInquiries" class="staff-utility" hidden>
+            <h3>Guest lecture proposals</h3>
+            <p class="admin-note" id="proposalsStatusLine"></p>
+            <table class="reg-table" id="proposalsTable">
+              <thead><tr><th>Name</th><th>Email</th><th>Proposal</th><th>Submitted</th></tr></thead>
+              <tbody id="proposalsTableBody"></tbody>
+            </table>
+            <h3>General interest signups</h3>
+            <p class="admin-note" id="signupsStatusLine"></p>
+            <p class="admin-actions"><button id="signupsRefreshBtn" type="button">Refresh both lists</button></p>
+            <table class="reg-table" id="signupsTable">
+              <thead><tr><th>Name</th><th>Email</th><th>Submitted</th></tr></thead>
+              <tbody id="signupsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <aside class="admin-side" aria-label="Account assistance">
+<section id="accountAssistance" class="staff-utility" hidden aria-labelledby="supportHeading">
+        <h2 id="supportHeading">Account assistance</h2>
+        <form id="accountLookup"><label>Email address<input class="nda-field__input" id="supportEmail" type="email" autocomplete="off" required maxlength="120"></label><button type="submit">Look up account</button></form>
         <p id="supportStatus" class="staff-note" role="status"></p><div id="accountSupportResult"></div>
         <h2>Teaching assignments</h2><p id="assignmentAccount" class="staff-note">Look up an existing Auth account before granting teaching access.</p>
-        <form id="instructorAssignment"><label>Seminar<select id="assignSeminar"></select></label><label>Role<select id="assignRole"><option value="instructor">Instructor</option><option value="ta">Teaching Assistant</option></select></label><button id="assignInstructor" disabled>Grant teaching access</button></form>
+        <form id="instructorAssignment"><label>Seminar<select id="assignSeminar"></select></label><label>Role<select id="assignRole"><option value="instructor">Instructor</option><option value="ta">Teaching Assistant</option></select></label><button id="assignInstructor" type="submit" disabled>Grant teaching access</button></form>
         <p id="assignmentStatus" class="staff-note" role="status"></p><div id="instructorList"></div>
       </section>
-
-      <nav class="staff-modes" aria-label="Admin sections"><button data-admin-view="seminars" aria-pressed="true">Seminars</button><button data-admin-view="inquiries" aria-pressed="false">Inquiries</button></nav><div id="adminSeminars">
-      <div class="seminar-tabs" id="seminarTabs"></div>
-      <div id="seminarPanels"></div>
-
-      </div><div id="adminInquiries" hidden>
-      <h2 class="admin-title" style="font-size:22px;margin-top:56px;margin-bottom:8px;">Guest Lecture Proposals</h2>
-      <p class="admin-note" id="proposalsStatusLine" style="margin-bottom:16px;"></p>
-      <table class="reg-table" id="proposalsTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Proposal</th>
-            <th>Submitted</th>
-          </tr>
-        </thead>
-        <tbody id="proposalsTableBody"></tbody>
-      </table>
-
-      <h2 class="admin-title" style="font-size:22px;margin-top:40px;margin-bottom:8px;">General Interest Signups</h2>
-      <p class="admin-note" id="signupsStatusLine" style="margin-bottom:16px;"></p>
-      <button id="signupsRefreshBtn" style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;padding:8px 14px;background:transparent;border:1px solid var(--rule-thin);cursor:pointer;">Refresh Both Lists</button>
-
-      <table class="reg-table" id="signupsTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Submitted</th>
-          </tr>
-        </thead>
-        <tbody id="signupsTableBody"></tbody>
-      </table></div>
+        </aside>
+      </div>
     </div>
+  </section>
+</main>
+<footer class="nda-footer">
+  <div class="nda-footer__inner">
+    <a class="nda-wordmark nda-wordmark--footer" href="/">Neta DAO Academy</a>
+    <nav class="nda-footer__nav" aria-label="Footer">
+      <ul>
+        <li><a href="https://x.com/NetaDAO_Academy">X</a></li>
+        <li><a href="https://discord.com/invite/gvjC86WXC2">Discord</a></li>
+        <li><a class="nda-footer__parent" href="https://netadao.org" aria-label="Neta DAO">
+          <img class="nda-footer__mark nda-footer__mark--paper" src="/ds/media/neta-mark-paper.png" alt="" width="251" height="192">
+          <img class="nda-footer__mark nda-footer__mark--night" src="/ds/media/neta-mark-night.png" alt="" width="251" height="192">
+        </a></li>
+      </ul>
+    </nav>
+    <p class="nda-footer__copy">© Neta DAO Academy · All rights reserved</p>
   </div>
+</footer>
+</div>
+<script type="module" src="/js/admin-support.js"></script>
+<script type="module">
+  import {
+    auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
+    getAllRegistrations, approveRegistration, revokeRegistration, setAttendance,
+    getAllInterestSignups, getAllEvaluations, setInstructorEvaluation, ADMIN_EMAIL, SEMINAR_TITLES, ATTENDANCE_EVENTS, attendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES
+  } from '/js/academy-auth.js?v=27';
 
-  <script type="module" src="/js/admin-support.js"></script>
-  <script type="module">
-    import {
-      auth, onAuthStateChanged, signOut, completeSignInIfNeeded,
-      getAllRegistrations, approveRegistration, revokeRegistration, setAttendance,
-      getAllInterestSignups, getAllEvaluations, setInstructorEvaluation, ADMIN_EMAIL, SEMINAR_TITLES, ATTENDANCE_EVENTS, attendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES
-    } from '/js/academy-auth.js?v=27';
+  import { evaluationParticipationControl } from '/js/evaluation-correction.js';
+  import { renderSessionAttendance } from '/js/session-attendance.js';
+  import { staffCall, staffError } from '/js/staff-api.js';
 
-    import { evaluationParticipationControl } from '/js/evaluation-correction.js';
-    import { renderSessionAttendance } from '/js/session-attendance.js';
-    import { staffCall, staffError } from '/js/staff-api.js';
+  document.querySelectorAll('[data-admin-view]').forEach(button=>button.onclick=()=>{ const view=button.dataset.adminView; document.getElementById('adminSeminars').hidden=view!=='seminars'; document.getElementById('adminInquiries').hidden=view!=='inquiries'; document.querySelectorAll('[data-admin-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button))); });
+  const adminSignedOut     = document.getElementById('adminSignedOut');
+  const adminNotAuthorized = document.getElementById('adminNotAuthorized');
+  const adminApproved      = document.getElementById('adminApproved');
 
-    document.querySelectorAll('[data-admin-view]').forEach(button=>button.onclick=()=>{ const view=button.dataset.adminView; document.getElementById('adminSeminars').hidden=view!=='seminars'; document.getElementById('adminInquiries').hidden=view!=='inquiries'; document.querySelectorAll('[data-admin-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button))); });
-    const adminSignedOut     = document.getElementById('adminSignedOut');
-    const adminNotAuthorized = document.getElementById('adminNotAuthorized');
-    const adminApproved      = document.getElementById('adminApproved');
+  function showAdminState(el) {
+    [adminSignedOut, adminNotAuthorized, adminApproved].forEach(s => s.classList.add('hidden'));
+    el.classList.remove('hidden');
+  }
 
-    function showAdminState(el) {
-      [adminSignedOut, adminNotAuthorized, adminApproved].forEach(s => s.classList.add('hidden'));
-      el.classList.remove('hidden');
-    }
+  function isApproved(val) {
+    return val === true || val === 'true';
+  }
 
-    function isApproved(val) {
-      return val === true || val === 'true';
-    }
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
 
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
+  const SEMINAR_IDS = Object.keys(SEMINAR_TITLES);
+  let activeSeminar = SEMINAR_IDS[0];
+  let allEvaluations = {};
+  let allRegistrationsFlat = []; // [{ emailKey, seminarId, reg }]
 
-    const SEMINAR_IDS = Object.keys(SEMINAR_TITLES);
-    let activeSeminar = SEMINAR_IDS[0];
-    let allEvaluations = {};
-    let allRegistrationsFlat = []; // [{ emailKey, seminarId, reg }]
+  // ── Build tabs + panel shells once ──
+  function buildTabsAndPanels() {
+    const tabsEl = document.getElementById('seminarTabs');
+    const panelsEl = document.getElementById('seminarPanels');
+    tabsEl.innerHTML = '';
+    panelsEl.innerHTML = '';
 
-    // ── Build tabs + panel shells once ──
-    function buildTabsAndPanels() {
-      const tabsEl = document.getElementById('seminarTabs');
-      const panelsEl = document.getElementById('seminarPanels');
-      tabsEl.innerHTML = '';
-      panelsEl.innerHTML = '';
+    SEMINAR_IDS.forEach((seminarId, i) => {
+      const tab = document.createElement('button');
+      tab.className = 'seminar-tab' + (i === 0 ? ' active' : '');
+      tab.textContent = SEMINAR_TITLES[seminarId];
+      tab.addEventListener('click', () => switchSeminar(seminarId));
+      tabsEl.appendChild(tab);
 
-      SEMINAR_IDS.forEach((seminarId, i) => {
-        const tab = document.createElement('button');
-        tab.className = 'seminar-tab' + (i === 0 ? ' active' : '');
-        tab.textContent = SEMINAR_TITLES[seminarId];
-        tab.addEventListener('click', () => switchSeminar(seminarId));
-        tabsEl.appendChild(tab);
+      const panel = document.createElement('div');
+      panel.className = 'seminar-panel' + (i === 0 ? ' active' : '');
+      panel.id = `panel-${seminarId}`;
+      panel.innerHTML = `
+        <h2>Registrations</h2>
+        <p class="admin-note" id="statusLine-${seminarId}"></p>
+        <table class="reg-table" id="regTable-${seminarId}">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>X Handle</th>
+              <th>Reason for Joining</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="regTableBody-${seminarId}"></tbody>
+        </table>
 
-        const panel = document.createElement('div');
-        panel.className = 'seminar-panel' + (i === 0 ? ' active' : '');
-        panel.id = `panel-${seminarId}`;
-        panel.innerHTML = `
-          <h2>Registrations</h2>
-          <p class="admin-note" id="statusLine-${seminarId}"></p>
-          <table class="reg-table" id="regTable-${seminarId}">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>X Handle</th>
-                <th>Reason for Joining</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="regTableBody-${seminarId}"></tbody>
-          </table>
-
-          <h2>Attendance</h2>
-          <div class="attendance-wrap" id="attendanceWrap-${seminarId}"></div>
-          <h2>Optional evaluation</h2><div id="evaluationWrap-${seminarId}"></div>
-        `;
-        panelsEl.appendChild(panel);
-      });
-    }
-
-    function switchSeminar(seminarId) {
-      activeSeminar = seminarId;
-      document.querySelectorAll('.seminar-tab').forEach((t, i) => {
-        t.classList.toggle('active', SEMINAR_IDS[i] === seminarId);
-      });
-      document.querySelectorAll('.seminar-panel').forEach(p => {
-        p.classList.toggle('active', p.id === `panel-${seminarId}`);
-      });
-    }
-
-    async function loadRegistrations() {
-      const all = await getAllRegistrations();
-      try { allEvaluations = await getAllEvaluations(); } catch (error) { console.error("Could not load evaluations", error); allEvaluations = {}; }
-
-      if (!all) {
-        SEMINAR_IDS.forEach(id => {
-          document.getElementById(`statusLine-${id}`).textContent = 'Could not load registrations — check console for errors.';
-        });
-        return;
-      }
-
-      allRegistrationsFlat = [];
-      for (const [emailKey, seminars] of Object.entries(all)) {
-        if (!seminars || typeof seminars !== 'object') continue;
-        for (const [seminarId, reg] of Object.entries(seminars)) {
-          allRegistrationsFlat.push({ emailKey, seminarId, reg });
-        }
-      }
-
-      SEMINAR_IDS.forEach(renderSeminarSection);
-    }
-
-    function renderSeminarSection(seminarId) {
-      const rows = allRegistrationsFlat.filter(r => r.seminarId === seminarId);
-      rows.sort((a, b) => (b.reg.requestedAt || 0) - (a.reg.requestedAt || 0));
-
-      const enrolledCount = rows.filter(r => isApproved(r.reg.enrolled)).length;
-      document.getElementById(`statusLine-${seminarId}`).textContent =
-        `${rows.length} total registration(s) — ${enrolledCount} enrolled.`;
-
-      // ── Registration table ──
-      const tbody = document.getElementById(`regTableBody-${seminarId}`);
-      tbody.innerHTML = '';
-      for (const { emailKey, reg } of rows) {
-        const approved = isApproved(reg.enrolled);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${escapeHtml(reg.name || '')}</td>
-          <td>${escapeHtml(reg.email || '')}</td>
-          <td>${escapeHtml(reg.xHandle || '')}</td>
-          <td>${escapeHtml(reg.reason || '—')}</td>
-          <td><span class="status-pill ${approved ? 'approved' : 'pending'}">${approved ? 'Enrolled' : reg.enrolled === false ? 'Unenrolled' : 'Pending'}</span></td>
-          <td></td>
-        `;
-        const actionCell = tr.lastElementChild;
-        if (approved) {
-          const btn = document.createElement('button');
-          btn.className = 'revoke-btn';
-          btn.textContent = 'Unenroll';
-          btn.addEventListener('click', async () => {
-            if (!confirm(`Unenroll ${reg.name || reg.email}? They will lose readings and screening access immediately.`)) return;
-            btn.disabled = true;
-            btn.textContent = 'Unenrolling…';
-            try { await revokeRegistration(emailKey, seminarId); await loadRegistrations(); }
-            catch (error) { alert(staffError(error)); btn.disabled = false; btn.textContent = 'Unenroll'; }
-          });
-          actionCell.appendChild(btn);
-        } else {
-          const btn = document.createElement('button');
-          btn.className = 'approve-btn';
-          btn.textContent = 'Enroll';
-          btn.addEventListener('click', async () => {
-            btn.disabled = true;
-            btn.textContent = 'Enrolling…';
-            try { await approveRegistration(emailKey, seminarId, reg.email, reg.name, SEMINAR_TITLES[seminarId] || seminarId); await loadRegistrations(); }
-            catch (error) { alert(staffError(error)); btn.disabled = false; btn.textContent = 'Enroll'; }
-          });
-          actionCell.appendChild(btn);
-        }
-        const deletion = document.createElement('button');
-        deletion.className = 'revoke-btn'; deletion.textContent = 'Delete registration';
-        deletion.addEventListener('click', async () => {
-          if (!confirm(`Permanently delete ${reg.name || reg.email}’s registration (${reg.email || emailKey}) for ${SEMINAR_TITLES[seminarId] || seminarId}? This removes this seminar’s attendance and evaluation. This cannot be undone. Their account, other registrations, and interests are preserved.`)) return;
-          deletion.disabled = true;
-          try { await staffCall('adminDeleteRegistration', { emailKey, seminarId, confirm: `${emailKey}/${seminarId}` }); await loadRegistrations(); }
-          catch (error) { alert(staffError(error)); deletion.disabled = false; }
-        });
-        actionCell.appendChild(deletion);
-        tbody.appendChild(tr);
-      }
-
-      const enrolledRows = rows;
-      renderSessionAttendance(document.getElementById(`attendanceWrap-${seminarId}`), seminarId, rows.map(({emailKey,reg})=>({emailKey,registration:reg})), {admin:true});
-      renderEvaluations(seminarId, enrolledRows);
-    }
-
-    function renderEvaluations(seminarId, rows) {
-      const wrap = document.getElementById(`evaluationWrap-${seminarId}`);
-      wrap.replaceChildren();
-      if (seminarId !== 'sex-monsters-superheroes') {
-        wrap.textContent = 'Evaluation is not configured for this seminar.';
-        return;
-      }
-      for (const { emailKey, reg } of rows) {
-        const evaluation = allEvaluations[emailKey]?.[seminarId] || {};
-        const correction=document.createElement('section'); correction.className='staff-row'; const name=document.createElement('strong');name.textContent=reg.name || reg.email;correction.append(name);evaluationParticipationControl(correction,seminarId,emailKey,evaluation,loadRegistrations);wrap.append(correction);
-        if (!evaluation.request && !evaluation.instructor) continue;
-        const form = document.createElement('form');
-        form.style.cssText = 'border-top:1px solid var(--rule-thin); padding:14px 0; display:flex; flex-wrap:wrap; gap:10px; align-items:end;';
-        form.innerHTML = `<strong>${escapeHtml(reg.name || reg.email)}</strong><span>${escapeHtml(reg.email)}</span><span>Requested: ${escapeHtml(EVALUATION_FORMS[evaluation.request?.form] || '—')}</span>
-          <label>State <select name="state"><option value="agreed">Agreed</option><option value="in-progress">In progress</option><option value="completed">Completed</option></select></label>
-          <label>Agreed form <select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join('')}</select></label>
-          <label>Outcome <select name="outcome"><option value="">Pending</option>${Object.entries(EVALUATION_OUTCOMES).map(([key,label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join('')}</select></label>
-          <label>Instructor feedback <textarea name="feedback" rows="3" style="width:min(430px,80vw)"></textarea></label><button type="submit">Save evaluation</button><span role="status"></span>`;
-        form.elements.state.value = evaluation.instructor?.state || 'agreed';
-        form.elements.namedItem('form').value = evaluation.instructor?.form || evaluation.request?.form || 'other';
-        form.elements.outcome.value = evaluation.instructor?.outcome || '';
-        form.elements.feedback.value = evaluation.instructor?.feedback || '';
-        form.addEventListener('submit', async event => {
-          event.preventDefault(); const status = form.querySelector('[role="status"]');
-          const state = form.elements.namedItem('state'); const workForm = form.elements.namedItem('form');
-          const outcome = form.elements.namedItem('outcome'); const feedback = form.elements.namedItem('feedback');
-          if (state.value === 'completed' && !outcome.value) { status.textContent = 'Choose an outcome for completed work.'; return; }
-          const record = { state: state.value, form: workForm.value, feedback: feedback.value };
-          if (state.value === 'completed') record.outcome = outcome.value;
-          try { await setInstructorEvaluation(emailKey, seminarId, record); status.textContent = 'Saved.'; }
-          catch { status.textContent = 'Could not save evaluation.'; }
-        });
-        wrap.append(form);
-      }
-      if (!wrap.children.length) wrap.textContent = 'No evaluation requests yet.';
-    }
-
-    async function loadInterestSignups() {
-      const all = await getAllInterestSignups();
-      const signupsTbody = document.getElementById('signupsTableBody');
-      const proposalsTbody = document.getElementById('proposalsTableBody');
-      signupsTbody.innerHTML = '';
-      proposalsTbody.innerHTML = '';
-
-      if (!all) {
-        document.getElementById('signupsStatusLine').textContent = 'Could not load signups — check console for errors.';
-        document.getElementById('proposalsStatusLine').textContent = 'Could not load proposals — check console for errors.';
-        return;
-      }
-
-      const entries = Object.entries(all).sort((a, b) => (b[1].submittedAt || 0) - (a[1].submittedAt || 0));
-      const proposals = entries.filter(([, s]) => s.proposingLecture);
-      const signups = entries.filter(([, s]) => !s.proposingLecture);
-
-      document.getElementById('proposalsStatusLine').textContent = `${proposals.length} guest lecture proposal(s).`;
-      document.getElementById('signupsStatusLine').textContent = `${signups.length} general signup(s).`;
-
-      for (const [, signup] of proposals) {
-        const tr = document.createElement('tr');
-        const submittedDate = signup.submittedAt ? new Date(signup.submittedAt).toLocaleString() : '';
-        tr.innerHTML = `
-          <td>${escapeHtml(signup.name || '')}</td>
-          <td>${escapeHtml(signup.email || '')}</td>
-          <td>${escapeHtml(signup.proposal || '(no details given)')}</td>
-          <td>${escapeHtml(submittedDate)}</td>
-        `;
-        proposalsTbody.appendChild(tr);
-      }
-
-      for (const [, signup] of signups) {
-        const tr = document.createElement('tr');
-        const submittedDate = signup.submittedAt ? new Date(signup.submittedAt).toLocaleString() : '';
-        tr.innerHTML = `
-          <td>${escapeHtml(signup.name || '')}</td>
-          <td>${escapeHtml(signup.email || '')}</td>
-          <td>${escapeHtml(submittedDate)}</td>
-        `;
-        signupsTbody.appendChild(tr);
-      }
-    }
-
-    (async () => {
-      await completeSignInIfNeeded();
-      onAuthStateChanged(auth, async (user) => {
-        if (!user) { showAdminState(adminSignedOut); return; }
-        if (!user.email) {
-          console.log('Auth state fired without an email yet — waiting for the next update.');
-          return;
-        }
-        if (user.email !== ADMIN_EMAIL || !user.emailVerified) {
-          document.getElementById('unauthorizedEmail').textContent = user.email || '(unknown)';
-          showAdminState(adminNotAuthorized);
-          return;
-        }
-        showAdminState(adminApproved);
-        buildTabsAndPanels();
-        loadRegistrations();
-        loadInterestSignups();
-      });
-    })();
-
-    document.getElementById('adminSignOutLink').addEventListener('click', (e) => {
-      e.preventDefault();
-      signOut(auth);
+        <h2>Attendance</h2>
+        <div class="attendance-wrap" id="attendanceWrap-${seminarId}"></div>
+        <h2>Optional evaluation</h2><div id="evaluationWrap-${seminarId}"></div>
+      `;
+      panelsEl.appendChild(panel);
     });
+  }
 
-    document.getElementById('signupsRefreshBtn').addEventListener('click', loadInterestSignups);
+  function switchSeminar(seminarId) {
+    activeSeminar = seminarId;
+    document.querySelectorAll('.seminar-tab').forEach((t, i) => {
+      t.classList.toggle('active', SEMINAR_IDS[i] === seminarId);
+    });
+    document.querySelectorAll('.seminar-panel').forEach(p => {
+      p.classList.toggle('active', p.id === `panel-${seminarId}`);
+    });
+  }
+
+  async function loadRegistrations() {
+    const all = await getAllRegistrations();
+    try { allEvaluations = await getAllEvaluations(); } catch (error) { console.error("Could not load evaluations", error); allEvaluations = {}; }
+
+    if (!all) {
+      SEMINAR_IDS.forEach(id => {
+        document.getElementById(`statusLine-${id}`).textContent = 'Could not load registrations — check console for errors.';
+      });
+      return;
+    }
+
+    allRegistrationsFlat = [];
+    for (const [emailKey, seminars] of Object.entries(all)) {
+      if (!seminars || typeof seminars !== 'object') continue;
+      for (const [seminarId, reg] of Object.entries(seminars)) {
+        allRegistrationsFlat.push({ emailKey, seminarId, reg });
+      }
+    }
+
+    SEMINAR_IDS.forEach(renderSeminarSection);
+  }
+
+  function renderSeminarSection(seminarId) {
+    const rows = allRegistrationsFlat.filter(r => r.seminarId === seminarId);
+    rows.sort((a, b) => (b.reg.requestedAt || 0) - (a.reg.requestedAt || 0));
+
+    const enrolledCount = rows.filter(r => isApproved(r.reg.enrolled)).length;
+    document.getElementById(`statusLine-${seminarId}`).textContent =
+      `${rows.length} total registration(s) — ${enrolledCount} enrolled.`;
+
+    // ── Registration table ──
+    const tbody = document.getElementById(`regTableBody-${seminarId}`);
+    tbody.innerHTML = '';
+    for (const { emailKey, reg } of rows) {
+      const approved = isApproved(reg.enrolled);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(reg.name || '')}</td>
+        <td>${escapeHtml(reg.email || '')}</td>
+        <td>${escapeHtml(reg.xHandle || '')}</td>
+        <td>${escapeHtml(reg.reason || '—')}</td>
+        <td><span class="status-pill ${approved ? 'approved' : reg.enrolled === false ? 'unenrolled' : 'pending'}">${approved ? 'Enrolled' : reg.enrolled === false ? 'Unenrolled' : 'Pending'}</span></td>
+        <td></td>
+      `;
+      const actionCell = tr.lastElementChild;
+      if (approved) {
+        const btn = document.createElement('button');
+        btn.className = 'revoke-btn';
+        btn.textContent = 'Unenroll';
+        btn.addEventListener('click', async () => {
+          if (!confirm(`Unenroll ${reg.name || reg.email}? They will lose readings and screening access immediately.`)) return;
+          btn.disabled = true;
+          btn.textContent = 'Unenrolling…';
+          try { await revokeRegistration(emailKey, seminarId); await loadRegistrations(); }
+          catch (error) { alert(staffError(error)); btn.disabled = false; btn.textContent = 'Unenroll'; }
+        });
+        actionCell.appendChild(btn);
+      } else {
+        const btn = document.createElement('button');
+        btn.className = 'approve-btn';
+        btn.textContent = 'Enroll';
+        btn.addEventListener('click', async () => {
+          btn.disabled = true;
+          btn.textContent = 'Enrolling…';
+          try { await approveRegistration(emailKey, seminarId, reg.email, reg.name, SEMINAR_TITLES[seminarId] || seminarId); await loadRegistrations(); }
+          catch (error) { alert(staffError(error)); btn.disabled = false; btn.textContent = 'Enroll'; }
+        });
+        actionCell.appendChild(btn);
+      }
+      const deletion = document.createElement('button');
+      deletion.className = 'revoke-btn'; deletion.textContent = 'Delete registration';
+      deletion.addEventListener('click', async () => {
+        if (!confirm(`Permanently delete ${reg.name || reg.email}’s registration (${reg.email || emailKey}) for ${SEMINAR_TITLES[seminarId] || seminarId}? This removes this seminar’s attendance and evaluation. This cannot be undone. Their account, other registrations, and interests are preserved.`)) return;
+        deletion.disabled = true;
+        try { await staffCall('adminDeleteRegistration', { emailKey, seminarId, confirm: `${emailKey}/${seminarId}` }); await loadRegistrations(); }
+        catch (error) { alert(staffError(error)); deletion.disabled = false; }
+      });
+      actionCell.appendChild(deletion);
+      tbody.appendChild(tr);
+    }
+
+    const enrolledRows = rows;
+    renderSessionAttendance(document.getElementById(`attendanceWrap-${seminarId}`), seminarId, rows.map(({emailKey,reg})=>({emailKey,registration:reg})), {admin:true});
+    renderEvaluations(seminarId, enrolledRows);
+  }
+
+  function renderEvaluations(seminarId, rows) {
+    const wrap = document.getElementById(`evaluationWrap-${seminarId}`);
+    wrap.replaceChildren();
+    if (seminarId !== 'sex-monsters-superheroes') {
+      wrap.textContent = 'Evaluation is not configured for this seminar.';
+      return;
+    }
+    for (const { emailKey, reg } of rows) {
+      const evaluation = allEvaluations[emailKey]?.[seminarId] || {};
+      const correction=document.createElement('section'); correction.className='staff-row'; const name=document.createElement('strong');name.textContent=reg.name || reg.email;correction.append(name);evaluationParticipationControl(correction,seminarId,emailKey,evaluation,loadRegistrations);wrap.append(correction);
+      if (!evaluation.request && !evaluation.instructor) continue;
+      const form = document.createElement('form');
+      form.style.cssText = 'border-top:1px solid var(--rule-thin); padding:14px 0; display:flex; flex-wrap:wrap; gap:10px; align-items:end;';
+      form.innerHTML = `<strong>${escapeHtml(reg.name || reg.email)}</strong><span>${escapeHtml(reg.email)}</span><span>Requested: ${escapeHtml(EVALUATION_FORMS[evaluation.request?.form] || '—')}</span>
+        <label>State <select name="state"><option value="agreed">Agreed</option><option value="in-progress">In progress</option><option value="completed">Completed</option></select></label>
+        <label>Agreed form <select name="form">${Object.entries(EVALUATION_FORMS).map(([key,label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join('')}</select></label>
+        <label>Outcome <select name="outcome"><option value="">Pending</option>${Object.entries(EVALUATION_OUTCOMES).map(([key,label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join('')}</select></label>
+        <label>Instructor feedback <textarea name="feedback" rows="3" style="width:min(430px,80vw)"></textarea></label><button type="submit">Save evaluation</button><span role="status"></span>`;
+      form.elements.state.value = evaluation.instructor?.state || 'agreed';
+      form.elements.namedItem('form').value = evaluation.instructor?.form || evaluation.request?.form || 'other';
+      form.elements.outcome.value = evaluation.instructor?.outcome || '';
+      form.elements.feedback.value = evaluation.instructor?.feedback || '';
+      form.addEventListener('submit', async event => {
+        event.preventDefault(); const status = form.querySelector('[role="status"]');
+        const state = form.elements.namedItem('state'); const workForm = form.elements.namedItem('form');
+        const outcome = form.elements.namedItem('outcome'); const feedback = form.elements.namedItem('feedback');
+        if (state.value === 'completed' && !outcome.value) { status.textContent = 'Choose an outcome for completed work.'; return; }
+        const record = { state: state.value, form: workForm.value, feedback: feedback.value };
+        if (state.value === 'completed') record.outcome = outcome.value;
+        try { await setInstructorEvaluation(emailKey, seminarId, record); status.textContent = 'Saved.'; }
+        catch { status.textContent = 'Could not save evaluation.'; }
+      });
+      wrap.append(form);
+    }
+    if (!wrap.children.length) wrap.textContent = 'No evaluation requests yet.';
+  }
+
+  async function loadInterestSignups() {
+    const all = await getAllInterestSignups();
+    const signupsTbody = document.getElementById('signupsTableBody');
+    const proposalsTbody = document.getElementById('proposalsTableBody');
+    signupsTbody.innerHTML = '';
+    proposalsTbody.innerHTML = '';
+
+    if (!all) {
+      document.getElementById('signupsStatusLine').textContent = 'Could not load signups — check console for errors.';
+      document.getElementById('proposalsStatusLine').textContent = 'Could not load proposals — check console for errors.';
+      return;
+    }
+
+    const entries = Object.entries(all).sort((a, b) => (b[1].submittedAt || 0) - (a[1].submittedAt || 0));
+    const proposals = entries.filter(([, s]) => s.proposingLecture);
+    const signups = entries.filter(([, s]) => !s.proposingLecture);
+
+    document.getElementById('proposalsStatusLine').textContent = `${proposals.length} guest lecture proposal(s).`;
+    document.getElementById('signupsStatusLine').textContent = `${signups.length} general signup(s).`;
+
+    for (const [, signup] of proposals) {
+      const tr = document.createElement('tr');
+      const submittedDate = signup.submittedAt ? new Date(signup.submittedAt).toLocaleString() : '';
+      tr.innerHTML = `
+        <td>${escapeHtml(signup.name || '')}</td>
+        <td>${escapeHtml(signup.email || '')}</td>
+        <td>${escapeHtml(signup.proposal || '(no details given)')}</td>
+        <td>${escapeHtml(submittedDate)}</td>
+      `;
+      proposalsTbody.appendChild(tr);
+    }
+
+    for (const [, signup] of signups) {
+      const tr = document.createElement('tr');
+      const submittedDate = signup.submittedAt ? new Date(signup.submittedAt).toLocaleString() : '';
+      tr.innerHTML = `
+        <td>${escapeHtml(signup.name || '')}</td>
+        <td>${escapeHtml(signup.email || '')}</td>
+        <td>${escapeHtml(submittedDate)}</td>
+      `;
+      signupsTbody.appendChild(tr);
+    }
+  }
+
+  (async () => {
+    await completeSignInIfNeeded();
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { showAdminState(adminSignedOut); return; }
+      if (!user.email) {
+        console.log('Auth state fired without an email yet — waiting for the next update.');
+        return;
+      }
+      if (user.email !== ADMIN_EMAIL || !user.emailVerified) {
+        document.getElementById('unauthorizedEmail').textContent = user.email || '(unknown)';
+        showAdminState(adminNotAuthorized);
+        return;
+      }
+      showAdminState(adminApproved);
+      buildTabsAndPanels();
+      loadRegistrations();
+      loadInterestSignups();
+    });
+  })();
+
+  document.getElementById('adminSignOutLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    signOut(auth);
+  });
+
+  document.getElementById('signupsRefreshBtn').addEventListener('click', loadInterestSignups);
   </script>
+<script type="module">
+  import { initNavAccountWidget } from '/js/academy-auth.js?v=27';
+  initNavAccountWidget();
+</script>
+<script>window.NDA && NDA.enhance();</script>
 </body>
 </html>

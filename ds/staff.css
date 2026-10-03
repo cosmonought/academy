@@ -1,0 +1,138 @@
+/* Neta DAO Academy: the staff tools (the profile's Teaching tab and admin.html) in the design system's type and colour.
+   Their markup is written by js/profile-teaching.js, js/session-attendance.js, js/evaluation-correction.js,
+   js/admin-support.js and admin.html's own script; this sheet styles it, after the ProfileTeacher and AdminPage drafts.
+   Values come from the system's tokens. */
+
+.staff-utility { min-width: 0; }
+.staff-utility[hidden], .staff-modes[hidden], .staff-utility [hidden] { display: none !important; }
+.staff-title, .staff-utility h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0;
+  font: 700 clamp(32px, 3.4vw, 48px)/.9 var(--font-display); text-transform: uppercase; letter-spacing: -.01em; color: var(--ink); }
+.staff-utility h2 + h2, .staff-utility * + h2 { margin-top: var(--space-8, 40px); }
+.staff-utility h3 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: var(--space-7, 32px) 0 0; padding-bottom: 8px;
+  border-bottom: var(--stroke-hairline, 1px) solid var(--rule); font: 700 13px/1.4 var(--font-body); letter-spacing: .04em; text-transform: uppercase; color: var(--ink); }
+.staff-note { margin: var(--space-2, 8px) 0 0; font: 400 14px/1.6 var(--font-body); color: var(--ink-mid); overflow-wrap: anywhere; }
+.staff-note:empty { display: none; }
+.staff-badge, .staff-utility .staff-badge { display: inline-flex; align-items: center; margin: 0; padding: 0; border: 0;
+  font: 500 11px/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mid); }
+.staff-selector { max-width: 360px; margin: 0 0 var(--space-5, 20px); }
+
+/* buttons: the system's outline button, small; Enroll and saving are the one primary each */
+.staff-utility button:not(.nda-button), .staff-modes button, .attendance-event > button, .staff-row button, .staff-participant button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--control-sm, 32px); padding: 0 var(--space-4, 16px);
+  border: var(--stroke-outline, 1.5px) solid var(--ink); border-radius: var(--radius-sm, 4px); background: transparent; color: var(--ink);
+  font: 500 12px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; cursor: pointer;
+  transition: background-color var(--dur-fast, 150ms) ease; }
+.staff-utility button:not(.nda-button):hover, .staff-modes button:hover { background: var(--paper-hover); }
+.staff-utility button:disabled, .staff-row button:disabled { opacity: .45; cursor: wait; }
+.staff-utility button[type="submit"]:not(.nda-button), .staff-row > button:last-of-type:not(.nda-button), .staff-utility form > button:not(.nda-button), .staff-utility button.approve-btn:not(.nda-button) { background: var(--ink); color: var(--on-ink); }
+.staff-utility button[type="submit"]:not(.nda-button):hover, .staff-row > button:last-of-type:not(.nda-button):hover, .staff-utility form > button:not(.nda-button):hover, .staff-utility button.approve-btn:not(.nda-button):hover { background: var(--ink-mid); border-color: var(--ink-mid); }
+.staff-utility :focus-visible, .staff-modes :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* fields */
+.staff-utility label { display: grid; gap: 6px; font: 500 14px/1.5 var(--font-body); color: var(--ink); }
+.staff-utility input:not([type=checkbox]), .staff-utility select, .staff-utility textarea {
+  box-sizing: border-box; min-height: var(--control, 44px); max-width: 100%; min-width: 0; padding: 9px 12px;
+  border: var(--stroke-hairline, 1px) solid var(--rule-strong); border-radius: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.4 var(--font-body); }
+.staff-utility textarea { width: 100%; min-height: 0; }
+.staff-utility input:hover, .staff-utility select:hover, .staff-utility textarea:hover { border-color: var(--ink); }
+.staff-utility form, .staff-actions { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; margin: var(--space-4, 16px) 0 0; }
+.staff-utility form [role="status"] { flex-basis: 100%; font: 400 13px/1.5 var(--font-body); color: var(--ink-mid); }
+.staff-utility form [role="status"]:empty { display: none; }
+
+/* rows: requests, evaluations; participants fold open */
+.staff-row { padding: 14px 0 16px; border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); overflow-wrap: anywhere; }
+.staff-row > strong { display: block; font: 500 17px/1.35 var(--font-body); color: var(--ink); }
+.staff-row p { margin: 4px 0 0; font: 400 13px/1.5 var(--font-mono); letter-spacing: .02em; color: var(--ink-mid); }
+.staff-row > button { margin-top: 12px; }
+.staff-row .staff-row { border-bottom: 0; padding-bottom: 0; }
+.staff-participant { border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+.staff-participant summary { display: grid; grid-template-columns: minmax(0, 1fr) 14px; gap: 12px; padding: 11px 0; cursor: pointer; list-style: none; font: 400 16px/1.4 var(--font-body); }
+.staff-participant summary::-webkit-details-marker { display: none; }
+.staff-participant summary::after { content: "+"; font: 400 14px/1.4 var(--font-mono); color: var(--ink-dim); text-align: right; }
+.staff-participant[open] summary::after { content: "\2013"; }
+.staff-participant > div { padding: 0 0 14px; }
+.staff-participant p { margin: 0 0 8px; font: 400 14px/1.55 var(--font-body); color: var(--ink-mid); }
+.staff-participant p:first-child { font: 400 13px/1.5 var(--font-mono); }
+.staff-participant button { background: transparent; color: var(--ink); }
+
+/* attendance: the current session open, each event with Mark all attended and a three-way switch per person */
+.session-attendance > section > h4 { margin: var(--space-6, 24px) 0 0; font: 400 11px/1.45 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); }
+.attendance-session { border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); padding: var(--space-4, 16px) 0; }
+.attendance-session > h5, .attendance-session > summary { margin: 0 0 var(--space-2, 8px); font: 700 22px/1.05 var(--font-display); text-transform: uppercase; letter-spacing: -.005em; color: var(--ink); cursor: pointer; }
+details.attendance-session > summary { list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+details.attendance-session > summary::-webkit-details-marker { display: none; }
+details.attendance-session > summary::after { content: "+"; font: 400 14px/1.6 var(--font-mono); color: var(--ink-dim); }
+details.attendance-session[open] > summary::after { content: "\2013"; }
+.attendance-event { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; margin: var(--space-4, 16px) 0 0; padding: 0 0 var(--space-2, 8px); }
+.attendance-event > h6 { grid-column: 1; margin: 0; font: 400 15px/1.4 var(--font-body); color: var(--ink); }
+.attendance-event > .staff-note:first-of-type { grid-column: 1; margin: 0; font: 400 11px/1.45 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+.attendance-event > button { grid-column: 2; grid-row: 1 / span 2; justify-self: end; }
+.attendance-event > [role="status"] { grid-column: 1 / -1; }
+.attendance-person { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+.attendance-person strong { font: 400 15px/1.4 var(--font-body); color: var(--ink); overflow-wrap: anywhere; }
+.attendance-marks { display: inline-flex; flex: none; border: var(--stroke-hairline, 1px) solid var(--rule-strong); }
+.attendance-marks button { width: 34px; height: 30px; min-height: 0; padding: 0; border: 0; border-radius: 0; background: var(--paper); color: var(--ink-mid); font: 500 13px/1 var(--font-mono); cursor: pointer; }
+.attendance-marks button + button { border-left: var(--stroke-hairline, 1px) solid var(--rule-strong); }
+.attendance-marks button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+.attendance-marks button:disabled { opacity: .55; }
+.staff-table-scroll { max-width: 100%; overflow-x: auto; }
+.staff-table-scroll table { width: 100%; border-collapse: collapse; }
+.staff-table-scroll th, .staff-table-scroll td { padding: 9px 10px 9px 0; border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); text-align: left; font: 400 13px/1.45 var(--font-mono); }
+.staff-table-scroll th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+
+/* the profile's Teaching tab: the panel sits in the page's rows */
+#profileTeachingPanel > #teachingRefresh { margin-top: var(--space-4, 16px); }
+#teachingBody { margin-top: var(--space-4, 16px); }
+@media (max-width: 599px) {
+  .staff-utility form { align-items: stretch; }
+  .staff-utility form > label { flex: 1 1 100%; }
+  .attendance-event { grid-template-columns: 1fr; }
+  .attendance-event > button { grid-column: 1; grid-row: auto; justify-self: start; }
+  .attendance-person { flex-wrap: wrap; }
+}
+
+/* ---------- admin.html ---------- */
+.admin-cols { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); }
+.admin-main { min-width: 0; padding-right: var(--space-7, 32px); }
+.admin-side { min-width: 0; padding-left: var(--space-7, 32px); border-left: var(--stroke-hairline, 1px) solid var(--rule-strong); }
+.admin-side .staff-utility h2 { font-size: 28px; }
+.admin-side .staff-utility h2 + * { margin-top: var(--space-3, 12px); }
+@media (max-width: 1099px) { .admin-cols { grid-template-columns: minmax(0, 1fr); } .admin-main { padding-right: 0; }
+  .admin-side { padding: var(--space-7, 32px) 0 0; margin-top: var(--space-7, 32px); border-left: 0; border-top: var(--stroke-hairline, 1px) solid var(--rule-strong); } }
+.staff-modes { margin: 0 0 var(--space-6, 24px); }
+.staff-modes .pg-tabs button { min-height: 0; padding: 12px 0 11px; border: 0; border-bottom: 3px solid transparent; border-radius: 0; margin-bottom: -1px; background: none;
+  font: 400 12px/1.4 var(--font-mono); letter-spacing: .08em; color: var(--ink-dim); }
+.staff-modes .pg-tabs button:hover { background: none; color: var(--ink); }
+.staff-modes .pg-tabs button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+/* one tab per seminar, as on the profile's Teaching tab */
+.seminar-tabs { display: flex; flex-wrap: wrap; gap: 0 var(--space-6, 24px); margin: 0 0 var(--space-6, 24px); border-bottom: var(--stroke-hairline, 1px) solid var(--rule); }
+.staff-utility .seminar-tabs .seminar-tab { min-height: 0; padding: 10px 0 9px; border: 0; border-bottom: 3px solid transparent; border-radius: 0; margin-bottom: -1px; background: none;
+  font: 500 15px/1.3 var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink-mid); }
+.staff-utility .seminar-tabs .seminar-tab:hover { background: none; color: var(--ink); }
+.staff-utility .seminar-tabs .seminar-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+.seminar-panel { display: none; }
+.seminar-panel.active { display: block; }
+.staff-utility .seminar-panel h2, .staff-utility #adminInquiries h3 { display: flex; margin: var(--space-8, 40px) 0 0; padding-bottom: 8px; border-bottom: var(--stroke-hairline, 1px) solid var(--rule);
+  font: 700 15px/1.2 var(--font-body); letter-spacing: .01em; text-transform: uppercase; }
+.staff-utility .seminar-panel h2:first-child, .staff-utility #adminInquiries h3:first-child { margin-top: 0; }
+.admin-note { margin: var(--space-3, 12px) 0 0; font: 400 11px/1.45 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+.admin-actions { margin: var(--space-3, 12px) 0 0; }
+/* registrations: data in mono on hairlines; one action per row, Delete as the quiet one */
+table.reg-table { display: block; max-width: 100%; overflow-x: auto; margin-top: var(--space-3, 12px); border-collapse: collapse; }
+table.reg-table th, table.reg-table td { padding: 10px 14px 10px 0; border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); text-align: left; vertical-align: top; }
+table.reg-table th { font: 400 11px/1.45 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); white-space: nowrap; }
+table.reg-table td { font: 400 13px/1.5 var(--font-mono); letter-spacing: .01em; color: var(--ink); }
+table.reg-table td:first-child { font: 500 15px/1.4 var(--font-body); }
+table.reg-table td:nth-child(4) { min-width: 220px; font: 400 14px/1.5 var(--font-body); color: var(--ink-mid); }
+table.reg-table td:last-child { display: flex; flex-wrap: wrap; gap: 8px; }
+.status-pill { display: inline-flex; align-items: center; gap: 8px; font: 500 11px/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: var(--ink-mid); }
+.status-pill::before { content: ""; width: 7px; height: 7px; box-sizing: border-box; border: 1px solid currentColor; }
+.status-pill.pending { color: var(--pink); }
+.status-pill.pending::before { background: var(--pink-mark); border-color: var(--pink-mark); }
+.status-pill.approved { color: var(--ink); }
+.status-pill.approved::before { background: currentColor; }
+.staff-utility .revoke-btn { background: transparent; color: var(--ink); }
+.staff-utility .revoke-btn + .revoke-btn, .staff-utility .approve-btn + .revoke-btn { border-color: transparent; text-decoration: underline; text-underline-offset: 4px; padding-inline: 4px; }
+.attendance-wrap { margin-top: var(--space-3, 12px); }
+.attendance-empty { font: 400 13px/1.5 var(--font-body); color: var(--ink-mid); }
+.hidden { display: none !important; }

@@ -70,7 +70,7 @@ function render(rows,id) {
   const attendance=document.createElement('section');attendance.innerHTML='<h3>Attendance</h3><div id="teachingAttendance" class="staff-table-scroll"></div>';root.append(attendance);
   renderSessionAttendance(el('teachingAttendance'),id,rows,{onAccessChanged:refreshAssignments});
   const enrolled=rows.filter(row=>row.registration.enrolled===true);
-  const participants=document.createElement('section');participants.innerHTML='<h3>Participants</h3><div id="teachingParticipants"></div>';const participantRoot=el('teachingParticipants');root.append(participants);
+  const participants=document.createElement('section');participants.innerHTML='<h3>Participants</h3><div id="teachingParticipants"></div>';root.append(participants);const participantRoot=el('teachingParticipants');
   if(!enrolled.length)participantRoot.textContent='No enrolled participants.';
   for(const {emailKey,registration:reg} of enrolled){
     const row=document.createElement('details');row.className='staff-participant';const summary=document.createElement('summary');summary.textContent=reg.name||reg.email||'Participant';row.append(summary);
@@ -78,7 +78,7 @@ function render(rows,id) {
     participantRoot.append(row);
   }
   if(!isInstructor)return;
-  const evaluationRoot=document.createElement('section');evaluationRoot.innerHTML='<h3>Evaluation</h3><div id="teachingEvaluation"></div>';const evaluationList=el('teachingEvaluation');root.append(evaluationRoot);
+  const evaluationRoot=document.createElement('section');evaluationRoot.innerHTML='<h3>Evaluation</h3><div id="teachingEvaluation"></div>';root.append(evaluationRoot);const evaluationList=el('teachingEvaluation');
   if(!EVALUATION_OFFERED[id]){evaluationList.textContent='Evaluation is not offered for this seminar.';return;}
   for(const {emailKey,registration:reg,evaluation} of enrolled){
     const section=document.createElement('section');section.className='staff-row';

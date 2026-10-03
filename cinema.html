@@ -1,797 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cinema — Neta DAO Academy</title>
-  <meta name="description" content="Live film screening — Neta DAO Academy." />
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neta DAO Cinema — Neta DAO Academy</title>
+  <meta name="description" content="Live film screening — Neta DAO Academy.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
-  <style>
-    /* ── Cinema page: Academy page → screening chamber ── */
-    .cinema-wrap {
-      max-width: 1300px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    body { background:#151214; }
-    .cinema-hero {
-      padding: 46px 0 34px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      margin-top:54px;
-      background:#151214;
-      color:#f2f0eb;
-    }
-
-    .cinema-title {
-      font-family: var(--font-display);
-      font-size: clamp(32px, 5vw, 56px);
-      font-weight: 900;
-      text-transform: uppercase;
-      line-height: 0.95;
-      margin-bottom: 12px;
-    }
-
-    .cinema-sub {
-      max-width: 62ch;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color:#aaa6ac;
-      letter-spacing: 0.04em;
-      line-height: 1.6;
-    }
-
-    /* Logged-out visitors enter the same dark spatial language as the room,
-       without turning authentication itself into a theatrical effect. */
-    .cinema-entry {
-      background: #151214;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      padding: clamp(30px, 4vw, 52px) 24px;
-    }
-
-    .cinema-entry-inner {
-      width: min(100%, 760px);
-      margin: 0 auto;
-    }
-
-    #cinemaAccessGate {
-      max-width: none;
-      margin: 0;
-      padding: clamp(28px, 4vw, 42px);
-      background:
-        linear-gradient(135deg, rgba(101, 30, 49, 0.16), transparent 44%),
-        #1a1719;
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.22);
-    }
-
-    #cinemaAccessGate h3 {
-      margin: 0 0 10px;
-      font-family: var(--font-display);
-      font-size: 24px;
-      font-weight: 900;
-      text-transform: uppercase;
-      color: #f2f0eb;
-    }
-
-    #cinemaAccessGate p {
-      max-width: 58ch;
-      margin: 0 0 20px;
-      color: #aaa6ac;
-      line-height: 1.65;
-    }
-
-    #cinemaAccessGate p[role="status"] {
-      font-family: var(--font-mono);
-      font-size: 12px;
-    }
-
-    #cinemaAccessGate p:last-of-type { margin-bottom: 0; }
-
-    #cinemaAccessGate .btn {
-      min-height: 42px;
-    }
-
-    #cinemaAccessGate .btn-primary {
-      background: #eeeae3;
-      color: #111;
-      border-color: #eeeae3;
-    }
-
-    #cinemaAccessGate .btn-primary:hover {
-      background: #fff;
-      border-color: #fff;
-    }
-
-    #cinemaAccessGate .btn-outline {
-      margin-top: 14px;
-      border-color: rgba(255,255,255,0.22);
-      color: #e7e3df;
-    }
-
-    #cinemaAccessGate .btn-outline:hover {
-      border-color: rgba(255,255,255,0.44);
-      background: rgba(255,255,255,0.04);
-    }
-
-    /* ── Screening chamber ── */
-    .screening-chamber {
-      --chamber-bg: #151214;
-      --chamber-line: rgba(255,255,255,0.09);
-      --chamber-line-soft: rgba(255,255,255,0.055);
-      background: var(--chamber-bg);
-      border-bottom: 1px solid rgba(0,0,0,0.45);
-      padding: clamp(28px, 3.5vw, 44px) 0 clamp(26px, 3.2vw, 40px);
-      transition: background-color 500ms ease;
-    }
-
-    .screening-chamber.is-live {
-      --chamber-bg: #0d0c0d;
-      --chamber-line: rgba(255,255,255,0.075);
-      --chamber-line-soft: rgba(255,255,255,0.045);
-    }
-
-    .screening-chamber-inner {
-      max-width: 1300px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    .live-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(320px, 360px);
-      gap: 0;
-      align-items: stretch;
-      border: 1px solid var(--chamber-line);
-      background: #080708;
-    }
-
-    .player-section,
-    .chat-section {
-      min-width: 0;
-      min-height: 0;
-    }
-
-    .player-section {
-      background: #050505;
-    }
-
-    .player-frame {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      background: #030303;
-      isolation: isolate;
-    }
-
-    .player-frame video {
-      position: relative;
-      z-index: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      background: #030303;
-      object-fit: contain;
-    }
-
-    /* Curtain is decoration only; status remains real text above it. */
-    .cinema-curtain {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .curtain-half {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 50.5%;
-      will-change: transform;
-      transition: transform 1.55s cubic-bezier(0.64, 0, 0.26, 1);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.025), transparent 24%, rgba(0,0,0,0.16) 82%, rgba(0,0,0,0.34)),
-        repeating-linear-gradient(
-          90deg,
-          #2d0912 0%,
-          #4b1020 10%,
-          #67172c 18%,
-          #3d0d1a 28%,
-          #711b31 39%,
-          #42101d 49%,
-          #5c1428 62%,
-          #2a0811 74%,
-          #571225 86%,
-          #350b17 100%
-        );
-      background-blend-mode: normal;
-    }
-
-    .curtain-half::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 50% -12%, rgba(255,255,255,0.10), transparent 45%),
-        linear-gradient(90deg, rgba(0,0,0,0.24), transparent 16%, transparent 84%, rgba(0,0,0,0.28));
-      opacity: 0.62;
-    }
-
-    .curtain-left {
-      left: 0;
-      box-shadow: inset -14px 0 22px rgba(0,0,0,0.32);
-      transform-origin: left center;
-    }
-
-    .curtain-right {
-      right: 0;
-      box-shadow: inset 14px 0 22px rgba(0,0,0,0.32);
-      transform-origin: right center;
-    }
-
-    .player-frame.curtains-open .curtain-left { transform: translateX(-104%); }
-    .player-frame.curtains-open .curtain-right { transform: translateX(104%); }
-
-    .player-state {
-      position: absolute;
-      inset: 0;
-      z-index: 3;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      padding: 24px;
-      color: #ece8e3;
-      text-align: center;
-      background: linear-gradient(180deg, rgba(3,3,3,0.10), rgba(3,3,3,0.36));
-      text-shadow: 0 1px 12px rgba(0,0,0,0.75);
-    }
-
-    .player-state.hidden { display: none; }
-
-    .state-badge {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border: 1px solid rgba(255,255,255,0.22);
-      color: #b9b3bc;
-      background: rgba(5,5,5,0.22);
-    }
-
-    .state-badge.live {
-      border-color: var(--pink);
-      color: var(--pink);
-    }
-
-    .state-title {
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .state-note {
-      max-width: 420px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      line-height: 1.6;
-      color: #b0abb0;
-    }
-
-    .retry-btn {
-      margin-top: 4px;
-      padding: 10px 20px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #ece8e3;
-      background: rgba(5,5,5,0.28);
-      border: 1px solid rgba(255,255,255,0.28);
-      cursor: pointer;
-      transition: background 150ms ease, border-color 150ms ease;
-    }
-
-    .retry-btn:hover {
-      background: rgba(5,5,5,0.52);
-      border-color: rgba(255,255,255,0.55);
-    }
-
-    .retry-btn:focus-visible,
-    .sound-toggle:focus-visible,
-    .fullscreen-toggle:focus-visible,
-    .chat-send-btn:focus-visible,
-    .disable-chat-btn:focus-visible,
-    .end-screening-btn:focus-visible {
-      outline: 2px solid #f2f0eb;
-      outline-offset: 2px;
-    }
-
-    /* ── Live chat: same room, separated by one quiet aisle line ── */
-    .chat-section {
-      display: flex;
-      flex-direction: column;
-      background: #111011;
-      border-left: 1px solid var(--chamber-line);
-      transition: background-color 500ms ease, border-color 500ms ease;
-    }
-
-    .screening-chamber.is-live .chat-section {
-      background: #0f0e0f;
-    }
-
-    .chat-box {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      min-height: 0;
-      background: transparent;
-      border: 0;
-    }
-
-    .chat-messages {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 0;
-      overflow-y: auto;
-      padding: 16px 20px;
-    }
-
-    .chat-empty {
-      margin-top: 100px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: #66616a;
-      text-align: center;
-    }
-
-    .chat-msg {
-      font-size: 13px;
-      line-height: 1.5;
-      color: #d8d4d0;
-      word-break: break-word;
-    }
-
-    .chat-msg .chat-name {
-      margin-right: 6px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--pink);
-    }
-
-    .chat-msg .chat-time {
-      margin-left: 6px;
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: #67626a;
-    }
-
-    .chat-name-row,
-    .chat-input-row {
-      display: flex;
-      gap: 0;
-      border-top: 1px solid var(--chamber-line-soft);
-    }
-
-    .chat-name-row { flex-wrap: wrap; padding: 12px 14px; gap: 8px; align-items: center; }
-    .chat-name-row .field-label, .chat-name-help { flex: 0 0 100%; margin: 0; }
-    .chat-name-help { font-size: 12px; color: #aaa; }
-    .chat-name-row .chat-input { min-width: 180px; }
-    #chatNameStatus { flex-basis: 100%; font-size: 12px; }
-    .chat-input {
-      flex: 1;
-      min-width: 0;
-      padding: 14px 20px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: #f2f0eb;
-      background: transparent;
-      border: 0;
-      outline: none;
-    }
-
-    .chat-input:focus {
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
-    }
-
-    .chat-input::placeholder { color: #66616a; }
-
-    .chat-send-btn {
-      padding: 0 20px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #e8e6e0;
-      background: transparent;
-      border: 0;
-      border-left: 1px solid var(--chamber-line-soft);
-      cursor: pointer;
-      transition: background 150ms ease;
-    }
-
-    .chat-send-btn:hover { background: rgba(255,255,255,0.045); }
-    .chat-send-btn:disabled { color: #5d5960; cursor: default; }
-
-    .hidden { display: none; }
-
-    /* ── Chat flash overlay — visible in fullscreen too ── */
-    .chat-overlay {
-      position: absolute;
-      left: 14px;
-      bottom: 64px;
-      z-index: 6;
-      display: flex;
-      flex-direction: column-reverse;
-      gap: 6px;
-      width: min(340px, 60%);
-      pointer-events: none;
-    }
-
-    .chat-toast {
-      padding: 7px 12px;
-      font-size: 12px;
-      line-height: 1.4;
-      color: #f0eee8;
-      word-break: break-word;
-      background: rgba(8,8,8,0.76);
-      border-left: 2px solid var(--pink);
-      backdrop-filter: blur(3px);
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 300ms ease, transform 300ms ease;
-    }
-
-    .chat-toast.show { opacity: 1; transform: translateY(0); }
-    .chat-toast.leaving { opacity: 0; }
-
-    .chat-toast .chat-name {
-      margin-right: 6px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--pink);
-    }
-
-    /* ── Minimal live controls ── */
-    .player-controls {
-      position: absolute;
-      right: 14px;
-      bottom: 14px;
-      z-index: 7;
-      display: flex;
-      gap: 8px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 350ms ease;
-    }
-
-    .player-controls.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .sound-toggle,
-    .fullscreen-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      padding: 0;
-      border-radius: 50%;
-      font-size: 16px;
-      color: #e8e6e0;
-      background: rgba(8,8,8,0.72);
-      border: 1px solid rgba(255,255,255,0.18);
-      cursor: pointer;
-      transition: background 150ms ease, border-color 150ms ease;
-    }
-
-    .sound-toggle:hover,
-    .fullscreen-toggle:hover {
-      background: rgba(18,18,18,0.90);
-      border-color: rgba(255,255,255,0.34);
-    }
-
-    /* ── Host-only utilities ── */
-    .disable-chat-btn,
-    .end-screening-btn {
-      display: none;
-      width: 100%;
-      padding: 10px 20px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      background: transparent;
-      border: 0;
-      border-top: 1px solid var(--chamber-line-soft);
-      cursor: pointer;
-      transition: background 150ms ease, color 150ms ease;
-    }
-
-    .disable-chat-btn {
-      color: #9aa0b8;
-    }
-
-    .disable-chat-btn.visible,
-    .end-screening-btn.visible { display: block; }
-
-    .disable-chat-btn:hover {
-      background: rgba(154,160,184,0.08);
-      color: #c8ccdc;
-    }
-
-    .disable-chat-btn.active { color: #d4a017; }
-
-    .disable-chat-btn.active:hover {
-      background: rgba(212,160,23,0.10);
-      color: #e8b830;
-    }
-
-    .end-screening-btn {
-      color: #b45e64;
-    }
-
-    .end-screening-btn:hover {
-      background: rgba(180,94,100,0.10);
-      color: #ee969b;
-    }
-
-    .chat-disabled-banner {
-      display: none;
-      padding: 10px 20px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: #d4a017;
-      text-align: center;
-      background: rgba(212,160,23,0.06);
-      border-top: 1px solid rgba(212,160,23,0.24);
-    }
-
-    .chat-disabled-banner.visible { display: block; }
-
-    /* ── Screening metadata ── */
-    .player-meta {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      align-items: center;
-      gap: 14px 24px;
-      margin-top: 14px;
-    }
-
-    .player-meta p {
-      margin: 0;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      line-height: 1.55;
-      color: #928d94;
-    }
-
-    .screening-chamber.is-live .player-meta p {
-      color: #7f7a81;
-    }
-
-    .live-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      margin-right: 6px;
-      border-radius: 50%;
-      background: var(--pink);
-      animation: pulse-dot 1.4s ease-in-out infinite;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* ── Nav account widget ── */
-    #navAccountItem { position: relative; }
-    #navAccountItem a { white-space: nowrap; }
-    #navAccountItem.signed-in a { color: #2a8a4a; }
-    #navAccountItem .nav-signout {
-      margin-left: 8px;
-      font: inherit;
-      color: var(--ink-dim);
-      text-decoration: underline;
-      background: none;
-      border: 0;
-      cursor: pointer;
-    }
-
-    @media (min-width: 901px) and (max-width: 1100px) {
-      .live-layout {
-        grid-template-columns: minmax(0, 1fr) minmax(300px, 34vw);
-      }
-    }
-
-    @media (max-width: 900px) {
-      .screening-chamber {
-        padding-top: 24px;
-      }
-
-      .live-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .chat-section {
-        border-left: 0;
-        border-top: 1px solid var(--chamber-line);
-      }
-
-      .chat-box { flex: none; }
-      .chat-messages { flex: none; height: 280px; }
-    }
-
-    @media (max-width: 600px) {
-      .cinema-wrap,
-      .screening-chamber-inner {
-        padding-inline: 16px;
-      }
-
-      .cinema-hero {
-        padding: 34px 0 28px;
-      }
-
-      .cinema-entry {
-        padding: 20px 16px 26px;
-      }
-
-      #cinemaAccessGate {
-        padding: 24px 20px;
-      }
-
-      .screening-chamber {
-        padding: 18px 0 26px;
-      }
-
-      .live-layout {
-        border-left: 0;
-        border-right: 0;
-      }
-
-      .player-state {
-        gap: 10px;
-        padding: 16px;
-      }
-
-      .state-title {
-        font-size: 18px;
-      }
-
-      .state-note {
-        font-size: 10px;
-      }
-
-      .player-controls {
-        right: 10px;
-        bottom: 10px;
-      }
-
-      .sound-toggle,
-      .fullscreen-toggle {
-        width: 38px;
-        height: 38px;
-      }
-
-      .chat-messages {
-        height: 250px;
-        padding-inline: 16px;
-      }
-
-      .chat-input {
-        padding: 13px 14px;
-      }
-
-      .chat-send-btn {
-        padding-inline: 14px;
-      }
-
-      .player-meta {
-        grid-template-columns: 1fr;
-        gap: 7px;
-        margin-top: 12px;
-      }
-
-      .chat-overlay {
-        left: 10px;
-        bottom: 58px;
-        width: min(320px, calc(100% - 76px));
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .curtain-half,
-      .screening-chamber,
-      .chat-section,
-      .player-controls,
-      .chat-toast,
-      .retry-btn,
-      .sound-toggle,
-      .fullscreen-toggle,
-      .chat-send-btn,
-      .disable-chat-btn,
-      .end-screening-btn {
-        transition: none !important;
-      }
-
-      .live-dot { animation: none !important; }
-    }
-  </style>
+  <link rel="preload" href="/ds/fonts/NDADisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/ds/tokens.css?v=2">
+  <link rel="stylesheet" href="/ds/bundle.css?v=2">
+  <link rel="stylesheet" href="/ds/site.css?v=2">
+  <script src="/ds/bundle.js?v=2"></script>
+  <link rel="stylesheet" href="/ds/pages.css?v=2">
+  <link rel="stylesheet" href="/ds/cinema.css?v=1">
   <script src="/js/site.js?v=11" defer></script>
-  <link rel="stylesheet" href="/css/editorial.css?v=6" />
-  <link rel="stylesheet" href="/css/screening-banner.css?v=3">
   <script src="https://netadao.org/radio/radio.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
-
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo" aria-label="Neta DAO Academy home">
-        <svg class="nav-logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="40" height="40" fill="#080808"/>
-          <defs>
-            <linearGradient id="ag" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#C9338A"/>
-              <stop offset="35%" stop-color="#C9338A"/>
-              <stop offset="100%" stop-color="#5B8EF0"/>
-            </linearGradient>
-            <clipPath id="a-clip-cinema">
-              <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34">A</text>
-            </clipPath>
-          </defs>
-          <text x="20" y="31" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="#f2f0eb">A</text>
-          <g clip-path="url(#a-clip-cinema)">
-            <rect x="0" y="21.7" width="40" height="4.3" fill="url(#ag)"/>
-          </g>
-        </svg>
-      </a>
-      <ul class="nav-links" id="site-menu">
-        <li><a href="/">Home</a></li>
-        <li class="nav-dropdown-item">
-          <a href="/seminars.html">Seminars</a>
-          <ul class="nav-dropdown-menu">
-            <li><a href="/sex-and-or-love.html">Current: Sex, and/or Love</a></li>
-            <li><a href="/CoiningReason/">Flagship: Coining Reason</a></li>
-            <li><a href="/SexMonstersSuperheroes/">Forthcoming: Sex, Monsters, and Superheroes</a></li>
-          </ul>
-        </li>
-        <li id="navAccountItem"><a href="/account.html" id="navAccountLink">Sign In</a></li>
-      </ul>
-      <button class="nav-hamburger" type="button" aria-label="Open menu" aria-controls="site-menu" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="nda-page">
+<a class="nda-skip" href="#main-content">Skip to content</a>
+<header class="nda-header" data-nda-menu data-nda-autohide>
+  <div class="nda-header__inner">
+    <a class="nda-wordmark" href="/">Neta DAO Academy</a>
+    <div class="nda-header__primary">
+      <nav class="nda-header__nav" id="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="/seminars.html">Seminars</a></li>
+          <li><a href="/cinema.html" aria-current="page">Cinema</a></li>
+          <li><a href="https://fork.netadao.org">Journal</a></li>
+        </ul>
+      </nav>
     </div>
-  </nav>
-<main id="main-content">
-<div class="cinema-wrap">
-    <div class="cinema-hero">
-      <h1 class="cinema-title">Neta DAO <span class="grad-text">Cinema</span></h1>
-      <p class="cinema-sub">Live film screening, streamed to the Academy community.</p>
+    <div class="nda-header__tools" id="site-tools">
+      <span id="navAccountItem"><a class="nda-button nda-button--outline nda-button--sm" id="navAccountLink" href="/account.html?returnTo=%2Fprofile.html">Sign in</a></span>
     </div>
-
+    <button class="nda-header__menu" type="button" aria-expanded="false" aria-controls="site-nav site-tools"><span class="nda-header__menu-label">Menu</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
   </div>
-  <section class="cinema-entry" id="cinemaEntry" aria-label="Screening access">
-    <div class="cinema-entry-inner">
-      <div id="cinemaAccessGate" class="access-panel"><h3>Screening access</h3><p role="status" aria-live="polite">Sign in to access materials, or create an account to request enrollment.</p><p><a data-account-link class="btn btn-primary" href="/account.html?seminar=sex-and-or-love">Sign in / create an account →</a></p><button type="button" class="btn btn-outline" data-check-enrollment hidden>Check enrollment status</button></div>
+</header>
+<main id="main-content">
+  <section class="nda-row pg-cin-head" aria-labelledby="cin-title">
+    <div class="nda-columns pg-cin-head__cols">
+      <div class="pg-fitbox"><h1 id="cin-title"><span class="pg-fit" data-nda-fit>Neta DAO Cinema</span></h1></div>
+      <div class="pg-cin-now">
+        <p class="nda-index"><span class="nda-index__num">Screenings</span><span class="nda-index__label">10 p.m. Eastern</span></p>
+        <p class="pg-cin-film">Live film screenings, streamed to the Academy community.</p>
+        <p class="pg-meta">For enrolled participants · the chat opens when the screening goes live</p>
+      </div>
     </div>
   </section>
-  <section id="gatedCinemaContent" class="hidden screening-chamber" aria-label="Live screening room">
+  <section class="nda-row cinema-entry" id="cinemaEntry" aria-label="Screening access">
+    <div id="cinemaAccessGate" class="pg-form cinema-gate">
+      <h2 class="pg-form__title">Screening access</h2>
+      <p class="pg-form__sub" role="status" aria-live="polite">Sign in to access materials, or create an account to request enrollment.</p>
+      <p class="pg-actions"><a data-account-link class="nda-button nda-button--primary" href="/account.html?seminar=sex-and-or-love">Sign in or create an account <span aria-hidden="true">→</span></a><button type="button" class="nda-button nda-button--outline" data-check-enrollment hidden>Check enrollment status</button></p>
+    </div>
+  </section>
+  <section id="gatedCinemaContent" class="nda-row screening-chamber hidden" aria-label="Live screening room">
     <div class="screening-chamber-inner">
       <div class="live-layout">
     <div class="player-section">
@@ -826,6 +94,7 @@
 
     <!-- ── Live chat ── -->
     <div class="chat-section">
+      <div class="pg-head-row chat-head"><h2 class="nda-section-heading">Chat</h2></div>
 
       <div class="chat-box" id="chatBox">
         <div class="chat-messages" id="chatMessages">
@@ -837,7 +106,7 @@
           <button id="chatNameSubmit" class="chat-send-btn">Save display name</button><span id="chatNameStatus" role="status" aria-live="polite"></span>
         </div>
 
-        <div id="chatIdentity" class="hidden" style="padding:8px 14px;font-size:12px;"><span>Chatting as <strong id="chatIdentityName"></strong></span> · <a href="/profile.html#accountHeading">Change</a></div>
+        <div id="chatIdentity" class="chat-identity hidden"><span>Chatting as <strong id="chatIdentityName"></strong></span> · <a href="/profile.html#accountHeading">Change</a></div>
         <div class="chat-input-row hidden" id="chatInputRow">
           <label class="field-label" for="chatMessageInput">Message</label><input type="text" id="chatMessageInput" class="chat-input" placeholder="Chat opens once the screening is live" maxlength="500" disabled />
           <button id="chatSendBtn" class="chat-send-btn" disabled>Send</button>
@@ -853,28 +122,29 @@
 
     <div class="player-meta">
       <p id="liveIndicator" role="status" aria-live="polite" style="display:none;"><span class="live-dot" aria-hidden="true"></span>Live now</p>
-      <p>This is a live feed — no pause or rewind. Having trouble? Try refreshing, or watch in <a href="#" id="vlcLink" style="color:var(--blue);">VLC</a> using the MediaMTX RTMP/RTSP address.</p>
+      <p>Live feed · no pause or rewind. Having trouble? Try refreshing, or watch in <a href="#" id="vlcLink">VLC</a> using the MediaMTX RTMP/RTSP address.</p>
     </div>
 
     </div>
   </section>
-
-  </main>
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand-cell"><p class="footer-brand">Neta DAO Academy</p><p class="footer-tagline">An educational subDAO of Neta DAO · academy.netadao.org</p></div>
-      <div class="footer-links-cell">
-        <ul class="footer-links">
-          <li><a href="https://netadao.org">Neta DAO ↗</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">© Neta DAO Academy · Free and open educational programs for the Interchain</p>
-      <p class="footer-copy">academy.netadao.org</p>
-    </div>
-  </footer>
-
+</main>
+<footer class="nda-footer">
+  <div class="nda-footer__inner">
+    <a class="nda-wordmark nda-wordmark--footer" href="/">Neta DAO Academy</a>
+    <nav class="nda-footer__nav" aria-label="Footer">
+      <ul>
+        <li><a href="https://x.com/NetaDAO_Academy">X</a></li>
+        <li><a href="https://discord.com/invite/gvjC86WXC2">Discord</a></li>
+        <li><a class="nda-footer__parent" href="https://netadao.org" aria-label="Neta DAO">
+          <img class="nda-footer__mark nda-footer__mark--paper" src="/ds/media/neta-mark-paper.png" alt="" width="251" height="192">
+          <img class="nda-footer__mark nda-footer__mark--night" src="/ds/media/neta-mark-night.png" alt="" width="251" height="192">
+        </a></li>
+      </ul>
+    </nav>
+    <p class="nda-footer__copy">© Neta DAO Academy · All rights reserved</p>
+  </div>
+</footer>
+</div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
   <script>
     /* ════════════════════════════════════════════════════════
@@ -1126,9 +396,6 @@
 
     connect();
 
-    // Mobile nav
-    const hamburger = document.querySelector('.nav-hamburger');
-    const navLinks  = document.querySelector('.nav-links');
   </script>
 
   <!-- ── Live chat (Firebase Realtime Database) ── -->
@@ -1421,4 +688,6 @@
     });
     onAuthStateChanged(auth, () => { enrolled = false; moderator = false; renderCinemaAccess(); });
   </script>
-</body></html>
+<script>window.NDA && NDA.enhance();</script>
+</body>
+</html>

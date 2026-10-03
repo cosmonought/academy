@@ -41,6 +41,10 @@ html { scroll-padding-top: calc(var(--header-height, 64px) + var(--space-5, 20px
   .home-programs { --nda-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-7, 32px); }
   .home-programs > :nth-child(3) { border-left: 0; }
 }
+/* on phones the panels have no side padding: The Graphic's comic frame steps out a little, clear of its letters */
+@media (max-width: 759px) {
+  .home-programs > .nda-comic::before { left: calc(-1 * var(--space-3, 12px)); right: calc(-1 * var(--space-3, 12px)); }
+}
 /* the updates signup (Participate links here: /#updates) */
 .home-updates__cols { --nda-columns: minmax(0, 5fr) minmax(0, 7fr); }
 .home-updates__copy { padding-right: var(--space-8, 40px); }

@@ -415,6 +415,26 @@
     }
   };
 
+  /* ---- A nav item's own menu (Seminars) ----
+     The toggle opens and closes it; Escape closes it and returns to the toggle; so does a click or focus elsewhere.
+     On pointer devices it also opens on hover (CSS). */
+  NDA.submenu = function (group) {
+    if (group.__ndaSubmenu) return;
+    group.__ndaSubmenu = true;
+    var toggle = group.querySelector('.nda-header__sub-toggle');
+    if (!toggle) return;
+    function setOpen(open) {
+      if (open) group.setAttribute('data-open', ''); else group.removeAttribute('data-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    }
+    toggle.addEventListener('click', function () { setOpen(!group.hasAttribute('data-open')); });
+    group.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && group.hasAttribute('data-open')) { setOpen(false); toggle.focus(); e.stopPropagation(); }
+    });
+    group.addEventListener('focusout', function (e) { if (!group.contains(e.relatedTarget)) setOpen(false); });
+    document.addEventListener('click', function (e) { if (!group.contains(e.target)) setOpen(false); });
+  };
+
   /* ---- Intro sequence: the first-visit overture -----------------------------
      The intro concept film, rebuilt live and laid out from its measurements.
      "Neta DAO Academy" never moves; "the home of Web3 and" shivers where PHILOSOPHY
@@ -1840,6 +1860,7 @@
     each(root, '[data-nda-liquid]', NDA.liquidWord);
     each(root, '[data-nda-radio]', NDA.radio);
     each(root, '[data-nda-menu]', NDA.menu);
+    each(root, '[data-nda-submenu]', NDA.submenu);
     each(root, '.nda-forkmark', NDA.forkMark);
     each(root, '.nda-wash', NDA.wash);
     each(root, '[data-nda-intro]', function (el) { NDA.intro(el); });
@@ -1849,5 +1870,5 @@
     return root;
   };
 
-  NDA.version = '3.3.0';
+  NDA.version = '3.4.0';
 })();

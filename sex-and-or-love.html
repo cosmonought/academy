@@ -11,11 +11,11 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
   <link rel="preload" href="/ds/fonts/NDADisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/ds/tokens.css?v=2">
-  <link rel="stylesheet" href="/ds/bundle.css?v=2">
-  <link rel="stylesheet" href="/ds/site.css?v=2">
-  <script src="/ds/bundle.js?v=2"></script>
-  <link rel="stylesheet" href="/ds/pages.css?v=2">
+  <link rel="stylesheet" href="/ds/tokens.css?v=3">
+  <link rel="stylesheet" href="/ds/bundle.css?v=3">
+  <link rel="stylesheet" href="/ds/site.css?v=3">
+  <script src="/ds/bundle.js?v=3"></script>
+  <link rel="stylesheet" href="/ds/pages.css?v=3">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>(function () { if (window.emailjs) emailjs.init({ publicKey: "qWT4IiYYkiSwREKOd" }); })();</script>
   <script src="/js/site.js?v=11" defer></script>
@@ -30,7 +30,7 @@
     <div class="nda-header__primary">
       <nav class="nda-header__nav" id="site-nav" aria-label="Main">
         <ul>
-          <li><a href="/seminars.html" aria-current="page">Seminars</a></li>
+          <li class="nda-header__group" data-nda-submenu><a href="/seminars.html" aria-current="page">Seminars</a><button class="nda-header__sub-toggle" type="button" aria-expanded="false" aria-controls="nav-seminars"><span class="nda-visually-hidden">Seminars menu</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button><ul class="nda-header__sub" id="nav-seminars"><li><a href="/sex-and-or-love.html">Sex, and/or Love <span class="nda-header__sub-state">Active</span></a></li><li><a href="/CoiningReason/">Coining Reason <span class="nda-header__sub-state">On hiatus</span></a></li><li><a href="/SexMonstersSuperheroes/">Sex, Monsters, and Superheroes <span class="nda-header__sub-state">Forthcoming</span></a></li></ul></li>
           <li><a href="/cinema.html">Cinema</a></li>
           <li><a href="https://fork.netadao.org">Journal</a></li>
         </ul>
@@ -160,11 +160,12 @@
     <a class="nda-wordmark nda-wordmark--footer" href="/">Neta DAO Academy</a>
     <nav class="nda-footer__nav" aria-label="Footer">
       <ul>
-        <li><a href="https://x.com/NetaDAO_Academy">X</a></li>
-        <li><a href="https://discord.com/invite/gvjC86WXC2">Discord</a></li>
+        <li><a class="nda-footer__icon" href="https://x.com/NetaDAO_Academy" aria-label="Neta DAO Academy on X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117Z"/></svg></a></li>
+        <li><a class="nda-footer__icon" href="https://discord.com/invite/gvjC86WXC2" aria-label="Neta DAO Academy on Discord"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515c-.074.127-.158.298-.217.432a18.27 18.27 0 0 0-5.487 0 4.64 4.64 0 0 0-.218-.432A19.736 19.736 0 0 0 4.625 4.37 20.02 20.02 0 0 0 1 18.855a19.9 19.9 0 0 0 5.993 3.03 14.62 14.62 0 0 0 1.226-1.994 12.7 12.7 0 0 1-1.93-.934c.162-.12.32-.246.474-.373a14.18 14.18 0 0 0 12.281 0c.155.127.313.252.475.373-.616.366-1.265.68-1.93.934a14.49 14.49 0 0 0 1.225 1.994 19.87 19.87 0 0 0 5.994-3.03A20.03 20.03 0 0 0 20.317 4.37ZM8.02 15.332c-1.17 0-2.128-1.065-2.128-2.366S6.85 10.6 8.02 10.6c1.18 0 2.147 1.075 2.128 2.366 0 1.301-.947 2.366-2.128 2.366Zm7.974 0c-1.17 0-2.128-1.065-2.128-2.366s.958-2.366 2.128-2.366c1.18 0 2.147 1.075 2.128 2.366 0 1.301-.947 2.366-2.128 2.366Z"/></svg></a></li>
         <li><a class="nda-footer__parent" href="https://netadao.org" aria-label="Neta DAO">
           <img class="nda-footer__mark nda-footer__mark--paper" src="/ds/media/neta-mark-paper.png" alt="" width="251" height="192">
           <img class="nda-footer__mark nda-footer__mark--night" src="/ds/media/neta-mark-night.png" alt="" width="251" height="192">
+          <img class="nda-footer__mark nda-footer__mark--loop" src="/ds/media/neta-mark-loop.webp" alt="" width="160" height="106" loading="lazy">
         </a></li>
       </ul>
     </nav>

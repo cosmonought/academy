@@ -238,6 +238,9 @@
 .participant-detail h2 a:hover { color: var(--pink); }
 .participant-date { margin: var(--space-2, 8px) 0 0; font: 400 12px/1.5 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
 @media (max-width: 759px) { .participant-panel { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-3, 12px); } }
+/* Coining Reason's next session, on hiatus: the same panel, neutral (pink is for what's happening now) */
+.participant-panel.pg-upnext--hiatus { border-top-color: var(--ink); }
+.pg-upnext--hiatus .participant-kicker { color: var(--ink-mid); }
 
 /* Sessions: the live schedule (session-schedule.js, screening-schedule.js) marks rows; titles stay hidden until a screening starts */
 .nda-session.session-hiatus > summary .nda-session__title { color: var(--ink); }

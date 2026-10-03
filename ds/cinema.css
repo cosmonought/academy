@@ -3,14 +3,6 @@
    .hidden, .visible, .is-live, .curtains-open, .show, .leaving and .active); their look is the system's.
    Values come from the system's tokens. */
 
-/* the head: the fitted title, and what plays here */
-.pg-cin-head { padding-block: var(--space-7, 32px); }
-.pg-cin-head__cols { --nda-columns: minmax(0, 8fr) minmax(0, 4fr); align-items: end; }
-.pg-cin-head h1 { margin: 0; }
-.pg-cin-head .pg-fitbox { padding-right: var(--space-6, 24px); }
-.pg-cin-now { display: flex; flex-direction: column; gap: 10px; padding-left: var(--space-6, 24px); }
-.pg-cin-now .nda-index__num { font-size: 12px; font-weight: 400; letter-spacing: .06em; text-transform: uppercase; }
-.pg-cin-film { margin: 0; font: 400 21px/1.35 var(--font-body); color: var(--ink); }
 
 /* signed out or not enrolled: one panel with the way in */
 .cinema-entry[hidden], .cinema-entry.hidden { display: none !important; }
@@ -117,9 +109,7 @@
 .end-screening-btn { border-color: transparent; text-decoration: underline; text-underline-offset: 4px; }
 
 @media (max-width: 899px) {
-  .pg-cin-head__cols, .live-layout { grid-template-columns: minmax(0, 1fr); --nda-columns: 1fr; }
-  .pg-cin-now { padding-left: 0; margin-top: 20px; }
-  .pg-cin-head .pg-fitbox { padding-right: 0; }
+  .live-layout { grid-template-columns: minmax(0, 1fr); --nda-columns: 1fr; }
   .player-section { padding-right: 0; }
   .chat-section { padding: var(--space-6, 24px) 0 0; border-left: 0; }
   .chat-messages { flex: none; height: 280px; }

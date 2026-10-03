@@ -1541,7 +1541,10 @@
       var philM = measure(words[0], 800, true), philF = 99.6 / philM.ink;
       var phil = word(0, { tight: true, weight: 800, size: philF, capTop: G.y0 + G.capTop, stretch: 17.3 / (G.mT.cap * philF) });
       place(phil, 0);
-      var hos = word(1, { tight: true, capTop: phil.base0 + 2.3, cap: 10 });
+      // set to the statement's width, as PHILOSOPHY is, so the opening keeps its block: four justified lines (a hair
+      // wider than PHILOSOPHY's fit, since its E stands further in from its edge than the lines' Y and D)
+      var hosM = measure(words[1], 700, true);
+      var hos = word(1, { tight: true, capTop: phil.base0 + 2.3, size: 100 / hosM.ink });
       enter(hos, 40, 320, 'cubic-bezier(.12,.9,.25,1.04)', 2.4);
       // 0.36-1.3 s: hold
       // 1.3 s: HISTORY OF SCIENCE leans into italic

@@ -364,9 +364,9 @@ body {
    banknote's guilloche band, engraved in ink across its title: a woven tube of 36 curves that flexes as one body, a
    slow wave travelling along it and a gentle swell behind (.nda-engrave; drawn by NDA.engrave on a canvas, the still
    band in CSS without script or under reduced motion). The Graphic's is its own page's comic panel: a 2px ink frame
-   and green Ben-Day dots, with an unseen magnifying glass drawn across them from the top-right corner to the bottom-left:
-   under it the dots show large, bulging at its edges, and turn into asterisks as it passes, then back (.nda-comic; NDA.comic). Flat like the rest,
-   no drop. Fork's is its own site's stock: the panel turns ice blue-grey behind its type, which keeps its ink
+   and green Ben-Day dots, with the pointer as an unseen magnifying glass over them: under it the dots show large,
+   bulging at its rim, and turn into asterisks at its heart (.nda-comic; NDA.comic). Flat like the rest,
+   no drop. Fork's is its own site's stock: the panel turns Fork's light grey behind its type, which keeps its ink
    (.nda-fork), as the mark cuts. A panel's action keeps its paper ground through all of them. */
 .nda-engrave, .nda-comic, .nda-fork { position: relative; isolation: isolate; }
 .nda-engrave::before, .nda-comic::before, .nda-fork::before {
@@ -426,7 +426,7 @@ body {
 .nda-program .nda-button--outline, .nda-program .nda-circle-link__icon { background-color: var(--paper); }
 .nda-program .nda-button--outline:hover { background-color: var(--paper-hover); }
 /* Fork's stock, from fork.netadao.org's paper */
-.nda-fork { --nda-fork-paper: #E3EAF0; }   /* the stock only: the type keeps the Academy's ink, so it stays as crisp as at rest */
+.nda-fork { --nda-fork-paper: #EAEAE7; }   /* the stock only: the type keeps the Academy's ink, so it stays as crisp as at rest */
 .nda-fork::before { background: var(--nda-fork-paper); }
 .nda-fork:is(:hover, :focus-within)::before, .nda-fork.is-washed::before { opacity: 1; }
 

@@ -408,19 +408,18 @@
     });
   };
 
-  /* The Graphic: an unseen magnifying glass, a long strip, is drawn across the panel's
-     Ben-Day dots diagonally, from the top-right corner to the bottom-left. Nothing marks
-     the glass itself; the dots under it are the panel's own, seen through it: about three
-     times their size across its middle, easing off towards its edges, where the enlarged
-     rows bulge, crowd and shrink a little before meeting the page's dots, so the glass has
-     no edge. As it passes they turn into six-armed asterisks, each dot shrinking as its arms
-     grow, so the change can be watched; behind it they stay asterisks, and the next pass
-     turns them back. A pass takes 7.5s.
-     The lens, across the glass: a point at a fraction x of its half-width shows the page at
-     g(x), with g′ = 1/ZP over the middle (x < X0) and, out to the edge, rising through a
-     bulge back to 1, its integral 1 so the edge meets the page. Along the glass the page is
-     spread ZA times in the middle, 1 at the edges, about the middle of the glass's chord;
-     the dots grow as the page is magnified across (1/g′). Kept in a table. */
+  /* The Graphic: the pointer is a magnifying glass over the panel's Ben-Day dots. Nothing
+     marks the glass; the dots under it are the panel's own, seen through it: three times
+     their size in its middle, the magnification easing off towards its rim, where the
+     enlarged dots bulge, crowd and shrink a little into the page's own, so the glass has no
+     edge. Seen through it the dots turn into six-armed asterisks: dots at its rim, asterisks
+     at its heart, each dot shrinking as its arms grow between, so moving the glass over the
+     page shows the change. It follows the pointer with a little lag; without one (keyboard
+     focus, a pinned preview) it drifts slowly over the panel.
+     The lens, from its centre out: a point at a fraction x of its radius shows the page at
+     g(x), with g′ = 1/Z over the middle (x < X0) and, out to the rim, rising through a
+     bulge back to 1, so g(1) = 1 and the rim meets the page. A dot there grows by the root
+     of the two magnifications, round (x/g) and out (1/g′). Kept in a table. */
   NDA.comic = function (el) {
     var arms = [];
     for (var a = 0; a < 3; a++) { var ang = Math.PI / 2 + a * Math.PI / 3; arms.push([Math.cos(ang), Math.sin(ang)]); }
@@ -432,42 +431,47 @@
         ctx.stroke();
       }
     }
-    var ZP = 3, ZA = 1.45, X0 = 0.3, N = 400, GD = [], GV = [0];
-    var K = (1 - 1 / ZP) * (1 + X0) / (1 - X0);
+    var Z = 3, X0 = 0.45, N = 400, GD = [], GV = [0];
+    var K = (1 - 1 / Z) * (1 + X0) / (1 - X0);
     for (var i = 0; i <= N; i++) {   // g′ and g on [0, 1]
       var x = i / N, r = x <= X0 ? 0 : (x - X0) / (1 - X0);
-      GD.push(1 / ZP + (1 - 1 / ZP) * smooth(r) + K * Math.pow(Math.sin(Math.PI * r), 2));
+      GD.push(1 / Z + (1 - 1 / Z) * smooth(r) + K * Math.pow(Math.sin(Math.PI * r), 2));
       if (i) GV.push(GV[i - 1] + (GD[i] + GD[i - 1]) / (2 * N));
     }
     for (i = 0; i <= N; i++) GV[i] /= GV[N];   // exactly g(1) = 1
     function lensAt(y) {   // the image fraction x showing the page at fraction y, with g′ there
       var lo = 0, hi = N;
       while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (GV[mid] < y) lo = mid; else hi = mid; }
-      var f = GV[hi] > GV[lo] ? (y - GV[lo]) / (GV[hi] - GV[lo]) : 0, x = (lo + f) / N;
-      return [x, GD[lo] + (GD[hi] - GD[lo]) * f];
+      var f = GV[hi] > GV[lo] ? (y - GV[lo]) / (GV[hi] - GV[lo]) : 0;
+      return [(lo + f) / N, GD[lo] + (GD[hi] - GD[lo]) * f];
     }
+    var px = null, py = null, gx = null, gy = null;
+    function point(e) {
+      if (e.pointerType === 'touch') return;
+      var rect = el.getBoundingClientRect();
+      px = e.clientX - rect.left; py = e.clientY - rect.top;
+      if (gx === null) { gx = px; gy = py; }
+    }
+    el.addEventListener('pointerenter', point);
+    el.addEventListener('pointermove', point);
+    el.addEventListener('pointerleave', function () { px = py = null; });
     drawnHover(el, function (ctx, box, t) {
       var dot = box.cs.getPropertyValue('--nda-comic-dot').trim() || '#5bb348';
-      var G = 9, R = 1.75, ARM = 2.6, LINE = 1.15, HW = 88, PASS = 7.5, HOLD = 0.3;
-      var w = box.w, h = box.h, S2 = Math.SQRT2;
-      var L = (w + h) / S2, run = PASS + HOLD, n = Math.floor(t / run), u = Math.min(1, (t - n * run) / PASS);
-      var c = -HW + u * (L + 2 * HW);   // the glass's centre line, along the diagonal from the top-right corner
-      var toStars = n % 2 === 0;
-      // the middle of the centre line's chord across the panel: the point the glass spreads the page about, along it
-      var xa = Math.max(0, w - c * S2), xb = Math.min(w, w - c * S2 + h), xm = (xa + xb) / 2, ym = xm - w + c * S2;
+      var G = 9, R = 1.75, ARM = 2.6, LINE = 1.15, w = box.w, h = box.h;
+      var RL = Math.max(72, Math.min(110, w * 0.29));   // the glass's radius
+      var tx = px, ty = py;
+      if (tx === null) { tx = w * (0.5 + 0.3 * Math.sin(t * 0.43)); ty = h * (0.5 + 0.3 * Math.sin(t * 0.29 + 1.1)); }
+      if (gx === null) { gx = tx; gy = ty; }
+      gx += (tx - gx) * 0.3; gy += (ty - gy) * 0.3;   // a little lag, like a glass moved by hand
       ctx.fillStyle = dot; ctx.strokeStyle = dot; ctx.lineCap = 'round';
       for (var y = G / 2; y < h + G; y += G) {
         for (var x = G / 2; x < w + G; x += G) {
-          var es = (-(x - xm) + (y - ym)) / S2;          // across the glass: + ahead of its centre line, − behind
-          if (Math.abs(es) >= HW) { mark(ctx, x, y, (es < 0) === toStars ? 1 : 0, R, ARM, LINE); continue; }
-          var lens = lensAt(Math.abs(es) / HW), xi = lens[0], e = (es < 0 ? -xi : xi) * HW;
-          var spread = 1 + (ZA - 1) * (1 - smooth(xi <= X0 ? 0 : (xi - X0) / (1 - X0)));
-          var ai = ((x - xm) + (y - ym)) / S2 * spread;
-          var px = xm + (ai - e) / S2, py = ym + (ai + e) / S2;
-          if (px < -20 || px > w + 20 || py < -20 || py > h + 20) continue;
-          var size = 1 / lens[1];
-          var turn = smooth(0.5 - es / (HW * 0.5));       // 0 ahead, 1 behind: the turn happens under the glass's middle
-          mark(ctx, px, py, toStars ? turn : 1 - turn, R * size, ARM * size, LINE * (1 + (size - 1) * 0.75));
+          var dx = x - gx, dy = y - gy, rs = Math.sqrt(dx * dx + dy * dy);
+          if (rs >= RL) { mark(ctx, x, y, 0, R, ARM, LINE); continue; }
+          var yn = rs / RL, lens = lensAt(yn), xi = lens[0], k = rs > 1e-6 ? xi / yn : Z;
+          var size = Math.sqrt(k / lens[1]);
+          var q = 1 - smooth((xi - 0.25) / 0.5);           // an asterisk at the heart, a dot at the rim
+          mark(ctx, gx + dx * k, gy + dy * k, q, R * size, ARM * size, LINE * (1 + (size - 1) * 0.75));
         }
       }
     });

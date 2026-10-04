@@ -17,7 +17,7 @@
 .staff-selector { max-width: 360px; margin: 0 0 var(--space-5, 20px); }
 
 /* buttons: the system's outline button, small; Enroll and saving are the one primary each */
-.staff-utility button:not(.nda-button), .staff-modes button, .attendance-event > button, .staff-row button, .staff-participant button {
+.staff-utility button:not(.nda-button), .staff-modes button, .staff-row button, .staff-participant button {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--control-sm, 32px); padding: 0 var(--space-4, 16px);
   border: var(--stroke-outline, 1.5px) solid var(--ink); border-radius: var(--radius-sm, 4px); background: transparent; color: var(--ink);
   font: 500 12px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; cursor: pointer;
@@ -45,36 +45,61 @@
 .staff-row p { margin: 4px 0 0; font: 400 13px/1.5 var(--font-mono); letter-spacing: .02em; color: var(--ink-mid); }
 .staff-row > button { margin-top: 12px; }
 .staff-row .staff-row { border-bottom: 0; padding-bottom: 0; }
-.staff-participant { border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); }
-.staff-participant summary { display: grid; grid-template-columns: minmax(0, 1fr) 14px; gap: 12px; padding: 11px 0; cursor: pointer; list-style: none; font: 400 16px/1.4 var(--font-body); }
+/* participants: one line each, the name (an instructor opens it for the email, handle and reason) and Unenroll on the row */
+.staff-participant { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 0 16px; border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+.staff-participant > details { min-width: 0; }
+.staff-participant summary { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 10px; padding: 11px 0; cursor: pointer; list-style: none; font: 400 16px/1.4 var(--font-body); overflow-wrap: anywhere; }
 .staff-participant summary::-webkit-details-marker { display: none; }
-.staff-participant summary::after { content: "+"; font: 400 14px/1.4 var(--font-mono); color: var(--ink-dim); text-align: right; }
-.staff-participant[open] summary::after { content: "\2013"; }
-.staff-participant > div { padding: 0 0 14px; }
+.staff-participant summary::before { content: "+"; font: 400 14px/1.6 var(--font-mono); color: var(--ink-dim); }
+.staff-participant [open] summary::before { content: "\2013"; }
+.staff-participant summary:hover::before { color: var(--ink); }
+.staff-participant details > div { padding: 0 0 14px 24px; }
 .staff-participant p { margin: 0 0 8px; font: 400 14px/1.55 var(--font-body); color: var(--ink-mid); }
 .staff-participant p:first-child { font: 400 13px/1.5 var(--font-mono); }
-.staff-participant button { background: transparent; color: var(--ink); }
+.staff-participant__name { padding: 11px 0; font: 400 16px/1.4 var(--font-body); color: var(--ink); overflow-wrap: anywhere; }
+.staff-participant > .staff-participant__unenroll { margin-top: 6px; background: transparent; color: var(--ink); }
+.staff-participant > .staff-participant__unenroll:hover { background: var(--paper-hover); }
 
-/* attendance: the current session open, each event with Mark all attended and a three-way switch per person */
-.session-attendance > section > h4 { margin: var(--space-6, 24px) 0 0; font: 400 11px/1.45 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); }
-.attendance-session { border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); padding: var(--space-4, 16px) 0; }
-.attendance-session > h5, .attendance-session > summary { margin: 0 0 var(--space-2, 8px); font: 700 22px/1.05 var(--font-display); text-transform: uppercase; letter-spacing: -.005em; color: var(--ink); cursor: pointer; }
-details.attendance-session > summary { list-style: none; display: flex; justify-content: space-between; gap: 12px; }
-details.attendance-session > summary::-webkit-details-marker { display: none; }
-details.attendance-session > summary::after { content: "+"; font: 400 14px/1.6 var(--font-mono); color: var(--ink-dim); }
-details.attendance-session[open] > summary::after { content: "\2013"; }
-.attendance-event { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; margin: var(--space-4, 16px) 0 0; padding: 0 0 var(--space-2, 8px); }
-.attendance-event > h6 { grid-column: 1; margin: 0; font: 400 15px/1.4 var(--font-body); color: var(--ink); }
-.attendance-event > .staff-note:first-of-type { grid-column: 1; margin: 0; font: 400 11px/1.45 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
-.attendance-event > button { grid-column: 2; grid-row: 1 / span 2; justify-self: end; }
-.attendance-event > [role="status"] { grid-column: 1 / -1; }
-.attendance-person { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: var(--stroke-hairline, 1px) solid var(--rule-thin); }
-.attendance-person strong { font: 400 15px/1.4 var(--font-body); color: var(--ink); overflow-wrap: anywhere; }
-.attendance-marks { display: inline-flex; flex: none; border: var(--stroke-hairline, 1px) solid var(--rule-strong); }
-.attendance-marks button { width: 34px; height: 30px; min-height: 0; padding: 0; border: 0; border-radius: 0; background: var(--paper); color: var(--ink-mid); font: 500 13px/1 var(--font-mono); cursor: pointer; }
-.attendance-marks button + button { border-left: var(--stroke-hairline, 1px) solid var(--rule-strong); }
-.attendance-marks button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
-.attendance-marks button:disabled { opacity: .55; }
+/* attendance (js/session-attendance.js): one table, participants down the left, every meeting across the top. It
+   scrolls sideways under the names and opens at the current meeting, whose column carries the pink rule and a faint
+   tint. Two header rows: the meetings, then each one's tally and All present, so those line up. Each cell is one box:
+   present, or not. */
+.session-attendance { margin-top: var(--space-2, 8px); }
+.attendance-status { min-height: 1.6em; margin: 0 0 var(--space-2, 8px); }
+.attendance-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; border-top: var(--stroke-hairline, 1px) solid var(--rule-strong); }
+.attendance-scroll:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.attendance-table { width: max-content; min-width: 100%; border-collapse: separate; border-spacing: 0; }
+.attendance-table th, .attendance-table td { padding: 0; border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); background: var(--paper);
+  text-align: left; vertical-align: top; font: 400 15px/1.35 var(--font-body); letter-spacing: normal; text-transform: none; color: var(--ink); }
+.attendance-table .attendance-name { position: sticky; left: 0; z-index: 2; width: 13rem; min-width: 13rem; max-width: 13rem; padding: 12px 16px 12px 0;
+  border-right: var(--stroke-hairline, 1px) solid var(--rule-strong); vertical-align: middle; overflow-wrap: anywhere; }
+.attendance-table thead .attendance-name { vertical-align: bottom; font: 400 11px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); }
+.attendance-table .attendance-col, .attendance-table .attendance-act { width: 9.5rem; min-width: 9.5rem; max-width: 9.5rem; padding: 12px 12px 0; border-left: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+.attendance-meetings .attendance-col { border-bottom: 0; }
+.attendance-table .attendance-act { padding: 6px 12px 12px; vertical-align: bottom; }
+.attendance-col > span:not(.attendance-when), .attendance-act > span { display: block; }
+.attendance-kicker { font: 400 10px/1.5 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); }
+.attendance-kicker > span { white-space: nowrap; }
+.attendance-title { margin-top: 4px; font: 700 15px/1.05 var(--font-display); text-transform: uppercase; letter-spacing: -.005em; color: var(--ink);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.attendance-when { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin-top: 6px; }
+.attendance-date { font: 400 11px/1.4 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-mid); }
+.attendance-now { font: 500 10px/1.4 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--pink); white-space: nowrap; }
+.attendance-now::before { content: "\25A0\00A0"; color: var(--pink-mark); }
+.attendance-tally { font: 400 11px/1.4 var(--font-mono); color: var(--ink-dim); }
+.staff-utility .attendance-act .attendance-all { margin-top: 8px; min-height: 26px; padding: 0 8px; font-size: 10px; letter-spacing: .08em; }
+.attendance-flag { display: block; margin-top: 2px; font: 400 10px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--pink); }
+.attendance-table .attendance-cell { height: 48px; text-align: center; vertical-align: middle; border-left: var(--stroke-hairline, 1px) solid var(--rule-thin); }
+.attendance-table .is-past .attendance-title { color: var(--ink-mid); }
+.attendance-table .attendance-col.is-current { box-shadow: inset 0 3px 0 var(--pink-mark); }
+.attendance-table .is-current { background: color-mix(in srgb, var(--pink-mark) 7%, var(--paper)); }
+.attendance-check { appearance: none; -webkit-appearance: none; display: inline-grid; place-content: center; width: 24px; height: 24px; margin: 0;
+  border: var(--stroke-outline, 1.5px) solid var(--ink); border-radius: 0; background: var(--paper); cursor: pointer; vertical-align: middle; }
+.attendance-check::before { content: ""; width: 11px; height: 6px; border: solid var(--on-ink); border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg); opacity: 0; }
+.attendance-check:checked { background: var(--ink); }
+.attendance-check:checked::before { opacity: 1; }
+.attendance-check:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.attendance-check:disabled { opacity: .5; cursor: wait; }
 .staff-table-scroll { max-width: 100%; overflow-x: auto; }
 .staff-table-scroll table { width: 100%; border-collapse: collapse; }
 .staff-table-scroll th, .staff-table-scroll td { padding: 9px 10px 9px 0; border-bottom: var(--stroke-hairline, 1px) solid var(--rule-thin); text-align: left; font: 400 13px/1.45 var(--font-mono); }
@@ -86,9 +111,8 @@ details.attendance-session[open] > summary::after { content: "\2013"; }
 @media (max-width: 599px) {
   .staff-utility form { align-items: stretch; }
   .staff-utility form > label { flex: 1 1 100%; }
-  .attendance-event { grid-template-columns: 1fr; }
-  .attendance-event > button { grid-column: 1; grid-row: auto; justify-self: start; }
-  .attendance-person { flex-wrap: wrap; }
+  .attendance-table .attendance-name { width: 8rem; min-width: 8rem; max-width: 8rem; padding-right: 10px; font-size: 14px; }
+  .attendance-table .attendance-col, .attendance-table .attendance-act { width: 8.5rem; min-width: 8.5rem; max-width: 8.5rem; padding-inline: 10px; }
 }
 
 /* ---------- admin.html ---------- */

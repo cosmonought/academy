@@ -4,7 +4,8 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 import {EVALUATION_FORMS,EVALUATION_OUTCOMES} from '../js/academy-record.js';
 const source=await readFile('profile.html','utf8');
-const fn=source.slice(source.indexOf('function evaluationHtml('),source.search(/\n[ \t]*function makeRow/));   // whatever the page's indentation
+const between=source.slice(source.indexOf('function evaluationHtml('),source.search(/\n[ \t]*function makeRow/));   // whatever the page's indentation
+const fn=between.slice(0,between.lastIndexOf('}')+1);   // up to its closing brace, leaving any comment that introduces makeRow
 const config={disabled:{enabled:false},enabled:{enabled:true,minimumAttendanceEvents:1,requestCutoff:null},locked:{enabled:true,minimumAttendanceEvents:1,requestCutoff:'2000-01-01T00:00:00Z'}};
 const render=vm.runInNewContext('('+fn+')',{EVALUATION_CONFIG:config,EVALUATION_FORMS,EVALUATION_OUTCOMES,escape:String,Date});
 test('disabled evaluations do not present fake failures; enabled failures are explicit',()=>{

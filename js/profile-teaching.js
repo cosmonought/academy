@@ -1,6 +1,6 @@
 import { evaluationParticipationControl } from './evaluation-correction.js';
 import { setTeachingAvailable } from './profile-tabs.js';
-import { renderSessionAttendance } from './session-attendance.js';
+import { renderSessionAttendance } from './session-attendance.js?v=2';
 import { auth, onAuthStateChanged, SEMINAR_TITLES, ATTENDANCE_EVENTS, EVALUATION_FORMS, EVALUATION_OUTCOMES, EVALUATION_OFFERED, approveRegistration, revokeRegistration, setAttendance, setInstructorEvaluation } from './academy-auth.js?v=27';
 import { staffCall, staffError } from './staff-api.js';
 import { readView, writeView } from './view-cache.js';
@@ -69,15 +69,21 @@ function render(rows,id) {
     for(const {emailKey,registration:reg} of pending){const row=document.createElement('article');row.className='staff-row';const name=document.createElement('strong');name.textContent=reg.name||reg.email||'Pending participant';const email=document.createElement('p');email.textContent=reg.email||'';const button=document.createElement('button');button.textContent='Enroll';button.onclick=()=>run(button,()=>approveRegistration(emailKey,id,reg.email,reg.name,SEMINAR_TITLES[id]));row.append(name,email,button);list.append(row);}
     root.append(section);
   }
-  const attendance=document.createElement('section');attendance.innerHTML='<h3>Attendance</h3><div id="teachingAttendance" class="staff-table-scroll"></div>';root.append(attendance);
-  renderSessionAttendance(el('teachingAttendance'),id,rows,{onAccessChanged:refreshAssignments});
+  const attendance=document.createElement('section');attendance.innerHTML='<h3>Attendance</h3><div id="teachingAttendance"></div>';root.append(attendance);
+  renderSessionAttendance(el('teachingAttendance'),id,rows,{onAccessChanged:refreshAssignments,ta:assignmentRoles[id]==='ta'});
   const enrolled=rows.filter(row=>row.registration.enrolled===true);
   const participants=document.createElement('section');participants.innerHTML='<h3>Participants</h3><div id="teachingParticipants"></div>';root.append(participants);const participantRoot=el('teachingParticipants');
   if(!enrolled.length)participantRoot.textContent='No enrolled participants.';
+  // one line each: the name (an instructor opens it for the email, handle and reason) and, for an instructor, Unenroll on the row
   for(const {emailKey,registration:reg} of enrolled){
-    const row=document.createElement('details');row.className='staff-participant';const summary=document.createElement('summary');summary.textContent=reg.name||reg.email||'Participant';row.append(summary);
-    if(isInstructor){const detail=document.createElement('div');detail.innerHTML=`<p>${escape(reg.email||'')} · ${escape(reg.xHandle||'')}</p><p>${escape(reg.reason||'')}</p>`;const button=document.createElement('button');button.textContent='Unenroll';button.onclick=()=>{if(confirm(`Unenroll ${reg.name||reg.email} from ${SEMINAR_TITLES[id]}? Their attendance and evaluation history will be preserved.`))run(button,()=>revokeRegistration(emailKey,id));};detail.append(button);row.append(detail);}
-    participantRoot.append(row);
+    const label=reg.name||reg.email||'Participant';
+    const row=document.createElement('div');row.className='staff-participant';
+    if(!isInstructor){const name=document.createElement('span');name.className='staff-participant__name';name.textContent=label;row.append(name);participantRoot.append(row);continue;}
+    const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent=label;details.append(summary);
+    const detail=document.createElement('div');detail.innerHTML=`<p>${escape(reg.email||'')}${reg.xHandle?` · ${escape(reg.xHandle)}`:''}</p>${reg.reason?`<p>${escape(reg.reason)}</p>`:''}`;details.append(detail);
+    const button=document.createElement('button');button.type='button';button.className='staff-participant__unenroll';button.textContent='Unenroll';button.setAttribute('aria-label',`Unenroll ${label}`);
+    button.onclick=()=>{if(confirm(`Unenroll ${label} from ${SEMINAR_TITLES[id]}? They lose readings and screening access at once; their attendance and evaluation history are kept.`))run(button,()=>revokeRegistration(emailKey,id));};
+    row.append(details,button);participantRoot.append(row);
   }
   if(!isInstructor)return;
   const evaluationRoot=document.createElement('section');evaluationRoot.innerHTML='<h3>Evaluation</h3><div id="teachingEvaluation"></div>';root.append(evaluationRoot);const evaluationList=el('teachingEvaluation');

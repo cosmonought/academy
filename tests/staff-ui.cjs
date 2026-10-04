@@ -41,6 +41,8 @@ process.on('exit',()=>server.kill());
    return route.continue();
  });
  const page=await context.newPage(); const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ // a fixed day: 3 Oct 2026, four days before the Hiroshima, Mon Amour screening (7 Oct), the current meeting
+ await page.clock.setFixedTime(new Date('2026-10-03T12:00:00Z'));
  await page.addInitScript(()=>{
    window.mockUser={uid:'teacher',email:'teacher@example.org',emailVerified:true,providerData:[{providerId:'google.com'}]};window.assignments=['sex-and-or-love','sex-monsters-superheroes'];window.assignmentRoles={'sex-and-or-love':'instructor','sex-monsters-superheroes':'instructor'};window.operations=[];
    window.mockDb={forkInterests:{a:{name:'Ada Reader',email:'ada@example.org',interest:'editorial',area:'Political theory',source:'fork.netadao.org',submittedAt:1790000000000}},
@@ -51,7 +53,7 @@ process.on('exit',()=>server.kill());
  for(const width of [1440,1280,1024,390]){
   await page.setViewportSize({width,height:1000});await page.goto('http://127.0.0.1:8765/profile.html');await page.locator('#profileTeachingTab').waitFor({state:'visible'});
   assert.equal(await page.locator('#profileSeminarsPanel').isVisible(),true);assert.equal(await page.locator('#profilePasswordRow').isVisible(),false);
-  await page.click('#profileTeachingTab');await page.locator('#teachingAttendance .attendance-person').first().waitFor();
+  await page.click('#profileTeachingTab');await page.locator('#teachingAttendance .attendance-check').first().waitFor();
   assert.equal(await page.locator('#teachingSeminar option').count(),2);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);assert.equal(overflow,false,'Profile overflow at '+width);
   await page.screenshot({path:screenshots+'/teaching-'+width+'.png',fullPage:true});
@@ -59,14 +61,49 @@ process.on('exit',()=>server.kill());
   await page.selectOption('#teachingEvaluation select[name=state]','completed');await page.selectOption('#teachingEvaluation select[name=outcome]','merit');await page.fill('#teachingEvaluation textarea','Thoughtful work.');await page.locator('#teachingEvaluation button').first().click();await page.waitForFunction(()=>window.operations.includes('evaluation'));
   results.push({width,overflow:false,teaching:true,evaluationSaved:true});
  }
+ // Attendance: one table, participants down the left, every meeting across the top. It opens at the current meeting,
+ // highlighted, as far left as it goes; each cell is present or absent, nothing else.
+ await page.setViewportSize({width:1440,height:1000});await page.goto('http://127.0.0.1:8765/profile.html');await page.click('#profileTeachingTab');
+ await page.locator('#teachingAttendance .attendance-check').first().waitFor();
+ const currentCol=page.locator('#teachingAttendance th.attendance-col.is-current');
+ assert.equal(await currentCol.count(),1);
+ assert.equal(await currentCol.locator('.attendance-title').textContent(),'Hiroshima, Mon Amour');
+ assert.equal(await currentCol.locator('.attendance-kicker').textContent(),'Session 6 · Screening 4');
+ assert.equal(await currentCol.locator('.attendance-now').textContent(),'Next');
+ const columnCount=await page.locator('#teachingAttendance th.attendance-col').count();
+ assert.equal(await page.locator('#teachingAttendance .attendance-check').count(),columnCount,'one box per meeting for the one participant');
+ assert.equal(await page.locator('#teachingAttendance').getByText(/unrecorded/i).count(),0);
+ const place=await page.evaluate(()=>{const s=document.querySelector('#teachingAttendance .attendance-scroll'),c=s.querySelector('th.is-current'),n=s.querySelector('thead .attendance-name');
+   const first=[...s.querySelectorAll('th.attendance-col')].find(th=>th.getBoundingClientRect().right>n.getBoundingClientRect().right+1);
+   return {left:s.scrollLeft,max:s.scrollWidth-s.clientWidth,width:c.offsetWidth,gap:c.getBoundingClientRect().left-n.getBoundingClientRect().right,whole:Math.abs(first.getBoundingClientRect().left-n.getBoundingClientRect().right)<2};});
+ // as far left as it goes: right after the names, or, near the table's end, within a column of that, on a whole column
+ assert.ok(place.left>0 && place.whole && (Math.abs(place.gap)<2 || (place.max-place.left<place.width && place.gap<place.width+2)),'current meeting placed leftmost: '+JSON.stringify(place));
+ await page.screenshot({path:screenshots+'/attendance-1440.png',fullPage:false,clip:await page.locator('#teachingAttendance').boundingBox()});
+ const box=page.locator('#teachingAttendance td.is-current .attendance-check');await box.check();await page.waitForFunction(()=>window.operations.includes('staffSetAttendance'));
+ assert.equal(await page.locator('#teachingAttendance td.attendance-act.is-current .attendance-tally').textContent(),'1 of 1 present');
+ await box.uncheck();assert.equal(await box.isChecked(),false);
+ // Participants: Unenroll is on the row; the details still fold open
+ const unenroll=page.locator('#teachingParticipants .staff-participant__unenroll');
+ assert.equal(await unenroll.isVisible(),true);assert.equal(await page.locator('#teachingParticipants details').first().evaluate(d=>d.open),false);
+ page.once('dialog',dialog=>dialog.accept());await unenroll.click();await page.waitForFunction(()=>window.operations.includes('unenroll'));
+ await page.setViewportSize({width:390,height:900});await page.waitForTimeout(150);
+ assert.equal(await page.evaluate(()=>{const s=document.querySelector('#teachingAttendance .attendance-scroll');return Math.abs(s.querySelector('th.is-current').getBoundingClientRect().left-s.querySelector('thead .attendance-name').getBoundingClientRect().right)<2;}),true,'kept at the current meeting through a resize');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'no page overflow at 390');
+ await page.locator('#teachingAttendance').screenshot({path:screenshots+'/attendance-390.png'});await page.locator('#teachingParticipants').screenshot({path:screenshots+'/participants-390.png'});
+ await page.setViewportSize({width:1440,height:1000});
  await page.evaluate(()=>{window.assignmentRoles={'sex-and-or-love':'ta','sex-monsters-superheroes':'ta'};});await page.click('#teachingRefresh');await page.locator('#teachingRoleBadge').getByText('TA',{exact:true}).waitFor();
  assert.equal(await page.locator('#teachingBody h3').allTextContents().then(items=>items.join('|')),'Attendance|Participants');
- await page.locator('#teachingParticipants summary').first().waitFor();assert.equal(await page.locator('#teachingParticipants .staff-participant p').count(),0);assert.equal(await page.locator('#teachingBody').getByText('To study together.').count(),0);
+ await page.locator('#teachingParticipants .staff-participant__name').first().waitFor();assert.equal(await page.locator('#teachingParticipants .staff-participant p').count(),0);assert.equal(await page.locator('#teachingParticipants button, #teachingParticipants details').count(),0);
+ // a teaching assistant never sees a film before the syllabus does: the screening goes by its session's title
+ assert.equal(await page.locator('#teachingAttendance th.is-current .attendance-title').textContent(),'Love’s Measure');assert.equal(await page.locator('#teachingAttendance').getByText('Hiroshima, Mon Amour').count(),0);
+assert.equal(await page.locator('#teachingBody').getByText('To study together.').count(),0);
  await page.evaluate(()=>{window.assignments=[];window.revoked=true;});await page.click('#teachingRefresh');await page.locator('#profileTeachingTab').waitFor({state:'hidden'});assert.equal(await page.locator('#profileSeminarsPanel').isVisible(),true);
  // Ordinary participant, from the initial render.
  await page.addInitScript(()=>{window.assignments=[];});await page.reload();await page.waitForFunction(()=>document.getElementById('profileDisplayName').textContent==='Test Instructor');assert.equal(await page.locator('#profileTeachingTab').isVisible(),false);
  // Admin Account Assistance / provider-aware recovery.
  await page.addInitScript(()=>{window.mockUser={uid:'admin',email:'academy@netadao.org',emailVerified:true};});await page.goto('http://127.0.0.1:8765/admin.html');await page.fill('#supportEmail','p@example.org');await page.locator('#accountLookup button').click();await page.locator('#accountSupportResult').getByText('Auth account exists',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'Send password setup/reset link'}).count(),0);
+ // Admin's seminar tab draws the same attendance table
+ await page.locator('#attendanceWrap-sex-and-or-love .attendance-table').waitFor({state:'attached'});assert.equal(await page.locator('#attendanceWrap-sex-and-or-love th.attendance-col.is-current .attendance-title').textContent(),'Hiroshima, Mon Amour');
  // Admin → Fork: registrations from forkInterests and, before that rule is live, the general list (kept out of Inquiries).
  await page.click('[data-admin-view="fork"]');await page.locator('#forkTableBody tr').nth(1).waitFor();
  assert.equal(await page.locator('#adminFork').isVisible(),true);assert.equal(await page.locator('#adminInquiries').isVisible(),false);assert.equal(await page.locator('#adminSeminars').isVisible(),false);

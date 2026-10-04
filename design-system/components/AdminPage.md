@@ -4,7 +4,7 @@
 
 - **Seminars | Inquiries | Fork** as tabs; under Seminars, one tab per seminar with its count.
 - **Registrations**: a table on hairlines, data in mono. Status uses the StatusBadge (Pending in pink because it is waiting on someone now, Enrolled, Unenrolled). One action per row (Enroll, or Unenroll), with Delete as a ghost button; both destructive actions keep the site's confirm step.
-- **Attendance**: the current session first, each person marked ✓ / — / ? in a three-way switch (the pressed one in ink), with Mark all attended; upcoming and past sessions fold up below.
+- **Attendance**: the same table as the Teacher tab (ProfileTeacher): participants down the left, every meeting across the top, opening on the current meeting with its pink rule; one box per cell, present or absent, and All present per meeting. Admin lists every registration, so a name that isn't enrolled carries Pending or Unenrolled in pink beneath it.
 - **Optional evaluation**: requests, forms and outcomes, where the seminar offers it.
 - **Account assistance** in the side column: look up an account, send a password link, grant or revoke teaching access.
 - **Inquiries** (not shown): guest-lecture proposals and general signups, as two of the same tables.

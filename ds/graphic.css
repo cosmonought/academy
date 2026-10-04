@@ -79,6 +79,11 @@
 .pg-tone--y { --g-tint: #fff1a1; --g-dot: #f4c300; }
 .pg-tone--c { --g-tint: #d0effc; --g-dot: #27a9e1; }
 .pg-tone--g { --g-tint: #dbf1c6; --g-dot: #5bb348; }
+.pg-tone--o { --g-tint: #ffdcb4; --g-dot: #f5851f; }
+.pg-tone--r { --g-tint: #fcd3c9; --g-dot: #d8321f; }   /* a vermilion, kept clear of the current session's pink */
+.pg-tone--p { --g-tint: #e5dbf5; --g-dot: #8659cc; }
+.pg-tone--b { --g-tint: #ebdcc7; --g-dot: #946538; }
+.pg-tone--k { --g-tint: #303237; --g-dot: #646a75; }   /* charcoal, on the dark theme: light type, dark cells */
 .pg-panel--tint { background-color: var(--g-tint); background-image: radial-gradient(circle, var(--g-dot) 1.6px, transparent 2px); background-size: 9px 9px; }
 /* now: the site's rule, in this page's neon. Pink frame and drop, pink dots, a glowing chip */
 .pg-panel--now { border: 3px solid var(--pink-mark); background-color: #ffe5f2; color: var(--ink);

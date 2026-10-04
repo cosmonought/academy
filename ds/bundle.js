@@ -301,6 +301,151 @@
     }
   };
 
+  /* ---- Drawn hovers: Coining Reason's band and The Graphic's dots ------------
+     A canvas behind the panel's type (.nda-program__canvas), drawn each frame while the
+     panel is hovered or focused, or pinned (.is-washed) and on screen; .is-live swaps it
+     in for the CSS layer, which stays as the still under reduced motion or without
+     script. The canvas fades out with the hover and stops once it has. */
+  var drawnSeen = null;
+  function drawnHover(el, draw) {
+    if (el.__ndaDrawn) return;
+    el.__ndaDrawn = true;
+    var canvas = null, ctx = null, raf = 0, t0 = 0, hovered = false, focused = false, onScreen = false, stopTimer = 0, box = null, sizer = null;
+    function wanted() { return hovered || focused || (onScreen && el.classList.contains('is-washed')); }
+    function size() {
+      var dpr = Math.min(2, window.devicePixelRatio || 1), w = el.clientWidth, h = el.clientHeight;
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var cs = getComputedStyle(el);
+      box = { w: w, h: h, cw: w - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0), cs: cs };
+    }
+    function frame(now) {
+      if (!t0) t0 = now;
+      ctx.clearRect(0, 0, box.w, box.h);
+      draw(ctx, box, (now - t0) / 1000);
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() { cancelAnimationFrame(raf); raf = 0; t0 = 0; }
+    function update() {
+      if (wanted() && !reducedMotion()) {
+        clearTimeout(stopTimer);
+        if (!canvas) {
+          canvas = document.createElement('canvas');
+          canvas.className = 'nda-program__canvas';
+          canvas.setAttribute('aria-hidden', 'true');
+          el.insertBefore(canvas, el.firstChild);
+          ctx = canvas.getContext('2d');
+          if (window.ResizeObserver) { sizer = new ResizeObserver(function () { if (raf) size(); }); sizer.observe(el); }
+        }
+        if (!raf) { size(); raf = requestAnimationFrame(frame); }
+        el.classList.add('is-live');
+      } else if (canvas) {
+        el.classList.remove('is-live');
+        clearTimeout(stopTimer);
+        stopTimer = setTimeout(function () { if (!wanted() || reducedMotion()) stop(); }, 600);   // after the fade
+      }
+    }
+    el.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') { hovered = true; update(); } });
+    el.addEventListener('pointerleave', function () { hovered = false; update(); });
+    el.addEventListener('focusin', function () { focused = true; update(); });
+    el.addEventListener('focusout', function (e) { if (!el.contains(e.relatedTarget)) { focused = false; update(); } });
+    onMotionChange(update);
+    if (el.classList.contains('is-washed') && window.IntersectionObserver) {
+      drawnSeen = drawnSeen || new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { var f = e.target.__ndaDrawnSeen; if (f) f(e.isIntersecting); });
+      }, { threshold: 0.2 });
+      el.__ndaDrawnSeen = function (v) { onScreen = v; update(); };
+      drawnSeen.observe(el);
+    }
+  }
+  function smooth(t) { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); }
+
+  /* Coining Reason: the still band's 36 curves (--nda-engrave-image), laid out as the CSS
+     mask lays them (a 240 × 200 tile, 110cqi × 92cqi, repeated across, its top at
+     45px − 20.2cqi), flexed as one body: every point rides the same wave travelling along
+     the band (one bend per tile, 8s round) and the mesh swells and narrows about its own
+     midline a quarter-wave behind, like a tube. The wave grows in over the first second,
+     so the band starts as the still. */
+  var engraveCurves = null;
+  function engraveData(el) {
+    if (engraveCurves) return engraveCurves;
+    var raw = cssString(el, '--nda-engrave-image'), d = '';
+    try { d = (decodeURIComponent(raw.slice(raw.indexOf(',') + 1)).match(/ d='([^']+)'/) || [])[1] || ''; } catch (e) { d = ''; }
+    var curves = d.split('M').filter(function (c) { return c.trim(); }).map(function (c) {
+      return c.split('L').map(function (pt) { var v = pt.trim().split(/\s+/); return [+v[0], +v[1]]; });
+    });
+    if (!curves.length) return null;
+    var n = curves[0].length, mid = [];
+    for (var i = 0; i < n; i++) {   // the band's midline: the mean of its curves at each step
+      var sum = 0;
+      curves.forEach(function (c) { sum += c[i] ? c[i][1] : 0; });
+      mid.push(sum / curves.length);
+    }
+    return (engraveCurves = { curves: curves, mid: mid });
+  }
+  NDA.engrave = function (el) {
+    drawnHover(el, function (ctx, box, t) {
+      var data = engraveData(el);
+      if (!data) return;
+      var W = 1.1 * box.cw, H = 0.92 * box.cw, top = 45 - 0.202 * box.cw, sx = W / 240, sy = H / 200;
+      var left = (box.w - W) / 2, first = left - Math.ceil(left / W) * W;
+      var grow = smooth(t / 1.1), phase = t * Math.PI * 2 / 8, A = 8 * grow, B = 0.08 * grow, k = Math.PI * 2 / 240;
+      ctx.strokeStyle = box.cs.getPropertyValue('--ink').trim() || '#111';
+      ctx.lineWidth = Math.max(0.7, 0.68 * sx);
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      for (var x0 = first; x0 < box.w; x0 += W) {
+        data.curves.forEach(function (c) {
+          for (var i = 0; i < c.length; i++) {
+            var u = c[i][0], v = c[i][1], m = data.mid[i] || 100, a = k * u - phase;
+            var y = m + (v - m) * (1 + B * Math.sin(a - Math.PI / 2)) + A * Math.sin(a);
+            var px = x0 + u * sx, py = top + y * sy;
+            if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+          }
+        });
+      }
+      ctx.stroke();
+    });
+  };
+
+  /* The Graphic: the panel's Ben-Day dots (9px grid) swept by a magnifying wave from the
+     top-right corner to the bottom-left. The dots swell as the front reaches them, to
+     about twice their size, and turn into six-armed asterisks as it passes (an asterisk
+     swells less, so it stays inside its cell); the next pass turns them back. A pass
+     takes 2.6s, with a short hold between. */
+  NDA.comic = function (el) {
+    drawnHover(el, function (ctx, box, t) {
+      var cs = box.cs, dot = cs.getPropertyValue('--nda-comic-dot').trim() || '#3f9a35';
+      var G = 9, R = 1.75, ARM = 2.6, SIG = 30, MAG = 1.35, PASS = 2.6, HOLD = 0.7;
+      var L = (box.w + box.h) / Math.SQRT2, run = PASS + HOLD, n = Math.floor(t / run), u = (t - n * run) / PASS;
+      var front = -3 * SIG + Math.min(1, u) * (L + 6 * SIG);   // along the diagonal from the top-right corner
+      var toStars = n % 2 === 0;
+      ctx.fillStyle = dot; ctx.strokeStyle = dot; ctx.lineCap = 'round';
+      var arms = [];
+      for (var a = 0; a < 3; a++) { var ang = Math.PI / 2 + a * Math.PI / 3; arms.push([Math.cos(ang), Math.sin(ang)]); }
+      ctx.beginPath();
+      var starry = [];
+      for (var y = G / 2; y < box.h + G; y += G) {
+        for (var x = G / 2; x < box.w + G; x += G) {
+          var s = ((box.w - x) + y) / Math.SQRT2, d = s - front;
+          var swell = 1 + MAG * Math.exp(-(d * d) / (SIG * SIG));
+          var passed = 1 - smooth((d + SIG * 0.25) / (SIG * 0.5));   // 1 behind the front, 0 ahead of it
+          var star = toStars ? passed : 1 - passed;
+          if (star < 1) { ctx.moveTo(x + R * swell * (1 - star), y); ctx.arc(x, y, R * swell * (1 - star), 0, Math.PI * 2); }
+          if (star > 0) starry.push(x, y, Math.min(swell, 1.5) * star, Math.min(swell, 1.5));   // an asterisk stays inside its cell
+        }
+      }
+      ctx.fill();
+      for (var i = 0; i < starry.length; i += 4) {
+        var px = starry[i], py = starry[i + 1], r = ARM * starry[i + 2];
+        ctx.lineWidth = 1.15 * Math.sqrt(starry[i + 3]);
+        ctx.beginPath();
+        arms.forEach(function (v) { ctx.moveTo(px - v[0] * r, py - v[1] * r); ctx.lineTo(px + v[0] * r, py + v[1] * r); });
+        ctx.stroke();
+      }
+    });
+  };
+
   /* ---- Header: the homepage's masthead --------------------------------------
      On the homepage the statement's first line is the masthead, so the header
      ([data-nda-dock]) keeps its wordmark out (.is-undocked) until that line has
@@ -1967,6 +2112,8 @@
     each(root, '[data-nda-submenu]', NDA.submenu);
     each(root, '.nda-forkmark', NDA.forkMark);
     each(root, '.nda-wash', NDA.wash);
+    each(root, '.nda-engrave', NDA.engrave);
+    each(root, '.nda-comic', NDA.comic);
     each(root, '[data-nda-intro]', function (el) { NDA.intro(el); });
     each(root, '[data-nda-dock]', NDA.dock);
     each(root, '[data-nda-autohide]', NDA.autohide);

@@ -355,26 +355,35 @@ body {
 .nda-columns > .nda-wash:first-child .nda-wash__film { left: calc(-1 * var(--space-4, 16px)); }
 .nda-columns > .nda-wash:last-child .nda-wash__film { right: calc(-1 * var(--space-4, 16px)); }
 
-/* ---------- Engraving and comic panel: two quieter hovers ----------
-   Each seminar has its own hover. Sex, and/or Love keeps the pigment wash (.nda-wash). Coining Reason's is still:
-   a banknote's guilloche band, engraved in ink, fades in (.nda-engrave). The Graphic's is its own page's comic
-   panel: a 2px ink frame, a hard 8px drop and pale yellow Ben-Day dots (.nda-comic). Neither moves. */
-.nda-engrave, .nda-comic { position: relative; isolation: isolate; }
-.nda-engrave::before, .nda-comic::before {
+/* ---------- Engraving, comic and Fork panels: three quieter hovers ----------
+   Each program has its own hover. Sex, and/or Love keeps the pigment wash (.nda-wash). Coining Reason's is still:
+   a banknote's guilloche band, engraved in ink, fades in across its title (.nda-engrave). The Graphic's is its own
+   page's comic panel: a 2px ink frame and pale yellow Ben-Day dots (.nda-comic), flat like the rest (no drop).
+   Fork's is its own site's stock: the panel turns ice blue-grey and its type Fork's charcoal navy (.nda-fork),
+   as the mark cuts. None of the three moves. */
+.nda-engrave, .nda-comic, .nda-fork { position: relative; isolation: isolate; }
+.nda-engrave::before, .nda-comic::before, .nda-fork::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0;
   transition: opacity var(--dur-wash, 450ms) var(--ease-out, cubic-bezier(.2,.8,.2,1));
 }
 .nda-engrave::before {
   background: var(--ink);
-  -webkit-mask: var(--nda-engrave-image) repeat-x center 28% / 240px 200px; mask: var(--nda-engrave-image) repeat-x center 28% / 240px 200px;
+  /* the band spans the title: sized to the panel's width (cqi) and centred on the title's two lines */
+  -webkit-mask: var(--nda-engrave-image) repeat-x center calc(45px - 20.2cqi) / 110cqi 92cqi;
+  mask: var(--nda-engrave-image) repeat-x center calc(45px - 20.2cqi) / 110cqi 92cqi;
 }
-.nda-engrave:is(:hover, :focus-within)::before, .nda-engrave.is-washed::before { opacity: .34; }
+.nda-engrave:is(:hover, :focus-within)::before, .nda-engrave.is-washed::before { opacity: .6; }
 .nda-comic::before {
   background-color: #fff1a1; background-image: radial-gradient(circle, #f4c300 1.6px, transparent 2px); background-size: 9px 9px;
-  box-shadow: inset 0 0 0 2px #050505, 8px 8px 0 #050505;
+  box-shadow: inset 0 0 0 2px #050505;
 }
 .nda-comic:is(:hover, :focus-within)::before, .nda-comic.is-washed::before { opacity: 1; }
 .nda-comic:is(:hover, :focus-within), .nda-comic.is-washed { color: #050505; }
+/* Fork's colours, from fork.netadao.org's tokens (paper, ink, ink-2) */
+.nda-fork { --nda-fork-paper: #E3EAF0; --nda-fork-ink: #17202C; --nda-fork-ink-2: #46515F; }
+.nda-fork::before { background: var(--nda-fork-paper); }
+.nda-fork:is(:hover, :focus-within)::before, .nda-fork.is-washed::before { opacity: 1; }
+.nda-fork:is(:hover, :focus-within), .nda-fork.is-washed { --ink: var(--nda-fork-ink); --ink-mid: var(--nda-fork-ink-2); --ink-dim: var(--nda-fork-ink-2); color: var(--ink); }
 
 /* ---------- Program panel ---------- */
 .nda-program {
@@ -461,10 +470,10 @@ body {
   stroke-dasharray: 1 1; stroke-dashoffset: 1; opacity: 0;
   transition: opacity 200ms ease-out, stroke-dashoffset 0s linear 200ms;
 }
-:is(.nda-program, .nda-journal, a):is(:hover, :focus-within) .nda-forkmark__bottom,
+:is(.nda-program, .nda-journal, a):is(:hover, :focus-within) .nda-forkmark__bottom, .nda-fork.is-washed .nda-forkmark__bottom,
 .nda-forkmark:hover .nda-forkmark__bottom,
 .nda-forkmark.is-split .nda-forkmark__bottom { transform: none; transition: transform 460ms cubic-bezier(.3, 1.4, .5, 1) 70ms; }
-:is(.nda-program, .nda-journal, a):is(:hover, :focus-within) .nda-forkmark__slash,
+:is(.nda-program, .nda-journal, a):is(:hover, :focus-within) .nda-forkmark__slash, .nda-fork.is-washed .nda-forkmark__slash,
 .nda-forkmark:hover .nda-forkmark__slash,
 .nda-forkmark.is-split .nda-forkmark__slash { opacity: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 340ms cubic-bezier(.2, .6, .25, 1), opacity 0s; }
 
@@ -832,6 +841,6 @@ textarea.nda-field__input { min-height: 112px; resize: vertical; }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .nda-wash::before, .nda-program__image, .nda-forkmark__bottom, .nda-forkmark__slash, .nda-header__inner > .nda-wordmark,
+  .nda-wash::before, .nda-engrave::before, .nda-comic::before, .nda-fork::before, .nda-program__image, .nda-forkmark__bottom, .nda-forkmark__slash, .nda-header__inner > .nda-wordmark,
   .nda-circle-link__icon, .nda-button, .nda-text-link, .nda-radio button, .nda-banner__action { transition: none; }
 }

@@ -50,6 +50,11 @@
 /* Coining Reason: a series of units. The cover is the seminar cover; then a switcher between the current unit,
    the archive and the roadmap; the unit's sessions as SessionRows; the roadmap as ten tiles on hairlines. */
 .pg-cover--cr .pg-cover__art img { object-position: 70% 40%; transform: scale(1.04); }   /* the scan has thin black bars top and bottom */
+/* the next session, as Sex, and/or Love shows its own Up next, but neutral: the unit is on hiatus, and pink is for now */
+.pg-upnext { display: grid; grid-template-columns: 100px minmax(0, 1fr); column-gap: var(--space-7, 32px); align-items: baseline; border-top: var(--stroke-heavy, 3px) solid var(--ink); }
+.pg-upnext__kicker { margin: 0; font: 500 11px/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mid); }
+.pg-upnext__title { margin: 0 0 8px; font: 700 32px/1 var(--font-display); text-transform: uppercase; letter-spacing: -.01em; word-spacing: .06em; }
+.pg-upnext__title a { color: inherit; text-decoration: none; }
 .pg-units-bar { padding-block: 0; border-bottom: 0; }
 .pg-switch { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border-bottom: var(--stroke-hairline, 1px) solid var(--rule); }
 .pg-switch li + li { border-left: var(--stroke-hairline, 1px) solid var(--rule-thin); }

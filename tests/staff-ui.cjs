@@ -11,10 +11,8 @@ process.on('exit',()=>server.kill());
  const context=await browser.newContext();
  await context.route('**/*',async route=>{
    const url=new URL(route.request().url());
-   if(url.hostname==='www.gstatic.com'&&url.pathname.endsWith('/firebase-database.js'))return route.fulfill({contentType:'application/javascript',body:`
-     export const ref=(db,path)=>path;
-     export const get=async path=>{if(window.denyFork&&path==='forkInterests')throw {code:'PERMISSION_DENIED',message:'Permission denied'};return {val:()=>window.mockDb?.[path]??null};};
-   `});
+   // Admin → Fork reads the database directly (a plain string body here: refinement-ui.cjs takes the first template body as its auth mock)
+   if(url.hostname==='www.gstatic.com'&&url.pathname.endsWith('/firebase-database.js'))return route.fulfill({contentType:'application/javascript',body:"export const ref=(db,path)=>path;\nexport const get=async path=>{if(window.denyFork&&path==='forkInterests')throw {code:'PERMISSION_DENIED',message:'Permission denied'};return {val:()=>window.mockDb?.[path]??null};};"});
    if(url.hostname!=='127.0.0.1'){ if(url.pathname.includes('email.min.js'))return route.fulfill({contentType:'application/javascript',body:'window.emailjs={init(){},send(){return Promise.resolve();}}'}); return route.abort(); }
    if(url.pathname==='/js/academy-auth.js')return route.fulfill({contentType:'application/javascript',body:`
      export * from '/js/academy-record.js';

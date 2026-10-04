@@ -364,8 +364,8 @@ body {
    banknote's guilloche band, engraved in ink across its title: a woven tube of 36 curves that flexes as one body, a
    slow wave travelling along it and a gentle swell behind (.nda-engrave; drawn by NDA.engrave on a canvas, the still
    band in CSS without script or under reduced motion). The Graphic's is its own page's comic panel: a 2px ink frame
-   and green Ben-Day dots, with a magnifying strip drawn across them from the top-right corner to the bottom-left: under
-   it the dots show large and turn into asterisks as it passes, then back on the next pass (.nda-comic; NDA.comic). Flat like the rest,
+   and green Ben-Day dots, with an unseen magnifying glass drawn across them from the top-right corner to the bottom-left:
+   under it the dots show large, bulging at its edges, and turn into asterisks as it passes, then back (.nda-comic; NDA.comic). Flat like the rest,
    no drop. Fork's is its own site's stock: the panel turns ice blue-grey behind its type, which keeps its ink
    (.nda-fork), as the mark cuts. A panel's action keeps its paper ground through all of them. */
 .nda-engrave, .nda-comic, .nda-fork { position: relative; isolation: isolate; }

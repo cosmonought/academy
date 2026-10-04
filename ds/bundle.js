@@ -408,12 +408,19 @@
     });
   };
 
-  /* The Graphic: a magnifying strip passes over the panel's Ben-Day dots, diagonally from the
-     top-right corner to the bottom-left, like a reading lens drawn across the page. Inside
-     it the dots show at 3.5 times their size, and as the strip goes over them they turn into
-     six-armed asterisks, the dot shrinking as the arms grow, so the change can be watched;
-     behind it the small dots have become asterisks too. The next pass turns them back. A
-     pass takes 6s, with a short hold between. */
+  /* The Graphic: an unseen magnifying glass, a long strip, is drawn across the panel's
+     Ben-Day dots diagonally, from the top-right corner to the bottom-left. Nothing marks
+     the glass itself; the dots under it are the panel's own, seen through it: about three
+     times their size across its middle, easing off towards its edges, where the enlarged
+     rows bulge, crowd and shrink a little before meeting the page's dots, so the glass has
+     no edge. As it passes they turn into six-armed asterisks, each dot shrinking as its arms
+     grow, so the change can be watched; behind it they stay asterisks, and the next pass
+     turns them back. A pass takes 7.5s.
+     The lens, across the glass: a point at a fraction x of its half-width shows the page at
+     g(x), with g′ = 1/ZP over the middle (x < X0) and, out to the edge, rising through a
+     bulge back to 1, its integral 1 so the edge meets the page. Along the glass the page is
+     spread ZA times in the middle, 1 at the edges, about the middle of the glass's chord;
+     the dots grow as the page is magnified across (1/g′). Kept in a table. */
   NDA.comic = function (el) {
     var arms = [];
     for (var a = 0; a < 3; a++) { var ang = Math.PI / 2 + a * Math.PI / 3; arms.push([Math.cos(ang), Math.sin(ang)]); }
@@ -425,52 +432,44 @@
         ctx.stroke();
       }
     }
+    var ZP = 3, ZA = 1.45, X0 = 0.3, N = 400, GD = [], GV = [0];
+    var K = (1 - 1 / ZP) * (1 + X0) / (1 - X0);
+    for (var i = 0; i <= N; i++) {   // g′ and g on [0, 1]
+      var x = i / N, r = x <= X0 ? 0 : (x - X0) / (1 - X0);
+      GD.push(1 / ZP + (1 - 1 / ZP) * smooth(r) + K * Math.pow(Math.sin(Math.PI * r), 2));
+      if (i) GV.push(GV[i - 1] + (GD[i] + GD[i - 1]) / (2 * N));
+    }
+    for (i = 0; i <= N; i++) GV[i] /= GV[N];   // exactly g(1) = 1
+    function lensAt(y) {   // the image fraction x showing the page at fraction y, with g′ there
+      var lo = 0, hi = N;
+      while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (GV[mid] < y) lo = mid; else hi = mid; }
+      var f = GV[hi] > GV[lo] ? (y - GV[lo]) / (GV[hi] - GV[lo]) : 0, x = (lo + f) / N;
+      return [x, GD[lo] + (GD[hi] - GD[lo]) * f];
+    }
     drawnHover(el, function (ctx, box, t) {
-      var cs = box.cs, dot = cs.getPropertyValue('--nda-comic-dot').trim() || '#5bb348', tint = cs.getPropertyValue('--nda-comic-tint').trim() || '#dbf1c6';
-      var G = 9, R = 1.75, ARM = 2.6, Z = 3.5, HW = 46, PASS = 6, HOLD = 0.5, w = box.w, h = box.h, S2 = Math.SQRT2;
+      var dot = box.cs.getPropertyValue('--nda-comic-dot').trim() || '#5bb348';
+      var G = 9, R = 1.75, ARM = 2.6, LINE = 1.15, HW = 88, PASS = 7.5, HOLD = 0.3;
+      var w = box.w, h = box.h, S2 = Math.SQRT2;
       var L = (w + h) / S2, run = PASS + HOLD, n = Math.floor(t / run), u = Math.min(1, (t - n * run) / PASS);
-      var c = -HW + u * (L + 2 * HW);   // the strip's centre, along the diagonal from the top-right corner
-      var toStars = n % 2 === 0, done = toStars ? 1 : 0, todo = 1 - done;
+      var c = -HW + u * (L + 2 * HW);   // the glass's centre line, along the diagonal from the top-right corner
+      var toStars = n % 2 === 0;
+      // the middle of the centre line's chord across the panel: the point the glass spreads the page about, along it
+      var xa = Math.max(0, w - c * S2), xb = Math.min(w, w - c * S2 + h), xm = (xa + xb) / 2, ym = xm - w + c * S2;
       ctx.fillStyle = dot; ctx.strokeStyle = dot; ctx.lineCap = 'round';
-      // the page: small dots ahead of the strip, small asterisks behind it (or the other way on a return pass)
-      ctx.beginPath();
-      var behind = [];
       for (var y = G / 2; y < h + G; y += G) {
         for (var x = G / 2; x < w + G; x += G) {
-          var s = (w - x + y) / S2;
-          if (Math.abs(s - c) < HW) continue;           // under the strip
-          var q = s < c ? done : todo;
-          if (q) behind.push(x, y); else { ctx.moveTo(x + R, y); ctx.arc(x, y, R, 0, Math.PI * 2); }
+          var es = (-(x - xm) + (y - ym)) / S2;          // across the glass: + ahead of its centre line, − behind
+          if (Math.abs(es) >= HW) { mark(ctx, x, y, (es < 0) === toStars ? 1 : 0, R, ARM, LINE); continue; }
+          var lens = lensAt(Math.abs(es) / HW), xi = lens[0], e = (es < 0 ? -xi : xi) * HW;
+          var spread = 1 + (ZA - 1) * (1 - smooth(xi <= X0 ? 0 : (xi - X0) / (1 - X0)));
+          var ai = ((x - xm) + (y - ym)) / S2 * spread;
+          var px = xm + (ai - e) / S2, py = ym + (ai + e) / S2;
+          if (px < -20 || px > w + 20 || py < -20 || py > h + 20) continue;
+          var size = 1 / lens[1];
+          var turn = smooth(0.5 - es / (HW * 0.5));       // 0 ahead, 1 behind: the turn happens under the glass's middle
+          mark(ctx, px, py, toStars ? turn : 1 - turn, R * size, ARM * size, LINE * (1 + (size - 1) * 0.75));
         }
       }
-      ctx.fill();
-      ctx.lineWidth = 1.15; ctx.beginPath();
-      for (var i = 0; i < behind.length; i += 2) arms.forEach(function (v) {
-        ctx.moveTo(behind[i] - v[0] * ARM, behind[i + 1] - v[1] * ARM); ctx.lineTo(behind[i] + v[0] * ARM, behind[i + 1] + v[1] * ARM);
-      });
-      ctx.stroke();
-      // the strip: the edges of a 45° band, |s - c| < HW
-      var k1 = -w + (c - HW) * S2, k2 = -w + (c + HW) * S2, x1 = -h - 20, x2 = w + h + 20;
-      ctx.save();
-      ctx.beginPath(); ctx.moveTo(x1, x1 + k1); ctx.lineTo(x2, x2 + k1); ctx.lineTo(x2, x2 + k2); ctx.lineTo(x1, x1 + k2); ctx.closePath();
-      ctx.clip();
-      ctx.fillStyle = tint; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, 0, w, h);   // a little glass
-      ctx.fillStyle = dot;
-      var BG = G * Z;
-      for (var by = BG / 2; by < h + BG; by += BG) {
-        for (var bx = BG / 2; bx < w + BG; bx += BG) {
-          var bs = (w - bx + by) / S2, d = bs - c;        // + ahead of the strip's centre, − behind it
-          if (Math.abs(d) > HW + ARM * Z) continue;
-          var turn = smooth((HW * 0.7 - d) / (HW * 1.4));  // 0 at the leading edge, 1 at the trailing edge
-          mark(ctx, bx, by, toStars ? turn : 1 - turn, R * Z, ARM * Z, 1.15 * Z * 0.75);
-        }
-      }
-      ctx.restore();
-      // the lens's rims, in the panel's ink
-      ctx.strokeStyle = '#050505'; ctx.lineWidth = 1.5; ctx.beginPath();
-      ctx.moveTo(x1, x1 + k1); ctx.lineTo(x2, x2 + k1); ctx.moveTo(x1, x1 + k2); ctx.lineTo(x2, x2 + k2);
-      ctx.stroke();
     });
   };
 

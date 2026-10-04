@@ -408,41 +408,69 @@
     });
   };
 
-  /* The Graphic: the panel's Ben-Day dots (9px grid) swept by a magnifying wave from the
-     top-right corner to the bottom-left. The dots swell as the front reaches them, to
-     about twice their size, and turn into six-armed asterisks as it passes (an asterisk
-     swells less, so it stays inside its cell); the next pass turns them back. A pass
-     takes 2.6s, with a short hold between. */
+  /* The Graphic: a magnifying strip passes over the panel's Ben-Day dots, diagonally from the
+     top-right corner to the bottom-left, like a reading lens drawn across the page. Inside
+     it the dots show at 3.5 times their size, and as the strip goes over them they turn into
+     six-armed asterisks, the dot shrinking as the arms grow, so the change can be watched;
+     behind it the small dots have become asterisks too. The next pass turns them back. A
+     pass takes 6s, with a short hold between. */
   NDA.comic = function (el) {
+    var arms = [];
+    for (var a = 0; a < 3; a++) { var ang = Math.PI / 2 + a * Math.PI / 3; arms.push([Math.cos(ang), Math.sin(ang)]); }
+    function mark(ctx, x, y, q, r, arm, line) {   // q: 0 a dot, 1 an asterisk; between, both
+      if (q < 1) { ctx.beginPath(); ctx.arc(x, y, r * (1 - q), 0, Math.PI * 2); ctx.fill(); }
+      if (q > 0) {
+        ctx.lineWidth = line; ctx.beginPath();
+        arms.forEach(function (v) { ctx.moveTo(x - v[0] * arm * q, y - v[1] * arm * q); ctx.lineTo(x + v[0] * arm * q, y + v[1] * arm * q); });
+        ctx.stroke();
+      }
+    }
     drawnHover(el, function (ctx, box, t) {
-      var cs = box.cs, dot = cs.getPropertyValue('--nda-comic-dot').trim() || '#3f9a35';
-      var G = 9, R = 1.75, ARM = 2.6, SIG = 30, MAG = 1.35, PASS = 2.6, HOLD = 0.7;
-      var L = (box.w + box.h) / Math.SQRT2, run = PASS + HOLD, n = Math.floor(t / run), u = (t - n * run) / PASS;
-      var front = -3 * SIG + Math.min(1, u) * (L + 6 * SIG);   // along the diagonal from the top-right corner
-      var toStars = n % 2 === 0;
+      var cs = box.cs, dot = cs.getPropertyValue('--nda-comic-dot').trim() || '#5bb348', tint = cs.getPropertyValue('--nda-comic-tint').trim() || '#dbf1c6';
+      var G = 9, R = 1.75, ARM = 2.6, Z = 3.5, HW = 46, PASS = 6, HOLD = 0.5, w = box.w, h = box.h, S2 = Math.SQRT2;
+      var L = (w + h) / S2, run = PASS + HOLD, n = Math.floor(t / run), u = Math.min(1, (t - n * run) / PASS);
+      var c = -HW + u * (L + 2 * HW);   // the strip's centre, along the diagonal from the top-right corner
+      var toStars = n % 2 === 0, done = toStars ? 1 : 0, todo = 1 - done;
       ctx.fillStyle = dot; ctx.strokeStyle = dot; ctx.lineCap = 'round';
-      var arms = [];
-      for (var a = 0; a < 3; a++) { var ang = Math.PI / 2 + a * Math.PI / 3; arms.push([Math.cos(ang), Math.sin(ang)]); }
+      // the page: small dots ahead of the strip, small asterisks behind it (or the other way on a return pass)
       ctx.beginPath();
-      var starry = [];
-      for (var y = G / 2; y < box.h + G; y += G) {
-        for (var x = G / 2; x < box.w + G; x += G) {
-          var s = ((box.w - x) + y) / Math.SQRT2, d = s - front;
-          var swell = 1 + MAG * Math.exp(-(d * d) / (SIG * SIG));
-          var passed = 1 - smooth((d + SIG * 0.25) / (SIG * 0.5));   // 1 behind the front, 0 ahead of it
-          var star = toStars ? passed : 1 - passed;
-          if (star < 1) { ctx.moveTo(x + R * swell * (1 - star), y); ctx.arc(x, y, R * swell * (1 - star), 0, Math.PI * 2); }
-          if (star > 0) starry.push(x, y, Math.min(swell, 1.5) * star, Math.min(swell, 1.5));   // an asterisk stays inside its cell
+      var behind = [];
+      for (var y = G / 2; y < h + G; y += G) {
+        for (var x = G / 2; x < w + G; x += G) {
+          var s = (w - x + y) / S2;
+          if (Math.abs(s - c) < HW) continue;           // under the strip
+          var q = s < c ? done : todo;
+          if (q) behind.push(x, y); else { ctx.moveTo(x + R, y); ctx.arc(x, y, R, 0, Math.PI * 2); }
         }
       }
       ctx.fill();
-      for (var i = 0; i < starry.length; i += 4) {
-        var px = starry[i], py = starry[i + 1], r = ARM * starry[i + 2];
-        ctx.lineWidth = 1.15 * Math.sqrt(starry[i + 3]);
-        ctx.beginPath();
-        arms.forEach(function (v) { ctx.moveTo(px - v[0] * r, py - v[1] * r); ctx.lineTo(px + v[0] * r, py + v[1] * r); });
-        ctx.stroke();
+      ctx.lineWidth = 1.15; ctx.beginPath();
+      for (var i = 0; i < behind.length; i += 2) arms.forEach(function (v) {
+        ctx.moveTo(behind[i] - v[0] * ARM, behind[i + 1] - v[1] * ARM); ctx.lineTo(behind[i] + v[0] * ARM, behind[i + 1] + v[1] * ARM);
+      });
+      ctx.stroke();
+      // the strip: the edges of a 45° band, |s - c| < HW
+      var k1 = -w + (c - HW) * S2, k2 = -w + (c + HW) * S2, x1 = -h - 20, x2 = w + h + 20;
+      ctx.save();
+      ctx.beginPath(); ctx.moveTo(x1, x1 + k1); ctx.lineTo(x2, x2 + k1); ctx.lineTo(x2, x2 + k2); ctx.lineTo(x1, x1 + k2); ctx.closePath();
+      ctx.clip();
+      ctx.fillStyle = tint; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, 0, w, h);   // a little glass
+      ctx.fillStyle = dot;
+      var BG = G * Z;
+      for (var by = BG / 2; by < h + BG; by += BG) {
+        for (var bx = BG / 2; bx < w + BG; bx += BG) {
+          var bs = (w - bx + by) / S2, d = bs - c;        // + ahead of the strip's centre, − behind it
+          if (Math.abs(d) > HW + ARM * Z) continue;
+          var turn = smooth((HW * 0.7 - d) / (HW * 1.4));  // 0 at the leading edge, 1 at the trailing edge
+          mark(ctx, bx, by, toStars ? turn : 1 - turn, R * Z, ARM * Z, 1.15 * Z * 0.75);
+        }
       }
+      ctx.restore();
+      // the lens's rims, in the panel's ink
+      ctx.strokeStyle = '#050505'; ctx.lineWidth = 1.5; ctx.beginPath();
+      ctx.moveTo(x1, x1 + k1); ctx.lineTo(x2, x2 + k1); ctx.moveTo(x1, x1 + k2); ctx.lineTo(x2, x2 + k2);
+      ctx.stroke();
     });
   };
 

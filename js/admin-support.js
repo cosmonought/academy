@@ -1,5 +1,6 @@
 import { auth, onAuthStateChanged, ADMIN_EMAIL, SEMINAR_TITLES, sendPasswordReset } from './academy-auth.js?v=27';
 import { staffCall, staffError } from './staff-api.js';
+import { readView, writeView } from './view-cache.js';
 const el=id=>document.getElementById(id);
 const escape=value=>{const span=document.createElement('span');span.textContent=value ?? '';return span.innerHTML;};
 let generation=0, account=null;
@@ -10,6 +11,12 @@ async function instructors() {
   try {
     const staff=await staffCall('adminListInstructors');
     if(request!==generation)return;
+    renderInstructors(staff);
+    if(auth.currentUser)writeView('admin-instructors',auth.currentUser.uid,staff);
+  } catch(error) { if(request===generation)el('assignmentStatus').textContent=staffError(error); }
+}
+// the list of teaching assignments, from the staff service or this browser's last copy of it
+function renderInstructors(staff) {
     el('instructorList').replaceChildren();
     for(const [id,users] of Object.entries(staff)) for(const [uid,record] of Object.entries(users)) {
       const row=document.createElement('div');row.className='staff-row';
@@ -19,8 +26,8 @@ async function instructors() {
       row.append(button);el('instructorList').append(row);
     }
     if(!el('instructorList').children.length)el('instructorList').textContent='No instructors assigned.';
-  } catch(error) { if(request===generation)el('assignmentStatus').textContent=staffError(error); }
 }
+{ const cached=readView('admin-instructors'); if(cached?.data)renderInstructors(cached.data); }
 el('accountLookup').onsubmit=async event=>{
   event.preventDefault();const request=++generation;account=null;el('assignInstructor').disabled=true;el('accountSupportResult').replaceChildren();el('supportStatus').textContent='Looking up account…';
   const button=el('accountLookup').querySelector('button');button.disabled=true;
@@ -55,7 +62,8 @@ el('instructorAssignment').onsubmit=async event=>{
   catch(error){el('assignmentStatus').textContent=staffError(error);}finally{button.disabled=false;}
 };
 onAuthStateChanged(auth,user=>{
-  generation++;account=null;el('accountSupportResult').replaceChildren();el('instructorList').replaceChildren();el('assignInstructor').disabled=true;
+  generation++;account=null;el('accountSupportResult').replaceChildren();el('assignInstructor').disabled=true;
+  if(!(user?.email===ADMIN_EMAIL && user.emailVerified))el('instructorList').replaceChildren();
   el('accountAssistance').hidden=!(user?.email===ADMIN_EMAIL && user.emailVerified);
   if(!el('accountAssistance').hidden)instructors();
 });

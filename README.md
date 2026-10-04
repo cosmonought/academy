@@ -79,6 +79,10 @@ The emulator command uses `demo-academy`, local fake accounts, and local databas
 data. It does not send real email or change production users. Browser previews
 still use the real Firebase project; do not submit fake accounts there.
 
+## Signed-in pages load at once
+
+Profile and Admin keep this browser's last copy of what they showed (`js/view-cache.js`: localStorage, tagged with the account's uid) and draw it immediately on a return visit, then read the database again once sign-in is confirmed and redraw only what changed; until then Admin's controls wait (inert). The copies are removed on sign-out, and whenever a page (Profile, Admin or Account) finds a different account, or no one, signed in. The pages' reads go out together, the teaching-roles staff service no longer holds the Profile record up, and both pages preload the Firebase modules and connections. `tests/fast-views.cjs` covers it.
+
 ## Fork registrations
 
 The Register interest form on fork.netadao.org posts to `forkInterests` in this project's database, and Admin lists the entries under Fork. Its rule must be added to the live rules: see [the Fork registrations guide](docs/fork-interest.md). No link or form on the Academy, netadao.org or Fork opens an email app.

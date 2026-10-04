@@ -3,6 +3,7 @@ import { setTeachingAvailable } from './profile-tabs.js';
 import { renderSessionAttendance } from './session-attendance.js';
 import { auth, onAuthStateChanged, SEMINAR_TITLES, ATTENDANCE_EVENTS, EVALUATION_FORMS, EVALUATION_OUTCOMES, EVALUATION_OFFERED, approveRegistration, revokeRegistration, setAttendance, setInstructorEvaluation } from './academy-auth.js?v=27';
 import { staffCall, staffError } from './staff-api.js';
+import { readView, writeView } from './view-cache.js';
 const el = id => document.getElementById(id);
 const escape = value => { const span = document.createElement('span'); span.textContent = value ?? ''; return span.innerHTML; };
 const options = object => Object.entries(object).map(([key,label]) => `<option value="${escape(key)}">${escape(label)}</option>`).join('');
@@ -12,11 +13,12 @@ async function refreshAssignments() {
   el('teachingBody').replaceChildren();
   if (!uid) { assignments = []; assignmentRoles = {}; updateRoleBadge(); setTeachingAvailable(false); return; }
   try {
-    const result = await staffCall('getTeachingAssignments');
-    const roles = await staffCall('getTeachingAssignmentRoles');
+    // both at once: these staff services are the slowest calls on the page
+    const [result, roles] = await Promise.all([staffCall('getTeachingAssignments'), staffCall('getTeachingAssignmentRoles')]);
     if (request !== generation || auth.currentUser?.uid !== uid) return;
     el('teachingAvailability').textContent = '';
     assignments = result; assignmentRoles = roles; setTeachingAvailable(!!result.length);
+    writeView('teaching', uid, { assignments: result, roles });
     current = result.includes(current) ? current : result[0] || '';
     el('teachingSeminar').innerHTML = options(Object.fromEntries(result.map(id => [id, SEMINAR_TITLES[id]])));
     el('teachingSeminar').value = current; el('teachingSelector').hidden = result.length < 2;
@@ -93,4 +95,14 @@ function render(rows,id) {
 document.addEventListener('profile-tab-change', event => { mode = event.detail; if (mode === 'teaching') loadRoster(); });
 el('teachingSeminar').onchange=event=> { current=event.target.value; updateRoleBadge(); loadRoster(); };
 el('teachingRefresh').onclick=()=>refreshAssignments();
+// a return visit shows the Teaching tab at once from this browser's last copy; sign-in confirms or removes it
+{
+  const early = readView('teaching');
+  if (early?.data?.assignments?.length) {
+    assignments = early.data.assignments; assignmentRoles = early.data.roles || {}; current = assignments[0];
+    el('teachingSeminar').innerHTML = options(Object.fromEntries(assignments.map(id => [id, SEMINAR_TITLES[id]])));
+    el('teachingSeminar').value = current; el('teachingSelector').hidden = assignments.length < 2;
+    updateRoleBadge(); setTeachingAvailable(true, false);
+  }
+}
 onAuthStateChanged(auth,()=> { mode='seminars'; refreshAssignments(); });

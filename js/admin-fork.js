@@ -4,6 +4,7 @@
 // source "fork.netadao.org"; those entries are shown here too and kept out of Inquiries.
 import { auth, db, onAuthStateChanged, ADMIN_EMAIL } from './academy-auth.js?v=27';
 import { ref, get } from 'https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js';
+import { readView, writeView } from './view-cache.js';
 
 const SOURCE = 'fork.netadao.org';
 const INTERESTS = { submitting: 'Submitting work', editorial: 'Editorial board', reviewing: 'Peer reviewing', updates: 'General updates only' };
@@ -21,14 +22,19 @@ async function list(path, keep) {
 function cell(tr, text) { const td = document.createElement('td'); td.textContent = text; tr.append(td); }
 
 async function load() {
-  const request = ++generation;
-  const status = el('forkStatusLine'), body = el('forkTableBody');
-  status.textContent = 'Loading…';
+  const request = ++generation, uid = auth.currentUser?.uid;
+  if (!el('forkTableBody').children.length) el('forkStatusLine').textContent = 'Loading…';
   const [own, early] = await Promise.all([list('forkInterests', () => true), list('interestSignups', r => r.source === SOURCE)]);
   if (request !== generation) return;
-  body.replaceChildren(); emails = [];
-  if (own === null && early === null) { status.textContent = 'Could not load Fork registrations. Please try again.'; el('forkCopyBtn').disabled = true; return; }
+  if (own === null && early === null) { el('forkStatusLine').textContent = 'Could not load Fork registrations. Please try again.'; return; }
   const rows = [...(own || []), ...(early || [])].sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
+  render(rows, own !== null);
+  if (uid) writeView('admin-fork', uid, { rows, ruleLive: own !== null });
+}
+
+function render(rows, ruleLive) {
+  const status = el('forkStatusLine'), body = el('forkTableBody');
+  body.replaceChildren(); emails = [];
   for (const r of rows) {
     const tr = document.createElement('tr');
     cell(tr, r.name || ''); cell(tr, r.email || ''); cell(tr, INTERESTS[r.interest] || r.interest || '—'); cell(tr, r.area || '—'); cell(tr, when(r.submittedAt));
@@ -40,7 +46,13 @@ async function load() {
     ? `${rows.length} registration${rows.length === 1 ? '' : 's'}` + (counts.length ? ' · ' + counts.map(([label, n]) => `${n} ${label.toLowerCase()}`).join(' · ') : '') + '.'
     : 'No registrations yet.';
   el('forkCopyBtn').disabled = !emails.length;
-  el('forkRuleNote').hidden = own !== null;   // the forkInterests rule isn't live yet: entries arrive through the general list
+  el('forkRuleNote').hidden = ruleLive;   // the forkInterests rule isn't live yet: entries arrive through the general list
+}
+
+// before sign-in is confirmed: this browser's last copy (Admin shows it, inert, until sign-in confirms the account)
+{
+  const cached = readView('admin-fork');
+  if (cached?.data?.rows) render(cached.data.rows, cached.data.ruleLive !== false);
 }
 
 el('forkRefreshBtn').addEventListener('click', load);
@@ -51,6 +63,6 @@ el('forkCopyBtn').addEventListener('click', async () => {
 });
 onAuthStateChanged(auth, user => {
   generation++;
-  el('forkTableBody').replaceChildren(); emails = [];
   if (user?.email === ADMIN_EMAIL && user.emailVerified) load();
+  else { el('forkTableBody').replaceChildren(); emails = []; }
 });

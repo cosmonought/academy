@@ -11,10 +11,23 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
   <link rel="preload" href="/ds/fonts/NDADisplay-Bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/ds/tokens.css?v=6">
-  <link rel="stylesheet" href="/ds/bundle.css?v=6">
-  <link rel="stylesheet" href="/ds/site.css?v=6">
-  <script src="/ds/bundle.js?v=6"></script>
+  <link rel="stylesheet" href="/ds/tokens.css?v=7">
+  <link rel="stylesheet" href="/ds/bundle.css?v=7">
+  <link rel="stylesheet" href="/ds/site.css?v=7">
+  <script src="/ds/bundle.js?v=7"></script>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://neta-dao-cinema-default-rtdb.firebaseio.com">
+  <link rel="preconnect" href="https://us-central1-neta-dao-cinema.cloudfunctions.net" crossorigin>
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js">
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js">
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js">
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.17.0/firebase-functions.js">
+  <link rel="modulepreload" href="/js/academy-auth.js?v=27">
+  <link rel="modulepreload" href="/js/academy-record.js">
+  <link rel="modulepreload" href="/js/staff-api.js">
+  <link rel="modulepreload" href="/js/view-cache.js">
   <link rel="stylesheet" href="/ds/pages.css?v=3">
   <link rel="stylesheet" href="/ds/staff.css?v=1">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -121,7 +134,7 @@
   </div>
 </footer>
 </div>
-<script type="module" src="/js/profile-teaching.js?v=2"></script>
+<script type="module" src="/js/profile-teaching.js?v=3"></script>
 <script type="module">
   import {
     auth, onAuthStateChanged, signOut, completeSignInIfNeeded, initNavAccountWidget,
@@ -131,6 +144,7 @@
   } from '/js/academy-auth.js?v=27';
   import { seminarPages } from '/js/account-flow.js?v=3';
   import { staffCall } from '/js/staff-api.js';
+  import { readView, writeView, keepViewsFor, clearViews } from '/js/view-cache.js';
   initNavAccountWidget();
   const $ = id => document.getElementById(id);
   const escape = value => { const el = document.createElement('span'); el.textContent = String(value ?? ''); return el.innerHTML; };
@@ -167,14 +181,38 @@
     const status = event.status.charAt(0).toUpperCase() + event.status.slice(1);
     return `<li${event.status === 'attended' ? '' : ' class="is-absent"'}><span>${escape(label)}</span><span>${escape(status)}</span></li>`;
   }
+  // ── Loading ──
+  // A return visit draws at once from this browser's last copy of the record (view-cache.js), before sign-in is even
+  // confirmed; then the record is read again and redrawn only if it changed. The reads go out together, and the
+  // teaching roles (a staff service, the slowest call) never hold the record up: they are added when they arrive.
+  const VIEW = 'profile';
+  let shown = '';
+  const basicsOf = user => ({ uid: user.uid, email: user.email, providers: (user.providerData || []).map(p => p.providerId) });
+  async function loadRecord(user) {
+    const regs = await getRegistrations(user.email);
+    const offered = Object.entries(regs || {}).filter(([id, reg]) => reg.enrolled === true && EVALUATION_OFFERED[id]).map(([id]) => id);
+    const [name, interests, evaluations] = await Promise.all([
+      getDisplayName(user.email).catch(() => ''),
+      getOwnSeminarInterests(user.email).catch(() => ({})),
+      Promise.all(offered.map(id => getEvaluation(user.email, id).then(e => [id, e || {}], () => [id, { unavailable: true }]))).then(Object.fromEntries)
+    ]);
+    return { regs: regs || null, name: name || '', interests: interests || {}, evaluations };
+  }
+  function draw(basics, record, roles) {
+    const key = JSON.stringify([basics, record, roles]);
+    if (key === shown) return;
+    shown = key;
+    renderProfile(basics, record, roles);
+  }
+  function showSignedIn(on) {
+    $('profileSignedOut').classList.toggle('hidden', on);
+    $('profileSignedIn').classList.toggle('hidden', !on);
+  }
   async function refreshProfile(user) {
     activeUser = user;
-    $('profileSignedOut').classList.toggle('hidden', !!user?.email);
-    $('profileSignedIn').classList.toggle('hidden', !user?.email);
-    if (!user?.email) return;
-    $('profileEmailLine').textContent = user.email;
-    $('accountEmail').textContent = user.email;
-    $('profilePasswordRow').hidden = user.providerData.some(p => p.providerId === 'google.com') && !user.providerData.some(p => p.providerId === 'password');
+    keepViewsFor(user?.email ? user.uid : null);   // no one, or someone else: this browser's copies go
+    if (!user?.email) { shown = ''; showSignedIn(false); return; }
+    showSignedIn(true);
     if (new URLSearchParams(location.search).get('rollout') === '1') {
       const check = $('rolloutCheck'); check.hidden = false; check.textContent = 'Checking administrator email verification…';
       try { const token = await user.getIdTokenResult(true); if (auth.currentUser?.uid !== user.uid) return;
@@ -182,12 +220,28 @@
       } catch { check.textContent = 'Could not check verification. Sign out, sign in again, and reopen this page.'; }
     }
     $('profileError').textContent = '';
-    let regs, name, interests, teachingRoles = {};
-    try { teachingRoles = await staffCall('getTeachingAssignmentRoles'); } catch { teachingRoles = {}; }
-    try { regs = await getRegistrations(user.email); }
+    const basics = basicsOf(user);
+    const cached = readView(VIEW);
+    let roles = (cached?.uid === user.uid && cached.data?.roles) || {};
+    const rolesCall = staffCall('getTeachingAssignmentRoles').catch(() => null);
+    let record;
+    try { record = await loadRecord(user); }
     catch (error) { $('profileError').textContent = 'We couldn’t load your Academy record. Please try again. If a prior registration is missing, contact academy@netadao.org. Account reference: ' + user.uid; return; }
-    [name, interests] = await Promise.all([getDisplayName(user.email).catch(() => ''), getOwnSeminarInterests(user.email).catch(() => ({}))]);
     if (auth.currentUser?.uid !== user.uid) return;
+    draw(basics, record, roles);
+    writeView(VIEW, user.uid, { basics, record, roles });
+    const fresh = await rolesCall;
+    if (!fresh || auth.currentUser?.uid !== user.uid) return;
+    roles = fresh;
+    draw(basics, record, roles);
+    writeView(VIEW, user.uid, { basics, record, roles });
+  }
+
+  function renderProfile(basics, data, teachingRoles) {
+    const { regs, name, interests, evaluations } = data;
+    $('profileEmailLine').textContent = basics.email;
+    $('accountEmail').textContent = basics.email;
+    $('profilePasswordRow').hidden = basics.providers.includes('google.com') && !basics.providers.includes('password');
     $('profileDisplayName').textContent = name || 'Display name not set';
     $('identityDisplayNameForm').classList.add('hidden');
     $('profileDisplayName').disabled = !!name;
@@ -207,11 +261,7 @@
       const completed = SEMINAR_COMPLETED[seminarId] === true;
       const title = SEMINAR_TITLES[seminarId] || seminarId;
       const record = participantAttendanceRecord(seminarId, reg);
-      let evaluation = {};
-      if (approved && EVALUATION_OFFERED[seminarId]) {
-        try { evaluation = await getEvaluation(user.email, seminarId); }
-        catch { evaluation = { unavailable: true }; }
-      }
+      const evaluation = (approved && EVALUATION_OFFERED[seminarId] && evaluations?.[seminarId]) || {};
       const attendance = approved
         ? `${record.total ? `${record.attended} of ${record.total} events` : 'Event schedule forthcoming'}${record.detail.length ? `<details class="pg-attend"><summary>See the record</summary><ul class="pg-events">${record.detail.map(eventLine).join('')}</ul></details>` : ''}`
         : 'After enrollment.';
@@ -244,11 +294,17 @@
     $('profileNoRegistration').classList.toggle('hidden', activeCount > 0);
     $('profileNoTranscript').classList.toggle('hidden', transcriptCount > 0);
     for (const [id, interest] of Object.entries(interests || {})) {
-      if (regs?.[id] || interest.accountUid !== user.uid) continue;
+      if (regs?.[id] || interest.accountUid !== basics.uid) continue;
       interestRows.append(makeRow(SEMINAR_TITLES[id] || id, badge('Interest recorded', 'next'), [['Enrollment', 'We’ll let you know when enrollment opens.']]));
     }
     $('profileInterests').classList.toggle('hidden', !interestRows.children.length);
     $('profileAttention').classList.toggle('hidden', !attention.children.length);
+  }
+
+  // before sign-in is confirmed: this browser's last copy, if it has one
+  {
+    const early = readView(VIEW);
+    if (early?.data?.basics && early.data.record) { showSignedIn(true); draw(early.data.basics, early.data.record, early.data.roles || {}); }
   }
 
   async function saveIdentityName(value, statusNode) {
@@ -280,7 +336,7 @@
 
   $('profileRegistrationsList').addEventListener('click', async event => {
     const button = event.target.closest('.evaluation-optout');
-    if (!button) return;
+    if (!button || !activeUser) return;
     button.disabled = true;
     try {
       await cancelEvaluationRequest(button.dataset.seminar);
@@ -291,13 +347,13 @@
     }
   });
   $('profileRegistrationsList').addEventListener('submit', async event => {
-    const form = event.target.closest('.evaluation-request'); if (!form) return; event.preventDefault();
+    const form = event.target.closest('.evaluation-request'); if (!form) return; event.preventDefault(); if (!activeUser) return;
     const button = form.querySelector('button'); button.disabled = true;
     try { await requestEvaluation(form.dataset.seminar, form.elements.namedItem('form').value); await refreshProfile(activeUser); }
     catch { button.disabled = false; form.insertAdjacentHTML('beforeend','<span role="alert">Could not request evaluation. Please try again.</span>'); }
   });
   (async () => { await completeSignInIfNeeded(); onAuthStateChanged(auth, refreshProfile); })();
-  $('profileSignOutBtn').addEventListener('click', () => signOut(auth));
+  $('profileSignOutBtn').addEventListener('click', () => { clearViews(); signOut(auth); });
   </script>
 <script>window.NDA && NDA.enhance();</script>
 </body>

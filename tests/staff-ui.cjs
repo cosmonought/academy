@@ -41,7 +41,7 @@ process.on('exit',()=>server.kill());
    return route.continue();
  });
  const page=await context.newPage(); const errors=[];page.on('pageerror',e=>errors.push(e.message));
- // a fixed day: 3 Oct 2026, four days before the Hiroshima, Mon Amour screening (7 Oct), the current meeting
+ // a fixed day: 3 Oct 2026, four days before the Dogtooth screening (7 Oct), the current meeting
  await page.clock.setFixedTime(new Date('2026-10-03T12:00:00Z'));
  await page.addInitScript(()=>{
    window.mockUser={uid:'teacher',email:'teacher@example.org',emailVerified:true,providerData:[{providerId:'google.com'}]};window.assignments=['sex-and-or-love','sex-monsters-superheroes'];window.assignmentRoles={'sex-and-or-love':'instructor','sex-monsters-superheroes':'instructor'};window.operations=[];
@@ -67,7 +67,7 @@ process.on('exit',()=>server.kill());
  await page.locator('#teachingAttendance .attendance-check').first().waitFor();
  const currentCol=page.locator('#teachingAttendance th.attendance-col.is-current');
  assert.equal(await currentCol.count(),1);
- assert.equal(await currentCol.locator('.attendance-title').textContent(),'Hiroshima, Mon Amour');
+ assert.equal(await currentCol.locator('.attendance-title').textContent(),'Dogtooth');
  assert.equal(await currentCol.locator('.attendance-kicker').textContent(),'Session 6 · Screening 4');
  assert.equal(await currentCol.locator('.attendance-now').textContent(),'Next');
  const columnCount=await page.locator('#teachingAttendance th.attendance-col').count();
@@ -95,7 +95,7 @@ process.on('exit',()=>server.kill());
  assert.equal(await page.locator('#teachingBody h3').allTextContents().then(items=>items.join('|')),'Attendance|Participants');
  await page.locator('#teachingParticipants .staff-participant__name').first().waitFor();assert.equal(await page.locator('#teachingParticipants .staff-participant p').count(),0);assert.equal(await page.locator('#teachingParticipants button, #teachingParticipants details').count(),0);
  // a teaching assistant never sees a film before the syllabus does: the screening goes by its session's title
- assert.equal(await page.locator('#teachingAttendance th.is-current .attendance-title').textContent(),'Love’s Measure');assert.equal(await page.locator('#teachingAttendance').getByText('Hiroshima, Mon Amour').count(),0);
+ assert.equal(await page.locator('#teachingAttendance th.is-current .attendance-title').textContent(),'Intermezzo: Sin or Sine or Sign or—the Curve');assert.equal(await page.locator('#teachingAttendance').getByText('Hiroshima, Mon Amour').count(),0);assert.equal(await page.locator('#teachingAttendance').getByText('Dogtooth').count(),0);
 assert.equal(await page.locator('#teachingBody').getByText('To study together.').count(),0);
  await page.evaluate(()=>{window.assignments=[];window.revoked=true;});await page.click('#teachingRefresh');await page.locator('#profileTeachingTab').waitFor({state:'hidden'});assert.equal(await page.locator('#profileSeminarsPanel').isVisible(),true);
  // Ordinary participant, from the initial render.
@@ -103,7 +103,7 @@ assert.equal(await page.locator('#teachingBody').getByText('To study together.')
  // Admin Account Assistance / provider-aware recovery.
  await page.addInitScript(()=>{window.mockUser={uid:'admin',email:'academy@netadao.org',emailVerified:true};});await page.goto('http://127.0.0.1:8765/admin.html');await page.fill('#supportEmail','p@example.org');await page.locator('#accountLookup button').click();await page.locator('#accountSupportResult').getByText('Auth account exists',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'Send password setup/reset link'}).count(),0);
  // Admin's seminar tab draws the same attendance table
- await page.locator('#attendanceWrap-sex-and-or-love .attendance-table').waitFor({state:'attached'});assert.equal(await page.locator('#attendanceWrap-sex-and-or-love th.attendance-col.is-current .attendance-title').textContent(),'Hiroshima, Mon Amour');
+ await page.locator('#attendanceWrap-sex-and-or-love .attendance-table').waitFor({state:'attached'});assert.equal(await page.locator('#attendanceWrap-sex-and-or-love th.attendance-col.is-current .attendance-title').textContent(),'Dogtooth');
  // Admin → Fork: registrations from forkInterests and, before that rule is live, the general list (kept out of Inquiries).
  await page.click('[data-admin-view="fork"]');await page.locator('#forkTableBody tr').nth(1).waitFor();
  assert.equal(await page.locator('#adminFork').isVisible(),true);assert.equal(await page.locator('#adminInquiries').isVisible(),false);assert.equal(await page.locator('#adminSeminars').isVisible(),false);

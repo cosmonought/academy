@@ -8,9 +8,12 @@ test('only the nearest scheduled screening gets navigation, through its full fou
   assert.deepEqual(before.pastIds, ['skin', 'sister', 'cook', 'mother']);
   assert.equal(screeningSchedule(Date.parse('2026-10-01T05:59:59Z')).nextId, 'park');
   const after = screeningSchedule(Date.parse('2026-10-01T06:00:00Z'));
-  assert.equal(after.nextId, 'hiroshima');
+  assert.equal(after.nextId, 'dogtooth');
   assert.ok(after.pastIds.includes('park'));
-  const done = screeningSchedule(Date.parse('2026-10-08T06:00:00Z'));
+  const intermezzo = screeningSchedule(Date.parse('2026-10-08T06:00:00Z'));   // Dogtooth's window closed: Hiroshima, a week on
+  assert.equal(intermezzo.nextId, 'hiroshima');
+  assert.ok(intermezzo.pastIds.includes('dogtooth'));
+  const done = screeningSchedule(Date.parse('2026-10-15T06:00:00Z'));
   assert.equal(done.nextId, null);
   assert.ok(done.pastIds.includes('hiroshima'));
   assert.ok(!done.pastIds.includes('tambien'));

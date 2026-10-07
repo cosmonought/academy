@@ -8,7 +8,7 @@ const sexLectures = [
 ];
 const sexScreenings = [
   [4, 'skin'], [5, 'sister'], [6, 'cook'], [6, 'mother'],
-  [6, 'park'], [6, 'hiroshima'], [7, 'tambien'], [8, 'someone']
+  [6, 'park'], [6, 'dogtooth'], [6, 'hiroshima'], [7, 'tambien'], [8, 'someone']
 ];
 const sexEvents = [];
 for (let i = 0; i < sexLectures.length; i += 1) {

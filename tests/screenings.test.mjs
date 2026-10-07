@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { screenings, canRevealTitle, screeningText, filmCredit, renderScreenings } from '../js/seminar-screenings.js';
 
 test('scheduled titles reveal at 10 p.m. Eastern, including the UTC date rollover', () => {
-  for (const [id, utc] of [['park', '2026-10-01T02:00:00Z'], ['hiroshima', '2026-10-08T02:00:00Z']]) {
+  for (const [id, utc] of [['park', '2026-10-01T02:00:00Z'], ['dogtooth', '2026-10-08T02:00:00Z'], ['hiroshima', '2026-10-15T02:00:00Z']]) {
     const film = screenings.find(item => item.id === id);
     const start = Date.parse(utc);
     assert.equal(Date.parse(film.startsAt), start);

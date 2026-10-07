@@ -5,7 +5,8 @@ import { canRevealTitle } from './seminar-screenings.js';
 // The staff attendance table's columns (js/session-attendance.js): every meeting of a seminar, in order, and which one
 // is current. The current meeting is the first that hasn't been over for a day yet: a screening is over four hours
 // after it starts, a lecture or discussion at the end of its day (Eastern), so the highlight moves on to the next
-// meeting 24 hours after this one. With `ta`, a screening the syllabus hasn't revealed yet goes by its session's title.
+// meeting 24 hours after this one. With `ta`, a screening the syllabus hasn't revealed yet goes by its own title in the
+// series (its `name`, as the syllabus shows it), or else its session's.
 // No network or page here, so the tests can run it.
 
 export const DAY = 24 * 60 * 60 * 1000;
@@ -31,7 +32,7 @@ export function attendanceColumns(seminarId, { now = Date.now(), ta = false } = 
     return {
       event, end: endOf(event),
       kicker: event.type === 'discussion' ? kind : `Session ${session} · ${kind}`,
-      title: hidden ? (lectureOf(event.parent) || `Session ${session}`) : event.label,
+      title: hidden ? (film.name || lectureOf(event.parent) || `Session ${session}`) : event.label,
       date: event.date ? SHORT.format(new Date(event.date + 'T12:00:00Z')) : 'Date TBD'
     };
   });

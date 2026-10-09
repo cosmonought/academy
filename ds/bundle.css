@@ -546,11 +546,13 @@ body {
   row-gap: var(--space-3, 12px);
   padding: var(--space-4, 16px) var(--nda-gutter);
 }
-/* only the off-site links: the sticky header carries the site's own pages */
-.nda-footer__nav { justify-self: end; margin: 0 var(--space-8, 40px) 0 0; padding: var(--space-2, 8px) var(--space-8, 40px) var(--space-2, 8px) 0; border-right: var(--stroke-hairline, 1px) solid var(--rule-strong); }
+/* only the off-site links: the sticky header carries the site's own pages. The footer every Neta DAO site shares:
+   the family's sites (Academy, Fork, Ludum), then X, Discord and Neta DAO's own mark */
+.nda-footer__nav { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3, 12px) var(--space-8, 40px); justify-self: end; margin: 0 var(--space-8, 40px) 0 0; padding: var(--space-2, 8px) var(--space-8, 40px) var(--space-2, 8px) 0; border-right: var(--stroke-hairline, 1px) solid var(--rule-strong); }
 .nda-footer__nav ul { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3, 12px) var(--space-8, 40px); margin: 0; padding: 0; list-style: none; }
 .nda-footer__nav a { font-family: var(--font-mono); font-size: 12px; line-height: 1.4; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
-.nda-footer__nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.nda-footer__nav a:hover, .nda-footer__nav a[aria-current] { text-decoration: underline; text-decoration-thickness: var(--stroke-hairline, 1px); text-underline-offset: 5px; }
+.nda-footer__nav .nda-footer__sites { column-gap: var(--space-6, 24px); }
 /* X and Discord as their own marks, and Neta DAO's, on one line: the glyphs and the N stand about 20px tall */
 .nda-footer__nav ul:has(.nda-footer__icon) { column-gap: var(--space-6, 24px); }
 .nda-footer__icon { display: grid; place-items: center; width: 32px; height: 32px; margin-block: -4px; color: var(--ink); transition: opacity var(--dur-fast, 120ms) ease; }

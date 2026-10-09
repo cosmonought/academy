@@ -3,6 +3,9 @@
    .hidden, .visible, .is-live, .curtains-open, .show, .leaving and .active); their look is the system's.
    Values come from the system's tokens. */
 
+/* the room is black, as the Academy's intro and netadao.org are, not Night's charcoal */
+[data-theme="dark"] { --paper: #000; --paper-hover: #121212; }
+
 
 /* signed out or not enrolled: one panel with the way in */
 .cinema-entry[hidden], .cinema-entry.hidden { display: none !important; }

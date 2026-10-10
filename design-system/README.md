@@ -79,7 +79,7 @@ Neta DAO Academy runs free public seminars that read Web3 through philosophy, ps
 
 - Icons are inline SVG line drawings on a 24px box, 1.5px stroke (`stroke-outline`), square caps, drawn in `currentColor`: arrow, magnifier, play, pause, menu, and the syllabus book (lecture) and film-strip (screenings) icons, which come from the current site's syllabus styles.
 - Arrows in running text are the characters → and ↗, not icons, and are `aria-hidden`.
-- Social links are words (X, Discord, Neta DAO), not logos. No icon fonts, no emoji, no filled or duotone icons.
+- Social links are their platforms' own marks (X, Discord) and Neta DAO's own mark, as the SiteFooter draws them; the family's sites (Academy, Fork, Ludum) are words. Otherwise no logos, no icon fonts, no emoji, no filled or duotone icons.
 
 ## Logos
 

@@ -10,10 +10,13 @@ test('only the nearest scheduled screening gets navigation, through its full fou
   const after = screeningSchedule(Date.parse('2026-10-01T06:00:00Z'));
   assert.equal(after.nextId, 'dogtooth');
   assert.ok(after.pastIds.includes('park'));
-  const intermezzo = screeningSchedule(Date.parse('2026-10-08T06:00:00Z'));   // Dogtooth's window closed: Hiroshima, a week on
-  assert.equal(intermezzo.nextId, 'hiroshima');
+  const intermezzo = screeningSchedule(Date.parse('2026-10-08T06:00:00Z'));   // Dogtooth's window closed: Amour Fou, a week on
+  assert.equal(intermezzo.nextId, 'amour');
   assert.ok(intermezzo.pastIds.includes('dogtooth'));
-  const done = screeningSchedule(Date.parse('2026-10-15T06:00:00Z'));
+  const second = screeningSchedule(Date.parse('2026-10-15T06:00:00Z'));   // then Hiroshima, a week later
+  assert.equal(second.nextId, 'hiroshima');
+  assert.ok(second.pastIds.includes('amour'));
+  const done = screeningSchedule(Date.parse('2026-10-22T06:00:00Z'));
   assert.equal(done.nextId, null);
   assert.ok(done.pastIds.includes('hiroshima'));
   assert.ok(!done.pastIds.includes('tambien'));

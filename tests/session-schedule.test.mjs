@@ -7,11 +7,12 @@ const state = (id, date) => sessionStates(Date.parse(date)).find(session => sess
 test('session status follows the Eastern lecture day and screening sequence', () => {
   assert.equal(state('session6', '2026-09-27T12:00:00Z').label, 'In progress');
   assert.equal(state('session5', '2026-09-27T12:00:00Z').label, 'Past');
-  assert.equal(state('session6', '2026-10-15T04:00:00Z').label, 'In progress');   // Amour Fou, Hiroshima, then the lecture on 28 October
+  assert.equal(state('session6', '2026-10-15T04:00:00Z').label, 'In progress');   // Amour Fou, Blue, Hiroshima, then the lecture on 4 November
   assert.equal(state('session6', '2026-10-22T04:00:00Z').label, 'In progress');
-  assert.equal(state('session6', '2026-10-29T03:59:59Z').label, 'In progress');
-  assert.equal(state('session6', '2026-10-29T04:00:00Z').label, 'Past');
-  assert.equal(state('session7', '2026-10-29T04:00:00Z').label, 'Date TBD');
+  assert.equal(state('session6', '2026-10-29T04:00:00Z').label, 'In progress');
+  assert.equal(state('session6', '2026-11-05T04:59:59Z').label, 'In progress');
+  assert.equal(state('session6', '2026-11-05T05:00:00Z').label, 'Past');
+  assert.equal(state('session7', '2026-11-05T05:00:00Z').label, 'Date TBD');
 });
 test('the first dated lecture is next before the series starts; later lectures are scheduled', () => {
   assert.equal(state('session0', '2026-02-01T12:00:00Z').label, 'Next');
@@ -22,6 +23,6 @@ test('all lecture dates, screening dates and summaries derive from the same sche
   assert.equal(labels.filter(label => label.attribute === 'data-lecture-date').length, sessions.length);
   assert.equal(labels.filter(label => label.attribute === 'data-screening-date').length, screenings.length);
   const summary = labels.find(label => label.attribute === 'data-screening-summary' && label.id === 'session6').text;
-  for (const date of ['16 September', '23 September', '30 September', '7 October', '14 October', '21 October']) assert.ok(summary.includes(date));
+  for (const date of ['16 September', '23 September', '30 September', '7 October', '14 October', '21 October', '28 October']) assert.ok(summary.includes(date));
   assert.equal(labels.find(label => label.id === 'session7' && label.attribute === 'data-lecture-date').text, 'Date TBD');
 });

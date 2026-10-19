@@ -8,7 +8,7 @@ export const sessions = [
   { id: 'session3', lectureDate: '2026-05-27' },
   { id: 'session4', lectureDate: '2026-07-29' },
   { id: 'session5', lectureDate: '2026-08-12' },
-  { id: 'session6', lectureDate: '2026-10-28' },
+  { id: 'session6', lectureDate: '2026-11-04' },
   { id: 'session7', lectureDate: null },
   { id: 'session8', lectureDate: null }
 ];
@@ -23,7 +23,8 @@ export const screenings = [
   { id: 'park', director: 'Larry Clark and Ed Lachman', session: 'session6', title: 'Ken Park', name: 'Bad Blood, Love’s Education, or—the Other', startsAt: '2026-09-30T22:00:00-04:00' },
   { id: 'dogtooth', director: 'Yorgos Lanthimos', session: 'session6', title: 'Dogtooth', name: 'Intermezzo: Sin or Sine or Sign or—the Curve', startsAt: '2026-10-07T22:00:00-04:00' },
   { id: 'amour', director: 'Jessica Hausner', session: 'session6', title: 'Amour Fou', name: 'Intermezzo II: Till Death Do Us Part, or—the Gap', startsAt: '2026-10-14T22:00:00-04:00' },
-  { id: 'hiroshima', director: 'Alain Resnais', session: 'session6', title: 'Hiroshima, Mon Amour', name: 'Après-Coup, Love’s Oblivion, or—the Eye', startsAt: '2026-10-21T22:00:00-04:00' },
+  { id: 'blue', director: 'Abdellatif Kechiche', session: 'session6', title: 'Blue Is the Warmest Color', name: 'Intermezzo III: To Unexpress the Expressible—On Heartbreak', startsAt: '2026-10-21T22:00:00-04:00' },
+  { id: 'hiroshima', director: 'Alain Resnais', session: 'session6', title: 'Hiroshima, Mon Amour', name: 'Après-Coup, Love’s Oblivion, or—the Eye', startsAt: '2026-10-28T22:00:00-04:00' },
   { id: 'tambien', director: 'Alfonso Cuarón', session: 'session7', title: 'Y Tu Mamá También', startsAt: null },
   { id: 'someone', director: 'Abbas Kiarostami', session: 'session8', title: 'Like Someone in Love', startsAt: null }
 ].map(film => ({ ...film, date: formatDate(film.screenedOn || film.startsAt?.slice(0, 10)) }));

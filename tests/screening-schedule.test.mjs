@@ -13,10 +13,13 @@ test('only the nearest scheduled screening gets navigation, through its full fou
   const intermezzo = screeningSchedule(Date.parse('2026-10-08T06:00:00Z'));   // Dogtooth's window closed: Amour Fou, a week on
   assert.equal(intermezzo.nextId, 'amour');
   assert.ok(intermezzo.pastIds.includes('dogtooth'));
-  const second = screeningSchedule(Date.parse('2026-10-15T06:00:00Z'));   // then Hiroshima, a week later
-  assert.equal(second.nextId, 'hiroshima');
+  const second = screeningSchedule(Date.parse('2026-10-15T06:00:00Z'));   // then Blue Is the Warmest Color, a week later
+  assert.equal(second.nextId, 'blue');
   assert.ok(second.pastIds.includes('amour'));
-  const done = screeningSchedule(Date.parse('2026-10-22T06:00:00Z'));
+  const third = screeningSchedule(Date.parse('2026-10-22T06:00:00Z'));   // then Hiroshima
+  assert.equal(third.nextId, 'hiroshima');
+  assert.ok(third.pastIds.includes('blue'));
+  const done = screeningSchedule(Date.parse('2026-10-29T06:00:00Z'));
   assert.equal(done.nextId, null);
   assert.ok(done.pastIds.includes('hiroshima'));
   assert.ok(!done.pastIds.includes('tambien'));

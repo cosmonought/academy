@@ -36,7 +36,7 @@ After editing the schedule, run `npm run sync:schedule` to update the static HTM
 fallback. `npm run check:schedule` verifies it is synchronized. The browser also
 derives displayed dates and session statuses from the canonical schedule.
 
-The September 30, October 7, October 14 and October 21, 2026 screenings reveal at
+The September 30 and October 7, 14, 21 and 28, 2026 screenings reveal at
 10 p.m. Eastern / 7 p.m. Pacific (UTC−04:00 in Eastern time on those dates). The interface checks
 every second and when a background tab becomes visible. Titles appear only after
 the existing enrollment check succeeds. The later screenings remain TBD.

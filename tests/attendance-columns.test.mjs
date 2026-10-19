@@ -5,7 +5,7 @@ import { screenings, SCREENING_WINDOW_MS } from '../js/seminar-data.js';
 
 const ID = 'sex-and-or-love';
 const at = id => Date.parse(screenings.find(film => film.id === id).startsAt);
-const dogtooth = at('dogtooth'), amour = at('amour'), hiroshima = at('hiroshima');
+const dogtooth = at('dogtooth'), amour = at('amour'), blue = at('blue'), hiroshima = at('hiroshima');
 const current = columns => columns.find(column => column.state === 'current');
 const column = (columns, id) => columns.find(item => item.event.screeningId === id);
 
@@ -20,13 +20,17 @@ test('one column per meeting, in order, with the session and kind above the titl
   assert.equal(second.kicker, 'Session 6 · Screening 5');
   assert.equal(second.date, '14 Oct');
   assert.equal(columns.indexOf(second), columns.indexOf(intermezzo) + 1);
+  const third = column(columns, 'blue');
+  assert.equal(third.kicker, 'Session 6 · Screening 6');
+  assert.equal(third.date, '21 Oct');
+  assert.equal(columns.indexOf(third), columns.indexOf(second) + 1);
   const after = column(columns, 'hiroshima');
-  assert.equal(after.kicker, 'Session 6 · Screening 6');
-  assert.equal(after.date, '21 Oct');
-  assert.equal(columns.indexOf(after), columns.indexOf(second) + 1);
+  assert.equal(after.kicker, 'Session 6 · Screening 7');
+  assert.equal(after.date, '28 Oct');
+  assert.equal(columns.indexOf(after), columns.indexOf(third) + 1);
   const lecture = columns.find(item => item.event.parent === 's6' && item.event.type === 'lecture');
   assert.equal(lecture.kicker, 'Session 6 · Lecture');
-  assert.equal(lecture.date, '28 Oct');
+  assert.equal(lecture.date, '4 Nov');
 });
 
 test('the current meeting moves on a day after each one ends', () => {
@@ -38,7 +42,8 @@ test('the current meeting moves on a day after each one ends', () => {
     assert.ok(columns.slice(index + 1).every(item => item.state === 'upcoming'));
   }
   assert.equal(current(attendanceColumns(ID, { now: dogtooth + SCREENING_WINDOW_MS + DAY + 60_000 })).event.screeningId, 'amour');
-  assert.equal(current(attendanceColumns(ID, { now: amour + SCREENING_WINDOW_MS + DAY + 60_000 })).event.screeningId, 'hiroshima');
+  assert.equal(current(attendanceColumns(ID, { now: amour + SCREENING_WINDOW_MS + DAY + 60_000 })).event.screeningId, 'blue');
+  assert.equal(current(attendanceColumns(ID, { now: blue + SCREENING_WINDOW_MS + DAY + 60_000 })).event.screeningId, 'hiroshima');
   const next = current(attendanceColumns(ID, { now: hiroshima + SCREENING_WINDOW_MS + DAY + 60_000 }));
   assert.equal(next.event.parent, 's6');
   assert.equal(next.event.type, 'lecture');
@@ -73,6 +78,14 @@ test('Intermezzo II: a teaching assistant sees its series title until 10 p.m. Ea
   assert.equal(column(attendanceColumns(ID, { now: amour, ta: true }), 'amour').title, 'Amour Fou');
   // admins and teachers see the film throughout
   assert.equal(column(attendanceColumns(ID, { now: amour - 60_000 }), 'amour').title, 'Amour Fou');
+});
+
+test('Intermezzo III: a teaching assistant sees its series title until 10 p.m. Eastern on 21 October, then Blue Is the Warmest Color', () => {
+  assert.equal(blue, Date.parse('2026-10-22T02:00:00Z'));
+  assert.equal(column(attendanceColumns(ID, { now: blue - 1, ta: true }), 'blue').title, 'Intermezzo III: To Unexpress the Expressible—On Heartbreak');
+  assert.equal(column(attendanceColumns(ID, { now: blue, ta: true }), 'blue').title, 'Blue Is the Warmest Color');
+  // admins and teachers see the film throughout
+  assert.equal(column(attendanceColumns(ID, { now: blue - 60_000 }), 'blue').title, 'Blue Is the Warmest Color');
 });
 
 test('undated seminars: every column, none current', () => {

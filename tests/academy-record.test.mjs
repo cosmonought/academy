@@ -5,10 +5,10 @@ import { ATTENDANCE_EVENTS, EVALUATION_CONFIG, attendanceRecord, participantAtte
 test('Sex/Love records distinct lecture and screening events without inferring old unit marks', () => {
   const events = ATTENDANCE_EVENTS['sex-and-or-love'];
   assert.equal(events.filter(event => event.type === 'lecture').length, 9);
-  assert.equal(events.filter(event => event.type === 'screening').length, 10);
+  assert.equal(events.filter(event => event.type === 'screening').length, 11);
   const record = attendanceRecord('sex-and-or-love', { attendance: { s6: true, 'lecture-s6': true, 'screening-mother': false } });
   assert.equal(record.attended, 1);
-  assert.equal(record.total, 19);
+  assert.equal(record.total, 20);
   assert.equal(record.legacy.length, 1);
   assert.equal(record.detail.find(event => event.key === 'screening-cook').status, 'unrecorded');
   assert.equal(record.detail.find(event => event.key === 'screening-mother').status, 'absent');
@@ -26,6 +26,7 @@ test('Love’s Measure screenings stay chronological inside their parent session
     'screening-park',
     'screening-dogtooth',
     'screening-amour',
+    'screening-blue',
     'screening-hiroshima',
     'lecture-s6'
   ]);

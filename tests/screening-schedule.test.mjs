@@ -19,7 +19,7 @@ test('only the nearest scheduled screening gets navigation, through its full fou
   const third = screeningSchedule(Date.parse('2026-10-22T06:00:00Z'));   // then Hiroshima
   assert.equal(third.nextId, 'hiroshima');
   assert.ok(third.pastIds.includes('blue'));
-  const done = screeningSchedule(Date.parse('2026-11-04T07:00:00Z'));   // Hiroshima, 3 November: 10 p.m. EST is 03:00Z
+  const done = screeningSchedule(Date.parse('2026-11-05T07:00:00Z'));   // Hiroshima, 4 November: 10 p.m. EST is 03:00Z
   assert.equal(done.nextId, null);
   assert.ok(done.pastIds.includes('hiroshima'));
   assert.ok(!done.pastIds.includes('tambien'));

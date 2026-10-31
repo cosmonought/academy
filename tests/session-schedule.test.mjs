@@ -23,6 +23,6 @@ test('all lecture dates, screening dates and summaries derive from the same sche
   assert.equal(labels.filter(label => label.attribute === 'data-lecture-date').length, sessions.length);
   assert.equal(labels.filter(label => label.attribute === 'data-screening-date').length, screenings.length);
   const summary = labels.find(label => label.attribute === 'data-screening-summary' && label.id === 'session6').text;
-  for (const date of ['16 September', '23 September', '30 September', '7 October', '14 October', '21 October', '3 November']) assert.ok(summary.includes(date));
+  for (const date of ['16 September', '23 September', '30 September', '7 October', '14 October', '21 October', '4 November']) assert.ok(summary.includes(date));
   assert.equal(labels.find(label => label.id === 'session7' && label.attribute === 'data-lecture-date').text, 'Date TBD');
 });

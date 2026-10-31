@@ -26,11 +26,11 @@ test('one column per meeting, in order, with the session and kind above the titl
   assert.equal(columns.indexOf(third), columns.indexOf(second) + 1);
   const after = column(columns, 'hiroshima');
   assert.equal(after.kicker, 'Session 6 · Screening 7');
-  assert.equal(after.date, '28 Oct');
+  assert.equal(after.date, '3 Nov');
   assert.equal(columns.indexOf(after), columns.indexOf(third) + 1);
   const lecture = columns.find(item => item.event.parent === 's6' && item.event.type === 'lecture');
   assert.equal(lecture.kicker, 'Session 6 · Lecture');
-  assert.equal(lecture.date, '4 Nov');
+  assert.equal(lecture.date, '11 Nov');
 });
 
 test('the current meeting moves on a day after each one ends', () => {

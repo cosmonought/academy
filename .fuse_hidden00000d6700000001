@@ -1,0 +1,23 @@
+[debug] [2026-11-12T18:08:29.568Z] ----------------------------------------------------------------------
+[debug] [2026-11-12T18:08:29.569Z] Command:       /usr/bin/node /sessions/rcw-01psyhjxh3twrdwlznxfjrqx/mnt/academy/node_modules/firebase-tools/lib/bin/firebase.js emulators:exec --only database --project demo-academy node --test tests/cinema-rules.mjs
+[debug] [2026-11-12T18:08:29.570Z] CLI Version:   15.31.0
+[debug] [2026-11-12T18:08:29.571Z] Platform:      linux
+[debug] [2026-11-12T18:08:29.571Z] Node Version:  v22.23.4
+[debug] [2026-11-12T18:08:29.573Z] Detected Agent: unknown
+[debug] [2026-11-12T18:08:29.573Z] Time:          Thu Nov 12 2026 18:08:29 GMT+0000 (Coordinated Universal Time)
+[debug] [2026-11-12T18:08:29.574Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-11-12T18:08:29.592Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-11-12T18:09:13.212Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-11-12T18:09:13.212Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-11-12T18:09:13.258Z] openjdk version "11.0.33" 2026-10-20
+[debug] [2026-11-12T18:09:13.258Z] 
+OpenJDK Runtime Environment (build 11.0.33+9-post-1ubuntu1-22.04.1-Ubuntu)
+OpenJDK 64-Bit Server VM (build 11.0.33+9-post-1ubuntu1-22.04.1-Ubuntu, mixed mode, sharing)
+
+[debug] [2026-11-12T18:09:13.263Z] Parsed Java major version: 11
+[debug] [2026-11-12T18:09:13.266Z] Could not find VSCode notification endpoint: TypeError: fetch failed. If you are not running the Firebase SQL Connect VSCode extension, this is expected and not an issue.
+[info] i  emulators: Shutting down emulators. {"metadata":{"emulator":{"name":"hub"},"message":"Shutting down emulators."}}
+[debug] [2026-11-12T18:09:13.268Z] Could not find VSCode notification endpoint: TypeError: fetch failed. If you are not running the Firebase SQL Connect VSCode extension, this is expected and not an issue.
+[error] 
+[error] Error: firebase-tools no longer supports Java version before 21. Please install a JDK at version 21 or above to get a compatible runtime.

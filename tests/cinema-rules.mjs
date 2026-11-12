@@ -68,3 +68,20 @@ test('Sex/Love instructors may moderate; other-seminar and revoked instructors c
  await assertFails(set(ref(db,'chat/cinema/disabled'),true));
  await assertFails(remove(ref(db,'chat/cinema/messages')));
 });
+test('only Cinema hosts set the screening mode; everyone can read it; malformed state is refused',async()=>{
+ const film='b'.repeat(32);
+ await assertSucceeds(get(ref(env.unauthenticatedContext().database(),'cinemaScreening')));
+ for(const db of [env.unauthenticatedContext().database(),user(),user('other','other@example.org',true)])await assertFails(set(ref(db,'cinemaScreening'),{mode:'premiere',videoId:film}));
+ const host=admin();
+ await assertSucceeds(set(ref(host,'cinemaScreening'),{mode:'premiere',videoId:film}));
+ await assertSucceeds(update(ref(host,'cinemaScreening'),{startedAt:Date.now()}));
+ await assertSucceeds(update(ref(host,'cinemaScreening'),{endedAt:Date.now()}));
+ await assertSucceeds(set(ref(host,'cinemaScreening'),{mode:'live'}));
+ await assertFails(set(ref(host,'cinemaScreening'),{mode:'premiere'}));
+ await assertFails(set(ref(host,'cinemaScreening'),{mode:'premiere',videoId:'../x'}));
+ await assertFails(set(ref(host,'cinemaScreening'),{mode:'cinema'}));
+ await assertFails(set(ref(host,'cinemaScreening'),{mode:'live',extra:true}));
+ await assertFails(set(ref(host,'cinemaScreening'),{mode:'premiere',videoId:film,startedAt:Date.now()+3600e3}));
+ await seed('seminarStaff/sex-and-or-love/teacher',{role:'instructor'});
+ await assertSucceeds(set(ref(user('teacher','teacher@example.org'),'cinemaScreening'),{mode:'live'}));
+});

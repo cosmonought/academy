@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/ds/site.css?v=11">
   <script src="/ds/bundle.js?v=11"></script>
   <link rel="stylesheet" href="/ds/pages.css?v=3">
-  <link rel="stylesheet" href="/ds/cinema.css?v=3">
+  <link rel="stylesheet" href="/ds/cinema.css?v=4">
   <script src="/js/site.js?v=11" defer></script>
   <script src="https://netadao.org/radio/radio.js" defer></script>
 </head>
@@ -106,7 +106,16 @@
         <p id="chatDisabledBanner" class="chat-disabled-banner">Chat has been temporarily disabled by the host</p>
 
         <button id="disableChatBtn" class="disable-chat-btn">Disable Chat</button>
+        <button id="startScreeningBtn" class="start-screening-btn" type="button">Start Screening</button>
         <button id="endScreeningBtn" class="end-screening-btn">End Screening &amp; Clear Chat</button>
+        <details id="screeningSetup" class="screening-setup hidden">
+          <summary>Screening setup</summary>
+          <p class="screening-setup__status" id="screeningSetupStatus" role="status" aria-live="polite"></p>
+          <label class="field-label" for="premiereVideoId">Cloudflare video ID for a premiere</label>
+          <input type="text" id="premiereVideoId" class="chat-input" placeholder="32-character video ID" maxlength="32" autocomplete="off" spellcheck="false" />
+          <button type="button" id="loadPremiereBtn" class="disable-chat-btn visible">Load film for premiere</button>
+          <button type="button" id="switchLiveBtn" class="disable-chat-btn visible">Switch to live (OBS)</button>
+        </details>
       </div>
     </div>
     </div>
@@ -149,8 +158,22 @@
     let streamToken = null;
     const TOKEN_REFRESH_MARGIN_MS = 3 * 60 * 60 * 1000; // a fresh token always outlasts a film
 
+    // Screening mode, published from cinemaScreening by the screening module below:
+    // live (OBS → live input) or premiere (an uploaded film, started by the host
+    // and kept in step for every viewer from the shared start time).
+    let screening = { mode: 'live' };
+    let screeningKnown = false;
+    let serverOffset = 0;
+    let syncTimer = null;
+    const isPremiere = () => screening.mode === 'premiere';
+    const premierePosition = () => Math.max(0, (Date.now() + serverOffset - screening.startedAt) / 1000);
+
+    function tokenMatchesScreening(t) {
+      return isPremiere() ? (t.kind === 'premiere' && t.subject === screening.videoId) : t.kind !== 'premiere';
+    }
+
     async function manifestUrl() {
-      if (!streamToken || streamToken.expiresAt - Date.now() < TOKEN_REFRESH_MARGIN_MS) {
+      if (!streamToken || streamToken.expiresAt - Date.now() < TOKEN_REFRESH_MARGIN_MS || !tokenMatchesScreening(streamToken)) {
         streamToken = await streamAccess();
       }
       return `${streamToken.host}/${streamToken.token}/manifest/video.m3u8`;
@@ -242,15 +265,30 @@
       window.dispatchEvent(new CustomEvent('streamStatus', { detail: { live: true } }));
     }
 
-    function showEnded() {
+    function showPremiereWaiting() {
+      stateLoading.classList.add('hidden');
+      stateOffline.classList.remove('hidden');
+      liveIndicator.style.display = 'none';
+      offlineBadge.textContent = 'Premiere';
+      offlineTitle.textContent = 'The screening will begin shortly';
+      offlineNote.textContent = 'The film starts for everyone when the host begins the screening. Chat is open in the meantime.';
+      retryBtn.hidden = true;
+      streamIsLiveForControls = false;
+      updateControlsVisibility();
+      if (!screeningHasOpened) screeningChamber.classList.remove('is-live');
+      // Chat opens while waiting: sessions often talk before the film starts.
+      window.dispatchEvent(new CustomEvent('streamStatus', { detail: { live: true } }));
+    }
+
+    function showEnded(title = 'Screening has ended', note = 'The host has ended this screening.') {
       screeningEndedByHost = true;
       playerFrame.classList.remove('curtains-open');
       screeningChamber.classList.remove('is-live');
       stateLoading.classList.add('hidden');
       stateOffline.classList.remove('hidden');
       offlineBadge.textContent = 'Ended';
-      offlineTitle.textContent = 'Screening has ended';
-      offlineNote.textContent = 'The host has ended this screening.';
+      offlineTitle.textContent = title;
+      offlineNote.textContent = note;
       retryBtn.hidden = true;
       liveIndicator.style.display = 'none';
       streamIsLiveForControls = false;
@@ -265,6 +303,7 @@
       connectToken += 1;
       teardown();
       showEnded();
+      window.dispatchEvent(new CustomEvent('cinemaHostEnded')); // a premiere also ends for every viewer
     };
 
     // ── Auto-hide controls unless live AND the mouse is active over the frame ──
@@ -300,6 +339,8 @@
     // Re-attaching hls.js to a video element that still holds a stale
     // MediaSource reference is a known cause of "nothing happens on retry."
     function teardown() {
+      clearInterval(syncTimer);
+      syncTimer = null;
       if (hls) {
         try { hls.destroy(); } catch (e) {}
         hls = null;
@@ -316,6 +357,32 @@
       retryTimeout = setTimeout(connect, 8000);
     }
 
+    function finishPremiere() {
+      clearTimeout(retryTimeout);
+      connectToken += 1;
+      teardown();
+      showEnded('Screening has finished', 'Thanks for watching.');
+    }
+
+    // Keep this viewer at the shared position: no pausing, skipping or drifting.
+    function syncPremiere() {
+      if (!isPremiere() || !screening.startedAt || screeningEndedByHost) return;
+      const expected = premierePosition();
+      const duration = video.duration;
+      if (Number.isFinite(duration) && duration > 0 && expected >= duration - 0.5) { finishPremiere(); return; }
+      if (video.readyState >= 1 && Math.abs(video.currentTime - expected) > 2) video.currentTime = expected;
+      if (video.paused && video.readyState >= 2) video.play().catch(() => {});
+    }
+
+    function startPremiereSync(myToken) {
+      video.addEventListener('loadedmetadata', () => { if (myToken === connectToken) syncPremiere(); }, { once: true });
+      clearInterval(syncTimer);
+      syncTimer = setInterval(() => { if (myToken === connectToken) syncPremiere(); }, 5000);
+    }
+
+    video.addEventListener('pause', () => { if (isPremiere()) setTimeout(syncPremiere, 0); });
+    video.addEventListener('ended', () => { if (isPremiere() && !screeningEndedByHost) finishPremiere(); });
+
     async function connect() {
       if (screeningEndedByHost) return;
       clearTimeout(retryTimeout);
@@ -323,6 +390,8 @@
       showLoading();
       teardown();
       if (!streamAccess) return; // waits until the access gate approves this viewer
+      if (!screeningKnown) return; // waits for the screening mode
+      if (isPremiere() && !screening.startedAt) { showPremiereWaiting(); return; }
 
       let url;
       try { url = await manifestUrl(); }
@@ -341,9 +410,10 @@
         if (myToken !== connectToken || screeningEndedByHost) return;
         showLive();
       }, { once: true });
+      if (isPremiere()) startPremiereSync(myToken);
 
       if (window.Hls && Hls.isSupported()) {
-        hls = new Hls({ liveSyncDurationCount: 3 });
+        hls = new Hls(isPremiere() ? { startPosition: premierePosition() } : { liveSyncDurationCount: 3 });
         hls.attachMedia(video);
         hls.on(Hls.Events.MEDIA_ATTACHED, () => {
           if (myToken !== connectToken) return;
@@ -401,6 +471,23 @@
 
     document.addEventListener('fullscreenchange', updateFullscreenIcon);
     document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+    window.addEventListener('cinemaScreeningState', event => {
+      const next = event.detail || { mode: 'live' };
+      serverOffset = Number(next.offset) || 0;
+      const prev = screening, first = !screeningKnown;
+      screening = next;
+      screeningKnown = true;
+      const sameSubject = prev.mode === next.mode && prev.videoId === next.videoId;
+      if (next.mode === 'premiere' && next.endedAt) {
+        if (!screeningEndedByHost) { clearTimeout(retryTimeout); connectToken += 1; teardown(); showEnded(); }
+        return;
+      }
+      if (!first && sameSubject && prev.startedAt === next.startedAt && !prev.endedAt) return; // nothing changed for playback
+      screeningEndedByHost = false;
+      if (!sameSubject) streamToken = null;
+      if (streamAccess) connect();
+    });
 
     // The access gate (end of page) grants or withdraws playback.
     window.addEventListener('cinemaStreamAccess', event => {
@@ -682,6 +769,77 @@
       if (!await checkModerator()) return;
       set(chatDisabledRef, !chatDisabled)
         .catch((err) => { console.error('Failed to toggle chat:', err); alert('Could not update chat status — check console.'); });
+    });
+  </script>
+
+  <!-- ── Screening mode: live via OBS, or a premiere of an uploaded film ── -->
+  <script type="module">
+    import { ref, onValue, set, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-database.js";
+    import { db } from '/js/academy-auth.js?v=27';
+
+    const screeningRef = ref(db, 'cinemaScreening');
+    const VIDEO_ID = /^[a-f0-9]{32}$/;
+    let state = { mode: 'live' }, offset = 0, isHost = false, published = false;
+
+    const startBtn = document.getElementById('startScreeningBtn');
+    const endBtn = document.getElementById('endScreeningBtn');
+    const setup = document.getElementById('screeningSetup');
+    const setupStatus = document.getElementById('screeningSetupStatus');
+    const videoInput = document.getElementById('premiereVideoId');
+
+    function normalize(value) {
+      const v = value && typeof value === 'object' ? value : {};
+      if (v.mode !== 'premiere' || !VIDEO_ID.test(v.videoId || '')) return { mode: 'live' };
+      return { mode: 'premiere', videoId: v.videoId,
+        startedAt: Number.isFinite(v.startedAt) ? v.startedAt : null,
+        endedAt: Number.isFinite(v.endedAt) ? v.endedAt : null };
+    }
+    function render() {
+      const premiere = state.mode === 'premiere';
+      startBtn.classList.toggle('visible', isHost && premiere && !state.startedAt && !state.endedAt);
+      endBtn.classList.toggle('visible', isHost && (!premiere || (!!state.startedAt && !state.endedAt)));
+      setup.classList.toggle('hidden', !isHost);
+      setupStatus.textContent = !premiere ? 'Now: live from OBS.'
+        : state.endedAt ? `Now: premiere ended (film ${state.videoId}). Load a film or switch to live for the next screening.`
+        : state.startedAt ? `Now: premiere playing (film ${state.videoId}).`
+        : `Now: premiere ready (film ${state.videoId}). Click Start Screening when you're ready.`;
+    }
+    function publish() {
+      window.dispatchEvent(new CustomEvent('cinemaScreeningState', { detail: { ...state, offset } }));
+      render();
+    }
+
+    onValue(ref(db, '.info/serverTimeOffset'), snap => {
+      const n = Number(snap.val());
+      offset = Number.isFinite(n) ? n : 0;
+      if (published) publish();
+    });
+    onValue(screeningRef, snap => { state = normalize(snap.val()); published = true; publish(); },
+      () => { state = { mode: 'live' }; published = true; publish(); }); // unreadable: behave as live
+    window.addEventListener('cinemaModerator', event => { isHost = event.detail?.authorized === true; render(); });
+
+    const fail = message => error => { console.error(message, error); alert(message); };
+    startBtn.addEventListener('click', () => {
+      if (!isHost || state.mode !== 'premiere' || state.startedAt || state.endedAt) return;
+      if (!confirm('Start the film now for everyone in the cinema?')) return;
+      update(screeningRef, { startedAt: serverTimestamp() }).catch(fail('Could not start the screening.'));
+    });
+    window.addEventListener('cinemaHostEnded', () => {
+      if (isHost && state.mode === 'premiere' && state.startedAt && !state.endedAt) {
+        update(screeningRef, { endedAt: serverTimestamp() }).catch(fail('Could not end the premiere for everyone.'));
+      }
+    });
+    document.getElementById('loadPremiereBtn').addEventListener('click', () => {
+      if (!isHost) return;
+      const videoId = videoInput.value.trim().toLowerCase();
+      if (!VIDEO_ID.test(videoId)) { setupStatus.textContent = "That isn't a Cloudflare video ID (32 letters and numbers, from Stream → Videos)."; return; }
+      if (state.mode === 'premiere' && state.startedAt && !state.endedAt && !confirm('A premiere is playing. Replace it? It stops for everyone.')) return;
+      set(screeningRef, { mode: 'premiere', videoId }).then(() => { videoInput.value = ''; }).catch(fail('Could not load the film.'));
+    });
+    document.getElementById('switchLiveBtn').addEventListener('click', () => {
+      if (!isHost || state.mode === 'live') return;
+      if (state.startedAt && !state.endedAt && !confirm('A premiere is playing. Switch to live? It stops for everyone.')) return;
+      set(screeningRef, { mode: 'live' }).catch(fail('Could not switch to live.'));
     });
   </script>
 

@@ -110,6 +110,15 @@
 .disable-chat-btn:hover, .end-screening-btn:hover { background: var(--paper-hover); }
 .disable-chat-btn.active { background: var(--ink); color: var(--on-ink); }
 .end-screening-btn { border-color: transparent; text-decoration: underline; text-underline-offset: 4px; }
+.start-screening-btn { display: none; width: 100%; margin-top: 8px; min-height: var(--control-sm, 32px); padding: 0 var(--space-4, 16px);
+  border: var(--stroke-outline, 1.5px) solid var(--ink); border-radius: var(--radius-sm, 4px); background: var(--ink); color: var(--on-ink);
+  font: 500 12px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.start-screening-btn.visible { display: block; }
+.start-screening-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.screening-setup { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--ink-dim); }
+.screening-setup summary { cursor: pointer; font: 500 11px/1.45 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
+.screening-setup__status { margin: 10px 0; font: 400 13px/1.5 var(--font-body); color: var(--ink-mid); }
+.screening-setup .chat-input { width: 100%; box-sizing: border-box; margin-top: 4px; }
 
 @media (max-width: 899px) {
   .live-layout { grid-template-columns: minmax(0, 1fr); --nda-columns: 1fr; }

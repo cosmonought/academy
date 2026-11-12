@@ -279,6 +279,26 @@
     "seminarStaff": {
       ".read": false,
       ".write": false
+    },
+    "cinemaScreening": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email != null && auth.token.firebase.sign_in_provider !== 'anonymous' && ((auth.token.email_verified === true && auth.token.email === 'academy@netadao.org') || root.child('seminarStaff/sex-and-or-love').child(auth.uid).child('role').val() === 'instructor')",
+      ".validate": "newData.child('mode').val() === 'live' || (newData.child('mode').val() === 'premiere' && newData.child('videoId').exists())",
+      "mode": {
+        ".validate": "newData.isString()"
+      },
+      "videoId": {
+        ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9]{32}$/)"
+      },
+      "startedAt": {
+        ".validate": "newData.isNumber() && newData.val() <= now + 1000"
+      },
+      "endedAt": {
+        ".validate": "newData.isNumber() && newData.val() <= now + 1000"
+      },
+      "$other": {
+        ".validate": false
+      }
     }
   }
 }

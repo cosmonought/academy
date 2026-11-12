@@ -70,3 +70,20 @@ test('an unconfigured signer refuses rather than leaking an unsigned URL', async
   const service = createStaffService({ db: { ref: path => ({ get: async () => ({ val: () => get(path) }) }) }, auth: { getUser: async () => ({ uid: 'p', email: 'p@example.org', emailVerified: true }) } });
   await assert.rejects(service.cinemaStreamToken({ auth: { uid: 'p', token: {} }, data: {} }), { code: 'failed-precondition' });
 });
+
+test('a loaded premiere signs the uploaded film; malformed or live settings fall back to the live input', async () => {
+  const film = 'a'.repeat(32);
+  for (const [screening, sub, kind] of [
+    [{ mode: 'premiere', videoId: film }, film, 'premiere'],
+    [{ mode: 'premiere', videoId: '../not-a-film' }, CINEMA_STREAM.liveInputId, 'live'],
+    [{ mode: 'live', videoId: film }, CINEMA_STREAM.liveInputId, 'live']
+  ]) {
+    const data = { cinemaScreening: screening, academyRegistrations: { 'p@example,org': { [CINEMA_STREAM.seminarId]: { enrolled: true, accountUid: 'p' } } } };
+    const get = path => path.split('/').filter(Boolean).reduce((v, k) => v?.[k], data) ?? null;
+    const signed = [];
+    const service = createStaffService({ db: { ref: path => ({ get: async () => ({ val: () => get(path) }) }) }, auth: { getUser: async () => ({ uid: 'p', email: 'p@example.org', emailVerified: true }) }, streamSigner: s => { signed.push(s); return { token: 't', expiresAt: 1 }; } });
+    const result = await service.cinemaStreamToken({ auth: { uid: 'p', token: {} }, data: {} });
+    assert.deepEqual(signed, [sub]); assert.equal(result.kind, kind);
+    assert.equal(result.subject, kind === 'premiere' ? film : null);
+  }
+});

@@ -69,8 +69,12 @@ export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CON
       }
       if (!allowed) fail('permission-denied', 'Enrollment is required to watch this screening.');
       if (!streamSigner) fail('failed-precondition', 'The screening stream is not configured yet.');
-      const { token, expiresAt } = streamSigner(cinemaStream.liveInputId);
-      return { token, expiresAt, host: `https://customer-${cinemaStream.customerCode}.cloudflarestream.com` };
+      // A premiere plays an uploaded film; otherwise the OBS live input.
+      const screening = await read('cinemaScreening');
+      const premiere = screening?.mode === 'premiere' && typeof screening.videoId === 'string' && /^[a-f0-9]{32}$/.test(screening.videoId);
+      const subject = premiere ? screening.videoId : cinemaStream.liveInputId;
+      const { token, expiresAt } = streamSigner(subject);
+      return { token, expiresAt, kind: premiere ? 'premiere' : 'live', subject: premiere ? subject : null, host: `https://customer-${cinemaStream.customerCode}.cloudflarestream.com` };
     },
     async getTeachingAssignmentRoles(request) {
       const who = await caller(request), result = {};

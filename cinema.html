@@ -113,7 +113,7 @@
 
     <div class="player-meta">
       <p id="liveIndicator" role="status" aria-live="polite" style="display:none;"><span class="live-dot" aria-hidden="true"></span>Live now</p>
-      <p>Live feed · no pause or rewind. Having trouble? Try refreshing, or watch in <a href="#" id="vlcLink">VLC</a> using the MediaMTX RTMP/RTSP address.</p>
+      <p>Live feed · no pause or rewind. Having trouble? Try refreshing, or watch in <a href="#" id="vlcLink">VLC</a> using the stream address.</p>
     </div>
 
     </div>
@@ -141,14 +141,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
   <script>
     /* ════════════════════════════════════════════════════════
-       CONFIG — edit these two lines for your MediaMTX server
+       CONFIG — Cloudflare Stream live input
        ════════════════════════════════════════════════════════ */
-    const MEDIAMTX_HOST = 'https://live.netadaostream.com';
-    const STREAM_PATH   = 'live/seminar';
+    const STREAM_HOST   = 'https://customer-piioie1ibxduv2ke.cloudflarestream.com';
+    const LIVE_INPUT_ID = 'f1908b679bf82268c809e1709ab0c580';
     /* ════════════════════════════════════════════════════════ */
 
-    const HLS_URL  = `${MEDIAMTX_HOST}/${STREAM_PATH}/index.m3u8`;
-    const RTMP_URL = `rtmp://${MEDIAMTX_HOST.replace(/^https?:\/\//, '')}/${STREAM_PATH}`;
+    const HLS_URL = `${STREAM_HOST}/${LIVE_INPUT_ID}/manifest/video.m3u8`;
 
     const video          = document.getElementById('video');
     const stateLoading   = document.getElementById('stateLoading');
@@ -182,8 +181,8 @@
       syncChatHeight();
     }
 
-    vlcLink.href = `vlc://${RTMP_URL}`;
-    vlcLink.title = RTMP_URL;
+    vlcLink.href = `vlc://${HLS_URL}`;
+    vlcLink.title = HLS_URL;
 
     let hls = null;
     let retryTimeout = null;
@@ -329,7 +328,7 @@
       }, { once: true });
 
       if (window.Hls && Hls.isSupported()) {
-        hls = new Hls({ liveSyncDuration: 3, liveMaxLatencyDuration: 10 });
+        hls = new Hls({ liveSyncDurationCount: 3 });
         hls.attachMedia(video);
         hls.on(Hls.Events.MEDIA_ATTACHED, () => {
           if (myToken !== connectToken) return;

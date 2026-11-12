@@ -1,5 +1,6 @@
 import { ATTENDANCE_EVENTS, EVALUATION_OFFERED, EVALUATION_CONFIG, attendanceRecord, EVALUATION_FORMS, EVALUATION_OUTCOMES } from './shared/academy-record.js';
 import { ACADEMY_SEMINAR_POLICY_VERSION, GRAPHIC_SEMINAR_ID } from './shared/seminar-policies.js';
+import { CINEMA_STREAM } from './stream-token.js';
 const ADMIN_EMAIL = 'academy@netadao.org';
 export class StaffError extends Error {
   constructor(code, message) { super(message); this.code = code; }
@@ -18,7 +19,7 @@ const emailValue = value => {
 const emailKey = email => key(email.replace(/\./g, ','));
 const seminarValue = id => { if (!Object.hasOwn(ATTENDANCE_EVENTS, id)) fail('invalid-argument', 'Unknown seminar.'); return id; };
 const pick = (record, fields) => Object.fromEntries(fields.filter(field => record[field] !== undefined).map(field => [field, record[field]]));
-export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CONFIG, now = Date.now }) {
+export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CONFIG, now = Date.now, streamSigner = null, cinemaStream = CINEMA_STREAM }) {
   const read = async path => (await db.ref(path).get()).val();
   async function rootTransaction(update) {
     const rootRef = db.ref();
@@ -57,6 +58,20 @@ export function createStaffService({ db, auth, evaluationConfig = EVALUATION_CON
     return { ...who, participantKey, path, reg };
   }
   return {
+    // Signed Cloudflare Stream playback for the Cinema room: the same people the
+    // page admits (admin, assigned instructor/TA, enrolled owner of the registration).
+    async cinemaStreamToken(request) {
+      const who = await caller(request), id = cinemaStream.seminarId;
+      let allowed = who.admin || ['instructor', 'ta'].includes((await read(`seminarStaff/${id}/${who.uid}`))?.role);
+      if (!allowed && who.email) {
+        const reg = await read(`academyRegistrations/${emailKey(emailValue(who.email))}/${id}`);
+        allowed = reg?.enrolled === true && (reg.accountUid === who.uid || (!reg.accountUid && who.emailVerified));
+      }
+      if (!allowed) fail('permission-denied', 'Enrollment is required to watch this screening.');
+      if (!streamSigner) fail('failed-precondition', 'The screening stream is not configured yet.');
+      const { token, expiresAt } = streamSigner(cinemaStream.liveInputId);
+      return { token, expiresAt, host: `https://customer-${cinemaStream.customerCode}.cloudflarestream.com` };
+    },
     async getTeachingAssignmentRoles(request) {
       const who = await caller(request), result = {};
       for (const id of Object.keys(ATTENDANCE_EVENTS)) {

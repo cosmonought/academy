@@ -113,7 +113,7 @@
 
     <div class="player-meta">
       <p id="liveIndicator" role="status" aria-live="polite" style="display:none;"><span class="live-dot" aria-hidden="true"></span>Live now</p>
-      <p>Live feed · no pause or rewind. Having trouble? Try refreshing, or watch in <a href="#" id="vlcLink">VLC</a> using the stream address.</p>
+      <p>Live feed · no pause or rewind. Having trouble? Try refreshing the page.</p>
     </div>
 
     </div>
@@ -141,20 +141,26 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
   <script>
     /* ════════════════════════════════════════════════════════
-       CONFIG — Cloudflare Stream live input
+       Cloudflare Stream with signed playback. Once the access check
+       approves this viewer, the Academy backend (cinemaStreamToken)
+       issues a short-lived token; the live input ID lives server-side.
        ════════════════════════════════════════════════════════ */
-    const STREAM_HOST   = 'https://customer-piioie1ibxduv2ke.cloudflarestream.com';
-    const LIVE_INPUT_ID = 'f1908b679bf82268c809e1709ab0c580';
-    /* ════════════════════════════════════════════════════════ */
+    let streamAccess = null; // async () => ({ token, expiresAt, host }), set by the access gate
+    let streamToken = null;
+    const TOKEN_REFRESH_MARGIN_MS = 3 * 60 * 60 * 1000; // a fresh token always outlasts a film
 
-    const HLS_URL = `${STREAM_HOST}/${LIVE_INPUT_ID}/manifest/video.m3u8`;
+    async function manifestUrl() {
+      if (!streamToken || streamToken.expiresAt - Date.now() < TOKEN_REFRESH_MARGIN_MS) {
+        streamToken = await streamAccess();
+      }
+      return `${streamToken.host}/${streamToken.token}/manifest/video.m3u8`;
+    }
 
     const video          = document.getElementById('video');
     const stateLoading   = document.getElementById('stateLoading');
     const stateOffline   = document.getElementById('stateOffline');
     const liveIndicator  = document.getElementById('liveIndicator');
     const retryBtn       = document.getElementById('retryBtn');
-    const vlcLink        = document.getElementById('vlcLink');
     const soundToggle      = document.getElementById('soundToggle');
     const fullscreenToggle  = document.getElementById('fullscreenToggle');
     const toastToggle       = document.getElementById('toastToggle');
@@ -180,9 +186,6 @@
       window.addEventListener('resize', syncChatHeight);
       syncChatHeight();
     }
-
-    vlcLink.href = `vlc://${HLS_URL}`;
-    vlcLink.title = HLS_URL;
 
     let hls = null;
     let retryTimeout = null;
@@ -313,12 +316,24 @@
       retryTimeout = setTimeout(connect, 8000);
     }
 
-    function connect() {
+    async function connect() {
       if (screeningEndedByHost) return;
       clearTimeout(retryTimeout);
       const myToken = ++connectToken; // any callback from a torn-down attempt is ignored
       showLoading();
       teardown();
+      if (!streamAccess) return; // waits until the access gate approves this viewer
+
+      let url;
+      try { url = await manifestUrl(); }
+      catch (e) {
+        if (myToken !== connectToken) return;
+        streamToken = null;
+        showOffline();
+        scheduleRetry();
+        return;
+      }
+      if (myToken !== connectToken || screeningEndedByHost) return;
 
       // "Live" means the media element is genuinely playing, not merely that
       // a manifest parsed. This is the one semantic trigger that opens curtains.
@@ -332,7 +347,7 @@
         hls.attachMedia(video);
         hls.on(Hls.Events.MEDIA_ATTACHED, () => {
           if (myToken !== connectToken) return;
-          hls.loadSource(HLS_URL);
+          hls.loadSource(url);
         });
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           if (myToken !== connectToken) return;
@@ -340,6 +355,7 @@
         });
         hls.on(Hls.Events.ERROR, (event, data) => {
           if (myToken !== connectToken) return;
+          if ([401, 403].includes(data.response?.code)) streamToken = null; // rejected token: sign a new one
           if (data.fatal) {
             showOffline();
             scheduleRetry();
@@ -347,7 +363,7 @@
         });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         // Native HLS support (Safari)
-        video.src = HLS_URL;
+        video.src = url;
         video.addEventListener('error', () => {
           if (myToken !== connectToken) return;
           showOffline();
@@ -386,7 +402,15 @@
     document.addEventListener('fullscreenchange', updateFullscreenIcon);
     document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
 
-    connect();
+    // The access gate (end of page) grants or withdraws playback.
+    window.addEventListener('cinemaStreamAccess', event => {
+      const getToken = event.detail?.getToken || null;
+      if (getToken === streamAccess) return;
+      streamAccess = getToken;
+      streamToken = null;
+      if (streamAccess) connect();
+      else { clearTimeout(retryTimeout); connectToken += 1; teardown(); }
+    });
 
   </script>
 
@@ -664,7 +688,9 @@
   <script type="module">
     import { initNavAccountWidget, auth, onAuthStateChanged, ADMIN_EMAIL } from '/js/academy-auth.js?v=27';
     import { watchEnrollment } from '/js/enrollment-gate.js';
+    import { staffCall } from '/js/staff-api.js';
     initNavAccountWidget();
+    const requestStreamToken = () => staffCall('cinemaStreamToken');
     let enrolled = false, moderator = false;
     window.addEventListener('cinemaModerator', event => { moderator = event.detail.authorized === true; renderCinemaAccess(); });
     function renderCinemaAccess() {
@@ -673,6 +699,7 @@
       document.getElementById('gatedCinemaContent').classList.toggle('hidden', !approved);
       document.getElementById('cinemaEntry').classList.toggle('hidden', approved);
       document.getElementById('cinemaAccessGate').classList.toggle('hidden', approved);
+      window.dispatchEvent(new CustomEvent('cinemaStreamAccess', { detail: { getToken: approved ? requestStreamToken : null } }));
     }
     watchEnrollment('sex-and-or-love', document.getElementById('cinemaAccessGate'), approved => {
       enrolled = approved;

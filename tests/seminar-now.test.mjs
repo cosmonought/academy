@@ -14,11 +14,15 @@ test('next-event panel advances from screening to screening, then lecture, then 
   assert.equal(participantPlan(Date.parse('2026-10-29T06:00:00Z')).film.id, 'hiroshima');
   assert.equal(participantPlan(Date.parse('2026-11-05T07:00:00Z')).kind, 'lecture');
   assert.equal(participantPlan(Date.parse('2026-11-12T04:59:59Z')).today, true);
-  const after = participantPlan(Date.parse('2026-11-12T05:00:00Z'));
+  const tonight = participantPlan(Date.parse('2026-11-12T05:00:00Z'));   // then Session 7's screening, 18 November
+  assert.equal(tonight.kind, 'screening');
+  assert.equal(tonight.film.id, 'tambien');
+  assert.equal(tonight.session.id, 'session7');
+  const after = participantPlan(Date.parse('2026-11-19T07:00:00Z'));   // its window over, the lecture still undated
   assert.equal(after.kind, 'unscheduled');
   assert.equal(after.session.id, 'session7');
 });
-for (const [id, timestamp] of [['park', '2026-10-01T02:00:00Z'], ['dogtooth', '2026-10-08T02:00:00Z'], ['amour', '2026-10-15T02:00:00Z'], ['blue', '2026-10-22T02:00:00Z'], ['hiroshima', '2026-11-05T03:00:00Z']]) {
+for (const [id, timestamp] of [['park', '2026-10-01T02:00:00Z'], ['dogtooth', '2026-10-08T02:00:00Z'], ['amour', '2026-10-15T02:00:00Z'], ['blue', '2026-10-22T02:00:00Z'], ['hiroshima', '2026-11-05T03:00:00Z'], ['tambien', '2026-11-19T03:00:00Z']]) {
   test(`${id}: Cinema navigation starts at 10 p.m. Eastern and ends exactly at 2 a.m.`, () => {
     const begins = Date.parse(timestamp);
     assert.equal(bannerState(begins - 1), null);

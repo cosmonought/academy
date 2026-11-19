@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { screenings, canRevealTitle, screeningText, filmCredit, renderScreenings } from '../js/seminar-screenings.js';
 
 test('scheduled titles reveal at 10 p.m. Eastern, including the UTC date rollover', () => {
-  for (const [id, utc] of [['park', '2026-10-01T02:00:00Z'], ['dogtooth', '2026-10-08T02:00:00Z'], ['amour', '2026-10-15T02:00:00Z'], ['blue', '2026-10-22T02:00:00Z'], ['hiroshima', '2026-11-05T03:00:00Z']]) {
+  for (const [id, utc] of [['park', '2026-10-01T02:00:00Z'], ['dogtooth', '2026-10-08T02:00:00Z'], ['amour', '2026-10-15T02:00:00Z'], ['blue', '2026-10-22T02:00:00Z'], ['hiroshima', '2026-11-05T03:00:00Z'], ['tambien', '2026-11-19T03:00:00Z']]) {
     const film = screenings.find(item => item.id === id);
     const start = Date.parse(utc);
     assert.equal(Date.parse(film.startsAt), start);
@@ -27,7 +27,7 @@ test('unknown and invalid screening times never reveal automatically', () => {
   for (const startsAt of [null, '', 'invalid']) {
     assert.equal(canRevealTitle({ title: 'Hidden', startsAt }, true, Date.parse('2030-01-01')), false);
   }
-  for (const id of ['tambien', 'someone']) {
+  for (const id of ['someone']) {
     assert.equal(canRevealTitle(screenings.find(film => film.id === id), true, Date.parse('2030-01-01')), false);
   }
 });

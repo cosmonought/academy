@@ -37,10 +37,10 @@ fallback. `npm run check:schedule` verifies it is synchronized. The browser also
 derives displayed dates and session statuses from the canonical schedule.
 
 The September 30 and October 7, 14 and 21, 2026 screenings, and the November 4
-screening, reveal at 10 p.m. Eastern / 7 p.m. Pacific (UTC−04:00 in Eastern time
-on the October dates; UTC−05:00 on November 4, after clocks fall back). The interface checks
+and November 18 screenings, reveal at 10 p.m. Eastern / 7 p.m. Pacific (UTC−04:00 in Eastern time
+on the October dates; UTC−05:00 in November, after clocks fall back). The interface checks
 every second and when a background tab becomes visible. Titles appear only after
-the existing enrollment check succeeds. The later screenings remain TBD.
+the existing enrollment check succeeds. The Session 8 screening remains TBD.
 
 This is a spoiler-control interface, not a confidentiality boundary: titles are
 present in the public source, and reveal timing uses the browser clock. Firebase

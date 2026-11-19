@@ -12,7 +12,8 @@ test('session status follows the Eastern lecture day and screening sequence', ()
   assert.equal(state('session6', '2026-10-29T04:00:00Z').label, 'In progress');
   assert.equal(state('session6', '2026-11-12T04:59:59Z').label, 'In progress');
   assert.equal(state('session6', '2026-11-12T05:00:00Z').label, 'Past');
-  assert.equal(state('session7', '2026-11-12T05:00:00Z').label, 'Date TBD');
+  assert.equal(state('session7', '2026-11-12T05:00:00Z').label, 'Next');   // its screening on 18 November
+  assert.equal(state('session7', '2026-11-19T03:00:00Z').label, 'In progress');
 });
 test('the first dated lecture is next before the series starts; later lectures are scheduled', () => {
   assert.equal(state('session0', '2026-02-01T12:00:00Z').label, 'Next');

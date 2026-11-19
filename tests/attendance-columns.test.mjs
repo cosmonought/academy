@@ -61,7 +61,8 @@ test('a teaching assistant sees an unrevealed screening by its own title in the 
   const before = attendanceColumns(ID, { now: dogtooth - 60_000, ta: true });
   assert.equal(column(before, 'dogtooth').title, 'Intermezzo: Sin or Sine or Sign or—the Curve');
   assert.equal(column(before, 'hiroshima').title, 'Après-Coup, Love’s Oblivion, or—the Eye');
-  assert.equal(column(before, 'tambien').title, 'The End of Ends: Sex, Reason, Being');   // no title of its own: its session's
+  assert.equal(column(before, 'tambien').title, 'The Trouble with Friendship: Sex and Sociality');
+  assert.equal(column(before, 'someone').title, 'To Touch, To Bid, To Kiss: On Parting');   // no title of its own: its session's
   for (const item of before.filter(entry => entry.event.type === 'screening' && entry.state === 'upcoming')) {
     assert.ok(!screenings.some(film => film.title === item.title), 'no film title ahead: ' + item.title);
   }
